@@ -1,0 +1,63 @@
+
+
+
+<wicket:head>
+	 
+ 	 <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+     <link rel="stylesheet" type="text/css" href="drcc.css"/>
+     <style>
+
+     
+     </style>
+</wicket:head>
+
+<wicket:panel>
+	<table style = "width : 96%; font-size : 100%;  margin-top : 5px; margin-right : 2%; margin-left : 2%"  class="dataview">
+		<tr>
+			<td style = "width : 25%; text-align : left; vertical-align : bottom">
+				<br><br><span wicket:id = "tabTitle" class = "drccSubSectionHeader">D. Subject Info</span>
+			</td>
+			<td style = "width : 50%; text-align : center; vertical-align : top">
+				<br>
+				<span wicket:id = "header" class = "drccDivisionHeader">Metabolomics Core - DRCC Data Reporting Tool</span><br>
+				<br>
+			</td>
+			<td style = "width : 25%"></td>
+		</tr>
+	</table>
+	<br>
+	<br>
+	<table style = "width : 96%; font-size : 80%; border : solid 1px black; margin-top : 5px; margin-right : 2%; margin-left : 2%"  class="dataview">
+		<tr>
+			<th class = "requiredHaveColumn" ><span >Researcher/MRC2 Subject ID</span></th>
+		  	<th class = "requiredHaveColumn" ><span>Subject Type</span></th>
+		  	<th class = "requiredHaveColumn"  style = "text-align : center; background : #000079 ; color : white"><span>Subject Species</span></th>
+		  	<th class = "requiredHaveColumn">TaxonomyID</th>
+		 
+		 </tr>
+	
+	    <tr wicket:id = "subjectInfo">
+	    
+	      	<td style = "vertical-align : middle; text-align : right ; padding-right :7px">
+	      		<span wicket:id = "subjectId">subjectId</span>
+	      	</td>
+	
+	      	<td style = "vertical-align : middle; text-align : center">
+	      		<select  style = "width : 110px" wicket:id = "subjectType"><option>Human</option><option>Animal</option><option>Plant</option><option>Cell</option></select>
+	      		
+	      	</td>
+	
+	      	<td style = "vertical-align : middle; text-align : center">
+	      		<span wicket:id = "subjectSpecies">genusOrSpecies</span>
+	      	</td>
+	      	
+	      	<td style = "vertical-align : middle; text-align : center">
+	      		<span wicket:id = "taxonomyId">(123) 456-7890</span>
+	      	</td>
+
+	      	
+	    </tr>
+	  </table>	
+
+ </wicket:panel>

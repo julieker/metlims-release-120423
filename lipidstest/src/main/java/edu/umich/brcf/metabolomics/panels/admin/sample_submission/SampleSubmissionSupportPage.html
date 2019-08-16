@@ -1,0 +1,67 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+
+<wicket:head>
+	<style>
+		 legend { border: 1px solid transparent; background-color: #bbb; color: #fff; padding: 4px;}
+      	fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+      	div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0; }
+      	
+	</style>
+			
+</wicket:head>
+<body id = "dialog_background">
+<!-- <wicket:panel> -->
+<br/>
+ 	<div wicket:id="modal1"></div>
+ 
+ 	
+	    
+	<fieldset id = "dialog_fieldset">
+	   	<legend style = "border : blue; background : transparent">
+	   		<span style = "font-weight : bold; color :  #0053CF">Support for Sample Creation</span>
+	   	</legend>
+	      <p><br/>
+	      <center>
+     
+      <table style = "width : 90%; margin-left : 5%; margin-right : 5%">
+      	<tr>
+      		<td style = "text-align : left; font-weight : bold; color :  #0053CF">Check Existence:</td>
+      	</tr>
+      	<tr>
+      		<td>
+      		<table>
+      			<tr>
+      				<td style = "width : 30%">Organization: </td>
+      				<td style = "width: 70%">
+      				<input  wicket:id="org" type="text" size = "60" style = "font-size : 70%"/></td>
+      				<td>
+      					<input wicket:id="organization" style = "width : 90%" type="button"  value="&nbsp;&nbsp;New...&nbsp;&nbsp;" />
+      				</td>
+      			</tr>
+      		
+	      		<tr>
+	      			<td>Client: </td><td><input type="text" wicket:id="clnt" size="60" style = "font-size : 70%"/></td><td><input style = "width : 90%" type="button" wicket:id="client" value="&nbsp;&nbsp;New...&nbsp;&nbsp;" />
+	      			</td>
+	      		</tr>
+	      			
+	      		<tr><td>Project: </td><td><input type="text" wicket:id="proj" size="60" style = "font-size : 70%"/></td><td><input style = "width : 90%" type="button" wicket:id="project" value="&nbsp;&nbsp;New...&nbsp;&nbsp;" /></td></tr>
+	      		<tr><td>Experiment: </td><td><input type="text" wicket:id="exp" size="60" style = "font-size : 70%" /></td><td><input style = "width : 90%" type="button" wicket:id="experiment" value="&nbsp;&nbsp;New...&nbsp;&nbsp;" /></td></tr>
+	      	</table></td></tr>
+	      	<tr><td></td></tr>
+	       <tr><td style = "font-weight : bold; color :  #0053CF">Find:</td></tr>
+	      	<tr><td>
+	      	<table>
+	      		<tr>
+	      			<td>GenusSpecies and SampleType IDs: </td>
+	      			<td>
+	      				<input  wicket:id="stSupport"  type="button" value="&nbsp;Search...&nbsp;"/>
+	      			</td>
+	      		</tr>
+	      	</table></td></tr>
+	      </table><br/>
+	       </center></p>
+     
+    </fieldset>
+<!-- </wicket:panel> -->
+</body>
+</html>

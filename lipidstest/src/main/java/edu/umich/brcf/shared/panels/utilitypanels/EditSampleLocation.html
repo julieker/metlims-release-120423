@@ -1,0 +1,57 @@
+
+ <html xmlns:wicket="http://wicket.apache.org/">
+
+	<head>
+	    <link rel="stylesheet" type="text/css" href="dialog.css"/>
+	    <style>
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	    </style>
+	</head>
+	
+	<wicket:head>
+		
+	</wicket:head>
+
+	<body class = "dialog_background">  <!-- "background : #E8ECEF"> -->
+		
+	    <fieldset style = "width : 90%; margin-right : 5%; margin-left : 5%; margin-bottom : 2%; 
+	    margin-top : 2%; height : 70%; vertical-align : middle">
+	      		
+	   		<legend style = "background : transparent; border : none">
+	   			<span style = "font-weight : bold; color :  #0053CF">Update Sample Location</span>
+	   		</legend>
+	       
+	        <div wicket:id = "feedback"></div>
+	    	<form  wicket:id = "editSampleLocationForm">
+       	
+	   			<table style = "width : 96%; margin-right : 2%; margin-left : 2%;">
+		  			<tr>
+						<td style = "text-align : right">Unit:</td>
+						<td><select wicket:id="unitsDD" ></select></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">Location:</td>
+						<td><select wicket:id="locationsDD" ></select></td>
+					</tr>
+					
+				</table>
+	    		
+	        	<br/>
+	        	<table style = "width : 96%; margin-right : 2%; margin-left : 2%; margin-bottom : 10px; border : none">	
+	        		<tr>
+			        	<td style = "text-align :right ; padding-right : 4%; width : 50%">
+			        		<input wicket:id="saveChanges" style = "width : 40%" type="submit"  value="Apply"/>
+			        	</td>
+			        	<td style = "text-align :left : padding-left : 4%; width : 50%">
+			     			<input wicket:id = "close" style = "width : 40%" type="submit"  value="Close"/>
+			     		</td>
+			     	</tr>	
+			    </table>        	
+	        </form>   
+		   </fieldset>
+		</body>
+
+</html>
+
+

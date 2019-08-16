@@ -1,0 +1,40 @@
+<wicket:panel>
+	<form wicket:id = "batchOrDateSearchForm">
+	<table style = "margin-left : 1%; margin-right : 1%;  text-align : left;">
+		<tr>	
+      		<td nowrap style = "text-align : right ; padding-right : 3px; padding-top : 7px">Status :</td>
+		    <td class = "col2" style = "text-align : left; padding-left : 3px; padding-top : 7px">
+		    	<select wicket:id = "searchStatusDrop" style = "vertical-align : top;  width : 95px;" >
+					<option>Status</option>
+				</select>
+		    </td>
+		    <td></td>
+		</tr>
+		<tr> 
+			<td nowrap style = "text-align : right ; padding-right : 3px">Dates :</td>
+			<td nowrap  style = "text-align : left; padding-left : 3px; padding-top : 7px; border : none">
+				<div nowrap wicket:id = "wmc">
+					<select wicket:id = "dateRangeTypeDrop" style = "width : 95px" >
+						<option>Select</option>
+					</select>							
+			  	</div>
+			  	<span nowrap wicket:id = "wmc2" style = "text-align : left">
+					<input  wicket:id = "fromDateTxt" readonly type = "text"  style = "text-align :left ; padding-left : 8px; width : 20%"/>
+					<span style =" padding-right : 4px; padding-left :4px">&nbsp;to&nbsp;</span>
+				
+					<input  wicket:id = "toDateTxt" readonly type = "text"  style = "text-align :left; padding-left : 3px; width : 20%"/>
+				</span>
+			</td> 
+
+			<td  style = "text-align : left; vertical-align : top ; border : none; padding-top : 7px">
+	        	<input  wicket:id = "searchButton"  style = "width : 100px;"  type = "button" value="&nbsp;Search...&nbsp;"/>
+	       	</td>		 
+      	</tr> 	
+      	<tr>
+       		<td></td>
+       		<td></td>
+       		<td></td>
+      	</tr>
+	</table>
+	</form>
+</wicket:panel>

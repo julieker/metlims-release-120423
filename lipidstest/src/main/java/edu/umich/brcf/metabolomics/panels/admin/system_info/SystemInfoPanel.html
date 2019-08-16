@@ -1,0 +1,605 @@
+<wicket:head>
+		<link rel="stylesheet" type="text/css" href="tabstyles5.css"/>
+		<style>
+		
+			th { background :  #003678 ; color : white; text-align : center}	
+		
+			.normalTable
+			    {
+			    width : 100%;
+			    margin-right : 0%;
+			    margin-left : 0%;
+			    border : solid 1px grey;
+			    background : white;
+			    font-size : 85%;
+			    }
+			    	
+			.borderlessTable
+			    {
+			    width : 98%;
+			    margin-right : 1%;
+			    margin-left : 1%;
+			    border : none;
+			    background : white;
+			    font-size : 85%;
+			    }    
+			      
+		    .drccSubSectionHeader
+		        {
+		        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+		        font-weight: 700;
+		   		font-size : 120%;  
+		        background-color : white;
+		        color : #A9E2F3 ;
+		        font-style : oblique;
+		        margin-left : 2%;
+		    	}
+		    
+		     .drccDivisionHeader
+		        {
+		        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+		        font-weight: 500;
+		   		font-size : 130%;
+		   		color :  #0053CF;
+		        margin-left: 2%;Í
+		    	}
+		    	
+		    .countCol { text-align : right; padding-right : 25px;}
+		</style>
+
+
+</wicket:head>
+
+<wicket:panel>
+	<div><br><br></div>
+
+	<table style = "width: 98%; text-align : center; margin-left : 1%; margin-right : 1%;  margin-bottom : 1px">
+			<tr>
+				<td style = "width : 67%; margin-top : 40px;  color : #0053CF; text-align : left">
+					<span class = "drccDivisionHeader">MetLIMS System Info</span>
+				</td>
+				<td style = "width: 33%; text-align : right ; padding-right : 10px"> 
+				 	<input style = "visibility : hidden; font-size : 80%" type="button"  value="&nbsp;&nbsp;&nbsp;&nbsp;Add User...&nbsp;&nbsp;&nbsp;&nbsp;" />
+				</td>	
+			</tr>
+			<tr><td></td><td></td></tr>
+		</table>
+	<div class = "borderlessTable" style = "width : 96%; font-size : 20%; padding : 0px; margin-left : 2%; margin-right : 2%; border-style : double; border-width :  1px; border-color:  #eeeeee"></div>	
+	
+	<!-- 
+
+	<table class = "borderlessTable" style = "margin-bottom : 7px">
+	
+		<tr>
+			<td style = "width : 67%; margin-top : 40px;  font-size : 125%; color : #0053CF; text-align : left; margin-left : 30px">
+				<span class = "drccDivisionHeader" >MetLIMS System Info</span>
+			</td>
+			<td style = "width: 33%; text-align : right ; padding-right : 10px"> 
+			</td>	
+		</tr>
+		<tr><td></td><td></td></tr>
+	</table>
+
+ -->
+ 	<br>
+	<table class = "borderlessTable" style = "border: none"  >
+       	<tr>
+           	<td style = "width : 75%; text-align : left; vertical-align : bottom;">
+				<br><span class = "drccSubSectionHeader">A. Submission Sheet Fields </span>
+			</td>
+			<td style = "width : 25%"></td>
+       	</tr>
+     </table>
+     
+     <div><br></div>
+     
+     <table class = "normalTable" style = "border: none;">
+        	<tr>
+            	<td style = "width : 100%; padding-left : 1%">
+				<div style = "text-align : left; "> 
+					
+					<table style = "margin-left : 1%;  margin-right : 1%;  width :98%;">	
+						<tr style = "border : solid 1px black">
+							<th style = "width : 20%">Field</th>
+							<th style = "width : 20%">Maximum Width</th>
+							<th style = "width : 20%">Data Type</th>
+							<th style = "width : 40%">Comment</th>
+						</tr>
+					
+						<tr style = "border : solid 1px black">
+							<td>Researcher Sample Id</td>
+							<td class = "countCol">120</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Researcher Subject Id</td>
+							<td  class = "countCol">100</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+	
+						<tr style = "border : solid 1px black">
+							<td>Sample Type</td>
+							<td  class = "countCol">100</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Genus or Species</td>
+							<td  class = "countCol">30</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Volume</td>
+							<td  class = "countCol">22 (precision :11)</td>
+							<td class = "countCol">NUMBER</td>
+							<td ></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Units</td>
+							<td class = "countCol">26</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Sample Type Id</td>
+							<td  class = "countCol">7</td>
+							<td class = "countCol">STRING </td>
+							<td class = "countCol">D000000</td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Genus or Species Id</td>
+							<td class = "countCol">22 (precision : 6)</td>
+							<td class = "countCol">NUMBER</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Location Id</td>
+							<td  class = "countCol">6</td>
+							<td class = "countCol">STRING</td>
+							<td class = "countCol">Format : LC0000</td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Factor Name</td>
+							<td  class = "countCol">120</td>
+							<td class = "countCol">STRING</td>
+							<td class = "countCol">Name of factor from headers on experiment design sheet</td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Factor Value</td>
+							<td  class = "countCol">40</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>PI/Contact Name (Last)</td>
+							<td  class = "countCol">20</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr> 
+						
+						<tr style = "border : solid 1px black">
+							<td>PI/Contact Name (Last)</td>
+							<td  class = "countCol">30</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>PI/Contact E-Mail</td>
+							<td  class = "countCol">50</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>PI/Contact Phone</td>
+							<td  class = "countCol">26</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Lab Name</td>
+							<td class = "countCol">50</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Department Name</td>
+							<td  class = "countCol">50</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						<tr style = "border : solid 1px black">
+							<td>Organization Name</td>
+							<td class = "countCol">120</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Organization Address</td>
+							<td class = "countCol">100</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Experiment Name</td>
+							<td class = "countCol">150</td>
+							<td class = "countCol"> STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Experiment Description</td>
+							<td class = "countCol">4000</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						<tr style = "border : solid 1px black">
+							<td>Project Name</td>
+							<td class = "countCol">120</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Project Description</td>
+							<td class = "countCol">1000</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>Shortcode</td>
+							<td class = "countCol">20</td>
+							<td class = "countCol">STRING</td>
+							<td></td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>NIH Grant Number</td>
+							<td class = "countCol">300 (3 Entries, 100 Each)</td>	
+							<td class = "countCol">STRING</td>
+							<td class = "countCol"> Values separated by comma or semi-colon</td>
+						</tr>
+					 </table>
+					</div>
+				</td>
+			</tr>
+		</table>
+     
+	<center>
+	<div><br><br></div>
+	<table class = "borderlessTable" style = "border: none"  >
+      	<tr>
+          	<td style = "width : 75%; text-align : left; vertical-align : bottom;">
+			<br><span class = "drccSubSectionHeader">B. Password Policy </span><span style = "margin-left : 150px; font-weight : 500">*** Minimum 8 characters, maximum 15 characters, 1 digit, 1 uppercase, 1 lowercase ***</span>
+		</td>
+		</tr>
+     </table>
+     
+
+     <div><br><br></div>
+	
+
+	
+	<table class = "borderlessTable" style = "border: none"  >
+        	<tr>
+            	<td style = "width : 75%; text-align : left; vertical-align : bottom;">
+					<br><span class = "drccSubSectionHeader">C. System Info</span>
+				</td>
+				<td style = "width : 25%"></td>
+        	</tr>
+     </table>
+     <div><br></div>
+     
+      <table class = "normalTable" style = "border: none;">
+        	<tr>
+            	<td style = "width : 100%; padding-left : 2%">
+				<table style = "width : 100%;">	
+					<tr style = "border : solid 1px black">
+						<th>Instrument Id</th>
+						<th>Instrument Name</th>
+						<th>Host Name</th>
+						<th>Current Status</th>
+						<th>IP Address</th>
+						<th>Comment</th>
+					</tr>
+		
+				<tr wicket:id="systems">
+					<td> <span wicket:id="instrumentId" />&nbsp;</td>
+					<td><span wicket:id="instrumentName" /> &nbsp;</td>
+					<td><span wicket:id="instrumentHostName"/></td>
+					<td> <span wicket:id="instrumentStatus" /><br/></td>
+					<td> <span wicket:id="instrumentIPAddr" /> &nbsp;</td>
+					<td><span wicket:id="instrumentQueue" /></td>
+					<td><table wicket:id="info"> </table></td>
+				</tr>
+			</table>
+		</td>
+		</tr>
+		</table>
+		
+		
+		<table class = "borderlessTable" style = "border: none"  >
+        	<tr>
+            	<td style = "width : 75%; text-align : left; vertical-align : bottom;">
+					<br><span class = "drccSubSectionHeader">D. Change Log</span>
+				</td>
+				<td style = "width : 25%"></td>
+        	</tr>
+     </table>
+     <div><br></div>
+     
+      <table class = "normalTable" style = "border: none;">
+        	<tr>
+            	<td style = "width : 100%; padding-left : 2%">
+				<table style = "width : 100%;">	
+					<tr style = "border : solid 1px black">
+						<th>Date</th>
+						<th>Feature</th>
+						<th> Description</th>
+					</tr>
+		
+		
+				
+				<tr >
+					<td>06/2017</td>
+					<td>Worklist generator</td>
+					<td> Control groups tab : Blanks bracket standards, added QC blanks, CHEAR reference standards, option for 0 on standards and process blanks</td>
+				</tr>
+				
+						
+				<tr >
+					<td></td>
+					<td>Prep page</td>
+					<td>Standard protocol upload (by assay and sample type)</td>
+				
+				</tr>
+				
+				<tr >
+					<td></td>
+					<td>Experiment] page</td>
+					<td>Experiments within project sorted by start date, also displayed under id</td>
+				
+				</tr>
+				
+				<tr >
+					<td></td>
+					<td>Prep page</td>
+					<td>Search by date for standard protocols</td>
+					
+				</tr>
+
+				<tr >
+					<td></td>
+					<td>Prep page</td>
+					<td>Online protocol sheets by experiment, assay and sample type </td>
+				
+				</tr>
+
+				<tr >
+					<td></td>
+					<td>Prep page</td>
+					<td>Search by date for saved protocol sheets </td>
+				</tr>
+				
+				<tr >
+					<td></td>
+					<td>Sample registration page</td>
+					<td>Dialog to recall sample ids by experiment, select for barcode re-printing</td>
+				</tr>
+
+				<tr >
+					<td></td>
+					<td>Sample registration page</td>
+					<td>Invalidate samples saves original subject ids for recall upon experiment reload</td>
+				</tr>
+		
+				<tr >
+					<td>-</td>
+					<td>Project tab</td>
+					<td>Block to prevent entry of duplicate project names</td>
+				
+				</tr>
+				
+				<tr >
+					<td>-</td>
+					<td>Client tab</td>
+					<td>Block to prevent entry of duplicate client names</td>
+				</tr>
+				
+				<tr >
+					<td>-</td>
+					<td>All </td>
+					<td>Cleaner simplified tab style</td>
+				</tr>
+				
+				<tr >
+					<td>-</td>
+					<td>Samples tab</td>
+					<td>To handle experiments with > 500 samples, dropdown search in edit sample panel replaced by text box search</td>
+				</tr>
+				
+				
+				<tr >
+					<td></td>
+					<td>Bug fix </td>
+					<td>Password generator fails intermittently </td>
+				</tr>
+				
+				<tr >
+					<td></td>
+					<td>Bug fix </td>
+					<td>Add factor page no longer allows entry of more than maximum number of factors</td>
+				</tr>
+				
+				
+				<tr >
+					<td>-</td>
+					<td> </td>
+					<td> </td>
+				
+				</tr>
+				<tr >
+					<td>-</td>
+					<td> </td>
+					<td> </td>
+				
+				</tr>
+		
+				<tr >
+					<td>05/2017</td>
+					<td>Worklist generator</td>
+					<td>Redid interface with tabbed input,  ability to add controls by group, reactivated worklist history save, per sample comments</td>
+				
+				</tr>
+				
+				<tr >
+					<td></td>
+					<td>Inventory tab</td>
+					<td>Restored compound drawing</td>
+				
+				</tr>
+				
+				<tr >
+					<td></td>
+					<td>Experiment tab </td>
+					<td>Data structures and database queries reworked to improve performance on experiments with > 500 samples </td>
+				
+				</tr>
+				
+				<tr >
+					<td></td>
+					<td>Samples tab </td>
+					<td>Drivers and printer connections for Zebra available </td>
+				
+				</tr>
+				
+				<tr >
+					<td></td>
+					<td>Admin tab</td>
+					<td>User registration page autopopulates id, user password and role based on client name</td>
+				
+				</tr> 
+				
+				<tr >
+					<td></td>
+					<td>Misc bug fixes </td>
+					<td>-</td>
+				
+				</tr>
+				
+				<tr >
+					<td>-</td>
+					<td> </td>
+					<td> </td>
+				
+				</tr>
+				<tr >
+					<td>-</td>
+					<td> </td>
+					<td> </td>
+				
+				</tr>
+		
+				<tr >
+					<td>01/2017</td>
+					<td>Experiment detail panel</td>
+					<td>Redid data structures to handle experimetns with > 500 samples </td>
+				</tr>
+		
+				<tr >
+					<td> </td>
+					<td>Experiment detail panel</td>
+					<td>Bug fixes </td>
+				</tr>
+			
+				<tr >
+					<td> </td>
+					<td>Workflow panel</td>
+					<td>Restored automated notifications upon report upload </td>
+				</tr>
+				
+				<tr >
+					<td> </td>
+					<td>Sample panel</td>
+					<td>E-mail notification upon sample form rollback </td>
+				</tr>
+				
+				<tr >
+					<td> </td>
+					<td>Sample submission upload</td>
+					<td>Screening for out of bounds numeric entries </td>
+				</tr>
+				
+				<tr >
+					<td> </td>
+					<td>Sample submission upload</td>
+					<td>Automated lookup for sample type ids</td>
+				</tr>
+				
+				
+				<tr>
+					<td> </td>
+					<td>Clients panel</td>
+					<td>Redid table data structures for better performance + data sorting</td>
+				</tr>
+				
+				<tr>
+					<td> </td>
+					<td>User registration</td>
+					<td>Added password policy validator to ensure strong passwords</td>
+				</tr>
+				
+				
+				<tr>
+					<td> </td>
+					<td>Compounds panel</td>
+					<td>Reworked add/edit dialogs for better error trapping/ user feedback</td>
+				</tr>
+				
+				<tr>
+					<td> </td>
+					<td>User registration</td>
+					<td>User delete requires confirm + account admin status</td>
+				</tr>
+				<tr>
+					<td> </td>
+					<td>Experiment panel</td>
+					<td>Upload and display of experiment associated protocol sheets</td>
+				</tr>
+				<tr>
+					<td> </td>
+					<td>User registration</td>
+					<td>Account admins can update passwords with knowing original</td>
+				</tr>
+				
+				<tr>
+					<td> </td>
+					<td>Samples Panel</td>
+					<td>Added sample inventory report (to identify aged samples)</td>
+				</tr>
+				
+			</table>
+		</td>
+		</tr>
+		</table>
+	</center>
+</wicket:panel>

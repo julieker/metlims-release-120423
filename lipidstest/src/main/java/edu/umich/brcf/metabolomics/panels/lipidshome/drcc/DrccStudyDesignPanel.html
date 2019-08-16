@@ -1,0 +1,93 @@
+
+<wicket:head>
+	 
+ 	 <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+     <link rel="stylesheet" type="text/css" href="drcc.css"/>
+     <style>
+     	.subjectInfoCol 
+     	{
+    	vertical-align : middle; 
+    	text-align : right; 
+    	padding-right : 7px"
+     	}
+     	
+     </style>
+</wicket:head>
+<wicket:panel>
+  	<table style = "width : 96%; font-size: 100%; margin-top : 5px; margin-right : 2%; margin-left : 2%"  class="dataview">
+		<tr>
+			<td style = "width : 25%; text-align : left; vertical-align : bottom">
+				<br><br><span wicket:id = "tabTitle" class = "drccSubSectionHeader">C. Study Design</span>
+			</td>
+			<td style = "width : 50%; text-align : center; vertical-align : top">
+				<br>
+				<span wicket:id = "header" class = "drccDivisionHeader">Metabolomics Core - DRCC Data Reporting Tool</span><br>
+				<br>
+			</td>
+			<td style = "width : 25%"></td>
+
+		</tr>
+	</table>
+	<br>
+	<br>
+  	<table style = "width : 96%; font-size : 80%; border : solid 1px black; margin-top : 5px; margin-right : 2%; margin-left : 2%"  class="dataview">
+	<tr>
+		<th class = "requiredHaveColumn" >Sample ID</th>
+	  	<th class = "requiredHaveColumn" >Researcher Subject ID</th>
+	  	<th class = "requiredHaveColumn" ><span wicket:id = "factor1Label"></span></th>
+	  	<th class = "requiredHaveColumn" ><span wicket:id = "factor2Label"></span></th>
+	  	<th class = "requiredHaveColumn" ><span wicket:id = "factor3Label"></span></th>
+	  	<th class = "requiredHaveColumn" ><span wicket:id = "factor4Label"></span></th>
+	  	<th class = "requiredHaveColumn" >
+	  	<span wicket:id = "factor5Label"></span></th>
+	  	<th clas = "requiredHaveColumn" >
+	  	<span wicket:id = "userDefinedSampleTypeLabel"></span></th>
+	  	<th class = "requiredHaveColumn">
+	  	<span wicket:id = "userSampleIdLabel"></span></th>
+	</tr>
+
+    <tr wicket:id = "subjectInfo">
+    	
+    	<td style = "vertical-align : middle; text-align : center">
+      		<span wicket:id = "researcherSampleName">(123) 456-7890</span>
+      		
+      	</td>
+    
+      	<td class = "subjectInfoCol">
+      		<span wicket:id = "subjectName">(123) 456-7890</span>
+      	</td>
+
+      
+      	<td style = "vertical-align : middle; text-align : right ; padding-right :7px">
+      		<span wicket:id = "factor0">(123) 456-7890</span>
+      	</td>
+      	
+      	<td style = "vertical-align : middle; text-align : right ; padding-right :7px">
+      		<span wicket:id = "factor1">(123) 456-7890</span>
+      	</td>
+      	
+      	<td style = "vertical-align : middle; text-align : right ; padding-right :7px">
+      		<span wicket:id = "factor2">(123) 456-7890</span>
+      	</td>
+      	
+      	<td style = "vertical-align : middle; text-align : right ; padding-right :7px">
+      		<span wicket:id = "factor3">(123) 456-7890</span>
+      	</td>
+      	
+      	<td style = "vertical-align : middle; text-align : right ; padding-right :7px">
+      		<span wicket:id = "factor4">(123) 456-7890</span>
+      	</td>
+      	
+      	<td style = "vertical-align : middle; text-align : right ; padding-right :7px">
+      		<span wicket:id = "userDefinedSampleType">(123) 456-7890</span>
+      	</td>
+      	<td style = "vertical-align : middle; text-align : right; padding-right : 7px">
+      		<span wicket:id = "userSampleId">(123) 456-7890</span>
+      	</td>
+     
+    </tr>
+  </table>	
+ 
+ 
+</wicket:panel>

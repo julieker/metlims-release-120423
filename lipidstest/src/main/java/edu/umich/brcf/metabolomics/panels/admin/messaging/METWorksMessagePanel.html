@@ -1,0 +1,38 @@
+
+<wicket:head>
+		<link rel="stylesheet" type="text/css" href="tabstyles5.css"/>
+</wicket:head>
+
+<wicket:panel>
+    <br>
+   
+    <div style = "margin-top : 3%">
+    	<center>
+			<div style = "margin-top : 2%;  margin-bottom : 2%; font-size : 125%; color : #0053CF">MetLIMS Messaging</div>
+		</center>
+    </div>
+    
+	<center>
+		<table wicket:id="container" class="dataview">
+		   <tr> 
+		   		<th><input wicket:id="allChecked" type="checkbox"  /> </th> 
+		   		<th>Username</th>
+		   		<th>Name </th>
+		   		<th>E-mail</th>
+		   	</tr>
+			<tr wicket:id="admins">
+				<td><input wicket:id="check" type="checkbox"  /></td>
+				<td><span wicket:id="userName"></span></td>
+				<td><span wicket:id="name"></span></td>
+				<td><span wicket:id="email"></span></td>
+			</tr>
+		</table>
+
+		<br>
+		<p> Message Text: <input wicket:id="message" type="text"  size="80" /> </p>
+		<br>
+		<p><input wicket:id="sendMessage" type="button"  style = "padding-top : 1px; padding-bottom : 1px" value="&nbsp;&nbsp;&nbsp;Send to Selected&nbsp;&nbsp;&nbsp;" /></p>
+
+	</center>
+</wicket:panel>
+

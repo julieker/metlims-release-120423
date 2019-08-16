@@ -1,0 +1,87 @@
+<wicket:head>
+		<link rel="stylesheet" type="text/css" href="worklist.css"/>
+		<link rel="stylesheet" type="text/css" href="tabstyles5.css"/>
+		
+		<style>
+		.worklistLargeButton
+			{
+			font-size : 98%;
+			padding-left : 5%; 
+			padding-right : 5%; 
+			width : 45%;
+			background : white;
+			padding-top : 2px; 
+			padding-bottom : 2px;
+			}
+		</style>
+</wicket:head>
+
+<wicket:panel>
+	<div wicket:id="modal1"></div> 	
+	<body class = "dialog_background" style = "margin-top : 0px; padding-top : 0px">
+		<span wicket:id = "container">	
+		<table style = "width : 100%">			
+			
+			<tr wicket:id = "sampleGroupsListView" style= "vertical-align : top" >
+				<td class = "worklistOptionFieldCell" style = "width : 30%;" nowrap>
+					&nbsp;&nbsp;Experiment :<br>
+					<table style = "width : 100%">
+					<tr>
+					<td class = "buttonCell">
+						<input wicket:id = "addButton" class = "worklistSmallButton"    title = "Add another sample group" 
+						style = "color : #00ee00;"  type = "button" value = "+"/> 	 
+					</td ><td class = "buttonCell">
+						<input  wicket:id = "deleteButton"   class = "worklistSmallButton" title = "Remove sample group"  
+						style = "color : red;"  type = "button"  value = "X"/>
+					</td ><td class = "buttonCell2">
+					<select wicket:id = "experimentDropdown" class = "buttonCellDrop"  >
+						<option>Experiment</option>
+						<option> EX0031</option>
+						<option>EX0057</option>
+						<option>EX0059</option>
+					</select>
+					</td ><td class = "buttonCell">
+						<input  class = "worklistSmallButton" title = "Control type definitions" 
+						style = "visibility : hidden; color : #0000ff; " type = "button" value = "?"/>
+					</td>
+					</tr>
+					</table>
+				</td>
+			
+				<td class = "worklistOptionFieldCell"  style = "width : 30%">
+					&nbsp;&nbsp;Assay : <br>
+					<select  style = "width : 96%; text-align : right; " class = "buttonCellDrop" wicket:id = "assayDropdown">
+						<option>Assay</option><option>Assay 1</option><option>Assay 2</option><option>Assay 3</option>
+					</select>
+				</td>
+				
+				<td  nowrap class = "worklistOptionFieldCell"  style = "width : 15%" >
+					<span wicket:id = "randomizationLabel">Plate Order: </span> :<br>
+					<select wicket:id = "randomizationDropdown"  class = "buttonCellDrop"
+					style = "width : 35%; ">
+						<option>Simple</option>
+						<option>Custom</option>
+					</select>
+				
+					<input  wicket:id = "runOrderButton" class = "worklistLargeButton" title = "Customize run order for this experiment"  
+				 	 style = "width : 50%; "  type = "button"   value = "&nbsp;&nbsp;Customize...&nbsp;&nbsp;"/>
+				</td>  
+				
+				<td nowrap class = "worklistOptionFieldCell"   style = "text-align : left; padding-left : 10px; width : 25%">
+					<br>
+					
+					<input wicket:id = "buildButton" class = "worklistLargeButton" style = "width : 40%;" title = "Build worklist using these samples" 
+					  type = "submit" value = "Build worklist"/> 
+					
+					<input wicket:id = "clearButton" class = "worklistLargeButton" style = "width : 40%;"  title = "Clear all samples and controls." 
+					  type = "button" value = "Clear worklist"/>		
+				</td>
+			</tr>
+		</table>
+	</span>
+</body>
+
+</wicket:panel>	
+
+
+

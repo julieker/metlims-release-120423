@@ -1,0 +1,47 @@
+<wicket:head>
+    <link rel="stylesheet" type="text/css" href="dialog.css"/>
+	<style>
+		.trow_label { width : 15%;  text-align : right; }
+		.dialog_table { width : 80%; margin-right : 10%; margin-left:10%" }
+	</style>
+</wicket:head>
+
+<wicket:panel>
+		
+	<div wicket:id="feedback"></div>
+		
+	<form wicket:id = "sampleSelectorForm">
+	    <table style = "text-align : left; margin-left : 5%">
+	        <tr>
+		       <td style = " vertical-align : top ; text-align: left">
+		        	<table>
+		        		<tr>
+		        			<td nowrap>Experiment :&nbsp;&nbsp;</td>
+		        			<td>
+		        				<select wicket:id = "selectedExperimentDrop" style = "width : 180px; margin-left : 10px" >
+									<option>Please Select </option>
+								</select>
+		        			</td>
+		        			<td></td>
+		        			
+		        		</tr>
+						<tr>
+							<td nowrap style = "text-align : right">
+								<label >Sample :&nbsp;&nbsp;</label> 
+							</td>
+			    			<td style = "vertical-align : top ; ">
+			    				<input wicket:id = "sampleSearchBox" type = "text" style = "width : 180px; margin-left : 10px; padding-left : 5px" />
+							</td>	
+							
+							<td  style = "text-align : left; vertical-align : top ;  ">
+					        	<input  wicket:id = "editButton" style = "width : 120px; margin-left : 30px" type="submit" value="&nbsp;Edit Data&nbsp;"/>  
+					       	</td>
+						</tr>
+					</table>
+				</td>
+				<td style = "width : 40%" ></td>	     		
+			</tr>
+			
+		</table>	
+	</form>
+</wicket:panel>

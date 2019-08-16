@@ -1,0 +1,19 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+	<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+	<div style = "text-align : center"><h2>File Upload </h2><br/>
+	 <span wicket:id = "feedback"></span>
+		<form wicket:id = "psuForm">   
+		        <p>
+		        <label for="upload">File</label>
+		        <input wicket:id="fileInput"  type="file" size="80"/>
+		        </p>
+		        <input type="submit" wicket:id="upload" value="Upload!"/><br/><br/>
+		        <a wicket:id = "fileLink" ><span wicket:id = "fileName"></span></a>
+		</form>
+	</div>
+</body>
+</html>

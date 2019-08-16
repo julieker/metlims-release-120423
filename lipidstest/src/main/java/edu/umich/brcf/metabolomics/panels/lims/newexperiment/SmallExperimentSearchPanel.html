@@ -1,0 +1,133 @@
+<wicket:head>
+	<link rel="stylesheet" type="text/css" href="tabstyles5.css"/>
+
+	<style>
+		
+		div.tabpanel2 div.tab-row 
+			{
+			 float:left;
+			 width:100%;
+			 border : none;
+			 background:clear;
+			 font-size:85%;
+			 line-height:normal;
+			 }
+			 
+		div.tabpanel2 div.tab-row ul 
+			{
+		  	margin:0;
+		  	padding:10px 10px 0;
+		  	list-style:none;
+		  	}
+		  	
+		div.tabpanel2 div.tab-row li 
+			{
+			  float:left;
+			  margin:0;
+			  padding:0 5px 0 0;
+			  }
+			  
+		div.tabpanel2 div.tab-row a {
+		  float:left;
+		  display:block;
+		  padding:5px 7px 4px 20px;
+		  text-decoration:none;
+		  font-weight:bold;
+		  color:#9cf;
+		  white-space:nowrap;
+		  }
+		/* Commented Backslash Hack
+		   hides rule from IE5-Mac \*/
+		div.tabpanel2 div.tab-row a {float:none;}
+		/* End IE5-Mac hack */
+		div.tabpanel2 div.tab-row a:hover {
+		  color:#fff;
+		  }
+		div.tabpanel2 div.tab-row li.selected {
+		  }
+		div.tabpanel2 div.tab-row li.selected a {
+		  color:#333;
+		  padding-bottom:5px;
+		  }
+		  
+		.tabpanel1 div.tab-row ul 
+		{
+		  margin:0;
+		  padding:10px 10px 0;
+		  list-style:none;
+		  }
+		  
+		.tabpanel1 div.tab-row li {
+		  float:left;
+		  background:url("tabs1/left.gif") no-repeat left top;
+		  margin:0;
+		  padding:0 0 0 9px;
+		  }
+		  
+		.tabpanel1 div.tab-row a {
+		  display:block;
+		  background:url("tabs1/right.gif") no-repeat right top;
+		  padding:5px 15px 4px 6px;
+		  text-decoration:none;
+		  font-weight:bold;
+		  color:#765;
+		  white-space:nowrap;
+		  }
+		.tabpanel1 div.tab-row a:hover {
+		  color:#333;
+		  }
+		  
+		.tabpanel1 div.tab-row li.selected {
+		  background-image:url("tabs1/left_on.gif");
+		  }
+		  
+		.tabpanel1 div.tab-row li.selected a {
+		  background-image:url("tabs1/right_on.gif");
+		  color:#333;
+		  padding-bottom:5px;
+		  }	  
+		
+	.container 
+		{
+	  	width: 100%;
+	  	position: relative;
+	  	margin-top :20px;
+	  	margin-bottom : 500px;
+		}
+	
+	hr {  border: 0; height: 0; border-top: 1px solid rgba(0, 0, 0, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+		  margin-top : 20px; margin-bottom : 20px; margin-left : 15px;
+		}
+</style>
+</wicket:head>
+
+
+<wicket:panel>
+	<span wicket:id = "feedback"/>
+	<form wicket:id = "experimentSearchForm" >
+		<div wicket:id = "container" class = "container">
+		
+			<div wicket:id="modal1"></div>
+			<div wicket:id="modal2"></div>
+			<div><br/><br></div>  
+	  	
+	  		<table style = "width: 96%; text-align : center; margin-left : 2%; margin-right :2%; margin-bottom : 7px">
+				<tr>
+					<td>
+					<span style = "width : 67%; margin-top : 40px;  font-size : 125%; color : #0053CF; text-align : left; text-decoration : underline">
+						Metabolomics Core - Experiment Details</span><span style = "text-decoration : none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span wicket:id = "progressLabel" style = "visibility : hidden; text-decoration : italic"></span>
+					</td>
+					<td style = "width: 33%; text-align : right ; padding-right : 10px" nowrap> 
+						<input wicket:id = "newExperimentSearch" type = "button" value = "Experiment Search..."  title = "Experiment Search" ></input>
+		   				<input wicket:id="createExperiment"  type="button"  value="Create Experiment..." />
+		   			</td>	
+				</tr>
+			</table>
+			
+			<div wicket:id = "expPanel"></div>
+		</div>
+	</form>
+
+	
+	
+</wicket:panel>

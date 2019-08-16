@@ -1,0 +1,44 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title>Inventory Detail</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+<center>
+
+<h2>Inventory Detail</h2>
+  
+  <span wicket:id = "feedback"></span>
+  <div style = "text-align : center">
+
+  <form wicket:id = "inventorySearchForm">    
+  	<table>
+	  	<tr>
+			<td ><b>CID</b></td>
+			<td ><b>CAS_Number</b></td>
+			<td><b>Inventory ID</b></td>
+			<td><b>Catalog #</b></td>
+		</tr>
+		<tr>
+			<td><input wicket:id="cidSrch" type="text" value="" size="25"/></td>
+			<td><input wicket:id="canSrch" type="text" value="" size="25"/></td>
+			<td><input wicket:id="invIdSrch" type="text" value="" size="25"/></td>
+			<td><input wicket:id="catnumSrch" type="text" value="" size="25"/></td>
+		</tr>
+		<tr>
+			<td><input type="submit" wicket:id="srchByCid" value="Search By CID"/></td>
+			<td><input type="submit" wicket:id="srchByCan" value="Search by CAS#"/></td>
+			<td><input type="submit" wicket:id="srchByInvId" value="Search by InventoryId"/></td>
+			<td><input type="submit" wicket:id="srchByCatnum" value="Search by Catalog #"/></td>
+		</tr>
+	</table>
+	</form>
+	</div>
+	<span wicket:id="inventoryDetailPanel"></span>
+	
+	
+	</center>
+	</body>
+	</html>
+	

@@ -1,0 +1,103 @@
+
+
+
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+	<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+	<style>
+        legend { border: 1px solid #e9601a; background-color: #bbb; color: #fff; padding: 4px;}
+        fieldset { border: 1px solid #e9601a; padding: 10px; margin-top: 10px;}
+    </style>
+</head>
+<wicket:head>
+	<style>
+		div.wicket-aa {
+			font-family: "Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana;
+			font-size: 12px;
+			background-color: white;
+			border-width: 1px;
+			border-color: #cccccc;
+			border-style: solid;
+			padding: 2px;
+			margin: 1px 0 0 0;
+			text-align:left;
+			z-index: 5;
+		}
+		div.wicket-aa ul { list-style:none; padding: 2px; margin:0; }
+		div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0; }
+		form fieldset.sr{
+		border-width:1px;
+		border-style: solid;
+		border-color: #cccccc;
+		background-color: #f3f3f8;
+		margin: 10px 400px 10px 400px;
+		position:relative;
+		display:block;
+		padding: 10px 14px 14px 10px;
+		
+		}
+		
+		form fieldset.sr legend{
+		font-weight:regular;
+		font-size: 15px;
+		background-color:#FFFFFF;
+		border-width:1px;
+		border-style:solid;
+		border-color:#888888;
+		padding:2px;
+		margin:0px 0px 0px 0px;
+		position:relative;
+		top: -10px;
+		width: 200px;
+		 }
+		 
+		.prepButton 
+			{
+			width : 10%;
+			font-size : 90%;
+			}
+	</style>
+</wicket:head>
+
+<body>
+	<wicket:panel>
+		
+		<center>
+			<div style = "width : 96%; margin-left : 2%; margin-right : 2%; text-align : left ; margin-right : 5%; font-weight : 700; 
+				color : grey"> &nbsp;&nbsp;&nbsp;Plate Map</div>
+			
+				<table class="blueHeaderTable" style = "width : 96%; margin-left : 2%; margin-right : 2%;">
+					<tr>
+				  		<td style = "width : 100%">	
+				  		 	<span wicket:id = "plateMap" style = "width : 100%"></span>
+						</td>
+					</tr>
+				</table>
+				<hr>
+				
+				<div style = "width : 96%; margin-left : 2%; margin-right : 2%; text-align : left ; font-weight : 700; 
+				color : grey"> &nbsp;&nbsp;&nbsp;Samples</div>
+			
+				<table class="blueHeaderTable" style = "width : 96%; margin-left : 2%; margin-right : 2%; margin-top : 10px">
+					<tr>
+				  		<td style = "width : 100%">	
+				  		 	<span wicket:id = "plateMap2" style = "width : 100%"></span>
+						</td>
+					</tr>
+				</table>
+			
+				<div>&nbsp;<hr></div>
+		</center>
+	</wicket:panel>
+</body>
+</html>
+
+
+	
+
+
+
+
+
+

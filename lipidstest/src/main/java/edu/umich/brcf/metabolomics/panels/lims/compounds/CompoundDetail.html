@@ -1,0 +1,86 @@
+
+<wicket:head>
+	<style>
+	div.tab-panel 
+		{
+		clear: left;
+		padding-top:0px;
+		}
+	
+	div.tabpanel1 div.tab-row
+		{
+		float:left;
+		width:100%;
+		background: transparent; 
+		line-height: 10%s;
+		text-align : center;
+		vertical-align : top;
+		margin : 0px; 
+		padding : 0px;
+	 	border : 1px transparent solid;
+		height : 22px;
+		}
+	  
+	  
+	tabpanel1 div.tab-row ul 
+		{
+		margin:0;
+		padding:  0;
+		list-style:none;
+		background : red;
+		float : left;
+		text-align : center;
+		}
+	  
+	  
+	tabpanel1 div.tab-row li 
+		{
+	  	float:left;
+	 	 /*background:url("tabs1/left.gif") no-repeat left top;  */
+	  	background : red; 
+	 	 margin:0px;
+	  	padding: 0px;
+	  	text-align : center; 
+	  	vertical-align : middle;
+	  	}
+	</style>
+</wicket:head>
+
+<wicket:panel>
+
+  <span wicket:id = "feedback"></span>
+
+  <div style = "margin-top : 3%">
+	 
+	  <form wicket:id = "compoundDetailForm" style = "margin-top : 5%">   
+	  	
+	  	<div><br><br></div>
+		
+		<table style = "margin-left : 7px; ">
+		  	<tr>
+				<td style = "text-align : right ; font-weight :500" >
+				Search for compounds <br>(by name, ID or inventory ID):</td>
+				
+				<td>
+					<input wicket:id="cname"  type="text" value="" size="60"/>
+					<span wicket:id="hiddenvalue">value</span>
+					<input wicket:id="saveChanges" type = "submit" value="Show Detail" style = "margin-left : 4px"/>
+				</td>
+			</tr>
+		</table>
+		
+		<br/>
+		
+		<span wicket:id="emptyPanel"></span>
+		<br/><br/>
+		
+		<div wicket:id="tabs"  class="tabpanel1" style = "margin-left : 2%"></div>
+		
+		<br/><br/>
+		</form>
+	</div>
+	
+<!--	</span>-->
+	</wicket:panel>
+
+	

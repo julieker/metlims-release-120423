@@ -1,0 +1,49 @@
+
+ <html xmlns:wicket="http://wicket.apache.org/">
+
+	<head>
+	    <link rel="stylesheet" type="text/css" href="dialog.css"/>
+	    <style>
+	        legend { border: none; background-color: transparent; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px; width : 90%; margin-right : 5%; margin-left : 5%; margin-bottom : 2%; 
+	    margin-top : 2%; height : 70%; vertical-align : middle}
+	    </style>
+	</head>
+	
+	<wicket:head>
+		
+	</wicket:head>
+
+	<body class = "dialog_background">  <!-- "background : #E8ECEF"> -->
+		
+	    <fieldset>
+	      		
+	   		<legend>
+	   			<span style = "font-weight : bold; color :  #0053CF">Apply Sample Status</span>
+	   		</legend>
+	       
+	    	<form  wicket:id = "editSampleStatusForm">
+       	
+	   			<table style = "width : 96%; margin-right : 2%; margin-left : 2%;">
+		  			<tr>
+						<td style = "width : 33%; text-align: right">Status:</td>
+						<td style = "width : 33%"><select wicket:id="status" ></select></td>
+						<td style = "text-align  left ; paddding-left : 5px; width : 33%">
+			        		<input wicket:id="saveChanges" style = "width : 40%" type="submit"  value="Apply"/>
+			        	</td>
+					</tr>
+				</table>
+	    		
+	        	<br/>
+	        	<table style = "width : 96%; margin-right : 2%; margin-left : 2%; margin-bottom : 10px; border : none">	
+	        		<tr>
+			        	
+			        	<td style = "text-align :center; width : 100%">
+			     			<input wicket:id = "close" style = "width : 20%" type="submit"  value="Close"/>
+			     		</td>
+			     	</tr>	
+			    </table>        	
+	        </form>   
+		   </fieldset>
+		</body>
+</html>

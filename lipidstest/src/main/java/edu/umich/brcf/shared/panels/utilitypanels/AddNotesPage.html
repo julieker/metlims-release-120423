@@ -1,0 +1,52 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+      <style>
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	    </style>
+</head>
+   
+<body class = "dialog_background">  <!-- "background : #E8ECEF"> -->
+
+ 	
+    <form wicket:id = "notesForm">
+
+		  		
+  		<span wicket:id = "feedback" style = "font-size : 75%; text-align : left;  width : 90%; margin-left : 5%;  margin-right : 5%"/>		
+		 		
+ 		<fieldset style = "width : 93%; margin-right : 5%; margin-left : 2%; vertical-align : middle; height : 63%;">
+	
+			<legend style = "background : transparent; border : none; text-align : left">
+	   			<span wicket:id = "pageTitle" style = "font-weight : bold; color :  #0053CF; text-align : left">Observations</span>
+	   		</legend>	
+  
+    
+  			<table style = "width : 94%; height : 56%; margin-left : 2%; margin-right : 2%">
+  				<tr>
+					<td>
+						<textarea wicket:id = "notes" maxlength = "950" style = "font-size : 70%; border : none; margin-bottom: 0%; width : 100%; height : 100%;"  rows="14" cols="100">This is a comment
+						</textarea>
+					</td>
+				</tr>
+			</table>
+		
+		</fieldset>	
+		
+		<table style = "text-align : center;  width : 96%; margin-left : 2%; margin-right : 2%; height : 15%; padding-top : 5px; padding-bottom : 20px">
+			<tr>
+				<td style = "width : 100%; text-align : center;">
+		    		<input wicket:id = "cancelButton"  
+		    			style = "width: 15%; margin-right : 10px" type = "submit"  value = "&nbsp;&nbsp;Close&nbsp;&nbsp;" />	
+	        	
+	        		<input wicket:id="save"  
+	        			style = "width : 15%; margin-left : 10px" type="submit" value="&nbsp;&nbsp;Save&nbsp;&nbsp;"/>
+	    		</td>
+	    	</tr>
+	    </table>
+ 	</form>
+
+</body>
+</html>

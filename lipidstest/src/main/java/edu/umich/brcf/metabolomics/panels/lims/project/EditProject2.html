@@ -1,0 +1,78 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="dialog.css"/>
+</head>
+<wicket:head>
+	<style>
+	    <link rel="stylesheet" type="text/css" href="dialog.css"/>
+		legend { border: 1px solid transparent; background-color: white; color: black; padding: 4px;}
+		fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px; border-radius : 10px}
+	
+	
+		
+	</style>
+</wicket:head>
+
+<body class = "dialog_background">
+	<fieldset class = "dialog_fieldset">
+    	<legend class = "dialog_legend">
+	     	<span wicket:id = "pageTitle" style = "text-align : left; font-weight : bold; color :  #0053CF">Edit Project</span>
+	    </legend>
+    		
+		<center>
+		  	<span wicket:id = "feedback" class = "feedbackMsg80"/>
+		  	
+		  	<p>
+		  	
+		  	<form wicket:id = "editProjectForm">        
+		 	    <table>
+				  	<tr>
+				  		<td style = "text-align : right">Project Id:</td>
+				  		<td><span wicket:id = "id">Moes ID</span></td>
+				  	</tr>
+					<tr>
+					  <td style = "text-align : right">Name:</td>
+					  <td><input wicket:id = "projectName" type="text" value="Moes Metabalome" size="40" /></td>
+					</tr>
+					<tr>
+					  <td style = "text-align : right">Description:</td>
+					  <td><input wicket:id = "description" type="text" value="Moes Metabalome" size="40" /></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">Client Id:</td>
+						<td><input wicket:id = "clientID" type="text" value="Mark Twain" size="20" />
+						<span wicket:id="hiddenclient">value</span></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">Contact Person Id:</td>
+						<td><input wicket:id="contactPerson" type="text" value="(123) 456-7890" size="20"/>
+						<span wicket:id="hiddencontact">value</span></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">Status Id:</td>
+						<td><select wicket:id="statusID"></select></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">Start Date:</td>
+						<td>
+							<input wicket:id="startDate" readonly type="text" value="street address" style = "text-align :left ; padding-left : 8px; width : 30%"/>
+						</td>
+					</tr>
+					<tr style = "height :40%">
+						<td style = "text-align : right; vertical-align : top" >Notes:</td>
+						<td><textarea wicket:id = "notes" style = "width : 100%; height :150px" >This is a comment</textarea></td>
+					</tr>
+			    </table>
+			    <br>
+			
+			    <div style = "text-align : center">
+					<input wicket:id="saveChanges" style = "width : 20%; margin-right : 2%" type="submit"  value="Save"/>
+					<input wicket:id="closeButton" style = "width : 20%; margin-right : 2%" type="submit"  value="Close"/>
+				</div>
+			</form>
+  		</center>
+	</fieldset>
+</body>
+</html>

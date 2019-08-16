@@ -1,0 +1,27 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title>Sample Run</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+<center>
+	<br/> 
+	<span wicket:id = "feedback"/><br/>
+	<form wicket:id = "runPlateForm">  
+		<font color="blue"><b>Select Samples to inject from plate "<span wicket:id = "plate"></span>"</b></font>
+	 	<span wicket:id = "selectionPanel"/><br/>
+	 	Mode: <span valign="top" wicket:id="runMode">
+ 			<input type="radio">foo</input><input type="radio">bar</input><input type="radio">bar</input><input type="radio">bar</input>
+        </span><br/> <br/>
+		Tray: <select wicket:id="tray"></select><br/><br/>
+		Method:<select wicket:id="methodsDD"></select> <br/> <br/>
+		<input type="submit" wicket:id="addToList" value="Add to Worklist"/> &nbsp;&nbsp; 
+		<span wicket:id = "injListPanel"/><br/><br/>
+		<input wicket:id="randomize" type="checkbox">&nbsp;<span wicket:id="randomLbl"/></input><br/><br/>
+		<span wicket:id="assayLbl"/><select wicket:id="assaysDD"></select><br/><br/>
+		<input type="submit" wicket:id="run" value="Run Worklist"/>
+	</form>
+</center>
+</body>
+</html>

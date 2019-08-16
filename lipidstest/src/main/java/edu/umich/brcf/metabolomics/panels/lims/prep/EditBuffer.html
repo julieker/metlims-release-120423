@@ -1,0 +1,25 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title>METWorks</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+<center><h2>Edit Buffer</h2>
+  <span wicket:id = "feedback"/>
+  <form wicket:id = "bufferForm">        
+ 	    <table class="blueHeaderTable">
+		  	<tr>
+			  <th align="right">Buffer Type:</th>
+			  <td><input wicket:id = "bufferType" type="text" size="15" /></td>
+			</tr>
+			<tr>
+			  <th align="right">Buffer Volume:</th>
+			  <td><input wicket:id = "bufferVolume" type="text" size="10" />µL</td>
+			</tr>
+		</table>
+		<input type="submit" wicket:id="save" value="Save"/>
+	</form>
+</center>
+</body>
+</html>

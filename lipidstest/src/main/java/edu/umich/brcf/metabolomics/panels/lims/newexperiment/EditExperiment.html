@@ -1,0 +1,115 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+
+<wicket:head>
+
+	<link rel="stylesheet" type="text/css" href="dialog.css"/>
+	
+	<style>
+		.trow_label { width : 15%;  text-align : right; }
+		.dialog_table { width : 80%; margin-right : 10%; margin-left:10%" }
+		
+		legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+		 fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px; border-radius : 10px}
+		
+		.dialog_legend { font-weight : bold; background : transparent; color : blue; padding: 4px;  text-align : left;	 }
+		.dialog_legend_text { font-weight : bold;  color :  #0053CF"; }
+		.dialog_background  { background : #F4F4F4 }
+		.dialog_fieldset {  border: 2px outset #4D94FF; background-color : white; margin: 2% }	
+		.feedbackMsg { color : red; font-weight : 600; text-align : left }
+	</style>
+</wicket:head>
+		
+		
+<body class = "dialog_background">
+	<fieldset class = "dialog_fieldset">
+   	<legend class = "dialog_legend" style = "background : transparent; border: none;">
+     	<span wicket:id = "pageTitle" style = "font-size : 120%; font-weight : bold; color :  #0053CF">Edit Experiment</span>
+    </legend>
+ 		<div style = "text-align : center">
+
+		  <span wicket:id = "feedback" class = "feedbackMsg"/>
+		  <p>
+		 
+		  <form wicket:id = "editExperimentForm">        
+		 	    <table class = "dialog_table" style = "width : 96%; margin-left : 2%; margin-right : 2%; height :70%; margin-top: 3%; margin-bottom : 4%; vertical-align : middle; 
+		 	     border : none ; border-radius: 10px; padding : 4%">
+				  	
+				  	<tr>
+				  		<td nowrap class = "trow_label">Experiment Id:</td>
+				  		<td style = "width : 85%; ">
+				  		<table style = "width : 100%">
+				  		    <tr>
+				  		        <td style = "width : 50%:">
+				  		            <span wicket:id = "expID" style = "width : 50%">Moes ID</span>
+				  		        </td>
+				  		        <!-- Issue 206 -->
+				  		        <td style = "text-align : right; width : 50%; padding-right : 20px">
+				  		             CHEAR Study : 
+				  		             <input wicket:id="isChear" type="checkbox">
+				  		        </td>
+				  		    </tr>
+				  		</table>
+					</td>
+				  	</tr>
+					
+					<tr>
+					  <td class = "trow_label">Name:</td>
+					  <td><input wicket:id = "expName" type="text" value="Moes Metabalome" style = "width : 50%" />
+			</td>
+					</tr>
+					
+					<tr style = "height : 20%">
+						<td class = "trow_label" style = "vertical-align : top">Description:</td>
+						<td style = "text-align : right ; vertical-align : top">
+							<textarea  wicket:id = "expDescription"  style = "overflow: scroll; width : 100%; height : 90px; vertical-align : top" 
+							cols = "26" rows = "7" ></textarea>
+						</td>
+					</tr>
+					
+					<tr>
+						<td class = "trow_label">Priority:</td>
+						<td nowrap><select nowrap wicket:id="priority"  style = "width : 50%" ></select></td>
+					</tr>
+				  	
+				  	<tr>
+				  		<td class = "trow_label">Service Request Id:</td>
+				  		<td><input wicket:id = "serviceRequest" type="text" style = "width : 50%" /></td>
+				  	</tr>
+					
+					<tr style = "height : 20%">
+						<td class = "trow_label" style = "vertical-align : top" >Notes:</td>
+						<td><textarea wicket:id = "notes" style = "overflow: scroll; width : 100%;  height : 90px" cols = "26" rows = "7" ></textarea></td>
+					</tr>
+					
+					<tr>
+						<td class = "trow_label"><br>Project:<br><br><br><br></td>
+						<td><br><input nowrap wicket:id = "projID" type="text" value="Mark Twain" style = "width : 90%" size="40" />
+						<span wicket:id="hiddenproject" style = "visibility : none"></span><br><br><br><br></td>
+						
+					</tr>
+					
+				</table>
+			
+				 <table style = "text-align : center;  width : 96%; margin-left : 2%; margin-right : 2%;">
+				
+					<tr>
+						<td style = "width : 100%; text-align : center;">
+				    		<input wicket:id = "cancelButton"  
+				    			style = "width: 15%; margin-right : 10px" type = "submit"  value = "&nbsp;&nbsp;Close&nbsp;&nbsp;" />	
+			        	
+			        		<input wicket:id="saveChanges"  
+			        			style = "width : 15%; margin-left : 10px" type="submit" value="&nbsp;&nbsp;Save&nbsp;&nbsp;"/>
+			    		</td>
+		    		</tr>
+	    		</table>
+		  </form>
+		
+	   </div>
+   </fieldset>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<wicket:head>
+	<link rel="stylesheet" type="text/css" href="tabstyles5.css"/>
+	<link rel="stylesheet" type="text/css" href="worklist.css"/>
+	<link rel="stylesheet" type="text/css" href="dialog.css"/>
+	<style>
+	
+		hr 
+			{
+		    border: 0;
+		    height: 0;
+		    border-top: 1px solid rgba(0, 0, 0, 0.1);
+		    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+		    margin-top : 0px;
+		    margin-bottom : 0px;
+		    width : 89%;
+		    margin-left : 0%;
+			}
+			
+		.buttonHeader { 
+			width : 150px;  margin-bottom : 0px; 
+			margin-left : 0px; margin-right : 0px; 
+			font-weight : 700; 
+			padding-bottom : 4px; 
+			padding-top : 4px ;
+			
+			-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.3);
+			-moz-box-shadow: 0 1px 2px rgba(0,0,0,.3);
+			box-shadow: 0 1px 2px rgba(0,0,0,.3);
+			
+			background: -webkit-gradient(linear, left top, left bottom, from(white), to(lightgrey));
+			background: -moz-linear-gradient(top,  white,  lightgrey);
+			filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='white, endColorstr='lightgrey');
+			border : 1px groove grey;		
+			}
+			
+			.sectionContent
+				{
+				width : 96%; margin-left : 2%; margin-right: 2% ; margin-bottom : 10px;  
+				margin-top : 4px; background : white;  padding: 10px; 
+				border-radius : 10px; border : groove grey thin; font-size : 100%;
+		    	}
+		    	
+		    .sectionHeader 
+				{
+				width : 40%; 
+				text-align : left; 
+				color : #0053CF;
+				}		
+	</style>
+	
+</wicket:head>
+
+<wicket:panel>		
+	<body>
+	
+		<div wicket:id = "feedback" class = "feedbackMsg" > </div>
+		<div wicket;id = "modal1"></div> 
+		<div style = "margin-bottom : 300px; width : 100%; overflow-x: hidden;">
+			<form wicket:id = "worklistForm" style = "margin-top : 0%">	
+			<div wicket:id = "modal1"></div>
+			
+			<center>
+    			<div style = "margin-top : 10px; font-weight : 500; font-size : 130%; color : #0053CF">Metabolomics Core - Worklist Builder</div>
+			</center>
+    	
+	   		
+	   		 <div style = "text-align : center;  margin : 8px; margin-bottom : 5px">
+        	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; margin-top : 0px ;  background : transparent; border : none" >
+		    	<tr> 
+		        	<td style = "width : 100%; text-align : center" class = "sectionHeader">
+		        		<strong>	</strong>
+		        	</td>
+		        	
+		        </tr>
+	    	</table>
+	
+	
+			 <table class = "sectionContent">
+		       	<tr>
+			       	<td style = "vertical-align : middle; width : 50%">
+			      
+			<div wicket:id = "containerDefault" style = "width : 100%">	
+			
+	
+				<table class = "worklistAddSection"  style = "width : 100%; margin-left : 3px">
+					<tr>
+						<td class = "worklistAddSectionLabel" style = "text-align : left; width: 15%; margin-top : 0px"> </td>
+						<td></td>
+					</tr>
+				</table>
+				
+				<table class = "worklistAddSection" style = "width : 100%; margin-left : 3px">
+					<tr>
+						<td nowrap style = "font-weight : 800; vertical-align : bottom" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Build For : </td>
+						<td class = "worklistOptionFieldCell2" style = "width : 13%;" nowrap>
+							Platform :&nbsp;&nbsp;<br>
+								<select wicket:id = "selectedPlatformDrop" style = "width : 55%; text-align : left" class = "buttonCellDrop">
+									<option>ABSciex</option>
+									<option>Agilent</option>
+								</select>
+						</td>
+						
+						<td class = "worklistOptionFieldCell2" style = "width : 13%;" nowrap>
+					
+							Instrument Id :&nbsp;&nbsp;<br>
+							<select wicket:id = "selectedInstrumentDrop" style = "width : 70%; text-align : left " class = "buttonCellDrop">
+								<option>IN0023</option>
+							</select>
+							
+						</td>
+						<td class = "worklistOptionFieldCell2" style = "width : 13%;">
+							<div style = "margin-left : 0%; text-align : left">
+								 Polarity :<br>
+								<select wicket:id = "selectedModeDrop" style = "width : 70%;" class = "buttonCellDrop">
+									<option>Positive</option>
+									<option>Negative</option>
+									<option>Positive + Negative</option>	
+								</select>
+							</div>
+					 		
+						</td>  
+				
+						<td class = "worklistOptionFieldCell2" style = "width : 13%;">Run Date :&nbsp;&nbsp;<br>
+					 		<input wicket:id="runDate"   type="text" style = "text-align : center; width : 40%"/>
+				
+					 	<!-- 	<input   wicket:id = "runDate" class = "worklistTextField" autocomplete = "off" 
+					 		style = "width : 50%"  
+					 		type = "text" /> -->
+					 	</td>  
+					 	
+					 	
+					 <td class = "worklistOptionFieldCell2" style = "width : 10%;">Randomize By Plate? :&nbsp;&nbsp;<br>	
+					<input wicket:id = "randomizeByPlate"  type = "checkbox" />
+					</td>
+					
+					 	<td class = "worklistOptionFieldCell2" style = "width : 13%;">Inj. Volume (&micro;l) :<br>
+					 		<input wicket:id = "defaultInjectionVol"  class = "worklistTextField" autocomplete = "off" 
+					 		style = "width : 70%"  type = "text"/>
+					 	</td> 
+					 	
+					 	 
+					 	<td class = "worklistOptionFieldCell2" style = "width : 20%;">
+					 		<div style = "margin-left : 0%">
+						 		&nbsp;&nbsp;Method File :<br>
+						 		&nbsp;&nbsp;
+						 		
+						 		<input  wicket:id = "defaultMethod"  autocomplete = "off" 
+						 		style = "width : 70%;"  type = "text" class = "worklistTextField"/>
+						 		
+						 		<select disabled  style = "visibility : hidden; width : 10% ; " class = "buttonCellDrop">
+									<option>A1</option>
+									<option>A2</option>	
+								</select>
+					 			&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+					 			<select   style = "visibility : hidden; width : 10% ;" class = "buttonCellDrop">
+									<option>F8</option>
+									<option selected>F9</option>	
+								</select>  
+						 	</div>
+					 	</td> 
+
+					 	<td class = "worklistOptionFieldCell2" style = "width : 31%;"><br>
+					 		<input    class = "worklistTextField" autocomplete = "off" 
+					 		style = "visibility: hidden; width : 70%"  type = "text"/>
+					 	</td>  
+					 
+					</tr>		
+				</table>
+			</div>
+			
+			<table class = "worklistAddSection" style = "width : 96%; margin-left : 2%; margin-right : 2%; margin-top : 10px; margin-left : 3px">
+				<tr>
+					<td class = "worklistAddSectionLabel" style = "text-align : left; width: 15%"> </td>
+					<td></td>
+				</tr>
+			</table>
+			<table class = "worklistAddSection" style = "width : 98%; margin-left : 0% ">
+				<tr>
+					<td><hr></td>
+					<td nowrap > 
+						<hr>
+						<input wicket:id = "hideAllButton" class = "buttonHeader" type = "button" title = "Start =>" value = "Start =>"/>
+						<input wicket:id = "samplesVisibleButton" class = "buttonHeader" type = "button" title = "1. Add Samples =>" value = "1. Add Samples =>"/>
+						<input  wicket:id = "groupsVisibleButton"  class = "buttonHeader"  type = "button" title = "2. Add Control Groups =>" value = "2. Add Control Groups =>"/>
+						<input  wicket:id = "controlsVisibleButton"  class = "buttonHeader"  type = "button" title = "3. Add Controls =>" value = "3. Add Controls =>"/>
+						<input   wicket:id = "randomizeButton" class = "buttonHeader"  type = "button" title = "4. Randomize =>" value = "4. Randomize =>"/>
+						<input  wicket:id = "platePreviewLink"  class = "buttonHeader"  type = "button" title = "5. Preview Plate...=>" value = "5. Preview Plate...=>"/>
+						<input  wicket:id = "downloadLink"  class = "buttonHeader"  type = "button" title = "6. Download List =>" value = "6. Download List =>"/>
+						
+						<hr>
+					</td>
+				</tr>
+			</table>
+			<div wicket:id = "containerOther" style = "width : 100%">
+				<table class = "worklistAddSection" style = "width : 90%">
+					<tr>
+						<td  wicket:id = "add_samples" class = "worklistAddSectionContent">Text goes here</td>
+					</tr>
+				</table>
+	
+				<table  class = "worklistAddSection" style = "width : 100%">
+					<tr>
+						<td wicket:id = "add_controls" class = "worklistAddSectionContent">Text goes here</td>
+					</tr>
+				</table>
+				
+				<table  class = "worklistAddSection" style = "width : 100%">
+					<tr>
+						<td wicket:id = "add_groups" class = "worklistAddSectionContent">Text goes here</td>
+					</tr>
+				</table>
+			</div>
+			</td></tr></table>
+			</div>
+		<!-- issue 291 -->
+			<div wicket:id = "worklist_ab" style = "overflow: auto; width : 100% ; margin-bottom : 40px" >Text goes here</div>		
+			<div wicket:id = "worklist_ag" style = "overflow: auto; width : 100%">Text goes here</div> 
+		
+		</form>
+		
+		</div>
+	
+		
+	</body>
+</wicket:panel>

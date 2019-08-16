@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<wicket:panel>
+
+<span wicket:id = "feedback"/>
+	<div><br><br><br></div>
+	
+	<form wicket:id = "locationSearchForm" >   
+  		<table style = "width: 98%; text-align : center; margin-left : 1%; margin-right :1%; margin-bottom : 7px">
+			<tr>
+				<td style = "width : 67%; margin-top : 40px;  font-size : 125%; color : #0053CF; text-align : left">
+					Metabolomics Core - Locations By Unit
+				</td>
+				<td style = "width: 33%; text-align : right ; padding-right : 10px"> 
+					<span style = "text-align : right; color : blue; font-weight : 500;">Show locations for unit :</span>
+					<select wicket:id="locUnitsDD"  style = "font-size : 90%" ></select>
+				</td>	
+			</tr>
+		</table>
+		<hr>	  
+		<center>
+		  <span wicket:id = "locationTablePanel"></span>
+	</center>
+	</form>
+	</wicket:panel>
+</html>
+
+
+	

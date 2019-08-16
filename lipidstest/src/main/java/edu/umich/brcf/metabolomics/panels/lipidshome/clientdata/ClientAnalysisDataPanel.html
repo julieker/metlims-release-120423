@@ -1,0 +1,84 @@
+<wicket:head>
+	<style>
+		body 
+			{
+	   		font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+	   		font-weight: 300;
+			}
+	
+		table tr th { width : 800px; background   white; padding-left : 20px; padding-right : 20px; text-align : center }
+		table tr.even { width : 800px; background  : white; padding-right : 10px;  }
+		table tr.odd { width : 800px; background  : #eeeeee;  padding-right : 10px }     <!-- #EFFBFB;-->
+			
+		
+	</style>
+</wicket:head>
+
+<wicket:panel>
+	<body id = "good_font">
+		<center>
+			<div><br>&nbsp;</div>
+			<span style = "font-size : 130%; text-align : center; color :  #0053CF;">Metabolomics Core - Client Data </span>
+			<!-- <span style = "font-size : 90%; text-align : center; color :  red;">(Demo Only)</span>  -->
+			
+			<br>
+		</center>		
+		
+		<div style = "width : 100%; text-align : left">
+			<div wicket:id = "header" style = "width : 96%; margin-left : 2%; margin-right : 2%; text-align : left"></div>
+		</div>
+		
+		<div><br>&nbsp;</div>
+		<form wicket:id = "clientReportsForm">
+			<div id = "good_font" style = "width : 100%">
+				<table style = "width : 100%; font-weight : 300; font-size : 100%; color : #0053CF; ">
+					
+					<tr>
+						<td style = "width : 5%; text-align : right">Assay :</td>
+						<td style = "color : black; vertical-align : bottom; font-weight : 400">
+							<span style = "width : 25%; text-align : left ; margin-left : 15px; padding-left : 5px;  ">Shotgun Lipidomics
+							</span>
+						</td>
+						<td style = "width : 70%">&nbsp;&nbsp;</td>
+					</tr>
+				</table>
+			
+			<br>
+			<span wicket:id = "container">	
+				<table style = "font-size : 80%; background : white; border : solid grey 1px; width : 96%; margin-left : 2% ; 
+				margin-right : 2%">
+					<tr style = "border : solid 1px white; background : #0053CF; color : white; font-weight : 300">	
+						<th style = "width : 25%">Experiment Id</th>
+						<th>Mode</th>
+						<th>Data Type</th>
+						<th>Compounds</th>
+						<th>Samples<br>Submitted</th>
+						<th>Assay Controls</th>
+						
+						<th>Run Date</th>
+						<th>Upload Date</th>
+						<th></th>
+					</tr>		
+			
+					<tr wicket:id = "dataSetListView" style = "min-height : 20%" >
+						<td style = "height: 40px; text-align : left; padding-left : 15px"> <span wicket:id = "expLabel" ></span> </td>
+						<td style = "height: 40px; text-align : left; padding-left : 4%"> <span wicket:id = "ionMode" ></span> </td>
+						<td style = "height: 40px; text-align : right; padding-right : 4%"> <span wicket:id = "dataNotation" ></span> </td>
+						
+						<td style = "height: 40px; text-align : right; padding-right : 4%"> <span wicket:id = "nCompounds" ></span> </td>
+						<td style = "height: 40px; text-align : right; padding-right : 4%"> <span wicket:id = "nSamples" ></span> </td>
+						<td style = "height: 40px; text-align : right; padding-right : 4%"> <span wicket:id = "nControls" ></span> </td>
+						
+						<td style = "height: 40px; text-align : right; padding-right : 4%"> <span wicket:id = "runDate" ></span> </td>
+						<td style = "height: 40px; text-align : right; padding-right : 4%"> <span wicket:id = "uploadDate" ></span> </td>
+						<td style = "height: 40px; text-align : center"> 
+							<input wicket:id = "dataSetLink" type = "button" style = "height : 20px" value = "  View data...  "/> 
+						</td>
+					</tr>
+			
+				</table>
+			</span>				
+			</div>
+		</form>
+	</body>
+</wicket:panel>

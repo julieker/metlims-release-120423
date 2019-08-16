@@ -1,0 +1,29 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title>METWorks</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+<center><h2>Edit GC Derivatization Method</h2><br/>
+  <span wicket:id = "feedback"/>
+  <form wicket:id = "gcPrepForm">        
+ 	    <table class="blueHeaderTable">
+		  	<tr>
+			  <th align="right">Reagent Composition:</th>
+			  <td><input wicket:id = "reagentComposition" type="text" size="40" /></td>
+			</tr>
+			<tr>
+			  <th align="right">Incubation Conditions:</th>
+			  <td><input wicket:id = "incubationConditions" type="text" size="40" /></td>
+			</tr>
+			<tr>
+			  <th align="right">Derivatization Volume:</th>
+			  <td><input wicket:id = "derivatizationVolume" type="text" size="40" />µL</td>
+			</tr>
+		</table><br/>
+		<input type="submit" wicket:id="save" value="Save"/>
+	</form>
+</center>
+</body>
+</html>

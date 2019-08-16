@@ -1,0 +1,55 @@
+
+
+<wicket:head>
+     <style>
+     	.basicColHeader { text-align : center; background : #000079; color : white; }
+     	.basicColEntry { vertical-align : middle; text-align : center }
+     	.basicTable { width : 96%; font-size: 90%; margin-right : 2%; margin-left : 2%; }
+     	table tr.odd {  background  : white;  }
+		table tr.even { background  : #EFFBF2 }
+     </style>
+</wicket:head>
+
+<wicket:panel>
+
+	<div><br/></div>
+	
+	<table  class="basicTable">
+		<tr>
+			<td nowrap style = "width : 75%; text-align : left; vertical-align : bottom">
+				<span style = "font-weight : 700;">Subject Info for <span wicket:id = "expId" style = "color : green">EX00411</span></span>
+			</td>
+			<td style = "width : 25%"></td>
+		</tr>
+	</table>
+	
+	<div><br/></div>
+	
+	<table  class="basicTable" style = "border : solid 1px black;"  >
+		<tr>
+			<th class = "basicColHeader" ><span >Researcher/MRC2 Subject ID</span></th>
+		  	<th class = "basicColHeader"><span>Subject Type</span></th>
+		  	<th class = "basicColHeader"><span>Subject Species</span></th>
+		  	<th class = "basicColHeader">TaxonomyID</th>
+		 </tr>
+	
+	    <tr wicket:id = "subjectInfo">
+	      	<td class = "basicColEntry" style = "padding-right :7px">
+	      		<span wicket:id = "subjectId">subjectId</span>
+	      	</td>
+	
+	      	<td class = "basicColEntry">
+	      		<select  style = "width : 110px" wicket:id = "subjectType"><option>Human</option><option>Animal</option><option>Plant</option><option>Cell</option></select>
+	      	</td>
+	
+	      	<td class = "basicColEntry">
+	      		<span wicket:id = "subjectSpecies">genusOrSpecies</span>
+	      	</td>
+	      	
+	      	<td class = "basicColEntry">
+	      		<span wicket:id = "taxonomyId">(123) 456-7890</span>
+	      	</td>
+	    </tr>
+	  </table>	
+
+ </wicket:panel>

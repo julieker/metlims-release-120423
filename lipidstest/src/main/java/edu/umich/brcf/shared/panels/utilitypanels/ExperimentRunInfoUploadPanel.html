@@ -1,0 +1,83 @@
+
+<wicket:panel>
+	<form wicket:id = "expRunInfoUploadForm">
+    <table style = "height : 75%;">
+		<tr>
+			<td style = "width : 40%; text-align : right">
+				<label>Experiment Id :&nbsp;&nbsp;</label> 
+			</td>
+    			
+    		<td style = "width : 60%;">
+				<select wicket:id = "experimentDropdown" style =  "width : 45%;">
+					<option>Please Select </option>
+					<option>EX00001</option>
+					<option>EX00002</option>
+				</select>
+			</td>	
+		</tr>
+			
+		<tr> 
+			<td style = "padding-top : 3px; width : 40%; text-align : right">
+				<span wicket:id = "dateLabel">Run Date :&nbsp;&nbsp;</span> 
+			</td> 
+			<td style = "padding-top : 3px; width : 60%;">
+				<input wicket:id = "uploadedRunDateTxt" readonly  type = "text" style = "padding-left : 3px; width : 44%"/>
+			</td> 
+		</tr>
+			
+		<tr> 
+			<td style = "padding-top : 3px; width : 40%; text-align : right">
+				<span wicket:id = "modeLabel">Mode :&nbsp;&nbsp;</span> 
+			</td> 
+			<td style = "padding-top : 3px; width : 60%;">
+				<select wicket:id = "experimentModeDropdown" id = "mode" style =  "width : 45%;" >
+					<option>Please Select </option>
+					<option>Positive</option>
+					<option>Negative</option>
+				</select>
+			</td> 
+		</tr>
+
+		<tr> 
+			<td style = "padding-top : 7px; width : 40%; text-align : right">
+				<span wicket:id = "notationLabel">Data Type :&nbsp;&nbsp;</span> 
+			</td> 
+			<td style = "padding-top : 7px; width : 60%;">
+				<select wicket:id = "dataNotationDropdown" id = "mode" style =  "width : 45%;" >
+					<option>Please Select </option>
+					<option>Positive</option>
+					<option>Negative</option>
+				</select>
+			</td> 
+		</tr>
+		
+		<tr>
+       		<td style = "padding-top : 7px;width : 40%; text-align : right" >
+       			<label for="upload">File Name :&nbsp;&nbsp;</label> 
+       		</td>
+    		<td style = "padding-top : 7px; width : 60% ; ">
+				<input style = "font-size : 100%; width : 90%;" wicket:id="fileContents" id="upload" type="file" size="100" 
+					value = "Select..."/>
+			</td>	
+		</tr>
+		
+		<tr>&nbsp;<td></td><td></td></tr>
+		<tr>&nbsp;<td></td><td></td></tr>
+		<tr>&nbsp;<td></td><td></td></tr>
+	</table>
+					
+	<div style = "padding-top : 18px ; text-align : center; width : 100%" nowrap> 
+		<input wicket:id = "submitButton" type="button"  style = "text-align : center; margin-right : 
+		50px; width : 100px; "
+		 value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Upload &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" />
+			
+		<input type="button"  style = "text-align : center; margin-left : 50px; width : 100px ; " value="File Example..."/>
+	</div>
+	</form>
+</wicket:panel>
+	
+	
+
+
+
+

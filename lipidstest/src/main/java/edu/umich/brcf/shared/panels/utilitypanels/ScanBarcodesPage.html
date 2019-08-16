@@ -1,0 +1,157 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+
+<wicket:head>
+
+	
+	<style>
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px; border-radius : 10px}
+
+			.dialog_background  { background : #F4F4F4 }
+			.dialog_fieldset {  border: 2px outset #4D94FF; background-color : white; margin: 2% }
+			.dialog_legend { font-weight : bold; background : transparent; color : blue; padding: 4px;  text-align : left;	 }
+			.dialog_legend_text { font-weight : bold;  color :  #0053CF"; font-size : 130% }
+					
+			div.wicket-aa 
+				{
+				font-family: "Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana;
+				font-size: 12px;
+				background-color: white;
+				border-width: 1px;
+				border-color: #cccccc;
+				border-style: solid;
+				padding: 2px;
+				margin: 1px 0 0 0;
+				text-align:left;
+				z-index: 5;
+				}
+					
+			div.wicket-aa 
+				{
+				font-family: "Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana;
+				font-size: 12px;
+				background-color: white;
+				border-width: 1px;
+				border-color: #cccccc;
+				border-style: solid;
+				padding: 2px;
+				margin: 1px 0 0 0;
+				text-align:left;
+				z-index: 5;
+				}
+
+			div.wicket-aa ul { list-style:none; padding: 2px; margin:0; }
+			div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0; }
+			
+			table tr.even { background  : white; padding-right : 10px;  }
+			table tr.odd { background  : #EFFBFB; padding-right : 10px }
+	
+	
+.			worklistSmallButton
+				{
+				font-size : 80%; 
+				color : red;
+				font-weight : 900; 
+				width : 35%;
+				background : white;
+				vertical-align : middle; 
+				text-align : center;
+				padding: 1px;
+				}
+			}
+	</style>
+</wicket:head>
+	
+		
+<body class = "dialog_background">
+<fieldset class = "dialog_fieldset">
+	<legend class = "dialog_legend" style = "background : transparent; border: none;">
+	     	&nbsp;<span class = "dialog_legend_text" wicket:id = "pageTitle"">Check In Samples</span>
+	</legend>
+	
+	<div style = "text-align : center">
+	  <form wicket:id = "scanBarcodeForm">        
+	  		<div wicket:id = "container">
+	 	    <table style = " width : 96%; margin-left : 2%; margin-right : 2%; height :75%; margin-top: 3%; margin-bottom : 4%; vertical-align : middle; 
+	 	     border : outset ; border-radius: 10px; padding : 4%">
+	 	    
+	 	    	<tr style = "height : 100%">
+			  	  	<td style = "width : 45%; vertical-align : top">
+				  		<table style = "width : 100%; vertical-align : top">
+				 		  	<tr>
+						  		<td nowrap style = "width : 25%; text-align : right">Barcode:</td>
+						  		
+						  		<td nowrap  style = "width :44%; ">
+						  			<input wicket:id = "scanField" type="text" size="20" style = "width : 95%; margin-left : 5%"/>
+						  		</td>
+						  		
+						  		<td style = "width : 31%; ">
+						  			<input  wicket:id="nextScanButton" type="submit" style = "font-size : 120%; width : 80%;  margin-left : 10%; margin-right : 10%" 
+						  			value="&nbsp;&nbsp;&nbsp;Add&nbsp;&#10140;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"/>
+						  		</td>
+						  	</tr>
+						</table>
+						
+					</td>
+				
+					<td style = "width : 30%; height : 100%; vertical-align : top; ">
+						<div style="overflow:scroll; height:510px;  border : black solid 1px; ">
+						<table style = "font-size : 95%; width : 96%; margin-left : 2%; margin-right : 2%;  border : none; margin-top :2%; vertical-align : top" >
+						  	<tr wicket:id = "itemsListView"  style = "vertical-align : top; height : 15px" ">
+						  		<td style = "width : 30%; text-align : center" >
+						  			<input   wicket:id = "deleteButton" class = "worklistSmallButton"   style = "color : red; font-weight : 900" title = "Remove item"  type = "button"  value = "X"/>
+						  		</td>
+
+						  		<td style = "border : none; width : 80%; text-align :left; vertical-align : middle">
+						  			<input disabled  wicket:id = "itemName" type = "text" style = "background : transparent; border: none"/>
+						  		</td>
+							</tr>
+						</table>
+						</div>
+						
+						<table style = "width : 100%">
+						
+							<tr>
+						  		<td nowrap style = "width : 100%; text-align : right">
+						  			Batch Count :
+						  			<input wicket:id = "scanCount" type="text" size="20" style = "width : 39px; margin-left : 5%; border : none; background : transparent"/>
+						  		</td>
+						  		
+						  	</tr>
+						</table>
+					</td>
+					
+					<td style = "width : 15%; height : 100%; vertical-align : top; border : none">
+						<table style = "width : 100%; min-height : 50%; border : none; padding-left : 25px;">
+						  	
+						  	<tr>
+						  		<td style = "width : 100%">
+						  			<input  wicket:id="submitBatchButton"  type="submit" style = "font-size : 120%; width : 90%; margin-left : 5%; margin-right : 5%"  value="&nbsp;&nbsp;&nbsp;&nbsp;Submit Batch&nbsp;&nbsp;&nbsp;&nbsp;"/>
+						  		</td>
+						  		
+							</tr>
+							
+							<tr>
+						  		<td>
+						  			<br>
+						  			<input  wicket:id="closeButton"  type="submit" style = "font-size : 120%; width : 90%; margin-left : 5%; margin-right : 5%" value="&nbsp;&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;&nbsp;"/>
+						  		</td>
+						  		
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+		    
+	  </form>
+	 </div>
+   </fieldset>
+</body>
+</html>

@@ -1,0 +1,74 @@
+ <html xmlns:wicket="http://wicket.apache.org/">
+
+	<head>
+	    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+	    <link rel="stylesheet" type="text/css" href="dialog.css"/>
+	</head>
+	
+	<wicket:head>
+		<style>
+		    legend { border: none; background : transparent; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+		</style>
+	</wicket:head>
+	
+	<body class = "dialog_background">  <!-- "background : #E8ECEF"> -->
+		
+		<!--  TO DO :  Vertically align this (including upload bar) -->
+	    <fieldset style = "width : 96%; margin-right : 2%; margin-left : 2%; vertical-align : middle; height : 83%;">
+	      		
+   		<legend>
+   			<span style = "font-weight : bold; color :  #0053CF">Attach Document</span>
+   		</legend>
+	        	
+	    <form style = "margin : 1%; margin-bottom : 2%" wicket:id="editDocumentForm">
+	    
+        	<div style = "text-align : center">
+				<div wicket:id = "feedback" style = "font-size : 90%; color : red; margin-bottom : 0px" ></div>
+    		    <span wicket:id="progress">[[ajax upload progressbar]]</span>
+		    </div>
+		    
+        	<table style = "width : 96%; margin-right : 2%; margin-left : 2%; margin-bottom : 10px; border : none">	
+        		<tr>	
+        			<td style = "width : 20%; white-space : nowrap; font-size : 80%; ">Document Type&nbsp;:&nbsp;</td>
+        			<td style = "border : none;  width : 60%"><select wicket:id="docType"></select></td>
+        			<td style = "border : none; width : 20%"></td>
+        		</tr>    
+        		        	
+        		<tr>	
+        			<td style = "font-size : 80%">Associate With&nbsp;:&nbsp;</td>
+        			<td><select wicket:id="associateWith"></select></td>
+        			<td>	</td>
+        		</tr>
+       
+        		<tr>
+	        	   	<td style = "font-size : 80%; ">
+	        	   		<label>Assay&nbsp;:&nbsp;</label>
+	        	   	</td>
+		        	
+		        	<td><select wicket:id="assayType" style = "width : 90%">
+		        			<option>LCMS</option>
+							<option>GCMS</option>
+						</select>
+					</td>
+		        	
+        			<td style = "text-align : center">
+	        			<input style = "width: 75%" type = "submit" wicket:id = "cancelButton" 
+	        			value = "&nbsp;&nbsp;Close&nbsp;&nbsp;" />	
+        			</td>
+        		</tr> 
+        		
+        		<tr>
+        		    <td style = "font-size : 80%; border :none"><label for="upload">File&nbsp;&nbsp;</label></td>
+	        		<td>
+	        			<input wicket:id="fileContents" style = "font-size : 80%; width : 90%; border : none"   type="file"  value = "Select File..."/></td>
+        			<td  style = "text-align : center; border : none">
+        				<input wicket:id = "submitButton" style = "width : 75%" type="submit" value="&nbsp;Upload&nbsp;"/>   
+        			</td>
+        		</tr>
+        		
+	        </table>
+	      </form>   
+	   </fieldset>
+	</body>
+</html>

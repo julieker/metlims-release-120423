@@ -1,0 +1,198 @@
+
+div.tab-panel 
+	{
+	clear: left;
+	padding-top:0px;
+	}
+  
+  
+div.tabpanel1 div.tab-row{
+  float:left;
+  width:100%;
+  background: transparent; 
+  line-height: 10%s;
+  text-align : center;
+  vertical-align : top;
+  margin : 0px; 
+  padding : 0px;
+  border : 1px transparent solid;
+  height : 22px;
+  }
+  
+  
+tabpanel1 div.tab-row ul 
+	{
+  margin:0;
+  padding:  0;
+  list-style:none;
+  background : red;
+  float : left;
+  text-align : center;
+   }
+  
+  
+tabpanel1 div.tab-row li {
+  float:left;
+  /*background:url("tabs1/left.gif") no-repeat left top;  */
+  background : red; 
+  margin:0px;
+  padding: 0px;
+  text-align : center; 
+  vertical-align : middle;
+  }
+  
+  
+.tabpanel1 div.tab-row a {
+  display:block;
+  /*background:url("tabs1/right.gif") no-repeat right top;  */
+  background : transparent; 
+  padding: 0px 0px 0px 0px;
+  text-decoration:none;
+  font-weight: 400;
+  font-size : 90%;
+  color:black;
+  font-family: Georgia, serif;
+  white-space:nowrap;
+  float : left;
+  border : 1px groove grey;
+  border-radius : 5px;
+  text-align : center;
+  margin-top : 0px;
+  height : 20px;
+  width : 150px;
+  vertical-align : middle;
+   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.3);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.3);
+	box-shadow: 0 1px 2px rgba(0,0,0,.3);
+	
+	background: -webkit-gradient(linear, left top, left bottom, from(white), to(lightgrey));
+	background: -moz-linear-gradient(top,  white,  lightgrey);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='white, endColorstr='lightgrey');
+  }
+  
+  
+.tabpanel1 div.tab-row a:hover {
+  color: green;
+  font-size : 105%;
+  }
+  
+  
+.tabpanel1 div.tab-row li.selected 
+	{
+	position : relative; 
+	top : 1px;
+	background: -webkit-gradient(linear, left top, left bottom, from(lightgrey), to(white));
+	background: -moz-linear-gradient(top,  lightgrey,  white);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='lightgrey', endColorstr='white');
+	
+ /* background-image:url("tabs1/left_on.gif"); */ 
+  /*background : green; */
+  }
+  
+.tabpanel1 div.tab-row li.selected a {
+ /* background-image:url("tabs1/right_on.gif"); */
+  background : lightgrey;
+  font-weight : 400;
+  font-size : 100%;
+  color: red;
+  margin : 0px;
+  padding : 0px;
+  }
+  
+  
+.tabpanel6 div.tab-row{
+  float:left;
+  width:100%;
+  background: url("../images/tabs1/bg.gif") repeat-x bottom; 
+  line-height:130%;
+  border : solid grey groove;
+  }
+
+.tabpanel6 div.tab-row ul {
+  list-style:none;
+  line-height: normal;
+  margin:0;
+  position: relative;
+  width:100%;
+  padding:3px 3px 0px 0px; 
+  float: left;
+  }
+  
+.tabpanel6 div.tab-row ul li {
+  float:left;
+  position: relative;
+  background: url("../images/tabs1/left.gif") no-repeat left top; 
+  margin:0;
+  padding:0 0 0 5px;
+  }
+  
+.tabpanel6 div.tab-row a {
+  display: block;
+  background: url("../images/tabs1/right_grey.gif") no-repeat right top;
+  padding:5px 9px 4px 6px;
+  text-decoration:none;
+  font-weight:bold;
+  font-size: 75%;
+  color:#808080;
+  white-space:nowrap;
+  }
+  
+.tabpanel6 div.tab-row a:hover {
+  color:#333;
+  }
+  
+.tabpanel6 div.tab-row li.selected {
+  background-image:url("../images/tabs1/left_on.gif");
+  }
+  
+.tabpanel6 div.tab-row li.selected a {
+  background-image: url("../images/tabs1/right_on_grey.gif"); 
+  color:#000000;
+  background : #ffffff; 
+  padding-bottom:5px;
+  }
+
+/* TABBED PANEL VARIATION 2 */
+			div.tabpanel2 div.tab-row {
+			  float:left;
+			  width:100%;
+			  border : black solid 1px;
+			  border-radius : 10px;
+			  background:#369 url("tabs2/bg.gif") repeat-x bottom;
+			  font-size:85%;
+			  line-height:normal;
+			  }
+			div.tabpanel2 div.tab-row ul {
+			  margin:0;
+			  padding:10px 10px 0;
+			  list-style:none;
+			  }
+			div.tabpanel2 div.tab-row li {
+			  float:left;
+			  margin:0;
+			  padding:0 5px 0 0;
+			  }
+			div.tabpanel2 div.tab-row a {
+			  float:left;
+			  display:block;
+			  padding:5px 7px 4px 20px;
+			  text-decoration:none;
+			  font-weight:bold;
+			  color:#9cf;
+			  white-space:nowrap;
+			  }
+			/* Commented Backslash Hack
+			   hides rule from IE5-Mac \*/
+			div.tabpanel2 div.tab-row a {float:none;}
+			/* End IE5-Mac hack */
+			div.tabpanel2 div.tab-row a:hover {
+			  color:#fff;
+			  }
+			div.tabpanel2 div.tab-row li.selected {
+			  }
+			div.tabpanel2 div.tab-row li.selected a {
+			  color:#333;
+			  padding-bottom:5px;
+			  }
+			
+  

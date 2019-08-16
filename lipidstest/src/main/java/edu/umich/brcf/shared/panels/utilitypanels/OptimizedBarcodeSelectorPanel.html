@@ -1,0 +1,129 @@
+<wicket:panel>
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+	<style>
+	
+		
+        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+        th { text-align : center ;font-weight : 700}
+        
+        hr 
+				{
+			    border: 0;
+			    height: 0;
+			    border-top: 1px solid rgba(0, 0, 0, 0.1);
+			    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+			    margin-top : 20px;
+			    margin-bottom : 20px;
+			    margin-left : 15px;
+				}
+        
+        .pageTitle2 { font-weight : bold; font-size : 120%; color :  #0053CF}
+        .sectionTitle { font-weight : 600; color : blue ; text-align : right}
+        input:disabled { background : white; text-align : right; padding-right : 15px; font-weight : 600; border: none; }
+			
+    </style>
+
+	</head>	
+	
+	<body class = "dialog_background"> 
+		<fieldset style = "vertical-align : middle; height : 90%; width : 90%; margin-right : 5%; margin-left : 5%">
+		   
+            <legend style = "border : blue; background : transparent">
+            	<span wicket:id = "pageTitle" class = "pageTitle2">Select Samples</span>
+            </legend>
+
+            <div wicket:id = "feedback"> </div>
+
+            <form wicket:id = "sampleSelectorForm">   
+  			
+  			<div wicket:id = "container">
+		        <div style = "width : 96%; margin-right : 2%; margin-left : 2%; ">
+	            	
+	            	    <table style = "width : 92%; margin-right : 4%; margin-right : 4%">
+	                        <tr>
+	                            <td style = "width : 70%; text-align : left">
+	                                <table >
+	                                    <tr style = "height  : 30px; vertical-align : bottom">
+	                                        <td nowrap style = "width : 25%; text-align : right; padding-right : 10px; font-weight : 800">
+	                                        	<span wicket:id = "setIdType" class = "sectionTitle">Batch Id </span> :
+	                                        </td>
+	                                        <td style = "width : 25%">
+	                                        	<span wicket:id="setId" >SB123342</span>
+	                                        	</td>
+	                                    </tr>
+	                                    <tr style = "height  : 30px; vertical-align : bottom">
+	                                        <td nowrap style = "width : 25%; text-align : right; padding-right : 10px; font-weight : 800"> <span class = "sectionTitle"> Action</span> : </td>
+	                                        <td nowrap style = "width : 25%"> 
+	                                        	<span wicket:id = "actionLabel"></span>
+	                                        </td>
+	                                        <td style = "text-align : left; width : 50%">
+	                               		</td>
+				                        </tr>
+				                        
+				                        <tr style = "height  : 30px; vertical-align : bottom" >
+	                                        <td nowrap style = "width : 25%; text-align : right; padding-right : 10px; font-weight : 800">
+	                                        	<span  class = "sectionTitle">Filter </span> :
+	                                        </td>
+	                                        <td nowrap style = "width : 25%">
+	                                       		<span style = "text-align : left">None</span> 	<input wicket:id="unfilteredSet" type = "checkbox"> 
+	                                        	<span wicket:id = "filterLabel">In Prep Cue</span> <input wicket:id="filteredSet" type = "checkbox"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	                                        </td>
+	                                    </tr>
+	                                </table>
+	                            </td>
+	                            <td style = "width : 30%; text-align : right; padding-right : 0px; vertical-align : top">
+	                            	<table style = "width : 100%">
+		                            	<tr>
+		                            		<td>
+		                            			<input wicket:id = "backButton" type = "button" value = "&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;" style = "width : 80%;   "/>
+											</td>
+										</tr>
+										
+										<tr>
+											<td> <!-- issue 464 -->
+												<input wicket:id = "submitButton" type = "submit" value = "&nbsp;&nbsp;&nbsp;View Details...&nbsp;&nbsp;&nbsp;" style = "width : 80%;    "/>
+											</td>
+										</tr>
+									</table>
+						        </td>
+	                        </tr>
+	                    </table>
+	               
+	              
+
+                    <div style = "width : 96%; margin-right : 2%; margin-left : 2%;">
+                        <hr>
+                        <br>
+                        <span class = "sectionTitle" style = "text-align : right" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Selection</span> :
+                    	<br>
+                    </div>
+					
+                    <div style = "overflow: auto; height: 300px; width : 80%; margin-left : 10%; margin-right : 10%;">	
+                        <table style = "width : 80%;">
+                            <tr style = "text-align : center; border :  solid 1px grey">
+                                <th style = "vertical-align : top;  font-weight : 600; "><span wicket:id = "header1Label">Sample Id</span><br></th>
+                                <th style = "vertical-align : top;  font-weight : 600; "><span wicket:id = "header2Label">CHEAR Id</span><br></th>
+                                <th style = "border :  none"><span wicket:id = "criteriaLabel">Select</span><br> <input wicket:id = "selectAll" type = "checkbox"   checked title ="Select all samples" /></th>
+                            </tr>
+                       	     <tr wicket:id = "selectionListView" style = "margin-left : 10%; border : solid gray 1px">
+                       	     	 <td style = "text-align : right; padding-right : 10%"><span  wicket:id = "sampleId" style = "text-align : right; " ></span></td>
+                              
+                                <td style = "text-align : right; padding-right : 10%"><span  wicket:id = "chearSampleId" style = "text-align : right; " ></span></td>
+                                <td style = "text-align : center"><input wicket:id = "selectSample" type = "checkbox"  style = "text-align : center" checked /></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                     <br><br><br>
+			
+				</div>
+				</div>
+				 
+            </form>
+	</fieldset>  
+</body>
+</html>
+</wicket:panel>
+

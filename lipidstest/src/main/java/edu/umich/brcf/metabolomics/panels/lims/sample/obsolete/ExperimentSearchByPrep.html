@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+	<wicket:head>
+			<style>
+			
+				legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        	fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	    
+				div.wicket-aa {
+					font-family: "Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana;
+					font-size: 12px;
+					background-color: white;
+					border-width: 1px;
+					border-color: #cccccc;
+					border-style: solid;
+					padding: 2px;
+					margin: 1px 0 0 0;
+					text-align:left;
+					z-index: 5;
+				}
+				div.wicket-aa ul { list-style:none; padding: 2px; margin:0; }
+				div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0; }
+			</style>
+		</wicket:head>
+<body style = "background : #E8ECEF">
+	
+	<fieldset style = "width : 90%; margin-right : 2%; margin-left : 2%; vertical-align : middle; height : 83%;">
+	      		
+   		<legend style = "background : transparent; border : none">
+   			<span style = "font-weight : bold; color :  #0053CF">Search by Sample Prep</span>
+   		</legend>
+   		
+  		<span style = "color : red; font-weight : 400" wicket:id = "feedback"/>
+  <form wicket:id = "searchByPrepForm">
+  	<center>
+  	<table style = "margin-top : 3%">
+  		<tr>
+			<td><b>Sample Prep/Prep Plate: </b><input wicket:id="prep" type="text" value="" size="25"/></td>
+		</tr>
+	</table>
+	<br/>
+   <input type="submit" wicket:id="save" value="&nbsp;&nbsp;&nbsp;Search&nbsp;&nbsp;&nbsp;"/>
+   </center>
+  </form>
+</fieldset>
+</body>
+</html>

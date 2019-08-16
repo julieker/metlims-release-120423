@@ -1,0 +1,20 @@
+		create table TEST_USER.ID_CONTROL
+			(
+			ID_CLASS VARCHAR2(20), 
+			WIDTH INTEGER(3), 
+			FIRST_LETTER CHAR(1), 
+			SECOND_LETTER CHAR(1), 
+			SEQUENCE INTEGER(10),
+			CONSTRAINT  id_control_pk PRIMARY KEY (ID_CLASS)
+			);
+			
+			
+insert into ID_CONTROL (ID_CLASS, WIDTH, FIRST_LETTER, SECOND_LETTER, SEQUENCE) values ('Project', 6.0, 'P', 'R', 1.0);
+insert into ID_CONTROL (ID_CLASS, WIDTH, FIRST_LETTER, SECOND_LETTER, SEQUENCE) values ('Experiment', 7.0, 'E', 'X', 1.0);
+insert into ID_CONTROL (ID_CLASS, WIDTH, FIRST_LETTER, SECOND_LETTER, SEQUENCE) values ('Client', 6.0, 'C', 'L', 1.0);
+insert into ID_CONTROL (ID_CLASS, WIDTH, FIRST_LETTER, SECOND_LETTER, SEQUENCE) values ('Document', 10.0, 'D', null, 2.0);
+insert into ID_CONTROL (ID_CLASS, WIDTH, FIRST_LETTER, SECOND_LETTER, SEQUENCE) values ('ProcedureVerify', 15.0, 'P', 'A', 1.0);
+insert into ID_CONTROL (ID_CLASS, WIDTH, FIRST_LETTER, SECOND_LETTER, SEQUENCE) values ('Sample', 9.0, 'S', null, 1.0);
+insert into ID_CONTROL (ID_CLASS, WIDTH, FIRST_LETTER, SECOND_LETTER, SEQUENCE) values ('SampleInfo', 10.0, 'S', 'I', 1.0);
+insert into ID_CONTROL (ID_CLASS, WIDTH, FIRST_LETTER, SECOND_LETTER, SEQUENCE) values ('User', 6.0, 'U', null, 1.0);
+			

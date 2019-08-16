@@ -1,0 +1,100 @@
+///////////////////////////////////////////
+// Writtten by Anu Janga
+// Revisited by Julie Keros November 2016
+///////////////////////////////////////////
+
+
+package edu.umich.brcf.metabolomics.layers.dao;
+
+import java.util.List;
+
+import javax.persistence.Query;
+
+import org.hibernate.Hibernate;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.stereotype.Repository;
+
+import edu.umich.brcf.metabolomics.layers.domain.CompoundName;
+import edu.umich.brcf.shared.layers.dao.BaseDAO;
+
+
+@Repository
+public class CompoundNameDAO extends BaseDAO
+	{
+	public void save(CompoundName cname)
+		{
+		getEntityManager().persist(cname);
+		}
+	
+	
+	public void delete(CompoundName cname)
+		{
+		getEntityManager().remove(cname);
+		getEntityManager().getTransaction().commit();
+		}
+	
+	
+	public List<CompoundName> allCompoundNames()
+		{
+		List<CompoundName> nameList = getEntityManager().createQuery("from CompoundName cn where cn.compound.cid like 'C%'").getResultList();
+		
+		for( CompoundName name : nameList)
+			initializeTheKids(name, new String[]{"compound"});
+		
+		return nameList;
+		}
+
+	
+	public List<CompoundName> getMatchingNames(String str)
+		{
+		Query query = getEntityManager().createQuery("from CompoundName cn where cn.compound.cid like 'C%' and lower(cn.name) like '%"+str.toLowerCase()+"%' order by length(cn.name)");
+		query.setMaxResults(50);
+		List<CompoundName> nameList = query.getResultList();
+		
+		for( CompoundName name : nameList)
+			initializeTheKids(name, new String[]{"compound"});
+		
+		return nameList;
+		}
+	
+	
+	public CompoundName loadByName(String name)
+		{
+		List<CompoundName> lst =  getEntityManager().createQuery("from CompoundName cn where cn.compound.cid like 'C%' and trim(cn.name) = :name")
+			    .setParameter("name", name.trim()).getResultList();
+		
+		CompoundName cmpdName;
+		try
+			{
+			cmpdName = (CompoundName)DataAccessUtils.requiredSingleResult(lst);
+			initializeTheKids(cmpdName, new String[]{"compound"});
+			Hibernate.initialize(cmpdName.getCompound().getParent());
+			}
+		catch(Exception e){ cmpdName=null; }
+
+		return cmpdName;
+		}
+
+	
+	public List<CompoundName> loadByCid(String cid)
+		{
+		List<CompoundName> lst =  getEntityManager().createQuery("from CompoundName cn where cn.compound.cid = :cid")
+				.setParameter("cid", cid).getResultList();
+		
+		for( CompoundName cname : lst)
+			initializeTheKids(cname, new String[]{"compound"});
+		
+		return lst;
+		}
+	
+	
+	public CompoundName loadName(String cid, String name)
+		{
+		List<CompoundName> lst =  getEntityManager().createQuery("from CompoundName cn where cn.compound.cid = :cid and cn.name = :name")
+				.setParameter("cid", cid).setParameter("name", name).getResultList();
+				
+		CompoundName cmpdName = (CompoundName)DataAccessUtils.requiredSingleResult(lst);
+		initializeTheKids(cmpdName, new String[]{"compound"});
+		return cmpdName;
+		}
+	}

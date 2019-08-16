@@ -1,0 +1,54 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<!-- <head>
+    <title>METWorks</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+<center><h2>Edit Protein Determination Method</h2>
+ -->
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+     <link rel="stylesheet" type="text/css" href="css/tabpanelstyles.css"/>
+      <style>
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	        
+	        hr 
+				{
+			    border: 0;
+			    height: 0;
+			    border-top: 1px solid rgba(0, 0, 0, 0.1);
+			    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+			    margin-top : 20px;
+			    margin-bottom : 20px;
+			    margin-left : 15px;
+				}
+	    </style>
+</head>
+   
+<body class = "dialog_background">  <!-- "background : #E8ECEF"> -->
+		  		
+  		<span wicket:id = "feedback" style = "font-size : 75%; text-align : left;  width : 90%; margin-left : 5%; 
+  		margin-right : 5%"></span>		
+ 	
+    	<form wicket:id = "pdForm">
+		 		
+ 		<fieldset style = "width : 93%; margin-right : 5%; margin-left : 2%; vertical-align : middle; height : 88%;">
+	
+			<legend style = "background : transparent; border : none; text-align : left">
+	   			<span style = "font-weight : bold; color :  #0053CF; text-align : left">Edit Protein Determination</span>
+	   		</legend>	
+
+			<span wicket:id="tabs"  class="tabpanel2"></span>    
+		
+				
+			<div style = "text-align : center">
+				<input wicket:id="save" type="submit"  value="&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;"/>
+			</div>
+		</fieldset>
+		</form>
+	</body>
+</html>

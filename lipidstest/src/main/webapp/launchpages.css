@@ -1,0 +1,25 @@
+.dialog_background 
+	{
+  	background : #EEEEEE;
+  	height : 200%;
+	}
+	
+.good_font
+	{
+	 font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+				font-weight: 300;
+	}
+
+.sectionHeader 
+	{
+	width : 40%; 
+	text-align : left; 
+	color : #0053CF;
+	}
+	
+.sectionContent
+	{
+	width : 90%; margin-left : 5%; margin-right: 5% ; margin-bottom : 40px;  
+	margin-top : 10px; background : white; height : 200px; padding: 20px; 
+	border-radius : 10px; border : groove grey thin; font-size : 95%;
+	}	

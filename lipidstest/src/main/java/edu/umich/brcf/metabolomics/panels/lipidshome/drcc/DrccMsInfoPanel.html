@@ -1,0 +1,366 @@
+<wicket:head>
+ 	 <link rel="stylesheet" type="text/css" href="drcc.css"/>
+     <style> </style>
+</wicket:head>
+
+<wicket:panel>
+
+<body>
+
+	<div> &nbsp; <br></div>
+	
+	<table style = "width : 96%; font-size : 100%;  margin-top : 5px; margin-right : 2%; margin-left : 2%"  class="dataview">
+		<tr>
+			<td style = "width : 25%; text-align : left; vertical-align : bottom">
+				<br><br><span class = "drccSubSectionHeader">H. MS</span>
+			</td>
+			<td style = "width : 50%; text-align : center; vertical-align : top">
+				<br>
+				<span class = "drccDivisionHeader">Metabolomics Core - DRCC Data Reporting Tool</span><br>
+				<br>
+			</td>
+			<td style = "width : 25%"></td>
+		</tr>
+	</table>
+
+	<div>><br><br></div>
+
+	<table style = "width : 30%; margin-left : 6%; margin-right : 64%; ">
+		<tr>
+			<td style = "width : 50%; text-align : right; padding-right : 5px" >Analysis Date :</td>
+			<td style = "width : 50%; text-align : left;  ">
+				<input  disabled wicket:id = "analysisDate" readonly type = "text" style = "text-align :left; padding-left : 3px; width : 80%"/>
+			</td>
+		</tr>
+		<tr>
+			<td style = "width : 50%; text-align : right; padding-right : 5px">Ion Mode(s) :</td>
+			<td style = "width : 50%; text-align : left">
+				<select disabled wicket:id = "selectedMode" style = "width : 70%:"><option>Positive</option><option>Negative</option><option>Both</option></select></td>
+		</tr>
+	</table>
+
+	<br>
+	<table style = "width : 80%; margin-left : 5%; margin-right : 35%">
+		<tr style = "font-weight : bold; text-align : center">
+			<td class = "drccTextLabel" >Ion Mode :  </td>
+			<td>
+				<input  wicket:id = "negativeHeader" disabled type = "text"  style = "color : white ; background : #0053CF;width : 80%; text-align : center" value = "NEGATIVE" />
+			</td>
+			<td>
+				<input  wicket:id = "positiveHeader" disabled type = "text"  style = "color : white ; background : #0053CF; width : 80%; text-align : center" value = "POSITIVE" />
+			</td>
+		</tr>
+	
+		<tr>
+			<td class = "drccRequiredTextLabel" >Ion Mode :  </td>
+			<td>
+				<select wicket:id = "ionMode.0" type = "text" disabled class = "drccTextField"   ></select>
+			</td>
+			<td>
+				<select wicket:id = "ionMode.1" type = "text" disabled class = "drccTextField"  ></select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td class = "drccRequiredTextLabel" >MS Instrument Type:  </td>
+			<td>
+				<select wicket:id = "msInstrumentType.0" type = "text" class = "drccTextField"  ></select>
+			</td>
+			
+			<td>
+				<select wicket:id = "msInstrumentType.1" type = "text" class = "drccTextField"  ></select>
+			</td>
+		</tr>
+
+		<tr>
+			<td class = "drccRequiredTextLabel" >MS Ionization Type :  </td>
+			<td>
+				<select wicket:id = "msIonizationType.0" type = "text" class = "drccTextField"  ></select>			
+			</td>
+			<td>
+				<select wicket:id = "msIonizationType.1" type = "text" class = "drccTextField"  ></select>			
+			</td>
+		</tr>
+		
+		
+		<tr>
+			<td id = "drccTextLabel" >Capillary Temperature:  </td>
+			<td><input wicket:id = "capillaryTemp.0" type = "text" id = "drccTextField"   /></td>
+			<td><input wicket:id = "capillaryTemp.1" type = "text" id = "drccTextField"   /></td>
+		</tr>
+		
+		<tr>
+			<td id = "drccTextLabel" >Capillary Voltage :  </td>
+			<td>
+				<input wicket:id = "capillaryVoltage.0" type = "text" id = "drccTextField"   />
+			</td>
+			<td>
+				<input wicket:id = "capillaryVoltage.1" type = "text" id = "drccTextField"   />
+			</td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Collision Energy  :  </td>
+			<td><input wicket:id = "collisionEnergy.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "collisionEnergy.1" type = "text" class = "drccTextField"  /></td>	
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Collision Gas  :  </td>
+			<td><input wicket:id = "collisionGas.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "collisionGas.1" type = "text" class = "drccTextField"   /></td>	
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Dry Gas Flow :  </td>
+			<td><input wicket:id = "dryGasFlow.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "dryGasFlow.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Dry Gas Temp :  </td>
+			<td><input wicket:id = "dryGasTemp.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "dryGasTemp.1" type = "text" class = "drccTextField"  /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Fragment Voltage :  </td>
+			<td><input wicket:id = "fragmentVoltage.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "fragmentVoltage.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Fragmentation Method :  </td>
+			<td><input wicket:id = "fragmentationMethod.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "fragmentationMethod.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Gas Pressure :  </td>
+			<td><input wicket:id = "gasPressure.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "gasPressure.1" type = "text" class = "drccTextField"  /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Helium Flow :  </td>
+			<td><input wicket:id = "heliumFlow.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "heliumFlow.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Ion Source Temperature :  </td>
+			<td><input wicket:id = "ionSourceTemperature.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "ionSourceTemperature.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Ion Spray Voltage :  </td>
+			<td><input wicket:id = "ionSprayVoltage.0" type = "text" id = "drccTextField"  /></td>
+			<td><input wicket:id = "ionSprayVoltage.1" type = "text" id = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Ionization :  </td>
+			<td><input wicket:id = "ionization.0" type = "text" id = "drccTextField"   /></td>
+			<td><input wicket:id = "ionization.1" type = "text" id = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Ionization Energy :  </td>
+			<td><input wicket:id = "ionizationEnergy.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "ionizationEnergy.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Ionization Potential :  </td>
+			<td><input wicket:id = "ionizationPotential.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "ionizationPotential.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Mass Accuracy :  </td>
+			<td><input wicket:id = "massAccuracy.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "massAccuracy.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Precursor Type :  </td>
+			<td><input wicket:id = "precursorType.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "precursorType.1" type = "text" class = "drccTextField"   /></td>
+			
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Reagant Gas :  </td>
+			<td><input wicket:id = "reagantGas.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "reagantGas.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Source Temperature :  </td>
+			<td><input wicket:id = "sourceTemperature.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "sourceTemperature.1" type = "text" class = "drccTextField"  /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Spray Voltage :  </td>
+			<td><input wicket:id = "sprayVoltage.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "sprayVoltage.1" type = "text" class = "drccTextField"  /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Activation Parameter :  </td>
+			<td><input wicket:id = "activationParameter.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "activationParameter.1" type = "text" class = "drccTextField" /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Activation Time :  </td>
+			<td><input wicket:id = "activationTime.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "activationTime.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Atom Gun Current :  </td>
+			<td><input wicket:id = "atomGunCurrent.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "atomGunCurrent.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Automatic Gain Control :  </td>
+			<td><input wicket:id = "automaticGainControl.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "automaticGainControl.1" type = "text" class = "drccTextField"  /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Bombardment :  </td>
+			<td><input wicket:id = "bombardment.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "bombardment.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >CDL Side Octopoles Bias Voltage :  </td>
+			<td><input wicket:id = "cdlSideOctBiasVoltage.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "cdlSideOctBiasVoltage.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >CDL Temperature :  </td>
+			<td><input wicket:id = "cdlTemperature.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "cdlTemperature.1" type = "text" class = "drccTextField"  /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Data Format :  </td>
+			<td><input wicket:id = "dataFormat.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "dataFormat.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Desolvation Gas Flow :  </td>
+			<td><input wicket:id = "desolvationGasFlow.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "desolvationGasFlow.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Desolvation Temperature :  </td>
+			<td><input wicket:id = "desolvationTemp.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "desolvationTemp.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Interface Voltage :  </td>
+			<td><input wicket:id = "interfaceVoltage.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "interfaceVoltage.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >IT Side Octopole Bias Voltage :  </td>
+			<td><input wicket:id = "itSideOctBiasVolt.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "itSideOctBiasVolt.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Laser :  </td>
+			<td><input wicket:id = "laser.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "laser.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Matrix :  </td>
+			<td><input wicket:id = "matrix.0" type = "text" id = "drccTextField"   /></td>
+			<td><input wicket:id = "matrix.1" type = "text" id = "drccTextField"   /></td>	
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Nebulizer :  </td>
+			<td><input wicket:id = "nebulizer.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "nebulizer.1" type = "text" class = "drccTextField"  /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Octopole Voltage :  </td>
+			<td><input wicket:id = "octopoleVoltage.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "octopoleVoltage.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Probe Tip :  </td>
+			<td><input wicket:id = "probeTip.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "probeTip.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Resolution Setting :  </td>
+			<td><input wicket:id = "resolutionSetting.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "resolutionSetting.1" type = "text" class = "drccTextField"  /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Sample Dripping :  </td>
+			<td><input wicket:id = "sampleDripping.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "sampleDripping.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Scan Range M/Z :  </td>
+			<td><input wicket:id = "scanRangeMz.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "scanRangeMz.1" type = "text" class = "drccTextField"   /></td>		
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Scanning :  </td>
+			<td><input wicket:id = "scanning.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "scanning.1" type = "text" class = "drccTextField"  /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Scanning Cycle :  </td>
+			<td><input wicket:id = "scanningCycle.0" type = "text" class = "drccTextField"   /></td>
+			<td><input wicket:id = "scanningCycle.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Scanning Range:  </td>
+			<td><input wicket:id = "scanningRange.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "scanningRange.1" type = "text" class = "drccTextField"  /></td>			
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Skimmer Voltage :  </td>
+			<td><input wicket:id = "skimmerVoltage.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "skimmerVoltage.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Lens Tube Voltage :  </td>
+			<td><input wicket:id = "tubeLensVoltage.0" type = "text" class = "drccTextField"  /></td>
+			<td><input wicket:id = "tubeLensVoltage.1" type = "text" class = "drccTextField"   /></td>
+		</tr>
+
+	</table>
+
+</body>
+</wicket:panel>
+
+

@@ -1,0 +1,223 @@
+<wicket:head>
+		<link rel="stylesheet" type="text/css" href="tabstyles5.css"/>
+
+	    <style>	
+        
+			.dialog_background 
+				{
+			  	background : #EEEEEE;
+			  	height : 200%;
+				}
+				
+			.good_font
+				{
+				 font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   				font-weight: 300;
+				}
+				
+			
+			.sectionHeader 
+				{
+				width : 40%; 
+				text-align : left; 
+				color : #0053CF;
+				}
+				
+			.sectionContent
+				{
+				width : 90%; margin-left : 5%; margin-right: 5% ; margin-bottom : 20px;  
+				margin-top : 4px; background : white;  padding: 10px; 
+				border-radius : 10px; border : groove grey thin; font-size : 90%;
+		    
+				}	
+			hr 
+				{
+			    border: 0;
+			    height: 0;
+			    border-top: 1px solid rgba(0, 0, 0, 0.1);
+			    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+			    margin-top : 20px;
+			    margin-bottom : 10px;
+			    margin-left : 15px;
+				}
+				
+			strong 
+				{
+				margin-left : 15px;
+				}
+		</style>	
+
+</wicket:head>
+
+<wicket:panel>
+
+    <body class = "dialog_background">
+    	
+    	
+		<div wicket:id="modal1"></div> 
+		
+		
+    	<center>
+    		<div style = "margin-top : 10px; font-weight : 500; font-size : 150%; color : #0053CF">Metabolomics Core - Workflow Tracking</div>
+		</center>
+    	
+		
+	    <div style = "text-align : center;  margin : 8px; margin-bottom : 5px">
+        	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; margin-top : 30px ;  background : transparent; border : none" >
+		    	<tr> 
+		        	<td style = "width : 50%" class = "sectionHeader">
+		        		<strong>Assay/Sample Status :	</strong>
+		        	</td>
+		        	<td class = "sectionHeader" style = "width : 50%;">
+	   					<strong>Worklist Details :</strong>
+		        	 </td>
+		        </tr>
+	    	</table>
+	    
+		    <table class = "sectionContent">
+		       	<tr>
+			       	<td style = "vertical-align : middle; width : 50%">
+			      
+						<table style = "margin-left : 3%; margin-right : 4%;  text-align : left;">
+				       		<tr>
+				       			<td style = "text-align : left">
+				       				<span style = "font-style : italic">View/edit details for :</span>
+				       			</td>
+							</tr>
+							<tr>
+								<td style = "text-align :left">
+									<div wicket:id = "selector"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				
+				
+		
+					<td style = "width : 50%; vertical-align : middle; border-left : 1px groove white; ">
+						<table style = "margin-left : 3%; margin-right : 4%;  text-align : left;">
+				       		<tr>
+				       			<td style = "text-align : left">
+				       				<span style = "font-style : italic">Show worklists generated for :</span>
+				       			</td>
+							</tr>
+							<tr>
+								<td style = "text-align :left">
+									<div wicket:id = "selector2"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+			
+		<hr>
+
+		<div style = "text-align : center;  margin : 8px; margin-bottom : 5px">
+        	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; margin-top : 30px ;  background : transparent; border : none" >
+		    	<tr> 
+		        	<td style = "width : 50%" class = "sectionHeader">
+		        		<strong>Upload Client Report :</strong>
+		        	</td>
+		        	<td class = "sectionHeader" style = "width : 50%;">
+	   					<strong>Submitted Reports : <span style = "color : red; font-style : italic"></span></strong>
+		        	 </td>
+		        </tr>
+	    	</table>
+	    
+			<div wicket:id = "feedback"></div>
+										    	
+		    <table class = "sectionContent">
+		       	<tr>
+			       	<td style = "vertical-align : middle; width : 50%">
+			      
+						<table style = "margin-left : 3%; margin-right : 4%;  text-align : left;">
+				       		<tr>
+				       			<td>
+				       				<span style = "font-style : italic">For client assay :</span>
+				       			</td>
+							</tr>
+							<tr>
+								<td>
+									<div wicket:id = "selector3"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+		
+					<td style = "width : 50%; vertical-align : middle; border-left : 1px groove white; ">
+						<table style = "margin-left : 7%; margin-right : 4%;  text-align : left;">
+				       		<tr>
+				       			<td style = "text-align : left">
+				       				<span style = "font-style : italic"></span>
+				       			</td>
+							</tr>
+							<tr>
+								<td style = "text-align :left">
+									<div wicket:id = "selector4" ></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+		
+		<!-- 
+		<hr>
+		
+		<div style = "text-align : center;  margin : 8px; margin-bottom : 15px">
+        	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; margin-top : 30px ;  background : transparent; border : none" >
+		    	<tr> 
+		        	<td style = "width : 50%" class = "sectionHeader">
+		        		<strong>Dashboard : <span style = "color : red; font-style : italic">(Under construction)</span>	</strong>
+		        	</td>
+		        	<td class = "sectionHeader" style = "width : 50%;">
+	   					<strong> : <span style = "color : red; font-style : italic"></span></strong>
+		        	 </td>
+		        </tr>
+	    	</table>
+	    
+		    <table class = "sectionContent">
+		       	<tr>
+			       	<td style = "vertical-align : middle; width : 50%">
+			      
+						<table style = "margin-left : 7%; margin-right : 4%;  text-align : left;">
+				       		<tr>
+				       			<td style = "text-align : left">
+				       				<span style = "font-style : italic"></span>
+				       			</td>
+							</tr>
+							<tr>
+								<td style = "text-align :left">
+									<div ></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				
+				
+		
+					<td style = "width : 50%; vertical-align : middle; border-left : 1px groove white; ">
+						<table style = "margin-left : 7%; margin-right : 4%;  text-align : left;">
+				       		<tr>
+				       			<td style = "text-align : left">
+				       				<span style = "font-style : italic"></span>
+				       			</td>
+							</tr>
+							<tr>
+								<td style = "text-align :left">
+									<div ></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div> -->
+	</body>
+
+</wicket:panel>
+
+

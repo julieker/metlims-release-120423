@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	                    http://www.springframework.org/schema/beans/spring-beans-2.0.xsd 
+	                    http://www.springframework.org/schema/tx 
+	                    http://www.springframework.org/schema/tx/spring-tx.xsd 
+	                    http://www.springframework.org/schema/aop 
+	                    http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	
+	<bean id="assayDAO" class="edu.umich.brcf.shared.layers.dao.AssayDAO" />
+	<bean id="aliquotDAO" class="edu.umich.brcf.shared.layers.dao.AliquotDAO" />
+	<bean id="barcodePrintingDAO" class="edu.umich.brcf.shared.layers.dao.BarcodePrintingDAO" />
+	<bean id="baseDAO" class="edu.umich.brcf.shared.layers.dao.BaseDAO" />
+	<bean id="clientDAO" class="edu.umich.brcf.shared.layers.dao.ClientDAO" />
+	<bean id="clientReportDAO" class="edu.umich.brcf.shared.layers.dao.ClientReportDAO" />
+	<bean id="controlDAO" class="edu.umich.brcf.shared.layers.dao.ControlDAO" />
+	<bean id="controlTypeDAO" class="edu.umich.brcf.shared.layers.dao.ControlTypeDAO" />
+	<bean id="documentDAO" class="edu.umich.brcf.shared.layers.dao.DocumentDAO" />
+	<bean id="experimentDAO" class="edu.umich.brcf.shared.layers.dao.ExperimentDAO" />
+	<bean id="factorDAO" class="edu.umich.brcf.shared.layers.dao.FactorDAO" />
+	<bean id="idGeneratorDAO" class="edu.umich.brcf.shared.layers.dao.IdGeneratorDAO" />
+	<bean id="inventoryDAO" class="edu.umich.brcf.shared.layers.dao.InventoryDAO" />
+	<bean id="locationDAO" class="edu.umich.brcf.shared.layers.dao.LocationDAO" />
+	<bean id="organizationDAO" class="edu.umich.brcf.shared.layers.dao.OrganizationDAO" />
+	<bean id="projectDAO" class="edu.umich.brcf.shared.layers.dao.ProjectDAO" />
+	<bean id="protocolReportDAO" class="edu.umich.brcf.shared.layers.dao.ProtocolReportDAO" />
+	<bean id="protocolSheetDAO" class="edu.umich.brcf.shared.layers.dao.ProtocolSheetDAO" />
+	<bean id="rollbackItemDAO" class="edu.umich.brcf.shared.layers.dao.RollbackItemDAO" />
+	<bean id="sampleAssayDAO" class="edu.umich.brcf.shared.layers.dao.SampleAssayDAO" />
+	<bean id="sampleAssayStatusDAO" class="edu.umich.brcf.shared.layers.dao.SampleAssayStatusDAO" />
+	<bean id="sampleDAO" class="edu.umich.brcf.shared.layers.dao.SampleDAO" />
+	<bean id="sampleLocationDAO" class="edu.umich.brcf.shared.layers.dao.SampleLocationDAO" />
+	<bean id="samplePrepDAO" class="edu.umich.brcf.shared.layers.dao.SamplePrepDAO" />
+	<bean id="sampleStatusDAO" class="edu.umich.brcf.shared.layers.dao.SampleStatusDAO" />
+	<bean id="sampleTypeDAO" class="edu.umich.brcf.shared.layers.dao.SampleTypeDAO" />
+	<bean id="standardProtocolDAO" class="edu.umich.brcf.shared.layers.dao.StandardProtocolDAO" />
+	<bean id="subjectDAO" class="edu.umich.brcf.shared.layers.dao.SubjectDAO" />
+	<bean id="systemConfigDAO" class="edu.umich.brcf.shared.layers.dao.SystemConfigDAO" />
+	
+	<bean id="userDAO" class="edu.umich.brcf.shared.layers.dao.UserDAO" >
+		<property name="godUser" value="God" />
+		<property name="godPassword" value="iamlatein8areu2?"/>
+		<property name="idGeneratorDAO" ref="idGeneratorDAO" />
+	</bean>
+	
+	
+</beans>

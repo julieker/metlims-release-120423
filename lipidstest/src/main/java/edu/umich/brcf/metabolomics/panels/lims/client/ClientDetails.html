@@ -1,0 +1,136 @@
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="dialog.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+
+<body class = "dialog_background">
+	
+    <fieldset class = "dialog_fieldset">
+    	<legend class  = "dialog_legend">
+	     		<span style = "font-weight : bold; color :  #0053CF">Client Details </span>
+	    </legend>
+    	
+    	<center> 		
+	    
+	        <table style = "font-size : 80%">
+				<tr>
+			  		<td style = "text-align :right">Client ID:</td>
+			  		<td><span wicket:id = "id">Moes ID</span></td>
+			  	</tr>
+				
+				<tr>
+					<td style = "text-align :right">Department/Division:</td>
+					<td><span wicket:id = "dept">Moes Metabalome</span></td>
+				</tr>
+				
+				<tr>
+					<td style = "text-align :right">Lab:</td>
+					<td><span wicket:id = "lab">Mark Twain</span></td>
+				</tr>
+				
+				<tr>
+					<td style = "text-align :right">Organization ID:</td>
+					<td>
+						<span wicket:id="organizationID">(123) 456-7890</span>
+					</td>
+				</tr>
+				
+				<tr>
+					<td style = "text-align :right">Investigator:</td>
+					<td>
+						<span wicket:id="investigatorID">Moes Email</span>
+					</td>
+				</tr>
+				
+				<tr>
+					<td style = "text-align :right">Contact Person:</td>
+					<td>
+						<span wicket:id="contact">street address</span>
+					</td>
+				</tr>
+				
+				<tr>
+					<td style = "text-align :right; vertical-align : top">Associated Documents:</td>
+					<td>
+						<table style = "font-size : 100%">
+							<tr wicket:id="docs">
+								<td><a wicket:id = "fileLink" ><span wicket:id = "fileName"></span></a>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+		    </table>
+	    		
+	    	<table>
+	    		<tr>
+	    			<td></td>
+	   				<td><input wicket:id = "cancelButton"  style = "width : 60px; margin-right : 0px" type = "submit" value = "Close"/></td>
+	   			</tr>
+		   	</table>
+		   	
+	        <br>
+	        
+		</center>			
+	</fieldset>
+
+</body>
+
+</html>
+
+
+
+<!-- <html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body id = "dialog_background">
+
+<fieldset id = "dialog_fieldset">	
+		
+		<legend id = "dialog_legend">
+	   		<span style = "text-align : left; font-weight : bold; color :  #0053CF">Client Details</span>
+	   	</legend>
+	    
+    <span wicket:id="border">
+	    <table>
+		  	<tr>
+		  		<td align="right">Client ID:</td>
+		  		<td><span wicket:id = "id">Moes ID</span></td>
+		  	</tr>
+			<tr>
+			  <td align="right">Department/Division:</td>
+			  <td><span wicket:id = "dept">Moes Metabalome</span></td>
+			</tr>
+			<tr>
+				<td align="right">Lab:</td>
+				<td><span wicket:id = "lab">Mark Twain</span></td>
+			</tr>
+			<tr>
+				<td align="right">Organization ID:</td>
+				<td><span wicket:id="organizationID">(123) 456-7890</span></td>
+			</tr>
+			<tr>
+				<td align="right">Investigator:</td>
+				<td><span wicket:id="investigatorID">Moes Email</span></td>
+			</tr>
+			<tr>
+				<td align="right">Contact Person:</td>
+				<td><span wicket:id="contact">street address</span></td>
+			</tr>
+			<tr>
+		<td align="right" valign="top">Associated Documents:</td>
+		<td><table><tr wicket:id="docs"><td><a wicket:id = "fileLink" ><span wicket:id = "fileName"></span></a></td></tr></table></td>
+		</tr>
+	    </table>
+		<!-- <a wicket:id = "edit" href="EditBook.html">Edit</a> 
+	</span>
+	
+	
+ </fieldset>	
+</body>
+</html> -->

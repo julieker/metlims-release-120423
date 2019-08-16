@@ -1,0 +1,251 @@
+<wicket:head>
+ 	 <link rel="stylesheet" type="text/css" href="drcc.css"/>
+     <style> </style>
+</wicket:head>
+
+<wicket:panel>
+	<body>
+
+	<div> &nbsp; <br></div>
+	<table style = "width : 96%; font-size : 100%;  margin-top : 5px; margin-right : 2%; margin-left : 2%"  class="dataview">
+		<tr>
+			<td style = "width : 25%; text-align : left; vertical-align : bottom">
+				<br><br><span class = "drccSubSectionHeader">G. Analysis</span>
+			</td>
+			
+			<td style = "width : 50%; text-align : center; vertical-align : top">
+				<br>
+				<span class = "drccSubSectionHeader">Metabolomics Core - DRCC Data Reporting Tool</span><br>
+				<br>
+			</td>
+			<td></td>
+			
+		</tr>
+	</table>
+	
+	<br>
+	
+	<table style = "width : 36%; margin-left : 4%; margin-right : 60%;">
+		<tr>
+			<td style = "width : 50%; text-align : right; padding-right : 5px" >Analysis Date :</td>
+			<td style = "width : 50%; text-align : left;  ">
+				<input  disabled wicket:id = "analysisDate" readonly type = "text" style = "text-align :left; padding-left : 3px; width : 80%"/>
+			</td>
+		</tr>
+		<tr>
+			<td style = "width : 50%; text-align : right; padding-right : 5px">Ion Mode(s) :</td>
+			<td style = "width : 50%; text-align : left">
+				<select disabled wicket:id = "selectedMode" style = "width : 70%"><option>Positive</option><option>Negative</option><option>Both</option></select>
+			</td>
+		</tr>
+	</table>
+
+	<br>
+
+	<table style = "width : 96%; margin-left : 2%; margin-right : 2%">
+		<tr style = "font-weight : bold; text-align : center">
+			<td class = "drccRequiredTextLabel" >Ion Mode :  </td>
+			<td>
+				<input wicket:id = "ionMode.0" type = "text"  style = "color : white ; background : #0053CF;width : 80%; text-align : center"  />
+			</td>
+			<td>
+				<input wicket:id = "ionMode.1" type = "text"  style = "color : white ; background : #0053CF; width : 80%; text-align : center" />
+			</td>
+		</tr>
+		<tr>
+			<td class = "drccRequiredTextLabel"  >Laboratory Name :  </td>
+			<td>
+				<input wicket:id = "laboratoryName.0" type = "text" class = "drccTextField"  value = "MS" />
+			</td>
+			<td>
+				<input wicket:id = "laboratoryName.1" type = "text" class = "drccTextField"  value = "MS" />
+			</td>
+		</tr>
+
+		<tr>
+			<td class = "drccRequiredTextLabel" >Operator Name :  </td>
+			<td>
+				<input wicket:id = "operatorName.0" type = "text" class  = "drccTextField" value = "MS" /> 
+			</td>
+			<td>
+				<input wicket:id = "operatorName.1" type = "text" class = "drccTextField" value = "MS" /> 
+			</td>
+		</tr>
+
+		<tr>
+			<td class = "drccRequiredTextLabel" >Analysis Type :  </td>
+			<td>
+				<select wicket:id = "analysisType.0" type = "text" class = "drccTextField"  value = "MS"></select>
+			</td>
+			<td>
+				<select wicket:id = "analysisType.1" type = "text" class = "drccTextField"  value = "MS"></select>
+			
+			</td>
+			
+		</tr>
+		<tr>
+			<td class  = "drccRequiredTextLabel" >Instrument Name:  </td>
+			<td>
+				<select wicket:id = "instrumentName.0" type = "text" class  = "drccTextField"  ></select>
+			</td>
+			<td>
+				<select wicket:id = "instrumentName.1" type = "text" class = "drccTextField"  ></select>
+			</td>
+			
+		</tr>
+		
+		<tr>
+			<td class = "drccRequiredTextLabel" >Instrument Manufacturer:  </td>
+			<td>
+				<input wicket:id = "instrumentManufacturer.0" type = "text" class  = "drccTextField"  value = "ABSciex">
+			</td>
+			<td>
+				<input wicket:id = "instrumentManufacturer.1" type = "text" class = "drccTextField"  value = "ABSciex">
+			</td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Software/Version:  </td>
+			<td>
+				<input wicket:id = "softwareVersion.0"  type = "text"  class = "drccTextField" value = "ABSciex Analyst" />
+			</td>
+			<td>
+				<input wicket:id = "softwareVersion.1" type = "text"   class = "drccTextField" value = "ABSciex Analyst" />
+			</td>
+			
+		</tr>
+	
+		<tr>
+			<td class = "drccTextLabel" >Detector Type :  </td>
+			<td>
+				<input wicket:id = "detectorType.0" type = "text" class = "drccTextField" value = "** Ask **">
+			</td>
+			<td>
+				<input wicket:id = "detectorType.1" type = "text" class = "drccTextField"  value = "** Ask **">
+			</td>
+		</tr>
+	
+		<tr>
+			<td class = "drccTextLabel" >Data Acquisition Method Filename  :  </td>
+			<td>
+				<input wicket:id = "dataAcquisitionFileName.0" type = "text" class = "drccTextField"  >
+			</td>
+			<td>
+				<input wicket:id = "dataAcquisitionFileName.1" type = "text" class  = "drccTextField"  >
+			</td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Data Processing Method Filename :  </td>
+			<td>
+				<input wicket:id = "dataProcessingMethodFileName.0" type = "text" class = "drccTextField"  >
+			</td>	
+			<td>
+				<input wicket:id = "dataProcessingMethodFileName.1" type = "text" class = "drccTextField"   >
+			</td>	
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel" >Submitter's Analysis Protocol Id :  </td>
+			<td>
+				<input wicket:id = "analysisProtocolId.0" type = "text" class = "drccTextField"  value = "A004 (Shotgun Lipidomics)">
+			</td>
+			<td>
+				<input wicket:id = "analysisProtocolId.1" type = "text" class  = "drccTextField"  value = "A004 (Shotgun Lipidomics)">
+			</td>
+		</tr>
+
+		<tr>
+			<td class =  "drccTextLabel" >Submitter's Acquisition Id :  </td>
+			<td>
+				<input wicket:id = "acquisitionId.0" type = "text" class  = "drccTextField"  >
+			</td>
+			<td>
+				<input wicket:id = "acquisitionId.1" type = "text" class  = "drccTextField"  >
+			</td>	
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Instrument Parameters File(s) (filename or directory) :  </td>
+			<td>
+				<input wicket:id = "instrumentParametersFile.0" type = "text" class  = "drccTextField"  >
+			</td>
+			<td>
+				<input wicket:id = "instrumentParametersFile.1" type = "text" class  = "drccTextField"  >
+			</td>		
+		</tr>
+
+		<tr>
+			<td class  = "drccTextLabel" >Raw Files (filename or directory) :  </td>
+			<td>
+				<input wicket:id = "rawDataDirectory.0" type = "text" class= "drccTextField"  value = "** To be determined **">
+			</td>
+			<td>
+				<input wicket:id = "rawDataDirectory.1" type = "text" class = "drccTextField"  >
+			</td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Processed Files (filename or directory) :  </td>
+			<td>
+				<input wicket:id = "processedDataDirectory.0" type = "text" class = "drccTextField"  value = "** To be determined **">
+			</td>
+			<td>
+				<input wicket:id = "processedDataDirectory.1" type = "text" class ="drccTextField"  value = "** To be determined **">
+			</td>
+		</tr>
+
+		<tr>
+			<td class  = "drccTextLabel" >Randomization Order :  </td>
+			<td>
+				<input wicket:id = "randomizationOrder.0" type = "text" class = "drccTextField"   value = "** Pull from database / timestamps"> 
+			</td>
+			<td>
+				<input wicket:id = "randomizationOrder.1" type = "text" class  = "drccTextField" value = "** Pull from database / timestamps"> 
+			</td>				
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Data Format :  </td>
+			<td>
+				<input wicket:id = "dataFormat.0" type = "text" class  = "drccTextField" style = "font-style : italic; " value = ".wiff, .scan, .mgf. .txt">
+			</td>	
+			<td>
+				<input wicket:id = "dataFormat.1" type = "text" class  = "drccTextField" style = "font-style : italic;" value = ".wiff, .scan, .mgf. .txt">
+			</td>
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Acquisition Date :  </td>
+			<td>
+				<input wicket:id = "acquisitionDateAsString.0" disabled type = "text" class  = "drccTextField" value ="** Pull from timestamp **">
+			</td>
+			<td>
+				<input wicket:id = "acquisitionDateAsString.1" disabled type = "text" class  = "drccTextField" value ="** Pull from timestamp **">
+			</td>
+		</tr>
+
+		<tr>
+			<td class  = "drccTextLabel" >Acquisition Time :  </td>
+			<td>
+				<input wicket:id = "acquisitionTimeAsString.0" type = "text" class  = "drccTextField"  value ="** Pull from timestamp **" >
+			</td>
+			<td>
+				<input wicket:id = "acquisitionTimeAsString.1" type = "text" class  = "drccTextField"  value ="** Pull from timestamp **" >
+			</td>			
+		</tr>
+
+		<tr>
+			<td class = "drccTextLabel" >Analysis Comments :  </td>
+			<td>
+				<input wicket:id = "analysisComments.0" type = "text" class  = "drccTextField"  >
+			</td>
+			<td>
+				<input wicket:id = "analysisComments.1" type = "text" class  = "drccTextField" >
+			</td>
+		</tr>
+
+	</table>
+	</body>
+	
+</wicket:panel>

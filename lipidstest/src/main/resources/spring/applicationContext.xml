@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+    <context:property-placeholder location="classpath:application.properties"/>
+    <context:annotation-config/>
+    <tx:annotation-driven/>
+ 
+ 	<import resource="data_source.xml"/>
+	<import resource = "transaction_manager_hibernate.xml"/>
+	<import resource = "./../edu/umich/brcf/shared/layers/dao/dao.xml"/>
+	<import resource = "./../edu/umich/brcf/shared/layers/service/service.xml"/>
+	<import resource = "./../edu/umich/brcf/metabolomics/layers/dao/dao.xml"/>
+	<import resource = "./../edu/umich/brcf/metabolomics/panels/admin/messaging/sms.xml"/>
+	<import resource = "./../edu/umich/brcf/metabolomics/layers/service/service.xml"/>
+	<import resource="session_factory.xml"/>
+
+</beans>

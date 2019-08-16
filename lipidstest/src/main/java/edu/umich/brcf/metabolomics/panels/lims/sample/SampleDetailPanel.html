@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+	<br/>
+	<wicket:head>
+	   
+	    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+	    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+	    <style>
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	    </style>
+	
+		<style>
+			div.wicket-aa 
+				{
+				font-family: "Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana;
+				font-size: 14px;
+				background-color: white;
+				border-width: 1px;
+				border-color: blue;
+				border-style: solid outset;
+				padding: 2px;
+				margin: 1px 0 0 0;
+				text-align:left;
+				z-index: 5;
+				}
+			div.wicket-aa ul { list-style:none; padding: 2px; margin:0px; }
+			div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0px; }
+		</style>
+	</wicket:head>
+	<wicket:panel>
+	
+		<body class = "dialog_background">  <!-- "background : #E8ECEF"> -->
+			<fieldset style = "vertical-align : middle">
+		     	
+		     	<legend style = "border : blue; background : transparent">
+		     		<span style = "font-weight : bold; color :  #0053CF">Sample Detail</span>
+		     	</legend>
+
+	   			<table style = "width : 90%; border-right : 5%; border-left : 5%">
+   					<tr>
+	   					<td>
+		    				<table class="blueHeaderTable">
+					  			<tr>
+					  				<th style = "text-align : right">Sample ID:</th>
+					  				<td><span wicket:id = "sampleID">Moes ID</span></td>
+							  	</tr>
+								<tr>
+								  <th style = "text-align : right">Name:</th>
+								  <td><span wicket:id = "sampleName">Moes Metabalome</span></td>
+								</tr>
+								<tr>
+									<th style = "text-align : right">User Description:</th>
+									<td><span wicket:id = "userDescription">Mark Twain</span></td>
+								</tr>
+								<tr>
+									<th style = "text-align : right">Experiment Name:</th>
+									<td><span wicket:id="exp.expName">(123) 456-7890</span></td>
+								</tr>
+								<tr>
+									<th style = "text-align : right">Parent ID:</th>
+									<td><span wicket:id="parentID">(123) 456-7890</span></td>
+								</tr>
+								<tr>
+									<th style = "text-align : right">Group ID:</th>
+									<td><span wicket:id="groupID">(123) 456-7890</span></td>
+								</tr>
+								<tr>
+									<th style = "text-align : right">GenusOrSpecies:</th>
+									<td><span wicket:id="genusOrSpecies.genusName">Moes Email</span></td>
+								</tr>
+								<tr>
+									<th style = "text-align : right">Location ID:</th>
+									<td><span wicket:id="locID">street address</span></td>
+								</tr>
+								<tr>
+									<th style = "text-align : right">SampleType:</th>
+									<td><span wicket:id="sampleType.description">second address</span></td>
+								</tr>
+								<tr>
+									<th style = "text-align : right">Initial Volume:</th>
+									<td><span wicket:id="volumeAndUnits">volume</span></td>
+								</tr>
+								<tr>
+									<th style = "text-align : right">Current Volume:</th>
+									<td><span wicket:id="curVolumeAndUnits"></span></td>
+								</tr>
+						<!--			<tr>-->
+						<!--				<th align="right">Control:</th>-->
+						<!--				<td><span wicket:id="sampleControlValue"></span></td>-->
+						<!--			</tr>-->
+								<tr>
+									<th style = "text-align : right; vertical-align : top">Preparations:</th>
+									<td><table><tr wicket:id="prepList"><td>
+									<span wicket:id = "prep"></span></td></tr></table></td>
+								</tr>
+
+								<tr>
+									<th style = "text-align : right; vertical-align : top">Documents:</th>
+									<td><table><tr wicket:id="docList"><td><a wicket:id = "fileLink" ><span wicket:id = "fileName"></span></a></td></tr></table></td>
+								</tr>
+						<!--			<tr>-->
+						<!--				<td colspan="2" align="right"><input type="submit" wicket:id="createAliquots" value="Create Aliquots"></td>-->
+						<!--			</tr>-->
+								
+							</table>
+								<!-- <a wicket:id = "edit" href="EditSample.html">Edit</a> -->
+						</td>
+					</tr>
+				</table>			
+			</fieldset>
+		</body>
+	</wicket:panel>
+</html>

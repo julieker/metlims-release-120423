@@ -1,0 +1,39 @@
+<html>
+<wicket:head>
+	
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="dialog.css"/>
+</wicket:head>
+
+<body class = "dialog_background">
+	<fieldset class = "dialog_fieldset">
+    	<legend class = "dialog_legend">
+	     		<span style = "font-weight : bold; color :  #0053CF">Please confirm </span>
+	    </legend>
+    	<center>
+		   <!-- issue 268 -->
+		 	<table style = "width : 96%; height : 75%; margin-left : 2%; margin-right :2%">
+   				<tr>
+    				<td wicket:id = "message" style = "text-align : center; width : 100%;"> Message here
+    				</td>
+    			</tr>
+    		</table>
+    		<table style = "width : 96%; margin-left : 2%; margin-right :2%">
+    			<tr>
+    				<td style = "width : 50%; text-align : left; padding-left : 20px">
+						<input wicket:id = "cancelButton"  type="submit"  style = "margin-top : 2%; width : 100px" 
+						value = "&nbsp;&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;&nbsp;"/>
+					</td>
+					<td style = "width : 50%; text-align : right; padding-right : 20px">
+						<input wicket:id = "confirmButton"  type="submit"  style = "margin-top : 2%; width : 100px"
+						 value = "&nbsp;&nbsp;&nbsp;&nbsp;Confirm&nbsp;&nbsp;&nbsp;&nbsp;"/>
+	    			</td>	
+    			</tr>	        	
+	    	 </table>
+	    	 <div><br></div>
+		</center>
+	</fieldset>
+</body>
+
+</html>
+			

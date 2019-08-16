@@ -1,0 +1,131 @@
+  <html>
+
+	<head>
+	    <title style = "background : #0053CF"></title>
+	    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+	    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+	    <style>
+	    
+	    	.lbColumn1 { padding-right : 4px; padding-left : 4px; max-height : 2% ; }
+	    	.lbColumn2 { text-align : right; padding-right : 8px; }
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	        
+	        
+	        table tr.odd { width : 800px; background  : white; padding-right : 10px;  }
+			table tr.even { width : 800px; background  : #dddddd	; padding-right : 10px }
+		
+			.good_font
+				{
+				 font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   				font-weight: 300;
+   				font-size : 90%;
+				}
+				
+			body 
+				{
+   				font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   				font-weight: 300;
+				}	
+				
+			title 	{ 
+					font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   					font-weight: 600;
+   					color : blue;
+   					height : 5%;
+   					margin-left : 1%;
+   					}
+   				
+	    </style>
+	</head>
+
+	<wicket:head>
+		<style>
+		
+			
+			table tr.even { background  : white;  }
+			table tr.odd { background  : #EFFBFB; }
+		</style>
+	</wicket:head>
+	
+	
+	
+
+	<body >  <!-- "background : #E8ECEF"> -->
+		<!-- <fieldset style = "vertical-align : middle; text-align : middle; height : 90%; width : 90%; margin : 5%; "> -->
+	     	
+	     <div style = "font-size : 90%; width : 100%">
+	     	 
+	     	<form  wicket:id="lipidInfoForm">
+	        
+	        <div wicket:id="modal2"></div> 	
+	        <div wicket:id="feedback"></div>
+	        
+	        <table style = "width : 100%; margin-right : 5%; margin-left : 5%">
+		        <tr>
+		        	<td nowrap style = "width : 33%; text-align : left; padding-left : 20px">
+		        		<span wicket:id = "boxTitle" style = "font-weight : bold; color :  #0053CF; margin-top : 1%; 
+		        		width : 100%;  height : 4%; margin-left : 1%"> Lipid Details
+		     			</span>
+		     			<span wicket:id = "boxSubTitle" style = "font-weight : bold; color :  #0053CF; margin-top : 1%; 
+		        		width : 100%;  height : 4%; margin-left : 1%"> Lipid Details
+		     			</span>
+		        	</td>
+		        	<td style = "width : 33%; text-align : center">
+			        		<span wicket:id = "navigator"/>
+		        	</td>
+		        	
+		            <td style = "width : 33%; text-align : right; padding-right : 30px">
+		        		<input  wicket:id = "downloadData" style = "font-size : 80%; text-align :center; " type="button"  
+						 value="&nbsp;&nbsp;&nbsp;Download Data&nbsp;&nbsp;&nbsp;" /> 
+					</td>
+					
+		        </tr>
+	        </table>	
+	   		
+	   		<div style = "text-align : center">
+				<table style = "width : 98%; height : 80%; margin-top : 30px; margin-bottom : 1%; 
+				margin-right : 1%; margin-left : 1%;  font-size : 80%; background : white; border : thin solid grey">
+				
+					<tr style = "border : solid 1px white; background : #0053CF; color : white; font-weight : 700; font-size : 110%">	
+						<th class = "lbColumn1"><div style="overflow:hidden">LipidBlast Id</div></th>
+						<th class = "lbColumn1"><div style="overflow:hidden">Full Name </div></th>
+						<th class = "lbColumn1"><div style="overflow:hidden">Molecular Formula</div></th>
+						<th class = "lbColumn1"><div style="overflow:hidden">Precursor MZ</div></th>
+						<th class = "lbColumn1"><div style="overflow:hidden">MS Mode</div></th>
+						<th class = "lbColumn1"><div style="overflow:hidden">Class Code</div></th>
+						<th class = "lbColumn1"><div style="overflow:hidden">Formula Mass</div></th>
+						<th class = "lbColumn1"><div style="overflow:hidden">LipidMap Class</div></th>
+					</tr>	
+			
+					<tr wicket:id = "infoListView" >
+						<td class = "lbColumn2"> <span wicket:id = "lipidId" ></span> </td>
+						<td class = "lbColumn2"> <span wicket:id = "fullName" ></span> </td>
+						<td class = "lbColumn2"> <span wicket:id = "molecularFormula" ></span> </td>
+						<td class = "lbColumn2"> <span wicket:id = "precursorMz" ></span> </td>
+						<td class = "lbColumn2"> <span wicket:id = "msMode" ></span> </td>
+						<td class = "lbColumn2"> <span wicket:id = "classCode" ></span> </td>
+						<td class = "lbColumn2"> <span wicket:id = "formulaMass" ></span> </td>
+						<td class = "lbColumn2">
+						<a wicket:id = "lipidMapsLink" href = "#"> <span wicket:id = "lipidMapsClass" ></span></a> <br>
+						(<span wicket:id = "lipidMapsClassName" ></span>)
+						</td>
+					</tr>
+					</table>
+				
+		        	<table style = "height : 10%; margin-bottom : 1%">	
+		        		<tr>
+		        			<td style = "text-align : center">
+			        			<input wicket:id = "cancelButton" style = "font-size : 80%" type = "submit"   value = "&nbsp;&nbsp;Close&nbsp;&nbsp;" />	
+		        			</td>
+		        		</tr> 
+			        </table>
+			        
+		        </div>
+			</form>   
+		</div>		
+	</body>
+ </html>
+ 
+ 
+  

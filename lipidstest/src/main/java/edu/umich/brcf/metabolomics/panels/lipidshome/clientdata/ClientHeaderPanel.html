@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<wicket:head>
+	<style>
+		#entry_label { font-weight : 400;  text-align : right; color : #0053CF; background : white }
+	</style>
+</wicket:head>
+
+<wicket:panel style = "text-align : left ">
+	<table style = "width : 100%; margin-top : 10px; ">
+		<tr>
+			<td style = "text-align :left; ">
+		    	<table style = "width : 40%; text-align : left; ">
+		    
+			    	<tr>
+						<th style = "width : 30%;" nowrap id = "entry_label">Lab:</th>
+						<td style = "width : 70%" nowrap ><span wicket:id = "lab">Mark Twain</span></td>
+					</tr>
+					
+					<tr>
+					  <th id = "entry_label">Department/Division:</th>
+					  <td><span wicket:id = "dept">Moes Metabalome</span></td>
+					</tr>
+					
+					<tr>
+					  <th id = "entry_label">Institution:</th>
+					  <td><span wicket:id = "organization"></span></td>
+					</tr>
+					
+					
+					<tr>
+						<th id = "entry_label">Investigator:</th>
+						<td><span wicket:id="investigator.fullName">Moes Email</span></td>
+					</tr>
+					
+					<tr>
+						<th id = "entry_label">Contact Person:</th>
+						<td><span wicket:id="contact.fullName">street address</span></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</wicket:panel>
+</html>

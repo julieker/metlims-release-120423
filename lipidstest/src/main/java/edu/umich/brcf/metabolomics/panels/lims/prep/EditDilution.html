@@ -1,0 +1,29 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title>METWorks</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+<center><h2>Edit Dilution</h2>
+  <span wicket:id = "feedback"/>
+  <form wicket:id = "dilutionForm">        
+ 	    <table class="blueHeaderTable">
+		  	<tr>
+			  <th align="right">Sample Diluted:</th>
+			  <td><input wicket:id = "sampleDiluted" type="text" size="20" /><span wicket:id="units"></span> </td>
+			</tr>
+			<tr>
+			  <th align="right">Dilutant:</th>
+			  <td><input wicket:id = "dilutant" type="text" size="20" /></td>
+			</tr>
+			<tr>
+			  <th align="right">Dilutant Volume:</th>
+			  <td><input wicket:id = "dilutantVolume" type="text" size="20" />µL</td>
+			</tr>
+		</table>
+		<input type="submit" wicket:id="save" value="Save"/>
+	</form>
+</center>
+</body>
+</html>

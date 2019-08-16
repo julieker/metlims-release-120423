@@ -1,0 +1,110 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+	<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+	<style>
+        legend { border: 1px solid #e9601a; background-color: #bbb; color: #fff; padding: 4px;}
+        fieldset { border: 1px solid #e9601a; padding: 10px; margin-top: 10px;}
+    </style>
+</head>
+<wicket:head>
+	<style>
+		div.wicket-aa {
+			font-family: "Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana;
+			font-size: 12px;
+			background-color: white;
+			border-width: 1px;
+			border-color: #cccccc;
+			border-style: solid;
+			padding: 2px;
+			margin: 1px 0 0 0;
+			text-align:left;
+			z-index: 5;
+		}
+		div.wicket-aa ul { list-style:none; padding: 2px; margin:0; }
+		div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0; }
+		form fieldset.sr{
+		border-width:1px;
+		border-style: solid;
+		border-color: #cccccc;
+		background-color: #f3f3f8;
+		margin: 10px 400px 10px 400px;
+		position:relative;
+		display:block;
+		padding: 10px 14px 14px 10px;
+		
+		}
+		
+		form fieldset.sr legend{
+		font-weight:regular;
+		font-size: 15px;
+		background-color:#FFFFFF;
+		border-width:1px;
+		border-style:solid;
+		border-color:#888888;
+		padding:2px;
+		margin:0px 0px 0px 0px;
+		position:relative;
+		top: -10px;
+		width: 200px;
+		 }
+		 
+		.prepButton 
+			{
+			width : 8%;
+			font-size : 80%;
+			}
+	</style>
+</wicket:head>
+<body>
+<wicket:panel>
+	<center>
+		<form wicket:id = "prepDetailForm">  
+		<div wicket:id="modal1"></div>
+		<div wicket:id="modal2"></div>
+		<h2>Plate Map</h2>
+			<table border = "2">
+				<tr>
+					<th ><input wicket:id="selectAll" type="checkbox"></th>
+					<th wicket:id="colNumbers">
+						<input wicket:id="colCheck" type="checkbox"/><span wicket:id = "colNum"></span>
+					</th>
+				</tr>
+				<tr wicket:id="rows"><th><span wicket:id = "rowIdentity"></span></th>
+					<td wicket:id="cols" ><input wicket:id="selected" type="checkbox"/>
+						<a wicket:id = "sampleLink" href="#"><span wicket:id = "sample.sampleid"></span></a></td>
+				</tr>
+			</table><br/>
+<!--			<input type="submit" wicket:id="sampleMethodsLink" value="Assign Prep Methods" />&nbsp;-->
+			<input class = "prepButton" type="submit" wicket:id="buffer" value="Buffer..." />&nbsp;
+			<input class = "prepButton" type="submit" wicket:id="homogenization" value="Homogenization..." />&nbsp;
+			<input class = "prepButton" type="submit" wicket:id="dilution" value="Dilution..." />&nbsp;
+			<input class = "prepButton" type="submit" wicket:id="protienDetermination" value="Protein Det..." />&nbsp;
+			<input class = "prepButton" type="submit" wicket:id="generalPrep" value="General Prep..." />&nbsp;
+			<input class = "prepButton" type="submit" wicket:id="absorbance" value="Absorbance..." />&nbsp;
+			<input class = "prepButton" type="submit" wicket:id="addNotes" value="Add Notes..." />&nbsp;
+			<input class = "prepButton" type="submit" wicket:id="addSample" value="Add Sample..." /><br/><br/><br/>
+<!--			<fieldset class="sr">-->
+<!--		      <legend class="sr"><span wicket:id = "fileUploadText"></span></legend>-->
+<!--				<h4><span wicket:id = "fileUploadText"></span></h4>-->
+<!--		        <p>-->
+<!--		        <label wicket:id="fileText" for="upload"></label>-->
+<!--		        <input wicket:id="fileInput" id="upload" type="file" size="80"/>-->
+<!--		        </p>-->
+<!--		        <input type="submit" wicket:id="upload" value="Upload!"/><br/>-->
+<!--		        <br/>-->
+<!--		        <span wicket:id="progress">[[ajax upload progressbar]]</span>-->
+<!--		     </fieldset>-->
+			<font size="3">Plates were created for: </font><span wicket:id = "plates"></span><br/><br/><br/>
+<!--		 	<input type="submit" wicket:id="plateMethodsLink" value="Assign GC/LC Methods" />-->
+		 	<input type="submit" wicket:id="createNewPlate" value="Create New Plate" />&nbsp;
+		 	<input type="submit" wicket:id="derivatization" value="Derivatization" />&nbsp;
+			<input type="submit" wicket:id="reconstitution" value="Reconstitution" />&nbsp;
+		 	<input type="submit" wicket:id="gcNotes" value="GC Prep Notes" />&nbsp;
+			<input type="submit" wicket:id="lcNotes" value="LC Prep Notes" />
+		</form>
+	</center>
+</wicket:panel>
+</body>
+</html>
+	

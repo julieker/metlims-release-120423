@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	                    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+	                    http://www.springframework.org/schema/tx 
+	                    http://www.springframework.org/schema/tx/spring-tx-2.5.xsd" >
+	           
+  	
+  	<bean id="compoundNameService" class="edu.umich.brcf.metabolomics.layers.service.CompoundNameService">
+ 		<property name="compoundNameDao" ref="compoundNameDAO" />
+ 		<property name="compoundDao" ref="compoundDAO" />
+ 	</bean>
+ 
+  	<bean id="compoundService" class="edu.umich.brcf.metabolomics.layers.service.CompoundService">
+ 		<property name="compoundNameDao" ref="compoundNameDAO" />
+ 		<property name="compoundDao" ref="compoundDAO" />
+ 	</bean>
+ 
+  
+ 	 <bean id="fractionationService" class="edu.umich.brcf.metabolomics.layers.service.FractionationService">
+ 		<property name="samplePrepDao" ref="samplePrepDAO" />
+ 		<property name="sampleDao" ref="sampleDAO" />
+ 		<property name="userDao" ref="userDAO" />
+ 		<property name="instrumentDao" ref="instrumentDAO" />
+ 		<property name="fractionationDao" ref="fractionationDAO" />
+ 		<property name="expDao" ref="experimentDAO" />
+ 		<property name="idGeneratorDao" ref="idGeneratorDAO" />
+ 		<property name="statusDao" ref="sampleStatusDAO" />
+ 		<property name="injectionsDao" ref="injectionsDAO" />
+ 		<property name="systemConfigDao" ref="systemConfigDAO" />
+ 	</bean>
+ 
+  	<bean id="generatedWorklistItemService" class="edu.umich.brcf.metabolomics.layers.service.GeneratedWorklistItemService">
+ 		<property name="generatedWorklistItemDao" ref="generatedWorklistItemDAO" />
+ 	</bean>
+ 	
+ 	<bean id="generatedWorklistService" class="edu.umich.brcf.metabolomics.layers.service.GeneratedWorklistService">
+ 		<property name="generatedWorklistDao" ref="generatedWorklistDAO" />
+ 		<property name="generatedWorklistItemDao" ref="generatedWorklistItemDAO" />
+ 	</bean>
+ 	
+ 	<bean id="genusSpeciesService" class="edu.umich.brcf.metabolomics.layers.service.GenusSpeciesService">
+ 		<property name="genusSpeciesDao" ref="genusSpeciesDAO"/>
+ 	</bean>
+ 
+ 	<bean id="instrumentService" class="edu.umich.brcf.metabolomics.layers.service.InstrumentService">
+		<property name="instrumentDao" ref="instrumentDAO" />
+	 	<property name="userDao" ref="userDAO" />
+ 	</bean>
+ 		
+ 	<bean id="inventoryService" class="edu.umich.brcf.metabolomics.layers.service.InventoryService">
+ 		<property name="inventoryDao" ref="inventoryDAO" />
+ 		<property name="compoundDao" ref="compoundDAO" />
+ 	</bean>
+ 	
+ 	<bean id="lipidBlastPrecursorService" class="edu.umich.brcf.metabolomics.layers.service.LipidBlastPrecursorService">
+		<property name="lipidBlastPrecursorDao" ref="lipidBlastPrecursorDAO" />
+ 	</bean>
+ 	
+ 	<bean id="lipidMapsClassService" class="edu.umich.brcf.metabolomics.layers.service.LipidMapsClassService">
+		<property name="lipidMapsClassDao" ref="lipidMapsClassDAO" />
+ 	</bean>
+ 	
+ 	<bean id="lipidMapsEntryService" class="edu.umich.brcf.metabolomics.layers.service.LipidMapsEntryService">
+		<property name="lipidMapsEntryDao" ref="lipidMapsEntryDAO" />
+ 	</bean>
+ 	
+ 	<bean id="mrc2SubmissionDataService" class="edu.umich.brcf.metabolomics.layers.service.Mrc2SubmissionDataService">
+ 		<property name="expDao" ref="experimentDAO" />
+ 		<property name="sampleDao" ref="sampleDAO" />
+ 		<property name="statusDao" ref="sampleStatusDAO" />
+ 		<property name="sampleTypeDao" ref="sampleTypeDAO" />
+ 		<property name="userDao" ref="userDAO" />
+ 		<property name="idGeneratorDao" ref="idGeneratorDAO" />
+ 		<property name="factorDao" ref="factorDAO" />
+ 		<property name="subjectDao" ref="subjectDAO" />
+ 		<property name="assayDao" ref="assayDAO" />
+ 		<property name="sampleAssayStatusDao" ref="sampleAssayStatusDAO" />
+ 		<property name="genusSpeciesDao" ref="genusSpeciesDAO" />
+ 		<property name="locationDao" ref="locationDAO" />
+ 		<property name="tableAccessDao" ref="tableAccessDAO" />
+ 	</bean>
+ 	
+ 	<bean id="ms2DataSetService" class="edu.umich.brcf.metabolomics.layers.service.Ms2DataSetService" >
+		<property name="ms2PeakSetDao" ref="ms2PeakSetDAO" />
+		<property name="ms2DataSetDao" ref="ms2DataSetDAO" />
+		<property name="ms2PeakDao" ref="ms2PeakDAO" />
+		<property name="ms2SampleMapDao" ref="ms2SampleMapDAO" />
+	</bean>
+ 	
+ 	<bean id="ms2PeakSetService" class="edu.umich.brcf.metabolomics.layers.service.Ms2PeakSetService" >
+		<property name="ms2PeakSetDao" ref="ms2PeakSetDAO" />
+		<property name="ms2PeakDao" ref="ms2PeakDAO" />
+		<property name="ms2DataSetDao" ref="ms2DataSetDAO" />
+	</bean>
+	
+	<bean id="ms2PeakService" class="edu.umich.brcf.metabolomics.layers.service.Ms2PeakService" >
+		<property name="ms2PeakSetDao" ref="ms2PeakSetDAO" />
+		<property name="ms2PeakDao" ref="ms2PeakDAO" />
+	</bean>
+	
+	
+	<bean id="ms2SampleMapService" class="edu.umich.brcf.metabolomics.layers.service.Ms2SampleMapService" >
+		<property name="ms2SampleMapDao" ref="ms2SampleMapDAO" />
+		<property name="ms2DataSetDao" ref="ms2DataSetDAO" />
+		<property name="idGeneratorDao" ref="idGeneratorDAO" />
+	</bean>
+	
+	
+	<bean id="tableAccessService" class="edu.umich.brcf.metabolomics.layers.service.TableAccessService" >
+		<property name="tableAccessDao" ref="tableAccessDAO" />
+	</bean>
+	
+ 
+ </beans>

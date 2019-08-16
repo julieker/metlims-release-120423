@@ -1,0 +1,84 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<!-- <head>
+    <title>METWorks</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head> -->
+
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+      <style>
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	    </style>
+</head>
+   
+<body class = "dialog_background">  <!-- "background : #E8ECEF"> -->
+		  		
+  		<span wicket:id = "feedback" style = "font-size : 75%; text-align : left;  width : 90%; margin-left : 5%; 
+  		margin-right : 5%"/>		
+ 	
+    	<form wicket:id = "generalPrepForm">
+
+		 		
+ 		<fieldset style = "width : 93%; margin-right : 5%; margin-left : 2%; vertical-align : middle; height : 88%;">
+	
+			<legend style = "background : transparent; border : none; text-align : left">
+	   			<span style = "font-weight : bold; color :  #0053CF; text-align : left">Edit General Prep Method</span>
+	   		</legend>	
+  
+    
+ 		<div><br>&nbsp;</div>
+
+     
+ 	    <table class="blueHeaderTable">
+		  	<tr>
+			  <th style = "text-align : right">Sample Volume:</th>
+			  <td><input wicket:id = "sampleVolume" type="text" size="40" />µL</td>
+			</tr>
+		  	<tr>
+			  <th style = "text-align : right">Crash Solvent:</th>
+			  <td><input wicket:id = "crashSolvent" type="text" size="40" /></td>
+			</tr>
+			<tr>
+			  <th style = "text-align : right">Recovery Standard Content:</th>
+			  <td><input wicket:id = "recoveryStandardContent" type="text" size="40" /></td>
+			</tr>
+			<tr>
+			  <th style = "text-align : right">Crash Volume:</th>
+			  <td><input wicket:id = "crashVolume" type="text" size="40" />µL</td>
+			</tr>
+			<tr>
+			  <th style = "text-align : right">Vortex:</th>
+			  <td><input wicket:id = "vortex" type="text" size="40" /></td>
+			</tr>
+			<tr>
+			  <th style = "text-align : right">Spin:</th>
+			  <td><input wicket:id = "spin" type="text" size="40" /></td>
+			</tr>
+			<tr>
+			  <th style = "text-align : right">GC Volume:</th>
+			  <td><input wicket:id = "gcVolume" type="text" size="40" />µL</td>
+			</tr>
+			<tr>
+			  <th style = "text-align : right">LC Volume:</th>
+			  <td><input wicket:id = "lcVolume" type="text" size="40" />µL</td>
+			</tr>
+			<tr>
+			  <th style = "text-align : right">Nitrogen Blowdown Time:</th>
+			  <td><input wicket:id = "nitrogenBlowdownTime" type="text" size="40" /></td>
+			</tr>
+			<tr>
+			  <th style = "text-align : right">Lyophilizer Time:</th>
+			  <td><input wicket:id = "lyophilizerTime" type="text" size="40" /></td>
+			</tr>
+		</table>
+		</fieldset>
+		<div style = "text-align : center">
+			<input wicket:id="save" type="submit"  value="&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;"/>
+		</div>
+	</form>
+</body>
+</html>

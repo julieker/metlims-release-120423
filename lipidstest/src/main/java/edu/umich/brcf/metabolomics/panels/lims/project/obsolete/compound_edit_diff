@@ -1,0 +1,33 @@
+102c102
+< 				public boolean isRequired() {	return false; }
+---
+> 				public boolean isRequired() {	return (cid!=null && !cid.equals("to be assigned")); }
+122a123
+> 					System.out.println("In the close...");
+124a126
+> 						System.out.println("in container not null");
+126c128,131
+< 						target.add(container);
+---
+> 						System.out.println("after setcmpid before container");
+> 					
+> 					//	target.add(container);
+> 						System.out.println("after add container....");
+160a166,167
+> 							System.out.println("Past the save in edit compound...");
+> 							
+163a171
+> 								System.out.println("In the contaier...");
+164a173
+> 								System.out.println("After the setCompid...");
+166c175,180
+< 								}
+---
+> 								System.out.println("After the impCompound..");
+> 								}          
+> 							}
+> 						catch(Exception e){ 
+> 							e.printStackTrace();
+> 							EditCompound.this.error("Save unsuccessful. Please make sure that smiles is valid.");
+168d181
+< 						catch(Exception e){  EditCompound.this.error("Save unsuccessful. Please make sure that smiles is valid."); }

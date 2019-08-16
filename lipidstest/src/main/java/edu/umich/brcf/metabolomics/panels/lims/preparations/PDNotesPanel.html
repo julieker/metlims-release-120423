@@ -1,0 +1,85 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+	<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+	<style>
+        legend { border: 1px solid #e9601a; background-color: #bbb; color: #fff; padding: 4px;}
+        fieldset { border: 1px solid #e9601a; padding: 10px; margin-top: 10px;}
+    </style>
+</head>
+<wicket:head>
+	<style>
+		div.wicket-aa {
+			font-family: "Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana;
+			font-size: 12px;
+			background-color: white;
+			border-width: 1px;
+			border-color: #cccccc;
+			border-style: solid;
+			padding: 2px;
+			margin: 1px 0 0 0;
+			text-align:left;
+			z-index: 5;
+		}
+		div.wicket-aa ul { list-style:none; padding: 2px; margin:0; }
+		div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0; }
+		form fieldset.sr{
+		border-width:1px;
+		border-style: solid;
+		border-color: #cccccc;
+		background-color: #f3f3f8;
+		margin: 10px 400px 10px 400px;
+		position:relative;
+		display:block;
+		padding: 10px 14px 14px 10px;
+		
+		}
+		
+		form fieldset.sr legend{
+		font-weight:regular;
+		font-size: 15px;
+		background-color:#FFFFFF;
+		border-width:1px;
+		border-style:solid;
+		border-color:#888888;
+		padding:2px;
+		margin:0px 0px 0px 0px;
+		position:relative;
+		top: -10px;
+		width: 200px;
+		 }
+		 
+		.prepButton 
+			{
+			width : 10%;
+			font-size : 90%;
+			}
+	</style>
+</wicket:head>
+<body>
+
+<wicket:panel>
+	<div><br><br><br>&nbsp;</div>
+	
+	<center>
+		<div style = "text-align : left ;width : 96%; margin-left : 2%; margin-right : 2%; padding-top : 30px; font-weight : 700; color : grey">
+		&nbsp;&nbsp;&nbsp; Notes</div>
+
+  	    <table class="blueHeaderTable" style = "width : 96%; margin-left : 2%; margin-right : 2%">
+			<tr>
+			  	<td style = "width : 100%">	
+			  		<textarea wicket:id = "notes" maxlength = "950" style = "margin-bottom : 30px; font-size : 70%;  margin-bottom: 0%; width : 100%; 
+			  			height : 100%;"  rows="14" cols="100">This is a comment
+					</textarea>
+				</td>
+			</tr>
+		</table>
+		
+		<div><br>&nbsp;<hr></div>
+	</center>
+</wicket:panel>
+</body>
+</html>
+
+
+	

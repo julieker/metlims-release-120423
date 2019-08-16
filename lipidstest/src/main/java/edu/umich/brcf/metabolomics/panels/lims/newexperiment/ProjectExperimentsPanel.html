@@ -1,0 +1,38 @@
+<wicket:panel>
+	<html xmlns="http://www.w3.org/1999/xhtml" >
+
+	<head>
+		<style>
+			.good_font
+				{
+				font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+ 				font-weight: 400;  font-size : 100%;
+				}
+				
+			a:visited { color : red; }	
+		</style>
+	</head>
+
+	<body class = "good_font">
+		<table>
+			<tr wicket:id = "projectList" style = "background : white">
+				<td>
+				<table>
+					<tr>
+						<td style = "text-align : left; vertical-align : top" >
+							<span wicket:id = "projname" style = "font-weight : 700">Moes ID</span>
+						</td>
+					</tr>
+		  		
+			  		<tr wicket:id = "expList">
+			  			<td style = "text-align : left">
+			  				<a wicket:id = "expLink" href="#"><span wicket:id = "expname"/></a>
+		  				</td>
+		  			</tr>
+		 		</table>
+		 		</td>
+		  	</tr>
+		</table>
+	</body>
+</html>
+</wicket:panel>

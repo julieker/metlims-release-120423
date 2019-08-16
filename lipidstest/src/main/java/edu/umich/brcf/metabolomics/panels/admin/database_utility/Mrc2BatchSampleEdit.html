@@ -1,0 +1,96 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+    <wicket:head>
+   		<link rel="stylesheet" type="text/css" href="dialog.css"/>
+	
+		 <style>
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	        
+	        td {  width : 10%; min-width : 100px; max-width : 100px; text-align : right ; padding-right : 2px }
+	        th {  width : 10%; font-weight : 700; font-size : 90%; color : white;  background-color : #000099; text-align : center; 
+	        vertical-align : top; }
+	         hr 
+				{
+			    border: 0;
+			    height: 0;
+			    border-top: 1px solid rgba(0, 0, 0, 0.1);
+			    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+			    margin-top : 20px;
+			    margin-bottom : 20px;
+			    margin-left : 15px;
+				}
+				
+			input { height : 100%; padding 0px; text-align : right; padding-right : 2px}
+	        .sectionTitle { font-weight : 600; color : blue ; text-align : right}
+	       
+	       .good_font
+				{
+				 font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   				font-weight: 300;
+   				font-size : 90%;
+				}
+	    </style>
+	</wicket:head>
+	
+	<body class = "good_font">  <!-- "background : #E8ECEF"> -->
+		
+		<fieldset style = "vertical-align : middle; height : 90% ; width : 90%; margin-left : 5%; margin-right : 5%;">
+		<legend style = "border : blue; background : transparent; text-align : left">
+	     		<span style = "text-align : left; font-weight : bold; color :  #0053CF; font-size : 120%">Edit Experiment Samples</span>
+	     </legend>
+	    
+	   <div>
+	   <span wicket:id = "feedback" class = "feedbackMsg90"></span>
+		
+	   	<form wicket:id = "batchSampleEditForm">      
+	  	
+	  	    <div wicket:id = "container">
+	  		<div style="overflow: auto; height: 85%; width: 1100px">
+	  		<table style = "width : 196%; margin-right : 2%; margin-left : 2%; ">
+	  			<tr>
+		  			<th>Sample Id</th>
+		  			<th>Researcher Sample Id</th>
+		  			<th>Subject Id</th>
+		  			<th>Researcher Subject Id Id</th>
+		  			<th>Volume</th>
+				  	<th>Curr. Volume</th>
+				  	<th>Volume Units</th>
+				  	<th>Location ID</th>
+				  	<th>User Defined GOS</th>
+				  	<th>GOS ID</th>
+				  	<th>User Defined Sampe Type</th>
+				  	<th>Sample Type ID</th>
+				</tr>
+				
+				<tr wicket:id = "sampleItems">
+	  				<td><input wicket:id = "sampleId" style = "width : 100%" /></td>
+	  				<td><input wicket:id = "researcherSampleId" style = "width : 100%" /></td>
+	  				<td><input wicket:id = "subjectId" style = "width : 100%" /></td>
+	  				<td><input wicket:id = "researcherSubjectId" style = "width : 100%" /></td>
+					<td><input wicket:id = "volume" style = "width : 100%" /></td>
+					<td><input wicket:id = "currVolume" style = "width : 100%" /></td>
+					<td><input wicket:id = "volUnits" style = "width : 100%" /></td>
+					<td><input wicket:id = "locID" style = "width : 100%" /></td>
+					<td><input wicket:id = "userDefGOS" style = "width : 100%" /></td>
+					<td><input wicket:id = "genusOrSpeciesID" style = "width : 100%" /></td>
+					<td><input wicket:id = "userDefSampleType" style = "width : 100%" /></td>
+					<td><input wicket:id = "sampleTypeId" style = "width : 100%" /></td>
+				</tr>
+			</table>
+	  	
+	  		</div>
+			<div>&nbsp;</div>
+			
+			<div style = "text-align : center">
+				<input wicket:id="cancelButton" type="submit"   style = "width : 100px; text-align: center; margin-right : 10px;" value="&nbsp;&nbsp;&nbsp;Cancel&nbsp;&nbsp;&nbsp;"/>
+				<input wicket:id="submitButton" type="submit"   style = "width : 100px; text-align: center; margin-left : 10px; margin-right : 10px;" value="&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;"/>
+				<input  class="downloadButton"   style = "width : 100px; margin-left : 10px; text-align: center; margin-right : 10px; text-align : center" type = "button" title = "Download" value = "&nbsp;&nbsp;&nbsp;Download Ids&nbsp;&nbsp;&nbsp;"/>
+			</div>
+			
+			</div>
+		</form>
+		</div>
+		</fieldset>
+		
+	</body>
+</html>

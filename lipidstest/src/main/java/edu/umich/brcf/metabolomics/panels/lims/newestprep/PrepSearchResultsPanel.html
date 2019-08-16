@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+	<wicket:head>
+		<link rel="stylesheet" type="text/css" href="tabstyles5.css"/>
+	</wicket:head>
+
+	<wicket:panel>
+		<div style = "text-align : center">
+		<span wicket:id = "feedback"></span><br/><br/>
+			
+			<form wicket:id = "sampleSearchForm">   
+			  	<br/>
+			   	<div wicket:id="modal1"></div>
+				
+				<br></br>
+				<div style = "width : 92%; margin-left : 4%; text-align : right; margin-right : 4%"><input wicket:id = "closeButton" type = "button" value = "Close..."  title = "Close"></input>
+		   		</div>
+				<table border="1" style = "width: 90%; margin-left: 5%; margin-right : 5%">
+					<tr>
+						<td>
+							<div style="overflow: auto; width: 100%; ">
+						   		<table style = "width : 100%; ">	
+						   			<tr wicket:id = "experiments" style = "padding-top : 20px;">
+						   				<td> 
+						   					<div><br>&nbsp;</br></div>
+						   					<font color="green"><b>Experiment - <span wicket:id = "expName"></span></b></font>&nbsp;
+						   					<a wicket:id = "setup" >Design</a>&nbsp;|&nbsp;<a wicket:id = "assays" >Assays</a>
+						   					<br/>
+						   			
+							   				<table style="width: 100%;  margin-top : 20px" class="dataview">
+								   				<tr>
+										   			<th width="15%">Sample ID</th>
+												    <th width="22%">Name</th>
+												    <th width="43%">Subject</th>
+												    <th width="10%">Amount</th>
+												    <th width="10%">Location</th>
+									   			</tr>
+									   		</table>
+						   			
+								   			<table border="1" style="width: 100%; margin-left : 0%; margin-right : 0%" class="dataview">
+									   			<tr wicket:id="sampleList">
+									   			  <td width="15%"><a wicket:id="detail"><span wicket:id = "sampleID">Huckleberry Finn</span></a></td>
+									   			  <td width="22%"><span wicket:id = "sampleName">Huckleberry Finn</span></td>
+											      <td width="43%"><span wicket:id = "userSubj">(123) 456-7890</span></td>
+											       <td width="10%"><span wicket:id = "amount">(123) 456-7890</span></td>
+									   			  <td width="10%"><span wicket:id = "locID">(123) 456-7890</span></td>
+												</tr>
+											</table>
+		
+					   					</td>
+									</tr>				
+								</table>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</form>
+	</div>
+</wicket:panel>
+</html>

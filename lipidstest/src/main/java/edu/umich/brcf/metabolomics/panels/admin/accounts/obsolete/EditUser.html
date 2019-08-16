@@ -1,0 +1,55 @@
+<wicket:panel>
+  <span wicket:id = "feedback"/>
+  <p>
+  <center>
+  <!-- 
+  <form wicket:id = "editUserForm">        
+   -->
+ 	    <table>
+		  	<tr>
+		  		<th style = "text-align : right">User ID:</th>
+		  		<td><span wicket:id = "id">Moes ID</span></td>
+		  	</tr>
+			<tr>
+				<th style = "text-align : right">Last Name:</th>
+				<td><input wicket:id = "lastName" type="text"  value="MuckyLastName" size="30" /></td>
+			</tr>
+			<tr>
+				<th style = "text-align : right">FirstName:</th>
+				<td><input wicket:id = "firstName" type="text" value="Moes Metabalome" size="20" /></td>
+			</tr>
+			<tr>
+				<th style = "text-align : right">UserName:</th>
+				<td>
+					<input wicket:id="userName" type="text" value="jdoe" size="15"/> 
+					<span wicket:id = "roleLabel">Role: </span><select wicket:id="viewpoint"><option>role 1</option><option>role 2</option></select>
+					
+				</td>
+			</tr>
+			<tr>
+				<th style = "text-align : right">Password:</th>
+				<td><input wicket:id="password1" type="password" value="(123) 456-7890" size="15"/></td>
+			</tr>
+			<tr>
+				<th style = "text-align : right">Re-enter Password:</th>
+				<td><input wicket:id="password2" type="password" value="(123) 456-7890" size="15"/></td>
+			</tr>
+			<tr>
+				<th style = "text-align : right">Phone:</th>
+				<td><input wicket:id="phone" type="text" value="(123) 456-7890" size="26"/></td>
+			</tr>
+			<tr>
+				<th style = "text-align : right">Fax:</th>
+				<td><input wicket:id="faxNumber" type="text" value="(123) 456-7890" size="26"/></td>
+			</tr>
+			<tr>
+				<th style = "text-align : right">EMail:</th>
+				<td><input wicket:id="email" type="text" value="Moes Email" size="30" /></td>
+			</tr>
+			<tr>
+				<th style = "text-align : right">Lab:</th>
+				<td><input wicket:id="lab" type="text" value="Moes Email" size="30" /></td>
+			</tr>
+	    </table>
+	</center>
+</wicket:panel>

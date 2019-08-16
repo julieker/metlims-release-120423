@@ -1,0 +1,96 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+
+	<link rel="stylesheet" type="text/css" href="dialog.css"/>
+ 
+	<style>
+		
+	    legend { border: none; background :  transparent; color: black; padding: 4px;}
+        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px; vertical-align : middle; 
+        	width : 90%; margin-right : 5%; margin-left : 5%}
+        th { text-align : center ;font-weight : 700}
+        
+        .factorNameHeader { text-align : center; font-weight : bold ; width : 60px; border : none; color : light yellow }
+        .pageTitle { font-weight : bold; font-size : 120%; color :  #0053CF}
+        .sectionTitle { font-weight : 600; color : blue }
+        
+        input:disabled { background : white; text-align : right; padding-right : 15px; font-weight : 600; border: none; }
+			
+    </style>
+
+	</head>	
+	
+	<body class = "dialog_background"> 
+		<fieldset>
+		   
+            <legend>
+            	<span class = "pageTitle"> Add Assay to Experiment</span>
+            </legend>
+
+            <span wicket:id = "feedback" class = "feedbackMsg"/>
+
+            <form wicket:id = "assayAddForm">   
+  		                    
+            <br><br>
+  			
+  			<div wicket:id = "container">
+		        <div style = "width : 96%; margin-right : 2%; margin-left : 2%;">
+	            	<div class = "sectionTitle"> <br>1.  Select Assay<br><br></div>
+	                    <br>
+	               
+	                    <table style = "width : 90%; margin-right : 5%">
+	                        <tr>
+	                            <td style = "width : 60%;">
+	                                <table  style = "text-align : left">
+	                                    <tr >
+	                                        <td nowrap style = "width : 25%; text-align : right; padding-right : 10px; font-weight : 800">Experiment Id :</td>
+	                                        <td style = "text-align : left; width : 25%">
+	                                        	<input style = "text-align : left" wicket:id="expId" type="text" value="(123) 456-7890" size="20"/></td>
+	                                    	<td style = "text-align : right; width : 50%">
+	                                    		<input wicket:id = "backButton" type = "button" value = "&nbsp;&nbsp;&nbsp;Back to Sample Tools&nbsp;&nbsp;&nbsp;" style = "width : 200px; "/>
+											</td>
+	                                    </tr>
+	                                    <tr style = "height  : 30px; vertical-align : bottom">
+	                                        <td nowrap style = "width : 25%; text-align : right; padding-right : 10px"><b> Assay to Add :</b></td>
+	                                        <td nowrap style = "width : 25%"> 
+	                                        	<select wicket:id = "assayDrop"  style ="width : 250px"></select>
+                                            </td>
+	                                        <td style = "text-align : right; width : 50%">
+												<input wicket:id = "saveButton" type = "submit" value = "&nbsp;&nbsp;&nbsp;Save Selection&nbsp;&nbsp;&nbsp;" style = "width : 200px; "/>
+											</td>
+				                        </tr>
+	                                </table>
+	                            </td>
+	                        </tr>
+	                    </table>
+	            	</div>
+	            
+	                <br><br><br>
+
+                    <div style = "width : 96%; margin-right : 2%; margin-left : 2%;">
+                        <span class = "sectionTitle" ><hr><br>2.  Apply to Samples<br><br></span>
+                    </div>
+
+					<div style="overflow: auto; height: 300px; width: 80%; margin-left : 10%; margin-right : 10%; ">
+	            
+                        <table style = "width : 25%; text-align : left">
+                            <tr style = "text-align : center">
+                                <th style = "vertical-align : top">Sample Id<br></th>
+                                <th>Include<br> <input wicket:id = "selectAll" type = "checkbox"   checked title ="Select all samples" /></th>
+                            </tr>
+                       	     <tr wicket:id = "sampleSelectionView" style = "margin-left : 10%">
+                                <td><input  wicket:id = "sampleID" type="text" size="10" ></input></td>
+                                <td style = "text-align : center"><input wicket:id = "selectSample" type = "checkbox"  style = "text-align : center" checked /></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                     <br><br><br>
+			
+				</div>
+			</form>
+	</fieldset>  
+</body>
+</html>
+
+

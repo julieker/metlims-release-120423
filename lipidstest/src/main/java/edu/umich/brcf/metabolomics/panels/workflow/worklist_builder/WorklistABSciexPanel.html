@@ -1,0 +1,111 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<style>
+	
+		.number_col { width : 2%"; }
+			
+		.tableInput { width : 100%"; height : 100%; }	
+			
+		.tableHeaderNarrow 
+			{ 
+			vertical-align : top ;   padding-top : 5px;  border : none;  width : 5%; padding-left : 5px; 
+			padding-right : 5px; padding-top : 5px; font-size : 50%; text-align : center;
+			}
+		
+		.worklist  
+			{ 
+			background : white;  padding : 0px;  padding-bottom : 5px; width : 100%;  font-size : 80%;  margin-left : 0%; cell-padding : 0px;  
+			cell-spacing : 0px;  margin-right : 0%;  border : solid grey 1px; margin-bottom : 100px;
+			}
+	</style>
+</head>
+
+<body>
+
+	<div style = "margin-left : 0%; color : transparent" >
+		<table style = "width : 98%; margin : 2%; margin-top : 30px; margin-bottom : 10px">
+			<tr>
+				<td style = "width : 33%">
+					<span style = "color : #0000cc; font-weight : 400; font-size : bigger">Worklist Preview (ABSciex)</span>
+				</td>
+				
+				<td style = "text-align : center; width : 33%; padding-right : 5px;  ">
+					<span style = "font-size : 80%"> </span>>
+				</td>
+				
+				<td style = "text-align : right; width : 33%; padding-right : 5px;  ">
+					<input style = "font-size : 70%; text-align :center; width : 120px; background : white" type="button"  id = "fileDownload" value="Get Worklist" /> 
+				</td>
+			</tr>
+		</table>
+		
+		<table class = "worklist"> 
+			
+			<wicket:extend>
+			
+			<tr style = "background : #0000BB; padding-top : 5px; color : white; border : none"> 
+			
+				<th class = "blueTableHeader" style = "width : 2%">Redo<br>
+					<input wicket:id = "allSelected" type = "checkbox" /> 
+				</th>
+				
+				<th class = "blueTableHeader"  style = "width : 2%; ">Order</th>
+				<th class = "blueTableHeader"  style = "width : 10%">Sample Label</th>
+				<th class = "blueTableHeader" style = "width : 2%; border-right : none">Rack<br>Code</th>
+				<th class = "blueTableHeader" style = "width : 2%; border-right : none">Rack<br>Pos</th>
+				<th class = "blueTableHeader" style = "width : 2%; border-right : none">Plate<br>Code</th>
+				<th class = "blueTableHeader" style = "width : 2%; border-right : none">Plate<br>Pos</th>
+				<th class = "blueTableHeader" style = "width : 2%">Vial<br>Pos</th>					
+				<th class = "blueTableHeader" style = "width : 20%">Acquisition Method</th>
+				<th class = "blueTableHeader" style = "width : 41%">Data File</th>
+				<th class = "blueTableHeader" style = "width : 4%;">Inj Vol<br>(&micro;l)</th>
+				<th class = "blueTableHeader" style = "width : 4%;">Comments</th> 					
+			</tr>	
+			
+			<tr wicket:id = "worklist">
+				
+				<td style = "text-align : center">
+					  <input wicket:id="selected" type="checkbox"/>
+				</td>
+					
+				<td style = "text-align : right; width : 2%"> 
+					<input wicket:id = "randomIdx" class = "tableField" type = "text" style = "height : 100%"/> 
+				</td>			
+			
+				<td style = "visibility : none; text-align : right; width : 12%"> 
+					<input  wicket:id = "outputFileDir"  type = "text" disabled  style =  "height : 100%; text-align: right; padding-right :4px; width : 100%; border-right : 
+					solid white 1px" class = "tableField" />
+				</td>
+				
+				<td  class = "number_col"> <input wicket:id = "rackCode" disabled class = "tableInput" type = "text"/></td>
+				<td  class = "number_col"> <input wicket:id = "rackPosition" disabled  class = "tableInput" type = "text"/></td>
+				<td  class = "number_col"> <input wicket:id = "plateCode" disabled  class = "tableInput" type = "text"/></td>
+				<td  class = "number_col"> <input wicket:id = "platePosition" disabled class = "tableInput" type = "text"/></td>
+				<td  class = "number_col"> <input wicket:id = "vialPosition" disabled class = "tableInput" type = "text"/></td>
+		 		
+		 		<td style = "text-align : right; width : 10%"> 
+		 			<input   wicket:id = "methodFileName" disabled style =  "height : 100%; text-align: right; padding-right :4px; width : 100%; border-right : 
+					solid white 1px" class = "tableField" type = "text"/>
+				</td>
+				<td style = "text-align : right; width : 40%"> 
+					<input  wicket:id = "outputFileName"  disabled  style =  "height : 100%; text-align: right; padding-right :4px; width : 100%; border-right : 
+					solid white 1px" class = "tableField" type = "text"/>
+				</td>
+				<td style = "text-align : right; width : 4%"> 
+					<input  wicket:id = "injectionVolume" disabled  style =  "height : 100%; text-align: right; padding-right :4px; width : 100%"  class = "tableField" type = "text"/>
+				</td>
+				<td style = "text-align : center; width : 5%"> 
+					<input wicket:id = "notes"  value = "Comment..."  style =  "height : 100%; text-align: center; width : 80%"  class = "tableField" type = "button"/>
+				</td>					
+			</tr>
+			
+			</wicket:extend>
+		</table>
+	</div>
+</body>
+</html>
+

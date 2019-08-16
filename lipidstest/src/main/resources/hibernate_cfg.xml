@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory name="sessionFactory">
+        <property name="hibernate.dialect">${hibernate.dialect}</property>
+        <property name="hibernate.connection.driver_class">${jdbc.driverClassName}</property>
+        <property name="hibernate.connection.url">${jdbc.url}</property>
+        <property name="hibernate.connection.username">metlims</property>
+        <property name="hibernate.connection.password">metlims</property>
+        <property name="hibernate.default_catalog">metlims</property>
+        <property name="hibernate.default_schema">metlims</property>
+    </session-factory>
+</hibernate-configuration>

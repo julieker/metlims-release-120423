@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+	<wicket:head>
+			<style>
+			
+				legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        	fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	    
+			
+			</style>
+		</wicket:head>
+		
+		
+<wicket:panel>
+<body style = "background : #E8ECEF">
+  
+  <form wicket:id = "searchByContactForm" style = "vertical-align : top; margin-top : 0%; border : none"  >
+		
+			  	<table>
+			  		<tr>
+						<td style = "text-align : left">
+							<input wicket:id="contact" type="text" value="" size="25"/>
+							<select wicket:id= "contactDrop"><option>EX00411</option><option>EX00412</option><option>EX00413</option></select>
+						</td>
+						<td style = "text-align : left">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input  wicket:id="select" type="button" value="&nbsp;&nbsp;&nbsp;Search&nbsp;&nbsp;&nbsp;"/>
+						</td>
+					</tr>
+				</table>
+		  </form>
+		  <span wicket:id = "feedback" style = "color : red; font-weight : 400" /> 
+
+</body>
+</wicket:panel>
+</html>

@@ -1,0 +1,73 @@
+<wicket:head>
+	<style>
+		body 
+			{
+		   	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+		   	font-weight: 300;
+			}
+	
+		table tr th { width : 800px; background   white; padding-left : 20px; padding-right : 20px; text-align : center }
+		table tr.even { width : 800px; background  : white; padding-right : 10px;  }
+		table tr.odd { width : 800px; background  : #EFFBFB; padding-right : 10px }
+	</style>
+</wicket:head>
+
+<wicket:panel>
+	<body  style = "margin-top : 50px">
+	
+		<div wicket:id="feedback"></div>
+		
+		<form wicket:id = "dataSetForm">
+			<table style = "width : 96%; margin-left : 2%; margin-right : 2%; margin-top : 3%">
+				<tr>
+					<td style = "width : 50%; text-align : left">
+						<h3><span wicket:id = "searchResultTitle" style = "margin-top: 5%; color :  #0053CF;"> </span></h3>
+					</td>
+					<td style = "width : 50%; text-align : right">
+						<input wicket:id = "backButton" type="button"   value="&nbsp;&nbsp;New Search&nbsp;&nbsp;" />
+					</td>
+				</tr> 
+			</table>
+			
+			<div>&nbsp;<br></div>
+			<div wicket:id = "modal1"></div>
+			<span>	
+				<table style = "font-size : 90%; background : white; border : solid grey 1px; width : 96%; margin-left : 2% ; margin-right : 2%">
+					<tr style = "border : solid 1px white; background : #0053CF; color : white; font-weight : 300">	
+						<th>Data Set Id</th>
+						<th>Experiment Id</th>
+						<th>Mode</th>
+						<th>Data Type</th>
+						<th># Compounds</th>
+						<th>Run Date</th>
+						<th>Upload Date</th>
+						<th>Uploaded By </th>
+						<th></th>
+					</tr>		
+			
+					<tr wicket:id = "dataSetListView" >
+						<td style = "text-align : right; padding-right : 4%"> <span wicket:id = "dataSetId" ></span> </td>
+						<td style = "text-align : right; padding-right : 4%"> <span wicket:id = "expId" ></span> </td>
+						<td style = "text-align : right; padding-right : 4%"> <span wicket:id = "ionMode" ></span> </td>
+						<td style = "text-align : right; padding-right : 4%"> <span wicket:id = "dataNotation" ></span> </td>
+						
+						<td style = "text-align : right; padding-right : 4%"> <span wicket:id = "numCompounds" ></span> </td>
+						
+						<td style = "text-align : right; padding-right : 4%"> <span wicket:id = "runDate" ></span> </td>
+						<td style = "text-align : right; padding-right : 4%"> <span wicket:id = "uploadDate" ></span> </td>
+						<td style = "text-align : right; padding-right : 4%"> <span wicket:id = "uploadedBy" ></span> </td>
+						<td style = "text-align : center" nowrap> 
+						<!-- 
+							<input wicket:id = "dataSetLink" type = "button" value = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;View data...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"/>
+							-->
+							<input wicket:id = "dataSetLink" type = "button" tyle = "padding-left : 20px; padding-right : 20px" value = "&nbsp;&nbsp;Randomization...&nbsp;&nbsp;"/>
+							 
+							<input wicket:id = "randomizationLoaderLink" type = "button" style = "padding-left : 20px" value = "&nbsp;&nbsp;Randomization...&nbsp;&nbsp;"/> 							
+						</td>
+					</tr>
+			
+				</table>
+			</span>				
+		</form>
+	</body>
+</wicket:panel>

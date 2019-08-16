@@ -1,0 +1,145 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+   	<style>
+    	legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+    	fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;
+    </style>
+</head>
+
+<body class = "dialog_background">  
+		  		 	
+ 	<fieldset style = "width : 93%; margin-right : 5%; margin-left : 2%; vertical-align : middle; height : 88%;">
+
+		<legend style = "background : transparent; border : none; text-align : left">
+   			<span style = "font-weight : bold; color :  #0053CF; text-align : left">Create New Prep</span>
+   		</legend>	
+  
+ 		<span wicket:id = "feedback"/>
+	
+		<form wicket:id = "preparationPlateForm">   
+			<center>
+  		
+			<table style = "border : groove #dddddd thin; border-radius : 10px; padding : 30px; width : 90%; margin-right : 5%; margin-left : 5%; font-size : 80%; ">
+				
+				<tr>
+					<td style = "width:50%; text-align : left; vertical-align : top; height : 100%">
+						<table style = "width : 100%; height : 100%;">
+				
+							<tr>
+								<td style = "font-weight : 600; text-align : right">Title :</td>
+								<td style = "text-align : left;  padding-left : 5px"> 
+									<span wicket:id = "prepTitle"></span>
+								</td>
+							</tr>
+				
+							<tr>
+								<td style = "font-weight : 600; text-align : right ">Volume :</td>
+								<td style = "text-align : left; padding-left : 5px">
+									<input wicket:id="volume"  type="text" size="10" style = "width : 120px" />
+								</td>
+							</tr>
+				
+							
+							<tr>
+								<td style = "font-weight : 600; text-align : right">Units :</td>
+								<td style = "text-align : left; padding-left : 5px"> 
+									<select wicket:id="volUnits" style = "width : 120px" ></select>
+								</td>
+							</tr>
+						</table>
+					
+					</td>
+					
+					<td>	
+						<table>
+						<tr wicket:id = "controlGroupsListView" >
+							<td class = "worklistOptionFieldCell" style = "width:30%;"  nowrap >
+									<span wicket:id ="type">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type :</span>
+								    <table style = "width : 100%; height : 100; border : none; margin-top : 0px; margin-bottom : 0px"> 
+									    <tr>
+										    <td class = "buttonCell">
+												<input wicket:id = "addButton" class = "worklistSmallButton" style = "color : #00ee00; "
+												title = "Add another control group"  type = "button"  value = "+"/>
+											</td>
+											<td class = "buttonCell">
+												<input  wicket:id = "deleteButton" class = "worklistSmallButton"   title = "Remove control group" 
+												style = "color : red; "   type = "button"  value = "X"/>
+											</td>
+											<td class = "buttonCell2">
+										  		<select  wicket:id = "controlTypeDrop" class = "buttonCellDrop">
+													<optgroup label="Blanks"><option>Blank></option></optgroup> <optgroup label="Pools"><option> Pool</option></optgroup>-->
+												</select> 
+											</td>
+											<td class = "buttonCell">
+												
+												<input wicket:id = "questionButton" class = "worklistSmallButton" title = "Control type definitions" 
+												style = "color : #0000ff;" type = "button" value = "?"/>
+											</td>
+										</tr>
+									</table>
+								</td>
+						</tr>
+						</table>
+				</td>
+							
+					</td>
+					<td style = "width : 50%; text-align : right; vertical-align : top; height : 100%">
+						<table style = "width : 100%;   height : 100%;">
+							<tr>
+								<td style = "vertical-align : top; text-align : right; padding-right : 5px; font-weight : 600">
+								Instrument :
+								</td>
+								<td style = "text-align : left">
+							 		<select style = "width : 70px; " wicket:id="instrumentName"></select>
+								</td>
+								<td></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			
+			<div style = "overflow: auto; height: 800px;">        
+				<span wicket:id = "container">
+					<table style = "border : groove #dddddd thin; border-radius : 10px; padding : 30px; width : 90%; margin-right : 5%; margin-left : 5%">
+						<tr>
+							<td wicket:id="cols">
+								<table>
+									<tr wicket:id="rows">
+										<td><span wicket:id = "index"></span><input type="text" wicket:id="cell" size="9"  style = "font-size : 90%; width : 80%"/></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</span>
+			</div>
+			
+			<br/>
+			
+			<center>
+				<table style = "width : 80%; margin-left : 10%; margin-right : 10%; ">
+					<tr>
+						<td style = "width : 33%; text-align : center">
+							<input wicket:id = "populateButton" type = "submit" style = "width : 120px; padding-top : 3px; padding-bottom : 3px"  value = "&nbsp;&nbsp;&nbsp;Populate&nbsp;&nbsp;&nbsp;"/>
+						</td>
+						<td style = "width : 33%; text-align : center">
+							<input wicket:id = "clearButton" type = "submit" style = "width : 120px; padding-top : 3px; padding-bottom : 3px"  value = "&nbsp;&nbsp;&nbsp;Clear&nbsp;&nbsp;&nbsp;"/>
+						</td>
+						
+						<td style = "width : 33%; text-align : center">								
+							<input type="submit" wicket:id="save" style = "width : 120px; padding-top : 3px; padding-bottom : 3px" value="&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;" />
+						</td>
+					</tr>
+				</table>
+			</center>
+	
+			</center>
+		</form>
+	</fieldset>
+</body>
+</html>
+	

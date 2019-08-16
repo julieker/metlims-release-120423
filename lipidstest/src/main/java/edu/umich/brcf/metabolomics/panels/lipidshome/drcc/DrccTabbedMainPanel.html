@@ -1,0 +1,52 @@
+<wicket:head>	    
+	    <title style = "background : #0053CF"></title>
+	    <link rel="stylesheet" type="text/css" href="drcc.css"/>
+	    <link rel="stylesheet" type="text/css" href="tabstyles5.css"/>
+	    
+	    <style>
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	        
+	        
+	        table tr.odd { width : 800px; background  : white; padding-right : 10px;  }
+			table tr.even { width : 800px; background  : #dddddd	; padding-right : 10px }
+		
+			.good_font
+				{
+				 font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   				font-weight: 300;
+   				font-size : 90%;
+				}
+   		
+			.table  { width : 90%; margin-right : 5%; margin-left : 5%}
+	    </style>
+</wicket:head>
+
+<wicket:panel>
+	<div class = "good_font">
+		<div ><br><br>&nbsp;</div>
+		
+		<div style = "text-align : center; margin-top : 12px">	
+			
+			<div wicket:id="drccTabs" class="tabpanel1">[tabbed panel will be here]</div>
+			
+			<div><br><br></div>
+			
+			<table style = "width: 90%; margin-left : 5%; margin-right : 5%; text-align : left" >
+				<tr>
+					<td style = "width : 25%">&nbsp;
+					</td>
+					
+					<td style = "width : 50%; text-align : center; ">
+						<input wicket:id = "reportButton" title = "Generate metadata workbook" type = "button" style = "margin-right : 15px;  width : 140px; font-size : 100%; height : 22px;" value = "&nbsp;&nbsp;&nbsp;Generate Report&nbsp;&nbsp;&nbsp;"> </input>
+						<input wicket:id = "backButton" type = "button" title = "Go back to lipid data portal" style = "margin-left : 15px; width : 140px;  font-size : 100%; height : 22px; " value = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;New Report&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"> </input>
+						<input type = "button" title = "Download protocol files" style = "margin-left : 15px; width : 140px; font-size : 100%; height : 22px;" value = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Protocol Files...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"> </input>
+					</td> 
+					<td style = "width : 25%; text-align : right; padding-right : 10px">
+					</td>
+				</tr>
+			</table>
+			<div><br></div>
+		</div>
+	</div>
+</wicket:panel>

@@ -1,0 +1,81 @@
+  <html>
+
+	<head>
+	    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+	    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+	    <style>
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	    </style>
+	</head>
+
+	<wicket:head>
+		<style>
+			.plateHeader { width : 10%; text-align : center; border : groove thin white; background : #000055; color : white	 }
+			
+			.plateCell { width : 10%; text-align : center; border : grey solid 1px; background : white; text-align : center }
+				
+			.plateTable { font-size: 80%; height : 75%; width : 90%; margin-left : 5%; margin-top : 1%; margin-right : 5%; border-bottom : thin solid grey;
+						 border-right : thin solid grey"}
+						 
+			.grid_label { width : 100%;  height : 100%; border : none; }	
+		</style>
+	</wicket:head>
+	
+	<body class = "dialog_background">  
+		<fieldset style = "vertical-align : middle">
+	     	
+	   		<form wicket:id="platePreviewForm" style = "margin : 1%; margin-bottom : 2%" >
+	        	
+	        	<center>
+						<span style = "font-size : 80%; margin-bottom : 0px" wicket:id = "feedback"/>
+						<span wicket:id = "navigator"/> <br>
+	    		</center>
+	
+				<span style = "text-align : left; margin-left : 5%">
+					<table class = "plateTable">
+						<tr>
+							<th style = "width : 5%; background : white; border :none; height : 10%"></th>
+							<th class = "plateHeader" style = "width : 10%">1</th>
+							<th class = "plateHeader" style = "width : 10%">2</th>
+							<th class = "plateHeader" style = "width : 10%">3</th>
+							<th class = "plateHeader" style = "width : 10%">4</th>
+							<th class = "plateHeader" style = "width : 10%">5</th>
+							<th class = "plateHeader" style = "width : 10%">6</th>
+							<th class = "plateHeader" style = "width : 10%">7</th>
+							<th class = "plateHeader" style = "width : 10%">8</th>
+							<th class = "plateHeader" style = "width : 10%">9</th>
+							
+						</tr>
+						<tr wicket:id = "plateRows">
+							<th class = "plateHeader" style = "width : 3%" ><span wicket:id = "rowTitle" style = "text-align : center">A</span></th>
+							<td wicket:id = "position1" class = "plateCell" ></td>
+							<td wicket:id = "position2" class = "plateCell" ></td>
+							<td wicket:id = "position3" class = "plateCell" ></td>
+							<td wicket:id = "position4" class = "plateCell" ></td>
+							<td wicket:id = "position5" class = "plateCell" ></td>
+							<td wicket:id = "position6" class = "plateCell" ></td>
+							<td wicket:id = "position7" class = "plateCell" ></td>
+							<td wicket:id = "position8" class = "plateCell" ></td>
+							<td wicket:id = "position9" class = "plateCell" ></td>
+						</tr>
+					</table>
+				</span>
+				
+				<center>
+		        	<table style = "margin-bottom : 1%; margin-top : 1%">	
+		        		<tr>
+		        			<td style = "text-align : center">
+			        			<input wicket:id = "cancelButton" style = "font-size : 80%; width : 120px" type = "button"  
+			        			value = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" />	
+		        			</td>
+		        		</tr> 
+			        </table>
+		        </center>
+			</form>   
+		</fieldset>     			
+	   </body>
+ </html>
+ 
+ 
+  

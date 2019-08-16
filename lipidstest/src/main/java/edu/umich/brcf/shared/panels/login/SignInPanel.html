@@ -1,0 +1,37 @@
+<wicket:head>
+	<head>
+		<link rel="stylesheet" href="dialog.css" type="text/css" media="all" />
+	
+	<style>
+	
+	</style>
+	</head>
+</wicket:head>
+
+<wicket:panel>
+	<span wicket:id="feedback" class = "feedbackMsg" />
+	<form wicket:id="signInForm">
+	<table>
+		<tr>
+			<td style ="text-align : right">Username:</td>
+			<td><input wicket:id="username" style="background-color: #F7F770; border-collapse: collapse; border-width: 1px;" type="text" value="foo@goo.moo" size="20" /></td>
+		</tr>
+		<tr>
+			<td style = "text-align : right">Password:</td>
+			<td><input wicket:id="password" style="background-color: #F7F770; border-collapse: collapse; border-width: 1px;" type="password" value="password"size="20" /></td>
+		</tr>
+		<tr wicket:id="rememberMeRow">
+			<td></td>
+			<td><input wicket:id="rememberMe" type="checkbox" /> Remember Me</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td nowrap>
+				
+				<input style = "margin-top : 10px" type="submit" name="submit" value="&nbsp;&nbsp;&nbsp;&nbsp;Sign In&nbsp;&nbsp;&nbsp;&nbsp;" /> 
+				<input type="reset" value="&nbsp;&nbsp;&nbsp;&nbsp;Reset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" />
+			</td>
+		</tr>
+	</table>
+	</form>
+</wicket:panel>

@@ -1,0 +1,37 @@
+<html>
+<wicket:head>
+	
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="dialog.css"/>
+</wicket:head>
+
+<body class = "dialog_background">
+	<fieldset class = "dialog_fieldset">
+    	<legend class = "dialog_legend">
+	     		<span style = "font-weight : bold; color :  #0053CF">Download Document</span>
+	    </legend>
+    	<center>
+		    <table style = "margin-top : 20px">
+		    	<tr>
+					<td nowrap style = "text-align : right : width : 20%; vertical-align : top">Documents:</td>
+					<td nowrap style = "width : 80%">
+						<a wicket:id = "fileLink" ><span wicket:id = "fileName"></span></a>
+					</td>
+				</tr>
+				<tr><br></tr>
+			</table>
+	
+		 	<table style = "width : 96%; margin-left : 2%; margin-right :2%">
+   				<tr>
+    				<td style = "text-align : center; width : 100%;">
+						<input wicket:id = "cancelButton"  type="submit"  style = "margin-top : 2%; width : 100px" value = "&nbsp;&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;&nbsp;"/>
+	    			</td>	
+    			</tr>	        	
+	    	 </table>
+	    	 <div><br></div>
+		</center>
+	</fieldset>
+</body>
+
+</html>
+			

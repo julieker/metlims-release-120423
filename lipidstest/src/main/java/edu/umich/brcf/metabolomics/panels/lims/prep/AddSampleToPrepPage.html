@@ -1,0 +1,30 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title>Add Fraction</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+<center><h2>Edit Prepped Fraction</h2><br/>
+	<span wicket:id = "feedback"/>
+	<form wicket:id = "preppedSampleForm"> 
+<!--	<div wicket:id="modal1"></div>-->
+		<table class="blueHeaderTable">
+			<tr>
+				<th align="right" width="50%">Fraction ID:</th>
+				<td><input wicket:id = "id" type="text" size="10" /></td>
+			</tr>
+			<tr>
+				<th align="right">Volume:</th>
+				<td><input wicket:id = "volume" type="text" size="10" /></td>
+			</tr>
+			<tr>
+				<th align="right">Volume Units:</th>
+				<td><select wicket:id="volUnits"></select></td>
+			</tr>
+		</table><br/>
+		<input type="submit" wicket:id="save" value="Save" />
+	</form>
+	</center>
+</body>
+</html>

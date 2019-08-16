@@ -1,0 +1,42 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title>Prepped Fraction</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+<center><h2>Edit Prepped Fraction</h2><br/>
+	<span wicket:id = "feedback"/>
+	<form wicket:id = "prepFractionForm"> 
+<!--	<div wicket:id="modal1"></div>-->
+		<table class="blueHeaderTable">
+			<tr>
+				<th align="right" width="50%">ID:</th>
+				<td><span wicket:id = "id"></span></td>
+			</tr>
+			<tr>
+				<th align="right">Volume:</th>
+				<td><input wicket:id = "volume" type="text" size="10" /></td>
+			</tr>
+			<tr>
+				<th align="right">Volume Units:</th>
+				<td><select wicket:id="volUnits"></select></td>
+			</tr>
+			<tr>
+				<th align="right">Sample Diluted:</th>
+				<td><input wicket:id = "sampleDiluted" type="text" size="10" /> mg</td>
+			</tr>
+			<tr>
+				<th align="right">Dilutant:</th>
+				<td><input wicket:id = "dilutant" type="text" size="15" /></td>
+			</tr>
+			<tr>
+				<th align="right">Dilutant Volume:</th>
+				<td><input wicket:id = "dilutantVolume" type="text" size="10" /> µL</td>
+			</tr>
+		</table><br/>
+		<input type="submit" wicket:id="save" value="Save" />
+	</form>
+	</center>
+</body>
+</html>

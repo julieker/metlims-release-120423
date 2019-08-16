@@ -1,0 +1,128 @@
+  <html>
+
+	<head>
+	    <title style = "background : #0053CF"></title>
+	    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+	    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+	    <style>
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	        
+	        
+	        table tr.odd { width : 800px; background  : white; padding-right : 10px;  }
+			table tr.even { width : 800px; background  : #dddddd; padding-right : 10px }
+		
+			body 
+				{
+   				font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   				font-weight: 300;
+				}	
+				
+			title 	{ 
+					font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   					font-weight: 600;
+   					color : blue;
+   					height : 5%;
+   					margin-left : 1%;
+   					}
+   					
+   			.lmColEntry1  { vertical-align : top; text-align : left; padding-left : 8px; font-size : 80%; padding-top : 8px; }		
+   			.lmColEntry2 { padding-right : 4px; padding-left : 4px; max-height : 2% }
+   				
+   			
+	    </style>
+	</head>
+
+
+	
+	
+
+	<body>  <!-- "background : #E8ECEF"> -->
+       	<form  wicket:id="lipidInfoForm">
+
+        <table style = "width : 98%; margin-left : 1%; margin-right : 1%">
+       		<tr>
+	       		<td nowrap style = "width : 100%; text-align : center; padding-left : 0px">
+	        		<span wicket:id = "boxTitle" style = "font-weight : bold; color :  #0053CF; margin-top : 1%; 
+	        			width : 100%;"> Lipid Details
+					</span><br>
+	     			<span wicket:id = "boxSubTitle" style = "font-weight : bold; color :  #0053CF; margin-top : 1%; 
+	        			width : 100%;  height : 4%; margin-left : 1%"> Lipid Details
+	     			</span>
+	     			
+	        	</td>
+	        </tr>
+        </table>
+
+        <table style = "width : 98%; margin-left : 1%; margin-right : 1%">
+        	<tr>
+        		<td style = "width : 33%">&nbsp; </td>
+	        	<td style = "width : 33%; text-align : center">
+		        		<span wicket:id = "navigator"/>
+	        	</td>
+	        	
+	            <td style = "width : 33%; text-align : right; padding-right : 30px">
+	        		<input  wicket:id = "downloadData" style = "font-size : 80%; text-align :center; " type="button"   value="&nbsp;&nbsp;&nbsp;Download Data&nbsp;&nbsp;&nbsp;" /> 
+				</td>
+				
+	        </tr>
+        </table>	
+			<center>
+			<table style = "width : 98%; height : 8%; margin-top : 2%; margin-bottom : 1%; 
+			margin-right : 1%; margin-left : 1%;  font-size : 80%; background : white; border : thin solid grey">
+			
+				<tr style = "border : solid 1px white; background : #0053CF; color : white; font-weight : 700; font-size : 110%">	
+					<th style = "padding-right : 4px; padding-left : 4px; max-height : 2%"><div style="overflow:hidden">LipidMaps Id</div></th>
+					<th nowrap class = "lmColEntry2" ><div style="overflow:hidden">Class<br>(Main/Sub/Lev4)</div></th>
+					<th class = "lmColEntry2"><div style="overflow:hidden">Category</div></th>
+					<th class = "lmColEntry2"><div style="overflow:hidden">Molecular Formula</div></th>
+					<th class = "lmColEntry2"><div style="overflow:hidden">Common Name</div></th>
+					<th class = "lmColEntry2"><div style="overflow:hidden">Systematic Name</div></th>
+					<th class = "lmColEntry2"><div style="overflow:hidden">Inchi Key</div></th>
+					<th class = "lmColEntry2"><div style="overflow:hidden">Smiles</div></th>
+				</tr>	
+				
+				
+				<tr wicket:id = "infoListView" >
+					<td style = "vertical-align : top; padding-top : 8px; text-align : right; padding-right : 8px; font-size : 80%"> <span wicket:id = "lipidMapsId" ></span> </td>
+					<td nowrap style = "vertical-align : top; text-align : right; padding-right : 8px;">
+						<table style = "font-size : 90%; vertical-align : top; margin-top : 4px"> 
+							<tr><td  style = "padding-left : 10px; text-align : left">[<span wicket:id = "mainClass" ></span>]</td></tr>
+							<tr><td style = "padding-left : 10px; text-align : left"> [<span wicket:id = "subClass" ></span>]</td></tr>
+							<tr><td style = "padding-left : 10px; text-align : left">[<span wicket:id = "classLevel4" ></span>]</td></tr>
+						</table> 
+					</td>
+					<td style = "vertical-align : top; text-align : center; font-size : 80%; padding-top : 8px "> <span wicket:id = "category" ></span> </td>
+					
+					<td style = "vertical-align : top; text-align : right; padding-right : 8px; font-size : 80%; padding-top : 8px"> <span wicket:id = "molecularFormula" ></span> </td>
+					
+					<td class = "lmColEntry1" > <span wicket:id = "commonName" ></span> </td>
+					<td class = "lmColEntry1"> <span wicket:id = "systematicName" ></span> </td>
+					<td class = "lmColEntry1"> <span wicket:id = "inchiKey" ></span> </td>
+					<td class = "lmColEntry1"> 
+						<!-- <a wicket:id = "imageLink" href = "#"> --> 
+						<span wicket:id = "smiles" ></span>
+						<!-- </a> --> 
+					</td>
+				</tr>
+				
+
+			</table>
+			
+			
+	        	<table style = "height : 10%; margin-bottom : 1%">	
+	        		<tr>
+	        			<td style = "text-align : center">
+		        			<input style = "font-size : 80%" type = "submit" wicket:id = "cancelButton"  value = "&nbsp;&nbsp;Close&nbsp;&nbsp;" />	
+	        			</td>
+	        		</tr> 
+		        </table>
+	        </center>
+		
+		</form>   
+</body>
+
+</html>
+
+
+ 

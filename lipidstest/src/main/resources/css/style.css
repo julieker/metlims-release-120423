@@ -1,0 +1,421 @@
+#extitle {
+	font-size: 12pt;
+	font-weight: bold;
+	color: #E9601A;
+	padding: 10px 10px 10px 10px;
+}
+
+.mark {
+	background-color: yellow;
+	margin: 5px;	
+}
+
+.feedbackPanelERROR {
+	color: red;
+	list-style: none;
+	font-weight: bold;
+}
+
+.feedbackPanelINFO {
+	color: green;
+	list-style: circle;
+	font-weight: bold;
+}
+.nospam {
+	display : none;
+}
+
+
+
+h2 {
+	font-size: 1.25em;
+}
+
+h3 {
+	font-size: 1em;
+}
+
+img {
+	border: none;
+}
+
+pre {
+	font-family: 'Lucida Sans', 'Helvetica', 'Sans serif', 'sans';
+}
+
+th {
+	background:  #031c7c;
+	color: white;
+	font-weight: bold;
+}
+
+tr.b {
+	background: #F5F5F5;
+}
+
+tr.a {
+	background: #E6E6E5;
+}
+
+tr.none {
+	background: transparent;
+}
+
+tr td {
+	text-align: left;
+	}
+	
+a.none {
+	background: transparent;
+	padding-right: 0px;
+}
+
+.blueHeaderTable th { 
+	background: transparent;
+	color: black;
+	font-weight: normal;
+	}
+	
+.inputForm label {
+	display: block;
+	margin-top: 5px;
+}
+
+#numberRadioChoice label { display: inline !important; }
+
+.inputForm label.non {
+	display: inline !important;
+}
+
+.inputFormTable td {
+	vertical-align: top;
+	padding: 10px;
+}
+
+#nestedExampleTree {
+	width: 300px;
+}
+
+#feedbackPanel {
+	width: 600px;
+}
+
+#siteSelection {
+	width: 200px;
+}
+
+div.tabRowContent {
+	border-color: #DDDDDD;
+	border-style: solid;
+	border-width: 1px;
+	margin: 4px;
+	padding: 4px;
+}
+
+
+table.dataview {
+	margin-bottom: 10px;
+	/* border-bottom: 4px solid #3300ff; */  /*#0079d6;*/
+	font-size: 1em;
+	font-family: arial;
+	}
+	
+table.dataview caption { text-align: left; }
+table.dataview tr { padding-top: 2px; padding-bottom: 2px; }
+table.dataview tr.even { background-color: #EEEEEE; }
+table.dataview tr.odd { background-color: #fff; }
+table.dataview tr.selected { background-color: #C2DFFF; }
+table.dataview tr td { padding-left: 8px; padding-right: 30px; }
+table.dataview tr td.storage { background-color: #FAF8CC; }
+table.dataview tr td.prepped { background-color: #EBDDE2; }
+table.dataview tr td.injected { background-color: #E3E4FA; }
+table.dataview tr td.processed { background-color: #CFECEC; }
+table.dataview tr td.complete { background-color: #DFFFD4; }
+table.dataview tr th { 
+	color: white; 
+	padding-top: 3px; 
+	padding-bottom: 3px; 
+	padding-left: 8px; 
+	padding-right: 30px; 
+	background-color: #000044 /*#c1e4ff; */ 
+	/*
+	border-bottom: 1px solid #0079d6; 
+	border-top: 1px solid #0079d6;
+	*/ 
+	text-align: left; 
+	white-space: nowrap; 
+	vertical-align: middle;}
+
+table.dataview tr th { background-position: right; background-repeat:no-repeat; }
+table.dataview tr th.wicket_orderDown {
+	background-color: #87cbff; background-image: url(displaytag/img/arrow_down.png); }
+table.dataview tr th.wicket_orderUp {
+	background-color: #87cbff; background-image: url(displaytag/img/arrow_up.png); }
+table.dataview tr th.wicket_orderNone {
+	background-image: url(displaytag/img/arrow_off.png);
+}
+table.dataview tr th a { font-weight: bold; text-decoration: none; }
+table.dataview #message { padding-left: 3px; }
+table.dataview caption { padding-bottom: 2px; }
+table.dataview input {font-size: 60%; }
+
+
+
+table.dataview2 {
+	margin-bottom: 10px;
+	/* border-bottom: 4px solid #3300ff; */  /*#0079d6;*/
+	font-size: 1em;
+	font-family: arial;
+	}
+	
+table.dataview2 caption { text-align: right; }
+table.dataview2 tr { padding-top: 2px; padding-bottom: 2px; }
+table.dataview2 tr.even { background-color: #FFF; }
+table.dataview2 tr.odd { background-color: #fff; }
+table.dataview2 tr.selected { background-color: #FFF; }
+table.dataview2 tr td { padding-left: 8px; padding-right: 30px; }
+table.dataview2 tr td.storage { background-color: #FAF8CC; }
+table.dataview2 tr td.prepped { background-color: #EBDDE2; }
+table.dataview2 tr td.injected { background-color: #E3E4FA; }
+table.dataview2 tr td.processed { background-color: #CFECEC; }
+table.dataview2 tr td.complete { background-color: #DFFFD4; }
+table.dataview2 tr th { 
+	color: white; 
+	padding-top: 3px; 
+	padding-bottom: 3px; 
+	padding-left: 8px; 
+	padding-right: 30px; 
+	background-color: #000033 /*#c1e4ff; */ 
+	/*
+	border-bottom: 1px solid #0079d6; 
+	border-top: 1px solid #0079d6;
+	*/ 
+	text-align: right; 
+	white-space: nowrap; 
+	vertical-align: middle;}
+
+table.dataview2 tr th { background-position: right; background-repeat:no-repeat; }
+table.dataview2 tr th.wicket_orderDown {
+	background-color: #87cbff; background-image: url(displaytag/img/arrow_down.png); }
+table.dataview2 tr th.wicket_orderUp {
+	background-color: #87cbff; background-image: url(displaytag/img/arrow_up.png); }
+table.dataview2 tr th.wicket_orderNone {
+	background-image: url(displaytag/img/arrow_off.png);
+}
+table.dataview2 tr th a { font-weight: bold; text-decoration: none; }
+table.dataview2 #message { padding-left: 3px; }
+table.dataview2 caption { padding-bottom: 2px; }
+table.dataview2 input {font-size: 60%; }
+
+header_back
+/* TAB PANEL STYLES */
+  
+div.tab-panel {
+	clear: left;
+	padding-top:0px;
+}
+  
+/* VARIATION 1 TAB PANEL STYLES first is the top bar*/
+div.tabpanel1 div.tab-row{
+  float:left;
+  width:100%;
+  background: url("../images/tabs1/bg.gif") repeat-x bottom; 
+  line-height:normal;
+  border : solid grey groove;
+  }
+
+div.tabpanel1 div.tab-row ul {
+  list-style:none;
+  line-height: normal;
+  margin:0;
+  position: relative;
+  width:100%;
+  padding:3px 3px 0px 0px; 
+  float: left;
+  }
+  
+div.tabpanel1 div.tab-row ul li {
+  float:left;
+  position: relative;
+  background: url("../images/tabs1/left.gif") no-repeat left top; 
+  margin:0;
+  padding:0 0 0 5px;
+  }
+  
+div.tabpanel1 div.tab-row a {
+  display: block;
+  background: url("../images/tabs1/right_grey.gif") no-repeat right top;
+  padding:5px 9px 4px 6px;
+  text-decoration:none;
+  font-weight:bold;
+  font-size: 75%;
+  color:#808080;
+  white-space:nowrap;
+  }
+  
+div.tabpanel1 div.tab-row a:hover {
+  color:#333;
+  }
+  
+div.tabpanel1 div.tab-row li.selected {
+  background-image:url("../images/tabs1/left_on.gif");
+  }
+  
+div.tabpanel1 div.tab-row li.selected a {
+  background-image: url("../images/tabs1/right_on_grey.gif"); 
+  color:#000000;
+  background : #ffffff; 
+  padding-bottom:5px;
+  }
+ 
+
+/*  FOR DRCC TAB  -- EXPERIMENT */
+
+div.tabpanel6 div.tab-row{
+  float:left;
+  width:100%;
+  background: url("../images/tabs1/bg.gif") repeat-x bottom; 
+  line-height:130%;
+  border : solid grey groove;
+  }
+
+div.tabpanel6 div.tab-row ul {
+  list-style:none;
+  line-height: normal;
+  margin:0;
+  position: relative;
+  width:100%;
+  padding:3px 3px 0px 0px; 
+  float: left;
+  }
+  
+div.tabpanel6 div.tab-row ul li {
+  float:left;
+  position: relative;
+  background: url("../images/tabs1/left.gif") no-repeat left top; 
+  margin:0;
+  padding:0 0 0 5px;
+  }
+  
+div.tabpanel6 div.tab-row a {
+  display: block;
+  background: url("../images/tabs1/right_grey.gif") no-repeat right top;
+  padding:5px 9px 4px 6px;
+  text-decoration:none;
+  font-weight:bold;
+  font-size: 75%;
+  color:#808080;
+  white-space:nowrap;
+  }
+  
+div.tabpanel6 div.tab-row a:hover {
+  color:#333;
+  }
+  
+div.tabpanel6 div.tab-row li.selected {
+  background-image:url("../images/tabs1/left_on.gif");
+  }
+  
+div.tabpanel6 div.tab-row li.selected a {
+  background-image: url("../images/tabs1/right_on_grey.gif"); 
+  color:#000000;
+  background : #ffffff; 
+  padding-bottom:5px;
+  }
+
+
+
+/* PROGRESS BAR */
+
+    div.wupb-uploadStatus {
+        margin: 5px;
+        color: #aaa;
+    }
+ 
+    div.wupb-progressBar {
+        margin: 5px;
+    }
+
+    div.wupb-progressBar .wupb-border {
+	    background: url( images/progress-remainder.gif ) repeat-x;
+		background-color: #eee;
+        border-left: 1px solid grey;
+        border-right: 1px solid grey;
+        width: 100%;
+    }
+
+    div.wupb-progressBar .wupb-background {
+	    background: url( images/progress-bar.gif ) repeat-x; 
+		background-color: #507090;
+        height: 18px;
+        width: 0%;
+    }
+/* END PROGRESS BAR */
+
+table.grid {
+	margin-bottom: 10px;
+	border-bottom: 1px solid #0079d6;
+	font-size: 1em;
+	font-family: arial;
+	width: 100%;
+	}
+	
+ 
+table.grid tr { padding-top: 2px; padding-bottom: 2px; }
+table.grid tr.odd { background-color: #ffebcd; }
+table.grid tr.even { background-color: #fff; }
+table.grid tr td { padding-left: 8px; padding-right: 30px; }
+
+
+/* NAVIGATION */
+table.grid tr.navigation { text-align: left; font-size: 0.8em;}
+table.grid tr.navigation td { padding-right: 0px;}
+
+
+/* HEADERS */
+table.grid tr th { font-weight: normal; padding-top: 3px; padding-bottom: 3px; padding-left: 8px;
+ padding-right: 24px; background-color: #c1e4ff; border-bottom: 1px solid #0079d6; border-top: 1px solid #0079d6; text-align: left; white-space: nowrap; vertical-align: middle;}
+table.grid tr th a { padding-right: 15px; background-position: right; background-repeat:no-repeat; }
+table.grid tr th.wicket_orderDown a { color:black; background-image: url(images/arrow_down.png); }
+table.grid tr th.wicket_orderUp a { color: black; background-image: url(images/arrow_up.png); }
+table.grid tr th.wicket_orderNone a {
+	background-image: url(images/arrow_off.png);
+}
+table.grid tr th a { font-weight: normal; }
+
+
+/* FILTERS */
+table.grid td.filter-td { font-size: 1em; background-color: #c1e4ff; border-bottom: 1px solid #0079d6; }
+table.grid td.filter-td input.go { width: 45%; }
+table.grid td.filter-td input.clear { width: 45%; }
+table.grid td.filter-td input { width: 100%; font-size: 0.6em; }
+table.grid td.filter-td select { width: 100%; font-size: 0.6em; }
+
+tr.section td {
+	padding-top: 0.75em;
+}
+
+/* comments this is the one....*/
+
+
+ div.wicket-aa
+                        {
+                        font-family: "Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana;
+                        font-size: 12px;
+                        background-color: white;
+
+                        padding: 2px;
+                        margin: 1px 0 0 0;
+                        text-align:left;
+                        z-index: 5;
+                        }
+
+
+ div.wicket-aa ul { list-style:none; padding: 2px; margin:0; }
+                div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0; }
+
+ 
+
+
+
+

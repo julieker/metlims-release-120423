@@ -1,0 +1,363 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  WorklistFieldBuilder.java
+//  Written by Jan Wigginton
+//  February 2015
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
+
+import java.io.Serializable;
+
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.PropertyModel;
+
+
+
+public class WorklistFieldBuilder implements Serializable
+	{
+	public WorklistFieldBuilder()
+		{
+		}
+	
+	public static TextField buildStringTextField(String id, WorklistItemSimple item, String field)
+		{
+	    TextField wrkField = new TextField(id, new PropertyModel<String>(item, field));
+	    if (field.equals("sampleName"))
+	        wrkField.add(AttributeModifier.append("title", item.getSampleName()));
+		// Issue 268
+	    if (field.equals("outputFileName"))
+	    	wrkField.add(AttributeModifier.append("title", item.getOutputFileName()));
+	    // issue 268
+	    if (field.equals("methodFileName"))
+	    	wrkField.add(AttributeModifier.append("title", item.getMethodFileName()));
+	    if (field.equals("overrideMethod"))
+	    	wrkField.add(AttributeModifier.append("title", item.getOverrideMethod()));
+	    //return new TextField(id, new PropertyModel<String>(item, field));
+		return wrkField;
+		}
+
+
+	public static Label buildPlateLabelField(String id, final WorklistItemSimple item, String field)
+		{
+		return new Label(id, new PropertyModel<String>(item, field))
+			{
+			@Override
+			protected void onComponentTag(ComponentTag tag)
+				{
+				super.onComponentTag(tag);
+				String displayTitle = assembleStyleTag(item, true);
+				tag.put("style", displayTitle);
+				if (!(item == null || item.getSampleType().trim().startsWith("Unknown")))
+					tag.put("title", item.getSampleType());
+				}
+			};
+		}
+
+	
+	public static TextField buildIntegerTextField(String id, final WorklistItemSimple item, final String field)
+		{
+		return new TextField<Integer>(id, new PropertyModel<Integer>(item,field))
+			{
+			public boolean isEnabled()
+				{
+				return (field.equals("randomIdx") && item.getRepresentsControl() == true);
+				}
+			};
+		}
+
+	
+	public static TextField buildDoubleTextField(String id, WorklistItemSimple item, String field)
+		{
+		return new TextField(id, new PropertyModel<Double>(item, field));
+		}
+
+	
+	public static TextField buildFillDoubleTextField(String id, WorklistItemSimple item, String field)
+		{
+		return new TextField(id, new PropertyModel<Double>(item, field));
+		}
+
+	
+	public static TextField buildStringWorklistField(final String id, final WorklistItemSimple item, final String field)
+		{
+		TextField txt = WorklistFieldBuilder.buildStringTextField(id, item, field);
+
+		txt.add(buildTextDecoratingBehavior(id, item, field));
+		txt.add(buildChangeRegistrationBehavior(id, item, field));
+
+		return txt;
+		}
+
+	
+	// onComponentTag
+	public static Label buildPlateLabelWorklistField(final String id, final WorklistItemSimple item,  String field)
+		{
+		// Issue 268 
+		// issue 346
+		if (!item.getNameForUserControlGroup().equals(""))
+			field = "shortNameForUserControlGroup";
+		else 
+			field = "shortSampleName";
+		Label pLabel = WorklistFieldBuilder.buildPlateLabelField(id, item, field);
+		pLabel.add(AttributeModifier.append("title", item.getSampleName()));
+		return pLabel;
+		}
+
+	public static TextField buildDoubleWorklistField(final String id, final WorklistItemSimple item, final String field)
+		{
+		TextField txt = WorklistFieldBuilder.buildDoubleTextField(id, item, field);
+		txt.add(buildTextDecoratingBehavior(id, item, field));
+		return txt;
+		}
+
+	
+	public static TextField buildIntegerWorklistField(final String id, final WorklistItemSimple item, String field)
+		{
+		TextField txt = WorklistFieldBuilder.buildIntegerTextField(id, item, field);
+
+		txt.add(buildTextDecoratingBehavior(id, item, field));
+
+		return txt;
+		}
+
+	
+	private static AjaxFormComponentUpdatingBehavior buildChangeRegistrationBehavior(String id, final WorklistItemSimple item, final String field)
+		{
+		return new AjaxFormComponentUpdatingBehavior("change")
+			{
+			@Override
+			protected void onUpdate(AjaxRequestTarget target)
+				{
+				target.appendJavaScript("Something changed!!');");
+				item.setIsHandEdited(true);
+				}
+			};
+		}
+
+	
+	private static AjaxFormComponentUpdatingBehavior buildTextDecoratingBehavior(String id, final WorklistItemSimple item, final String field)
+		{
+		return new AjaxFormComponentUpdatingBehavior("change")
+			{
+			@Override
+			protected void onUpdate(AjaxRequestTarget target) { }
+
+			protected void onComponentTag(final ComponentTag tag)
+				{
+				super.onComponentTag(tag);
+				String style = assembleStyleTag(item, false);
+				
+				if (field.equals("randomIdx") && item.getRepresentsControl())
+					tag.put("title", "Delete control " + item.getSampleName());
+
+				tag.put("style", style);
+				}
+			};
+		}
+
+	
+	private static String assembleStyleTag(WorklistItemSimple item, boolean forTable)
+		{
+		String style = forTable ? "" : "width : 100%;";
+	
+		if (item.getIsDeleted())
+			style += decorateAsDeleted(item);
+
+		style += shadeBackground(item);
+
+		return style;
+		}
+
+	
+	private static String decorateAsDeleted(WorklistItemSimple item)
+		{
+		String style = "";
+		String big_blank = "                                                                 ";
+		item.setSampleName(item.getSampleName()
+				+ "                                                                                                                                                       ");
+		item.setMethodFileName(item.getMethodFileName() + big_blank + big_blank);
+		item.setOutputFileName(item.getOutputFileName() + big_blank + big_blank);
+
+		style += "white-space:nowrap;  text-decoration : line-through; text-decoration-color : red; -moz-text-decoration-color: red;";
+		return style;
+		}
+	
+// issue 371 and 372 and 394
+	private static String shadeBackground(WorklistItemSimple item)
+		{     
+		String style = "background :";
+		String name = item.getSampleType().trim();
+		if (item.getSampleType().startsWith("Blank"))
+			style += "#CEF7E8";  
+		else if (item.getSampleType().startsWith("Pooled Plasma"))
+			style += "#F6CDCB"; 
+		else if (item.getSampleType().startsWith("Standard Mix"))
+			style += "#CBE3F6";  
+		else if (item.getSampleType().startsWith("Test Pool"))
+			style += "#D9F6CB";  
+		else if (item.getSampleType().startsWith("Neat Blank"))
+			style += "#CEF7E8"; 
+		else if (item.getSampleType().startsWith("Process Blank"))
+			style += "#F6CDCB";  
+		else if (item.getSampleType().startsWith("RC Plasma"))
+			style += "#CBE3F6";  
+		else if (item.getSampleType().startsWith("Red Cross"))
+			style += "#CBE3F6";  
+		else if (item.getSampleType().startsWith("Matrix Blank"))
+			style += "#CBE3F6";  	
+		else if (item.getSampleType().startsWith("Solvent Blank"))
+			style += "#D9F6CB";  
+		else if (item.getSampleType().startsWith("Standard.0"))
+			style += "#EFF6CB";  
+		else if (item.getSampleType().startsWith("Standard 0"))
+			style += "#EFF6CB";  
+		else if (item.getSampleType().startsWith("Standard.10"))
+			style += "#F6CBF2";  
+		else if (item.getSampleType().startsWith("Standard 10"))
+			style += "#F6CBF2";  
+		else if (item.getSampleType().startsWith("Standard.11"))
+			style += "#E9E9FF";
+		else if (item.getSampleType().startsWith("Standard 11"))
+			style += "#E9E9FF";
+		else if (item.getSampleType().startsWith("Standard.1"))
+			style += "#E9E9FF";  
+		else if (item.getSampleType().startsWith("Standard 1"))
+			style += "#E9E9FF";  
+		else if (item.getSampleType().startsWith("Standard.2"))
+			style += "#CBD9F6";  
+		else if (item.getSampleType().startsWith("Standard 2"))
+			style += "#CBD9F6";  
+		else if (item.getSampleType().startsWith("Standard.3"))
+			style += "#E8CBF6";  
+		else if (item.getSampleType().startsWith("Standard 3"))
+			style += "#E8CBF6";  
+		else if (item.getSampleType().startsWith("Standard.4"))
+			style += "#F6CBF2";  
+		else if (item.getSampleType().startsWith("Standard 4"))
+			style += "#F6CBF2";  
+		else if (item.getSampleType().startsWith("Standard.5"))
+			style += "#E9E9FF";
+		else if (item.getSampleType().startsWith("Standard 5"))
+			style += "#E9E9FF";
+		else if (item.getSampleType().startsWith("Standard.6"))
+			style += "#EFF6CB";  
+		else if (item.getSampleType().startsWith("Standard 6"))
+			style += "#EFF6CB";  
+		else if (item.getSampleType().startsWith("Standard.7"))
+			style += "#CBF6D2";  
+		else if (item.getSampleType().startsWith("Standard 7"))
+			style += "#CBF6D2";  
+		else if (item.getSampleType().startsWith("Standard.8"))
+			style += "#CBD9F6";  
+		else if (item.getSampleType().startsWith("Standard 8"))
+			style += "#CBD9F6";  
+		else if (item.getSampleType().startsWith("Standard.9"))
+			style += "#E8CBF6";  
+		else if (item.getSampleType().startsWith("Standard 9"))
+			style += "#E8CBF6";  
+		else if (item.getSampleType().startsWith("Blank"))
+			style += "#CEF7E8";  
+		else if (item.getSampleType().startsWith("Master Pool"))
+			style += "#F6CBCF";  
+		else if (item.getSampleType().startsWith("Pool.0"))
+			style += "#F6CBCF";  
+		else if (item.getSampleType().startsWith("Pool.1b"))
+			style += "#B3CDE0";  
+		else if (item.getSampleType().startsWith("Batch Pool.M1"))
+		        style += "#CBF6D2";	 
+		else if (item.getSampleType().startsWith("Pool.1"))
+		        style += "#CBF6D2";	 		
+		else if (item.getSampleType().startsWith("Batch Pool.M2"))
+			style += "#CBD9F6";  
+		else if (item.getSampleType().startsWith("Pool.2"))
+			style += "#CBD9F6";  
+		else if (item.getSampleType().startsWith("Batch Pool.M3"))
+			style += "#E8CBF6";  
+		else if (item.getSampleType().startsWith("Pool.3"))
+			style += "#E8CBF6";  
+		else if (item.getSampleType().startsWith("Batch Pool.M4"))
+			style += "#F6CBF2";  
+		else if (item.getSampleType().startsWith("Pool.4"))
+			style += "#F6CBF2";  
+		else if (item.getSampleType().startsWith("Batch Pool.M5"))
+			style += "#E9E9FF";
+		else if (item.getSampleType().startsWith("Pool.5"))
+			style += "#E9E9FF";
+		else if (item.getSampleType().startsWith("Other Pool.0"))
+			style += "#EFF6CB"; 
+		else if (item.getSampleType().startsWith("Pool.6"))
+			style += "#EFF6CB"; 
+		else if (item.getSampleType().startsWith("Other Pool.1"))
+			style += "#CBF6D2";
+		else if (item.getSampleType().startsWith("Pool.7"))
+			style += "#CBF6D2";
+		else if (item.getSampleType().startsWith("Other Pool.2"))
+			style += "#CBD9F6"; 
+		else if (item.getSampleType().startsWith("Pool.8"))
+			style += "#CBD9F6"; 
+		else if (item.getSampleType().startsWith("Other Pool.3"))
+			style += "#E8CBF6"; 
+		else if (item.getSampleType().startsWith("Pool.9"))
+			style += "#E8CBF6"; 
+		else if (item.getSampleType().startsWith("Reference 1 - urine"))
+			style += "#e9fb8c"; 
+		else if (item.getSampleType().startsWith("Reference 2 - urine"))
+			style += "#f7fed6"; 
+		else if (item.getSampleType().startsWith("Reference 1 - plasma"))
+			style += "#d8f4f8"; 
+		else if (item.getSampleType().startsWith("Reference 2 - plasma"))
+			style += "#ACE8F1"; 
+		// MotrPac Issue 422
+		// Issue 422
+		else if (item.getSampleType().startsWith("MoTrPAC -   Gastrocnemius, Exercise"))
+			style += "#FF92BB";
+		// issue 422
+		else if (item.getSampleType().startsWith("MoTrPAC -   Gastrocnemius, Sedentary"))
+			style += "#EEE0E5";
+		// Issue 422
+		else if (item.getSampleType().startsWith("MoTrPAC -   Liver, Exercise"))
+			style += "#BDA0CB";
+		// issue 422
+		else if (item.getSampleType().startsWith("MoTrPAC -   Liver, Sedentary"))
+			style += "#CDB5CD";
+		// Issue 422
+		else if (item.getSampleType().startsWith("MoTrPAC -   Adipose, Exercise"))
+			style += "#ECC8EC";
+		// issue 422
+	    else if (item.getSampleType().startsWith("MoTrPAC -   Adipose, Sedentary"))
+            style += "#EEA9B8";
+		// Issue 422
+		else if (item.getSampleType().startsWith("MoTrPAC -   Plasma, Exercise"))
+			style += "#DCA2CD";
+		// issue 422
+		else if (item.getSampleType().startsWith("MoTrPAC -   Plasma, Sedentary"))
+			style += "#D3BECF";
+		// issue 422
+		else if (item.getSampleType().startsWith("UM rat   plasma control"))
+			style += "#FFADB9";	
+		// issue 427
+		else if (item.getSampleType().startsWith("UM rat   liver control"))
+			style += "#EE799F";	
+		else if (item.getSampleType().startsWith("UM rat   adipose control"))
+			style += "#F6C9CC";	
+		else if (item.getSampleType().startsWith("UM rat   gastrocnemius control"))
+			style += "#D0A9AA";	
+		
+		// color will be good choice when pool1b is no longer use 
+		else if (item.getRepresentsUserDefinedControl())
+			style += "#e0b3dd";		
+		else
+			style += "#eaeef2";
+		return style;		
+		}
+
+	//issue 394 get rid of dead routines buildDynamicHOverMessageBehavior, trimtags
+	
+	}
+
+ 

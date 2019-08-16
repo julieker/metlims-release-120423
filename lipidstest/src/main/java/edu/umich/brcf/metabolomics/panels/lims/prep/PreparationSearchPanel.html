@@ -1,0 +1,47 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+	<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+	<style>
+        legend { border: 1px solid #e9601a; background-color: #bbb; color: #fff; padding: 4px;}
+        fieldset { border: 1px solid #e9601a; padding: 10px; margin-top: 10px;}
+    </style>
+</head>
+<wicket:head>
+	<style>
+		div.wicket-aa {
+			font-family: "Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana;
+			font-size: 12px;
+			background-color: white;
+			border-width: 1px;
+			border-color: #cccccc;
+			border-style: solid;
+			padding: 2px;
+			margin: 1px 0 0 0;
+			text-align:left;
+			z-index: 5;
+		}
+		div.wicket-aa ul { list-style:none; padding: 2px; margin:0; }
+		div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0; }
+	</style>
+</wicket:head>
+<body>
+<wicket:panel>
+<br/>
+	<center>
+	 <span wicket:id = "feedback"></span>
+		<form wicket:id = "preparationForm">   
+			<table width="100%">
+<!--			<tr class="userInfo"><td align="right">User: <b><span wicket:id="creator"></span></b></td>-->
+<!--			<td align="left">Date: <b><span wicket:id="prepDate"></span></b></td></tr>-->
+			<tr><td colspan="2" align="center"> Prep Title: <input type="text" wicket:id="title" size="25"/>&nbsp;
+			<div wicket:id="modal1"></div>
+		    <input type="submit" wicket:id="createPlate" value="Get/Create Plate"/></td></tr>
+		     <tr><td colspan="2"> <span wicket:id="pdh"></span></td></tr>
+		    <tr><td colspan="2"> <span wicket:id="tabs"  class="tabpanel2"></span></td></tr>
+		    </table>
+		</form>
+	</center>
+</wicket:panel>
+</body>
+</html>

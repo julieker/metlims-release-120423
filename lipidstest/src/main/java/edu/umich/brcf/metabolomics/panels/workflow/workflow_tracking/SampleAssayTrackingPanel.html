@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<wicket:head>
+	<style>
+		.entry_label { font-weight : 400;  text-align : right; color : #0053CF; background : white }
+	</style>
+</wicket:head>
+
+<wicket:panel>
+
+	<div style = "margin-top : 0%">
+		<span style = "height : 20px" >&nbsp; </span>
+		<div style = "text-align : center">
+			<div style = "margin-top : 1%;  margin-bottom : 2%; font-size : 135%; color : #0053CF">Metabolomics Core - Assay/Sample Status</div>
+		</div>
+	</div>
+	
+			  
+		  <table style = "border : none; width : 90%; margin-left : 5%; margin-right : 5%; margin-top : 5px; ">
+			<tr>
+				<td style = "border : none; width : 40%; text-align :left ">
+		    		<table style = "border : none">
+			    		<tr>
+							<th style = "width : 20%" class = "entry_label">Experiment : </th>
+							<td nowrap style = "width : 80%" ><span wicket:id = "experimentId"></span> (<span wicket:id = "experimentName"></span>)</td>
+						</tr>
+					
+						<tr>
+					  		<th class = "entry_label">Assay : </th>
+					  		<td nowrap><span wicket:id = "assayId"></span> (<span wicket:id = "assayName">Moes Metabalome</span>)</td>
+						</tr>
+					</table>
+				</td>
+		  	
+				<td style = "width : 50%; text-align : right">
+				
+					<table style = "width : 100%; text-align : right">
+						<tr style = "vertical-align : top">
+							<td style = "width : 50%; text-align : right">
+								<input  wicket:id = "backButton" type="button"   value="&nbsp;&nbsp;New Search&nbsp;&nbsp;" />
+							</td>
+						</tr> 
+					</table>
+				</td>
+			</tr>
+		</table>
+	
+<div wicket:id="modal1"></div>
+	<table style="width: 90%; margin-left : 5%; margin-right : 5%">
+		<tr >
+			<th style = "width : 4%; text-align : center;"></th>
+			<th style = "width : 4%; text-align : center; padding-left : 10px" > 
+				<input wicket:id="selectAll" type="checkbox"/>
+			</th>
+		  	<th style = "width : 23%; text-align : center">Sample ID</th>
+			<th style = "width : 23%; text-align : center">Assay</th>
+		
+			<th style = "width : 23%; text-align : center">Location 
+			   &nbsp;&nbsp;&nbsp;&nbsp;<input type="button"   style ="display: none; font-weight : 400; 
+			   background : white;  border : solid 1px grey; margin-top : 7px;
+			   margin-bottom : 7px" value="&nbsp;&nbsp;Update...&nbsp;&nbsp;" />
+			</th>
+			
+			<th style = "width : 23%; text-align : center">Status
+			   &nbsp;&nbsp;&nbsp;&nbsp;<input wicket:id = "changeStatus" type="button"  style ="font-weight : 400; background : white; margin-top : 7px;
+			   margin-bottom : 7px" value="&nbsp;&nbsp;Update...&nbsp;&nbsp;" />
+		    </th>
+		</tr>
+	</table>
+
+
+<div style="overflow: auto;height: 90%; width : 90%; margin-left : 5%; margin-right : 5%">
+<!--  <div id="scrollPanel">-->
+    <table style="width: 100% ; border : thin grey groove" class="dataview">
+
+	<tr wicket:id = "samples" style = "height : 25px">
+	  <td style = "width : 4%; text-align : right; padding-right : 1%"> 
+	  		<span wicket:id = "index"> </span>
+	  </td>
+
+      <td style = "width : 4%; text-align : right; padding-right : 1%">
+        	<input wicket:id ="selected" type="checkbox"/>
+      </td>
+
+      <td style = "width : 23%; text-align : right ; padding-right : 2%">
+      		<span wicket:id = "sampleId"></span>
+      </td>
+
+      <td style = "width : 23%; text-align : right ; padding-right : 2%">
+      		<span wicket:id = "sampleName"></span>
+      </td>
+      
+      <td style = "width : 23%; text-align : right ; padding-right : 2%; ">
+      		<span wicket:id = "location"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      		<input wicket:id  = "locationHistory" type = "button" title = "History" value = "&nbsp;&nbsp;History...&nbsp;&nbsp;" />
+      </td>
+      
+      <td wicket:id="cell" style = "width : 23%; text-align : right ; padding-right : 2%">
+      		<span wicket:id = "sampleAssayStatus"></span>
+      </td>
+    </tr>
+  </table>	
+  </div>
+ 
+</wicket:panel>
+</html>

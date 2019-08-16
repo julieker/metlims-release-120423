@@ -1,0 +1,238 @@
+
+.feedbackPanelERROR {
+	color: red;
+	list-style: none;
+	font-weight: bold;
+}
+
+.feedbackPanelINFO {
+	color: green;
+	list-style: circle;
+	font-weight: bold;
+}
+
+
+
+
+h2 {
+	font-size: 1.25em;
+}
+
+h3 {
+	font-size: 1em;
+}
+
+img {
+	border: none;
+}
+
+pre {
+	font-family: 'Lucida Sans', 'Helvetica', 'Sans serif', 'sans';
+}
+
+th {
+	background:  #031c7c;
+	color: white;
+	font-weight: bold;
+}
+
+tr.b {
+	background: #F5F5F5;
+}
+
+tr.a {
+	background: #E6E6E5;
+}
+
+tr.none {
+	background: transparent;
+}
+
+tr td {
+	text-align: left;
+	}
+	
+a.none {
+	background: transparent;
+	padding-right: 0px;
+}
+
+.blueHeaderTable th { 
+	background: transparent;
+	color: black;
+	font-weight: normal;
+	}
+	
+.inputForm label {
+	display: block;
+	margin-top: 5px;
+}
+
+
+.inputForm label.non {
+	display: inline !important;
+}
+
+.inputFormTable td {
+	vertical-align: top;
+	padding: 10px;
+}
+
+
+
+
+div.tabRowContent {
+	border-color: #DDDDDD;
+	border-style: solid;
+	border-width: 1px;
+	margin: 4px;
+	padding: 4px;
+}
+
+
+table.dataview {
+	margin-bottom: 10px;
+	/* border-bottom: 4px solid #3300ff; */  /*#0079d6;*/
+	font-size: 1em;
+	font-family: arial;
+	}
+	
+table.dataview caption { text-align: left; }
+table.dataview tr { padding-top: 2px; padding-bottom: 2px; }
+table.dataview tr.even { background-color: #EEEEEE; }
+table.dataview tr.odd { background-color: #fff; }
+table.dataview tr.selected { background-color: #C2DFFF; }
+table.dataview tr td { padding-left: 8px; padding-right: 30px; }
+table.dataview tr td.storage { background-color: #FAF8CC; }
+table.dataview tr td.prepped { background-color: #EBDDE2; }
+table.dataview tr td.injected { background-color: #E3E4FA; }
+table.dataview tr td.processed { background-color: #CFECEC; }
+table.dataview tr td.complete { background-color: #DFFFD4; }
+table.dataview tr th { 
+	color: white; 
+	padding-top: 3px; 
+	padding-bottom: 3px; 
+	padding-left: 8px; 
+	padding-right: 30px; 
+	background-color: #000044 /*#c1e4ff; */ 
+	/*
+	border-bottom: 1px solid #0079d6; 
+	border-top: 1px solid #0079d6;
+	*/ 
+	text-align: left; 
+	white-space: nowrap; 
+	vertical-align: middle;}
+
+table.dataview tr th { background-position: right; background-repeat:no-repeat; }
+table.dataview tr th.wicket_orderDown {
+	background-color: #87cbff; background-image: url(displaytag/img/arrow_down.png); }
+table.dataview tr th.wicket_orderUp {
+	background-color: #87cbff; background-image: url(displaytag/img/arrow_up.png); }
+table.dataview tr th.wicket_orderNone {
+	background-image: url(displaytag/img/arrow_off.png);
+}
+table.dataview tr th a { font-weight: bold; text-decoration: none; }
+table.dataview #message { padding-left: 3px; }
+table.dataview caption { padding-bottom: 2px; }
+table.dataview input {font-size: 60%; }
+
+
+
+table.dataview2 {
+	margin-bottom: 10px;
+	/* border-bottom: 4px solid #3300ff; */  /*#0079d6;*/
+	font-size: 1em;
+	font-family: arial;
+	}
+	
+
+
+header_back
+/* TAB PANEL STYLES */
+  
+div.tab-panel {
+	clear: left;
+	padding-top:0px;
+}
+  
+
+/*  FOR DRCC TAB  -- EXPERIMENT */
+
+
+
+/* PROGRESS BAR */
+
+    div.wupb-uploadStatus {
+        margin: 5px;
+        color: #aaa;
+    }
+ 
+    div.wupb-progressBar {
+        margin: 5px;
+    }
+
+    div.wupb-progressBar .wupb-border {
+	    background: url( images/progress-remainder.gif ) repeat-x;
+		background-color: #eee;
+        border-left: 1px solid grey;
+        border-right: 1px solid grey;
+        width: 100%;
+    }
+
+    div.wupb-progressBar .wupb-background {
+	    background: url( images/progress-bar.gif ) repeat-x; 
+		background-color: #507090;
+        height: 18px;
+        width: 0%;
+    }
+/* END PROGRESS BAR */
+
+table.grid {
+	margin-bottom: 10px;
+	border-bottom: 1px solid #0079d6;
+	font-size: 1em;
+	font-family: arial;
+	width: 100%;
+	}
+	
+ 
+table.grid tr { padding-top: 2px; padding-bottom: 2px; }
+table.grid tr.odd { background-color: #ffebcd; }
+table.grid tr.even { background-color: #fff; }
+table.grid tr td { padding-left: 8px; padding-right: 30px; }
+
+
+/* NAVIGATION */
+table.grid tr.navigation { text-align: left; font-size: 0.8em;}
+table.grid tr.navigation td { padding-right: 0px;}
+
+
+/* HEADERS */
+table.grid tr th { font-weight: normal; padding-top: 3px; padding-bottom: 3px; padding-left: 8px;
+ padding-right: 24px; background-color: #c1e4ff; border-bottom: 1px solid #0079d6; border-top: 1px solid #0079d6; text-align: left; white-space: nowrap; vertical-align: middle;}
+table.grid tr th a { padding-right: 15px; background-position: right; background-repeat:no-repeat; }
+table.grid tr th.wicket_orderDown a { color:black; background-image: url(images/arrow_down.png); }
+table.grid tr th.wicket_orderUp a { color: black; background-image: url(images/arrow_up.png); }
+table.grid tr th.wicket_orderNone a {
+	background-image: url(images/arrow_off.png);
+}
+table.grid tr th a { font-weight: normal; }
+
+
+/* FILTERS */
+table.grid td.filter-td { font-size: 1em; background-color: #c1e4ff; border-bottom: 1px solid #0079d6; }
+table.grid td.filter-td input.go { width: 45%; }
+table.grid td.filter-td input.clear { width: 45%; }
+table.grid td.filter-td input { width: 100%; font-size: 0.6em; }
+table.grid td.filter-td select { width: 100%; font-size: 0.6em; }
+
+tr.section td {
+	padding-top: 0.75em;
+}
+
+div.wicket-aa ul { list-style:none; padding: 2px; margin:0; }
+                div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0; }
+
+
+
+

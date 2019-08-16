@@ -1,0 +1,42 @@
+<wicket:panel>
+		
+	<div wicket:id="feedback"></div>
+		
+	<form wicket:id = "experimentSelectorForm">
+	
+		<div wicket:id = "container">
+	    <table style = "text-align : left; margin-left : 5%">
+	        <tr>
+	           <td style = " vertical-align : top ; text-align: left">
+		        	<table>
+						<tr>
+							<td  nowrap style = "text-align : right">
+								<label>Experiment Id:&nbsp;&nbsp;</label> 
+							</td>
+			    			<td style = "vertical-align : middle ; ">
+								<select wicket:id = "editExperimentDropdown" style = "width : 150px; margin-left : 10px">
+									<option>Please Select </option>
+									<option>EX00001</option>
+									<option>EX00002</option>
+								</select>
+							</td>	
+							
+							<td  style = "text-align : left; padding-left : 20px; vertical-align : middle ;  ">
+							   <a  href = "#" wicket:id="confirmLink" >
+							    	<input type = "button" value = "Invalidate Samples" style = "width : 100%"/>
+							   </a>&nbsp;&nbsp;&nbsp;&nbsp;
+							 
+							    <input wicket:id = "dummyButton" type = "button" value = "Invalidate Samples" style = "width : 100%"/>
+							   
+							   
+		     				</td>
+						</tr>
+					</table>
+				</td>
+				<td style = "width : 40%" ></td>	     		
+			</tr>
+			
+		</table>	
+		</div>
+	</form>
+</wicket:panel>

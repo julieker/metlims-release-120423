@@ -1,0 +1,77 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="dialog.css"/>
+</head>
+
+<body onUnload="opener.location.reload()" class = "dialog_background">
+
+	<fieldset class = "dialog_fieldset" style = "height : 80%; margin-top : 2%; margin-bottom : 2%; width :90%; margin-left : 5%; margin-right : 5%">	
+		<legend class = "dialog_legend" style = "margin-bottom : 2%">
+		  	<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">Edit Compound</span>
+		</legend>
+  	
+  	
+  	<center>
+   
+
+ 	 <span wicket:id = "feedback" class = "feedbackMsg"/>
+ 
+ 	 <form wicket:id = "editInventoryForm">        
+ 	 	<table style = "width : 80%; margin-left : 10%; margin-right : 10%">
+		  	<tr>
+		  		<td style = "text-align : right">CID:</td>
+		  		<td><span wicket:id = "cid">Moes ID</span></td>
+		  	</tr>
+			<tr>
+			  <td style = "text-align : right">Inventory ID:</td>
+			  <td><span wicket:id = "inventoryId">Moes ID</span></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right">Supplier:</td>
+				<td><select wicket:id="supplier"></select></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right">Catalog Number:</td>
+				<td><input wicket:id="catNum" type="text" value="(123) 456-7890" size="20"/></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right">Bottle Size:</td>
+				<td><input wicket:id="botSize" type="text" value="Moes Email" size="30" /></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right">Location ID:</td>
+				<td><input wicket:id="locId" type="text" value="street address" size="30"/></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right">Inventory Date:</td>
+				<td><input wicket:id="invDate" type="text" value="second address" size="30"></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right">Purity:</td>
+				<td><input wicket:id="purity" type="text" value="second address" size="5"></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right">Status:</td>
+				<td><select wicket:id="active"></select></td>
+			</tr>
+		</table>
+	    
+	    <br/>
+	    <table style = "width : 80%; margin-left : 10%; margin-right : 10%">
+		    <tr>
+			    <td style = "width : 20%"></td>
+			    <td nowrap style = "width : 60%">
+			    	<input type="submit" wicket:id="saveChanges" style = "margin-right : 15px; width : 100px;" value="Save"/>&nbsp;&nbsp;
+			    	<input type="submit" style = "margin-left : 15px; width : 100px;" wicket:id="close" value="Close"/>
+			    </td>
+			    <td style = "width : 20%"></td>
+		    </tr>
+	    </table>
+  </form>
+  </center>
+  </fieldset>
+ 
+</body>
+</html>

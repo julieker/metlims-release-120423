@@ -1,0 +1,225 @@
+<wicket:head>
+		<link rel="stylesheet" type="text/css" href="tabstyles5.css"/>
+		<link rel="stylesheet" type="text/css" href="launchpages.css"/>
+	
+   	 	<style>	
+        
+			
+			hr 
+				{
+			    border: 0;
+			    height: 0;
+			    border-top: 1px solid rgba(0, 0, 0, 0.1);
+			    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+			    margin-top : 20px;
+			    margin-bottom : 20px;
+			    margin-left : 15px;
+				}
+				
+			strong 
+				{
+				margin-left : 15px;
+				}
+		
+		</style>	
+    
+</wicket:head>
+<wicket:panel>
+
+    
+    <body class = "dialog_background">
+    	
+    	<div class = "good_font" style = "margin-top : 0px;">
+    	
+    	<center>
+    		<div><br>&nbsp;</div>
+			<div style = "margin-top : 0px; font-weight : 500; font-size : 125%; color : #0053CF">Metabolomics Core - Lipid Data Portal</div>
+		</center>
+    	    	
+    	<div wicket:id="feedback"></div>
+    	
+    	<div class ="indicator" style="display: none;">
+ 			<div class="indicator-content">
+  				Please wait... <wicket:link><img src="images/ajax-loader.gif" width="16" height="16" alt="loading" /></wicket:link>
+ 			</div>
+		</div>
+    	
+		
+	    	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; margin-top : 30px ;  background : transparent; border : none" >
+	    		<tr> 
+		        	<td style = "width : 50%" class = "sectionHeader">
+		        		<strong>Search MS/MS data :	</strong>
+		        	</td>
+		        	<td class = "sectionHeader" style = "width : 50%;">
+	   					<strong>DRCC reporting :</strong>
+		        	 </td>
+		        </tr>
+		    </table>
+	    
+		    <table class = "sectionContent">
+	       		<tr>
+	       			<td style = "vertical-align : middle; width : 50%">
+	        			<table  style = "text-align : left; margin-left : 6%">
+		       				<tr>
+		       					<td nowrap style = "text-align : left"> <span style = "font-style : italic">Search Parameters :</span></td>
+							</tr>
+							<tr>
+								<td style = "text-align :left"><div wicket:id = "experimentDateSelectorPanel"></div></td>
+							</tr>
+						</table>
+					</td>
+			
+					<td style = "width : 50%; vertical-align : middle; border-left : 1px groove white; ">
+						<table style = "margin-left : 14%; margin-right : 4%;  text-align : left;">
+		       				<tr>
+		       					<td style = "text-align : left"><span style = "font-style : italic">Pull metadata for :</span></td>
+							</tr>
+							<tr>
+								<td style = "text-align :left"><div wicket:id = "launchDRCCPanel"></div></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			
+			<hr>
+	        
+	     	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; background : transparent">
+		        	<tr> 
+			        	<td class = "sectionHeader">
+			        		<strong>Upload MS/MS data :	</strong>
+			        	</td>
+			        	<td class = "sectionHeader" style = "width : 40%; text-align : left">
+			        		<strong>Columns to read :	</strong>
+			        	</td>
+		        	</tr>
+		        </table>
+		        
+		        <table class = "sectionContent">
+		        	<tr>
+		        	
+		        		<td style = "width : 50%; vertical-align : middle;">
+							<table style = "margin-left : 14%; margin-right : 4%;  text-align : left;">
+		       					<tr>
+		       						<td style = "text-align : left"></td>
+								</tr>
+								<tr>
+									<td style = "text-align :left"><div wicket:id = "experimentInfoUploadPanel"></div></td>
+								</tr>
+							</table>
+						</td>
+		        	
+						<td style = "width : 50%; font-size : 90%; vertical-align : top; border-left : 1px groove white; padding-left : 30px">
+					    	<table style = "align : right; vertical-align : top ; padding-left : 10%;  margin-top : 3%">
+						    	<tr>
+									<td><input wicket:id = "checkbox0" type = "checkbox" checked = "checked"/>&nbsp;&nbsp;&nbsp;Lipid Name</td>
+									<td>Column : </td>
+									<td>
+										<select wicket:id = "colIdx0"  style = "padding-left : 5px; font-size : 100%">
+										</select>
+									</td> 
+								</tr>
+								
+									<tr>
+									<td><input wicket:id = "checkbox1" type = "checkbox" checked = "checked"/>&nbsp;&nbsp;&nbsp;Start Mass</td>
+									<td>Column : </td>
+									<td>
+										<select wicket:id = "colIdx1" style = "padding-left : 5px; font-size : 100%">
+											<option>1</option>
+											<option selected>2</option>
+										</select>
+									</td>  
+								</tr>
+								
+								<tr>
+									<td><input wicket:id = "checkbox2" type = "checkbox" checked = "checked"/>&nbsp;&nbsp;&nbsp;End Mass</td>
+									<td>Column :</td>
+									<td>
+										<select wicket:id = "colIdx2" style = "padding-left : 5px; font-size : 100%">
+											<option>1</option>
+										</select>
+									</td>  
+								</tr>
+								
+								
+								<tr>
+									<td><input wicket:id = "checkbox3" type = "checkbox" checked = "checked"/>&nbsp;&nbsp;&nbsp;Expected Retention Time&nbsp;&nbsp;</td>
+									<td>Column : </td>
+									<td>
+										<select wicket:id = "colIdx3" style = "padding-left : 5px; font-size : 100%">
+											<option>1</option>
+										</select>
+									</td>  
+								</tr>
+								
+								<tr>
+									<td><input wicket:id = "checkbox4" type = "checkbox" checked = "checked"/>&nbsp;&nbsp;&nbsp;Lipid Class</td>
+									<td>Column :</td>
+									<td>
+										<select wicket:id = "colIdx4" style = "padding-left : 5px; font-size : 100%">
+											<option>1</option>
+										</select>
+									</td>  
+								</tr>
+								
+								<tr>
+									<td><input wicket:id = "checkbox5" type = "checkbox" checked = "checked"/>&nbsp;&nbsp;&nbsp;Known Status</td>
+									<td>Column :</td>
+									<td>
+										<select wicket:id = "colIdx5" style = "padding-left : 5px; font-size : 100%;">
+											<option>1</option>			
+										</select>
+									</td>  
+								</tr>
+								
+								<tr>
+									<td><input wicket:id = "checkbox6" type = "checkbox" checked = "checked" enabled = "false"/>&nbsp;&nbsp;&nbsp;Peak Areas </td>
+									<td>Start at column : </td>
+									<td>
+										<select wicket:id = "colIdx6" style = "padding-left : 5px; font-size : 100%">
+											<option>8</option>
+										</select>
+									</td>  
+								</tr>
+							</table>
+						</td>	
+						<td  style = "width : 50%; text-align : left">
+				        </td>
+					</tr>
+				</table>
+		
+			<hr>
+				
+	    	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; margin-top : 30px ;  background : transparent; border : none" >
+	    		<tr> 
+		        	<td style = "width : 50%" class = "sectionHeader">
+		        		<strong>Update Randomization :	</strong>
+		        		<span style = "color: red" >( Under construction )</span>
+		        	</td>
+		        	<td class = "sectionHeader" style = "width : 50%;">
+	   					<strong>Update Sample Labels</strong>
+	   					<span style = "color: red" >( Under construction )</span>
+		        	</td>
+		        </tr>
+		    </table>
+		
+			<table class = "sectionContent">
+				<tr>
+					<td style = "vertical-align : middle; width : 50%">
+						<div disabled wicket:id = "experimentRandomizationUploadPanel"></div>	
+					</td>
+					<td style = "vertical-align : middle; border-left : thin white groove; width : 50%; margin-left : 14%">
+						<div wicket:id = "launchLabelEditPanel"></div>	
+					</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+
+</wicket:panel>
+	
+	
+
+
+
+

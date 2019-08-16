@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<wicket:head>
+		<link rel="stylesheet" type="text/css" href="tabstyles5.css"/>
+		<style>
+			.basicTable { width : 100%;  margin-right : 0%; margin-left : 0%; font-size: 90% }
+		</style>
+</wicket:head>
+
+
+
+<wicket:panel>
+	
+  	<center>
+	<table style = "width : 100%; border : solid thin grey; "><tr><td>
+    <table class="blueHeaderTable" style = "width : 100%">
+		  	<tr>
+		  		<td style = "text-align : right : width : 20%">Experiment ID:</td>
+		  		<td style = "text-align : left; width : 80%"><span wicket:id = "expID">Moes ID</span></td>
+		  	    <!-- Issue 206 -->
+		  	    <td style = "text-align : right; width : 50%; padding-right : 20px">
+				     CHEAR Study : 
+				     <input wicket:id="isChear" type="checkbox">
+				</td>
+		  	</tr>
+		  	
+		  	<tr>
+		  		<td style = "text-align : right : width : 20%">Checkin Date</td>
+		  		<td style = "text-align : left; width : 80%"><span wicket:id = "creationDateAsStr">Moes ID</span></td>
+		  	</tr>
+			<tr>
+			  	<td style = "text-align : right : width : 20%">Name:</td>
+			  	<td style = "text-align : left; width : 80%"><span wicket:id = "expName">Moes Metabalome</span></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right : width : 20%; vertical-align : top" >Description:</td>
+				<td style = "text-align : left; width : 80%"><span wicket:id = "expDescription">Mark Twain</span></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right : width : 20%">Project:</td>
+				<td style = "text-align : left; width : 80%"><span wicket:id="project.projectName"></span> 
+				(<a wicket:id = "projDetails" href="#"><span wicket:id = "project.projectID">(123) 456-7890</span>) </a></td>
+				
+			</tr>
+			<!-- <tr>
+				<td style = "text-align : right : width : 20%">Contact:</td>
+				<td style = "text-align : left; width : 80%"><span wicket:id="project.contactPersonName">(123) 456-7890</span></td>
+				
+			</tr> -->
+			<tr>
+				<td style = "text-align : right : width : 20%">Priority:</td>
+				<td style = "text-align : left"><span wicket:id="priority.shortName">(123) 456-7890</span></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right : width : 20%; vertical-align : top">Notes:</td>
+				<td style = "text-align : left; width : 80%"><span wicket:id="notes">(123) 456-7890</span></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right : width : 20%; vertical-align : top">Service Request ID:</td>
+				<td style = "width : 80%"><span wicket:id="serviceRequest">(123) 456-7890</span></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right : width : 20%; vertical-align : top">Documents:</td>
+				<td style = "width : 80%"><table>
+					<tr wicket:id="docList">
+					<td>
+						<a wicket:id = "fileLink" ><span wicket:id = "fileName"></span></a>
+					</td>
+					<td>
+						<!-- <input wicket:id = "deleteButton" type = "button" style = "margin-left : 20px; color : red; font-size : 90%; font-weight : 800"  value = "&nbsp;X&nbsp;" title = "Delete this document"/> -->
+						<a wicket:id="deleteButton"  href = "#"> <input type = "button" style = "margin-left : 20px; color : red; font-size : 90%; font-weight : 800"  value = "&nbsp;X&nbsp;" title = "Delete this document"/></a>&nbsp;&nbsp;&nbsp;&nbsp;
+					</td>
+					</tr></table></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right : width : 20%; vertical-align : top">Client Reports:</td>
+				<td style = "text-align : left; width : 80%">
+					<table>
+						<tr wicket:id="reports">
+							<td><a wicket:id = "repLink" ><span wicket:id = "repName"></span></a></td>
+							<td><span wicket:id = "reportDescriptor" style = "font-size : 90%; padding-left : 10px"></span></td>
+						    <td>			
+						    <a wicket:id="deleteReportButton"  href = "#"> <input type = "button" style = "margin-left : 20px; color : red; font-size : 90%; font-weight : 800"  value = "&nbsp;X&nbsp;" title = "Delete this client report"/></a>&nbsp;&nbsp;&nbsp;&nbsp;
+					        </td>						
+						</tr>
+					</table>
+				</td>
+			</tr>
+			
+			<!-- issue 245 -->
+			<tr>
+				<td style = "text-align : right : width : 20%; vertical-align : top">Protocols :</td>
+				<td style = "text-align : left; width : 80%">
+					<table>
+						<tr wicket:id="protocols">
+							<td><a wicket:id = "protocolLink" ><span wicket:id = "protocolName"></span></a></td>
+							<td><span wicket:id = "protocolDescriptor" style = "font-size : 90%; padding-left : 10px"></span></td>
+						   <td>			
+						    <a wicket:id="deleteProtocolButton"  href = "#"> <input type = "button" style = "margin-left : 20px; color : red; font-size : 90%; font-weight : 800"  value = "&nbsp;X&nbsp;" title = "Delete this client report"/></a>&nbsp;&nbsp;&nbsp;&nbsp;
+					        </td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			
+			 
+			<tr>
+				<td style = "text-align : right : width : 20%; vertical-align : top">View/Edit Protocol Sheets :</td>
+				<td style = "text-align : left; width : 80%">
+					<table>
+						<tr wicket:id="protocolSheets">
+							<td><a wicket:id = "sheetLink"><span wicket:id = "sheetName">Test Name</span></a></td>
+							<td>
+								<a wicket:id="deleteSheetButton"  href = "#"> <input type = "button" style = "margin-left : 20px; color : red; font-size : 90%; font-weight : 800"  value = "&nbsp;X&nbsp;" title = "Delete this document"/></a>&nbsp;&nbsp;&nbsp;&nbsp;
+							</td>
+							
+		
+						</tr>
+					</table>
+				</td>
+			</tr>
+		
+		</table>
+		
+		<div wicket:id="modalEdit"></div>
+		<div wicket:id="modalDoc"></div>
+		<div wicket:id="modalProtocol"></div>
+		
+		<div wicket:id="modalwin"></div>
+    	<a wicket:id = "edit" href="#">Edit</a><br/>
+    	<a wicket:id = "uploadDoc" href="#">Doc Upload</a><br/>
+    	<a wicket:id = "clientReport" href="#">Upload ClientReport</a><br/>
+    	<a wicket:id = "protocolReport" href="#">Upload Protocol</a>
+    	
+		</td></tr></table>
+	</center>
+		
+</wicket:panel>
+</html>

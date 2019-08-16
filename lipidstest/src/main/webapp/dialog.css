@@ -1,0 +1,34 @@
+
+.dialog_background 
+	{
+	background : #F4F4F4
+	}
+
+.dialog_fieldset 
+	{ 
+	border: 2px outset #4D94FF; background-color : white; padding: 10px;
+	}
+
+.dialog_legend 
+	{
+	font-weight : bold; background : transparent; color : blue; padding: 4px;  text-align : left;	
+	}
+	
+.dialog_legend_text
+	{
+	font-weight : bold; 
+	color :  #0053CF";
+	}
+	
+	
+table tr.odd { width : 800px; background  : white; padding-right : 10px;  }
+table tr.even { width : 800px; background  : #F4F4F4	; padding-right : 10px }
+	
+.feedbackMsg80 { color : red; font-weight : 600; text-align : left; font-size : 80%}	
+.feedbackMsg90 { color : red; font-weight : 600; text-align : left; font-size : 90%}
+.feedbackMsg { color : red; font-weight : 600; text-align : left; font-size : 100%}	
+
+
+ul { list-style:none; padding: 2px; margin:0; }
+ 
+div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0; }

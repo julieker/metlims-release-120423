@@ -1,0 +1,75 @@
+<wicket:panel>
+		
+		<form wicket:id = "launchDrccForm">
+		
+		
+		<div >&nbsp;&nbsp;</div>
+        <table style = "text-align : left; margin-left : 0%; ">
+	        <tr>
+		       <td style = " vertical-align : top ; text-align: left; border : none">
+		        	<table style = "width: 90%; margin-left : 5%; margin-right : 5%; ">
+		        		
+						<tr>
+							<td style = "text-align : right : padding-right : 3px" nowrap>
+								Platform :
+							</td>
+			    			<td style = "text-align : left; vertical-align : top ; ">
+								<select wicket:id = "platformDropdown" style = "width : 110px">
+									<option>Please Select </option>
+									<option>Agilent</option>
+									<option>ABSciex</option>
+								</select>
+							</td>	
+							
+							<td  style = "text-align : left; vertical-align : top ;  ">
+					      
+					       	</td>
+						</tr>
+						
+						<tr>
+							<td style = "text-align : right : padding-right : 3px" nowrap>
+								Experiment :
+							</td>
+			    			<td style = "text-align : left; vertical-align : top ; ">
+								<select wicket:id = "experimentDropdown" style = "width : 110px">
+									<option>Please Select </option>
+									<option>EX00001</option>
+									<option>EX00002</option>
+								</select>
+							</td>	
+							
+							<td  style = "text-align : left; vertical-align : top ;  ">
+					        	  
+					       	</td>
+						</tr>
+						
+						
+						<tr>
+							<td style = "text-align : right : padding-right : 3px" nowrap>
+								Assay :
+							</td>
+			    			<td style = "text-align : left; vertical-align : top ; ">
+								<select wicket:id = "assayDropdown" style = "width : 300px">
+									<option>Please Select </option>
+									<option>EX00001</option>
+									<option>EX00002</option>
+								</select>
+							</td>	
+							
+							<td  style = "text-align : left; vertical-align : top ;  ">
+					        	<input  wicket:id = "searchButton" style = "width : 110px" type="submit" value="&nbsp;Pull Data&nbsp;"/>  
+					       	</td>
+						</tr>
+						
+						<tr>
+				       		<td></td>
+				       		<td></td>
+				       		<td></td>
+			       		</tr>
+					</table>
+				</td>
+				<td style = "width : 30%" ></td>	     		
+			</tr>
+		</table>	
+		</form>
+</wicket:panel>

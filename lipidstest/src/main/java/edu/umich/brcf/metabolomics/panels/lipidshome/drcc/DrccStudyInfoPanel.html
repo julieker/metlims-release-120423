@@ -1,0 +1,143 @@
+<wicket:head>
+ 	 <link rel="stylesheet" type="text/css" href="drcc.css"/>
+     <style> </style>
+</wicket:head>
+
+<wicket:panel>
+<body>
+	
+<div> &nbsp; <br></div>	
+<table style = "width : 96%; font-size : 100%;  margin-top : 5px; margin-right : 2%; margin-left : 2%"  class="dataview">
+		<tr>
+			<td style = "width : 25%; text-align : left; vertical-align : bottom">
+				<br><br><span class = "drccSubSectionHeader">B. Study Info</span>
+			</td>
+			<td style = "width : 50%; text-align : center; vertical-align : top">
+				<br>
+				<span class = "drccDivisionHeader">Metabolomics Core - DRCC Data Reporting Tool</span><br>
+				<br>
+			</td>
+			<td style = "width : 25%"></td>
+		</tr>
+	</table>
+	
+	<br>
+	
+	<table style = "width : 96%; margin-left : 2%; margin-right : 2%">
+		<tr>
+			<td class = "drccRequiredTextLabel">Study Title : </td>
+			<td> 
+				<input wicket:id = "studyName" type= "text" class = "drccRequiredTextField" style = "width : 80%"/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td class = "drccRequiredTextLabel" >Study Type :  </td>
+			<td><input wicket:id = "studyType" type= "text"  class = "drccTextField" style = "width : 80%" /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccRequiredTextLabel" style = "vertical-align : top">Study Summary :  </td>
+			<td>
+				<textarea  wicket:id = "studyDescription" class = "drccTextField" style = "width : 80%" cols = "56" rows = "12"  ></textarea>
+			</td>
+		</tr>
+		
+		<tr><td>&nbsp;&nbsp;</td><td></td></tr>
+		<tr>
+			<td class = "drccRequiredTextLabel">Institute :  </td>
+			<td>
+				<input wicket:id = "institute" type= "text"  class = "drccTextField" style = "width : 80%"/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td class = "drccRequiredTextLabel">Department :  </td>
+			
+			<td>
+				<input wicket:id = "department" type= "text" class = "drccTextField" style = "width : 80%"/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel">Laboratory : </td>
+			<td>
+				<input wicket:id = "laboratory" type= "text" class = "drccTextField" style = "width : 80%"/>
+			</td>
+		</tr>
+
+		<tr>
+			<td>&nbsp;&nbsp;</td><td></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccRequiredTextLabel" >Study Contact Person :  Last Name </td>
+			
+			<td>
+				<input wicket:id = "contactLastName" type= "text" class = "drccRequiredTextField" style = "width : 80%"/>
+			</td>
+		</tr>
+
+		<tr>
+			<td class = "drccRequiredTextLabel" >Study Contact Person :  First Name </td>
+			
+			<td>
+				<input wicket:id = "contactFirstName" type= "text" class = "drccRequiredTextField" style = "width : 80%"/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td class = "drccRequiredTextLabel" >Address</td>
+			<td>
+				<input wicket:id = "contactAddress" type= "text"  class = "drccRequiredTextField" style = "width : 80%"/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td class = "drccRequiredTextLabel" >Email</td>
+			<td>
+				<input wicket:id = "contactEmail" type= "text"  class = "drccRequiredTextField" style = "width : 80%"/>
+			</td>
+		</tr>
+	
+		<tr>
+			<td class = "drccTextLabel" >Phone</td>
+			<td><input wicket:id = "contactPhone" type= "text" class = "drccTextField" style = "width : 80%"/></td>
+	 	</tr>
+
+		<tr><td>&nbsp;&nbsp;</td><td></td></tr>
+
+		<tr>
+			<td class = "drccRequiredTextLabel">Submission Date : </td>
+			<td><input wicket:id = "submissionDate" type = "text" class = "drccRequiredTextField" /></td>
+		</tr>
+		
+		<tr>
+			<td class = "drccTextLabel">Number of Groups : </td><td>
+				<input wicket:id = "studyNumGroups" type = "text" class = "drccRequiredTextField"/></td><td></td><td></td>
+		</tr>
+	
+		<tr>e
+			<td class = "drccTextLabel"><span>Total Number of Subjects : </span> </td>
+			<td>
+				<input wicket:id = "studyNumSubjects"  type= "text" class = "drccTextField"/>
+			</td>
+	 	</tr>
+	 	
+	 	<tr>
+			<td class = "drccTextLabel"><span>Total Number of Samples : </span> </td>
+			<td>
+				<input wicket:id = "studyNumSamples" type= "text"  class = "drccTextField"/>
+			</td>
+	 	</tr>
+	 	
+	 	<tr>
+			<td class = "drccTextLabel" style = "vertical-align : top">Study Comments :  </td>
+			<td>
+				<textarea wicket:id = "studyComments"  class = "drccTextField" style = "width : 80%" cols = "56" rows = "7" >
+				</textarea>
+			</td>
+		</tr>
+	</table>	
+</body>
+</wicket:panel>

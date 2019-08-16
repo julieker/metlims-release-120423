@@ -1,0 +1,199 @@
+
+<!--  Copied from CHEAR 02/05/17.  Close button to button to prevent submission upon enter key, button sizing,  save disabled until user name is populated -->
+
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+     <link rel="stylesheet" type="text/css" href="dialog.css"/>
+</head>
+
+<wicket:head>
+	<style>
+		
+	</style>
+</wicket:head>
+
+<body  class = "dialog_background">
+		
+	<fieldset class = "dialog_fieldset" style = "height : 92%; vertical-align: middle; width :90%; margin-left : 3%; margin-right : 5%">	
+	
+		<legend class = "dialog_legend">
+	   		<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">Register User</span>
+	   	</legend>
+	   	
+	   	<span wicket:id = "feedback" style = "font-size : 85%; color : red"></span>
+	   	
+	   	<div style = "text-align : center">
+	  	
+		  	<form wicket:id = "editUserForm">  
+			  	<table style = "width : 90%; margin-left : 5%; margin-right:5%">
+				  	<tr>
+				  		<td style = "text-align : right">User Id:</td>
+				  		<td><span wicket:id = "id">Moes ID</span></td>
+				  	</tr>
+					<tr>
+						<td style = "text-align : right">Last Name:</td>
+						<td><input wicket:id = "lastName" type="text"  value="MuckyLastName" size="30" /></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">First Name:</td>
+						<td><input wicket:id = "firstName" type="text" value="Moes Metabalome" size="20" /></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">User Name:</td>
+						<td>
+							<input wicket:id="userName" type="text" value="jdoe" size="15"/> 
+							<span >Role: </span>
+							<select wicket:id="viewpoint"><option>role 1</option><option>role 2</option></select>
+						
+						</td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">Password:</td>
+						<td><input wicket:id="password1" type="password" value="(123) 456-7890" size="15"/></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">Re-enter Password:</td>
+						<td><input wicket:id="password2" type="password" value="(123) 456-7890" size="15"/></td>
+					</tr>
+					
+					<tr>
+						<td style = "text-align : right">Fax Number:</td>
+						<td><input wicket:id="faxNumber" type="text" value="(123) 456-7890" size="26"/></td>
+					</tr>
+					
+					<tr>
+						<td style = "text-align : right">Phone:</td>
+						<td><input wicket:id="phone" type="text" value="(123) 456-7890" size="26"/></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">E-Mail:</td>
+						<td><input wicket:id="email" type="text" value="Moes Email" size="30" /></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">Lab:</td>
+						<td><input wicket:id="lab" type="text" value="Moes Email" size="30" /></td>
+					</tr>
+		    	</table>
+    	
+		    	<table style = "width : 96%; margin-left : 2%; margin-right :2%; margin-top : 10px">
+		    		<tr>
+			    		<td style = "width :50%; padding-right : 20px; text-align : right">
+				    		<input wicket:id = "saveChanges" type="submit"  style = "width : 30%"    value="&nbsp;&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;&nbsp;"/>
+						</td>
+						<td style = "width : 50%; padding-left : 20px; text-align : left">
+							<input wicket:id="cancelButton" type="button"  style = "width : 30%"  value="&nbsp;&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;&nbsp;"/>
+				    	</td>
+			    	</tr>	        	
+			    </table>
+ 		
+ 			</form>
+ 		</div>
+	</fieldset>
+</body>
+</html>
+
+
+
+<!-- 
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+     <link rel="stylesheet" type="text/css" href="dialog.css"/>
+</head>
+
+<wicket:head>
+	<style>
+		.leftButton
+	</style>
+</wicket:head>
+
+<body  class = "dialog_background">
+		
+	<fieldset class = "dialog_fieldset" style = "height : 92%; vertical-align: middle; width :90%; margin-left : 3%; margin-right : 5%">	
+	
+		<legend class = "dialog_legend">
+	   		<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">Register User</span>
+	   	</legend>
+	   	
+	   	<span wicket:id = "feedback" style = "font-size : 85%; color : red"></span>
+	   	<div style = "text-align : center">
+	  	
+		  	<form wicket:id = "editUserForm">  
+			  	<table style = "width : 90%; margin-left : 5%; margin-right:5%">
+				  	<tr>
+				  		<td style = "text-align : right">User Id:</td>
+				  		<td><span wicket:id = "id">Moes ID</span></td>
+				  	</tr>
+					<tr>
+						<td style = "text-align : right">Last Name:</td>
+						<td><input wicket:id = "lastName" type="text"  value="MuckyLastName" size="30" /></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">First Name:</td>
+						<td><input wicket:id = "firstName" type="text" value="Moes Metabalome" size="20" /></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">User Name:</td>
+						<td>
+							<input wicket:id="userName" type="text" value="jdoe" size="15"/> 
+							<span >Role: </span>
+							<select wicket:id="viewpoint"><option>role 1</option><option>role 2</option></select>
+						
+						</td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">Password:</td>
+						<td><input wicket:id="password1" type="password" value="(123) 456-7890" size="15"/></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">Re-enter Password:</td>
+						<td><input wicket:id="password2" type="password" value="(123) 456-7890" size="15"/></td>
+					</tr>
+					
+					<tr>
+						<td style = "text-align : right">Fax Number:</td>
+						<td><input wicket:id="faxNumber" type="text" value="(123) 456-7890" size="26"/></td>
+					</tr>
+					
+					<tr>
+						<td style = "text-align : right">Phone:</td>
+						<td><input wicket:id="phone" type="text" value="(123) 456-7890" size="26"/></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">E-Mail:</td>
+						<td><input wicket:id="email" type="text" value="Moes Email" size="30" /></td>
+					</tr>
+					<tr>
+						<td style = "text-align : right">Lab:</td>
+						<td><input wicket:id="lab" type="text" value="Moes Email" size="30" /></td>
+					</tr>
+		    	</table>
+    	
+    	
+    			<table style = "width : 96%; margin-left : 2%; margin-right :2%; margin-top : 10px">
+ +		    		<tr>
+ +			    		<td style = "width :50%; padding-right : 20px; text-align : right">
+ +				    		<input wicket:id = "saveChanges" type="submit"  style = "width : 30%"    value="&nbsp;&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;&nbsp;"/>
+ +						</td>
+ +						<td style = "width : 50%; padding-left : 20px; text-align : left">
+ +							<input wicket:id="cancelButton" type="button"  style = "width : 30%"  value="&nbsp;&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;&nbsp;"/>
+ +				    	</td>
+ +			    	</tr>	        	
+ +			    </table>
+    		<!-- 		    	<table style = "width : 96%; margin-left : 2%; margin-right :2%">
+		    		<tr>
+			    		<td style = "width :50%; padding-right : 20px; text-align : right">
+				    		<input wicket:id = "saveChanges"  class = "leftButton" style = "margin-top : 2%; width : 25%"  type="submit"   value="&nbsp;&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;&nbsp;"/>
+						</td>
+						<td style = "width : 50%; padding-left : 20px; text-align : left">
+							<input type="button" wicket:id="cancelButton" style = "width : 25%:"  value="&nbsp;&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;&nbsp;"/>
+				    	</td>
+			    	</tr>	        	
+			    </table> 
+ 		
+ 			</form>
+ 		</div>
+	</fieldset>
+</body>
+</html>  -->
+
+

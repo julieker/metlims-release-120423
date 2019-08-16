@@ -1,0 +1,205 @@
+<wicket:panel>
+<head>
+	<meta charset="UTF-8">
+	<style>	
+		.dialog_background 
+			{
+		  	background : white;
+			}
+		
+		.borderColumn 
+			{
+			padding-right : 10px;
+			padding-left : 10px;
+			text-align : right;
+			font-size : 90%; 		
+			nowrap;
+			}
+			
+		a			{	color: #0053CF; }
+		a:visited 	{	color: blue ; 	}
+		a:link 		{	color: #0053CF; }
+		a:hover 	{	color: red;   	}
+		a:active 	{  	color: #0053CF;	}	
+			
+		.borderColumn2 
+			{
+			text-align : right; 
+			padding-right : 20px;
+			font-size : 90%;
+			nowrap;
+			}	
+			
+		.blur 
+			{
+   			color: transparent;
+   			text-shadow: 0 0 5px rgba(0,0,0,0.5);
+			}	
+			
+		table tr.even { width : 800px; background  : white; padding-right : 10px;  }
+		table tr.odd { width : 800px; background  : #EFFBFB; padding-right : 10px }
+
+		body 
+			{
+   			font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   			font-weight: 300;
+			}	
+
+		input 
+			{
+   			font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   			font-weight: 300;
+			}
+			
+			
+		th 
+			{
+			background : white;
+			color : #0053CF;
+			}
+	</style>	
+	
+</head>
+
+
+<body class = "dialog_background">
+	
+	<div wicket:id="modal1"></div> 
+	
+	<center>
+		<div wicket:id = "experimentLabel" class = "blur" style = "margin-bottom : 20px; font-weight : 500; font-size : 120%; 
+			color : #0053CF">Peak Areas by Compound
+		</div>
+	</center>
+		
+	<table style = "width : 100%;">	
+		<tr>
+			<td>
+				<table style = "margin-left : 2%; font-weight : 500; font-size : 100%; color : #0053CF; ">
+					<!-- 
+					<tr>
+						<td style = "text-align : right">Experiment : </td>
+						<td style = "color : black; vertical-align : bottom">
+							<span wicket:id = "experimentLabel" style = "text-align : left ; margin-left : 15px; padding-left : 5px;   "></span>
+						</td>
+					</tr>
+					 -->
+				
+					<tr>
+						<td style = "text-align : right">Run Date :</td>
+						<td style = "font-size : 90%; color : black; vertical-align : bottom">
+							<span wicket:id = "dateLabel" style = "text-align : left ; margin-left : 15px; padding-left : 5px;  ">
+							</span>
+						</td>
+					</tr>
+					 
+					<tr>
+						<td style = "text-align : right">Mode :</td>
+						<td style = "font-size : 90%; color : black; vertical-align : bottom">
+							<span wicket:id = "ionMode" style = "text-align : left ; margin-left : 15px; padding-left : 5px;  ">
+							</span>
+						</td>
+					</tr> 
+					
+					<tr>
+						<td style = "text-align : right">Data Type :</td>
+						<td style = "font-size : 90%; color : black; vertical-align : bottom">
+							<span wicket:id = "dataNotation" style = "text-align : left ; margin-left : 15px; padding-left : 5px;  ">
+							</span>
+						</td>
+					</tr> 
+					
+					
+					<tr>
+						<td style = "text-align : right">Date Uploaded :</td>
+						<td style = "font-size : 90%; color : black; vertical-align : bottom">
+							<span wicket:id = "uploadLabel" style = "text-align : left ; margin-left : 15px; padding-left : 5px;  ">
+							</span>
+						</td>
+					</tr>
+					
+					<tr>
+						<td style = "text-align : right"> <span wicket:id = "fileLabelPrefix"> Data File :</span></td>
+						<td style = "font-size : 90%; color : black; vertical-align : bottom">
+							<span wicket:id = "fileLabel" style = "text-align : left ; margin-left : 15px; padding-left : 5px; "></span>
+						</td>
+					</tr>
+					
+				</table>
+			</td>
+			<td style = "vertical-align : bottom">
+				<div style = "text-align : right; width : 98%; padding-right : 2%; padding-left : 0%;">
+				
+					<input wicket:id = "persistData" style = "text-align : right; padding-right : 20px" type="button"   
+					value="&nbsp;&nbsp;Save to Database&nbsp;&nbsp;" /> 
+					
+					<input wicket:id = "backButton" style = "text-align : right; padding-right : 20px" type="button"   
+					value="&nbsp;&nbsp;Back to List&nbsp;&nbsp;" /> 
+					
+					<input wicket:id = "downloadData" style = "text-align : right; padding-right : 20px" type="button"  
+					value="&nbsp;&nbsp;Download Data&nbsp;&nbsp;" /> 
+					
+					<input class = "reportButton" disabled style = "text-align : right; padding-right : 20px" type="button" title = "Correlation Calculator"
+					value="&nbsp;&nbsp;Correlations...&nbsp;&nbsp;" /> 
+							
+				</div>
+			</td>
+		</tr>
+	</table>
+
+	<hr>
+
+	<center>
+		<div style="width: 100%; font-size : 85%; margin-left : 15px; margin-top : 10px"> 
+			<table wicket:id = "table" style = "border : none;"  >[table]</table>
+		</div> 
+	</center>
+</body>
+</wicket:panel>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+<table style = "width: 60%; border : solid black 1px">
+	    <tr style = "font-size : 80%" wicket:id = "viewResults">
+	    
+	    	<td style = "text-align : left; width : 40%">
+ 			    <span wicket:id = "lipidId">Experiment ID Here</span>
+			</td> 
+	    
+		    <td style = "text-align : left; width : 15%">
+ 			    <span wicket:id = "startMass">Experiment ID Here</span>
+			</td> 
+			
+			<td style = "text-align : left; width : 15%">
+ 			    <span wicket:id = "endMass">Experiment ID Here</span>
+			</td> 
+			
+			<td style = "text-align : left; width : 15%">
+ 			    <span wicket:id = "expectedRt">Experiment ID Here</span>
+			</td> 
+			
+			<td style = "text-align : left; width : 15%">
+ 			    <span wicket:id = "lipidClass">Experiment ID Here</span>
+			</td> 
+		 </tr>
+	</table>
+
+ -->

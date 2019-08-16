@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<wicket:panel>
+
+<div style="overflow: auto;height: 450px; margin-left : 4%; margin-right : 4%; text-align : center; margin-top : 20px">
+ 
+ <div style = "text-align : left; padding-left : 4px; font-size : 90%; margin-bottom : 10px">
+ 	<b>Location History for Sample <font color="green">"<span wicket:id = "sampleId">S00012345</span>"</font></b>
+ </div>
+ 
+
+ 	<table style = "border : thin solid grey; width : 100%; margin-top :2%; font-size : 80%">
+		<tr style = "background : #0053CF; color : white">
+			
+			<th colspan = "2" style = "width : 35%; text-align : center">New Location</th>
+			<th colspan = "2" style = "width : 35%; text-align : center">Old Location</th>
+			<th style = "width : 15%; text-align : center">Update Date</th>
+			<th style = "width : 15%; text-align : center">Updated By</th>
+		</tr>
+		
+		<tr wicket:id="sampleLocationsList">
+		  	
+		  	<td style = "text-align : right; padding-right : 2%;  border : none" nowrap>
+	        	<span wicket:id = "newLocationId"></span>
+	      	</td>
+	    
+	      	<td style = "text-align : right; padding-right : 2%;  border-right : solid 1px grey" nowrap>	
+	        	<span wicket:id = "newLocationDescription"></span>
+	        </td> 
+	      	
+	    	<td style = "text-align : right; padding-right : 2%;  border : none" nowrap>	
+	        	<span wicket:id = "oldLocationId"></span>	      		
+	      	</td>
+	      	
+	     	<td style = "text-align : right; padding-right : 2%; border-right : solid 1px grey" nowrap>
+	        	<span wicket:id = "oldLocationDescription"></span>
+	        </td>
+	    
+	    
+	    
+	      	<td style = "text-align : right; padding-right : 2%; border-right : solid 1px grey ">
+	        	<span wicket:id = "updateDate"></span>
+	      	</td>
+	      	<td style = "text-align : right; padding-right : 2%; ">
+	        	<span wicket:id = "updatedBy"></span>
+	      	</td>
+      	
+	     </tr>
+	  </table>
+	  <div style = "width : 100%;  text-align : right; margin-top : 10px; font-style : italic; font-size : 80%; font-weight : 300; font-color : red">
+	  		<span wicket:id = "oldSampleWarning" > Note : If sample was registered prior to 06/01/15 -- id is last known location.</span>
+	  </div>
+	  <br>
+	  
+	  <div style = "width : 100%; text-align : center">
+	  		<input wicket:id = "cancelButton" type = "submit"  value = "&nbsp;&nbsp;Close&nbsp;&nbsp;" style = "width : 15%; font-size : 90%"/>
+	  </div>
+</div>
+</wicket:panel>
+</html>

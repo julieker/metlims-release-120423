@@ -1,0 +1,58 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<wicket:head>
+		<style>
+		    legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	   
+			div.wicketa-aa 
+				{
+				font-family: "Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana;
+				font-size: 14px;
+				background-color: white;
+				border-width: 1px;
+				border-color: blue;
+				border-style: solid outset;
+				padding: 2px;
+				margin: 1px 0 0 0;
+				text-align:left;
+				z-index: 5;
+				}
+			div.wicket-aa ul { list-style:none; padding: 2px; margin:0px; }
+			div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0px; }
+		</style>
+	</wicket:head>
+	
+	<body id = "dialog_background">  <!-- "background : #E8ECEF"> -->
+		
+   		
+		<fieldset style = "width : 90%; margin-right : 8%; margin-left : 2%; vertical-align : middle; height : 83%;">
+		  	<legend style = "background : transparent; border : none">
+	   			<span style = "font-weight : bold; color :  #0053CF">Create New Plate</span>
+	   		</legend>
+		  	
+		  	<center>
+		  		<span wicket:id = "feedback"/>
+	  		
+		  		<form wicket:id = "cnpForm">	
+				  	<table style = "width : 80%; margin-left : 10%; margin-right : 10%">
+				  		<tr>
+				  			<td nowrap style = "width : 25%; text-align : right; font-weight : 500%; vertical-align : top; margin-right : 10px">Instrument :</td>
+							<td style = "width : 50%; text-align : left; padding-left : 20px" >
+								<select  wicket:id="instrumentName" style = "width : 80px; height : 80px; text-align : right; padding-right : 6px" ></select>
+							</td>
+							<td style = "width : 25%; ; vertical-align : bottom; text-align : right ; padding-right : 4%"> 
+								<input type="submit" wicket:id="save"  value="&nbsp;&nbsp;&nbsp;OK&nbsp;&nbsp;&nbsp;"/>
+							</td>
+						</tr>
+					</table>
+		  		</form>
+	  		</center>
+  
+  		</fieldset>
+  	</body>
+</html>

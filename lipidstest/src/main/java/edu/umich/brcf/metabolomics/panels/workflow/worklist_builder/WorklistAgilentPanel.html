@@ -1,0 +1,88 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+
+<body>	
+	<div style = "margin-left : 0%; color : transparent">
+		<table style = "margin-left : 0%; margin-right : 0%; margin-top : 20px; margin-bottom : 10px">
+			<tr>
+				<td style = "text-align : left; width : 50%">
+					<span style = "color : #0000cc; font-weight : 400; font-size : bigger">Worklist Preview (Agilent)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;********* Under construction *********</span>
+				</td>
+			
+				<td style = "text-align : right; width : 50%; ">
+					<input style = "display : none; text-align : right; padding-right : 20px; background : white" type="button"  id = "fileDownload" value="Download Worklist" /> 
+				</td>
+			</tr>
+		</table>
+		<div>
+		<!-- issue 268 -->
+			<table class = "worklist"> 
+				<wicket:extend>
+				<tr style = "background : #0053CF; color : white; border : solid black 1px"> 							
+					<!-- <th class = "blueTableHeader" style = "width : 2%">+/-</th> -->
+					<th class = "blueTableHeader" style = "width : 4%">Redo
+						<input wicket:id = "allSelected" type = "checkbox" /> 
+					</th>	
+					<th class = "blueTableHeader" style = "width : 3%">Order</th>
+					<th class = "blueTableHeader" style = "width : 23%; ">Sample Name</th>
+					<th class = "blueTableHeader" style = "width : 2%">Sample Pos</th>
+					<th class = "blueTableHeader" style = "width : 5%;  ">Inj Vol (&micro;l)</th> 
+					<th class = "blueTableHeader" title = "Method" style = "width : 1%">M</th> 
+					<th class = "blueTableHeader" title = "Override" style = "width: 1%">O</th> 
+					<!-- issue 292 -->
+					<th class = "blueTableHeader" style = "width:42%; "  >Data File   <span style="float:right;"><input wicket:id = "includeResearcherId"  type = "checkbox" /> Include Researcher ID  </span></th>
+					<th class = "blueTableHeader" style = "width : 7% "></th> 									
+				</tr>
+				
+				<tr wicket:id = "worklist">
+		
+		 		
+					<!--  <td style = "background : white; width : 2%; text-align : center"> 
+					 	<input disabled style = "font-size : 120%; font-weight : 900;  color : blue; vertical-align : bottom; text-align : middle" 
+	                	type = "button"  title = "Move sample up"  alt="Up arrow" value = "&uarr;"/> 
+	                	
+	                	<input disabled style = "font-size : 120%; font-weight : 900;  color : blue; vertical-align : bottom; text-align : middle" 
+	                	type = "button"  title = "Move sample down"  alt="Down arrow" value = "&darr;"/> 
+				
+						<input wicket:id = "unDeleteButton" title = "Include this sample" style = "font-size : 120%; color : #00ee00; 
+						font-weight : 900; padding-left : 5%; padding-right : 5%; width : 25px"  type = "button" class = "tableField" 
+						value = "+"/>
+	
+						<input wicket:id = "sampleDelete" title = "Exclude this sample" style = "font-size : 120%; color : red; 
+						font-weight : 900; padding-left : 5%; padding-right : 5%; width : 25px"  type = "button" class = "tableField" 
+						value = "X"/>
+					</td>  	-->
+	               
+					<td style = "text-align : center">
+					  <input wicket:id="selected" type="checkbox"/>
+					</td>
+					
+					<td>
+    					<input  class = "tableField" disabled type = "text"/>
+					</td>
+					
+					<td> <input wicket:id = "sampleName" class = "tableField" disabled style = "padding-left : 10px" type = "text"/></td>
+					<td> <input wicket:id = "samplePosition" disabled class = "tableField" type = "text"/></td>
+					<td> <input wicket:id = "injectionVolume" disabled class = "tableField" type = "text"/></td>
+					<td> <input wicket:id = "methodFileName"  disabled class = "tableField" type = "text"/></td>
+					<td> <input wicket:id = "overrideMethod" disabled class = "tableField" type = "text"/></td>
+					<td> <input wicket:id = "outputFileName" disabled class = "tableField" type = "text"/></td>
+					<td style = "text-align : center; background : white"> 
+						<span style="cursor:not-allowed">
+							<input wicket:id = "notes" value = "Comment..."  style =  "background : #F4GGF4; text-align: center;
+							 padding-right :4px; width : 80%"   type = "button"/>
+						 </span>
+					</td>	
+				</tr>
+				</wicket:extend>
+			</table>
+	
+			</div>
+		</div>
+</body>
+</html>
+
+ 					

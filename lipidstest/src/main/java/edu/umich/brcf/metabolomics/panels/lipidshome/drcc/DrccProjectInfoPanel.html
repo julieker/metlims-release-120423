@@ -1,0 +1,127 @@
+<wicket:head>
+	 
+     <link rel="stylesheet" type="text/css" href="drcc.css"/>
+     <style>
+     </style>
+</wicket:head>
+
+<wicket:panel>
+<body>
+
+	<div> &nbsp; <br></div>
+	<table style = "width : 96%;  margin-right : 2%; margin-left : 2%"  class="dataview">
+		<tr>
+			<td style = "width : 25%; text-align : left; vertical-align : bottom">
+				<br><br><span class = "drccSubSectionHeader">A. Project Info</span>
+			</td>
+			<td style = "width : 50%; text-align : center; vertical-align : top">
+				<br>
+				<span class = "drccDivisionHeader">Metabolomics Core - DRCC Data Reporting Tool</span><br>
+				<br>
+			</td>
+		
+			<td style = "width : 25%; text-align : right; vertical-align : bottom">&nbsp;
+			
+			</td> 
+		</tr>
+	</table>
+	<br>		
+	<table style = "width :96%; margin-left : 2%; margin-right : 2%">
+			<tr>
+				<td class = "drccRequiredTextLabel"><span> Project Title :</span></td>
+				<td>
+					<input wicket:id = "projectName" style = "width : 60%" class = "drccRequiredTextField" />
+				</td>
+			</tr>
+		
+			<tr>
+				<td class = "drccTextLabel" >Project Type :  </td>
+				<td>
+					<input wicket:id = "projectType" type = "text" class = "drccTextField" style = "width : 60%" />
+				</td>
+			</tr>
+		
+			<tr>
+				<td class = "drccTextLabel" style = "vertical-align : top">Project Summary :  </td>
+				<td>
+					<textarea  wicket:id = "projectDescription" class = "drccTextField" style = "width : 60%" 
+					cols = "56" rows = "7" ></textarea>
+				</td>
+			</tr>
+			
+			<tr><td>&nbsp;&nbsp;</td><td></td></tr>
+			<tr>
+				<td class = "drccRequiredTextLabel">Institute :  </td>
+				<td> 
+					<input wicket:id = "institute" type = "text" class = "drccRequiredTextField" style = "width : 60%" />
+				</td>
+			</tr>
+		
+			<tr>
+				<td class = "drccRequiredTextLabel">Department :  </td>
+				<td>
+					<input wicket:id = "department"  type = "text" class = "drccRequiredTextField" style = "width : 60%" /> 
+				</td>
+			</tr>
+			
+			<tr>
+				<td class = "drccTextLabel">Laboratory : </td>
+				<td>
+					<input wicket:id = "laboratory"  type = "text" class = "drccTextField" style = "width : 60%" />
+				</td>
+			</tr>
+			
+			<tr>
+				<td>&nbsp;&nbsp;</td>
+				<td></td>
+			</tr>
+				
+			<tr>
+				<td class = "drccTextLabel">Funding Source : </td>
+				<td>
+					<input wicket:id = "fundingSource" type = "text" class = "drccTextField" style = "width : 60%"/>
+				</td>
+			</tr>
+
+		
+			<tr><td>&nbsp;&nbsp;</td><td></td></tr>
+			
+			<tr>
+				<td class = "drccRequiredTextLabel" >Principal Investigator :  Last Name </td>
+				<td>
+					<input wicket:id = "piLastName" type = "text" class = "drccRequiredTextField" style = "width : 60%"/>
+				</td>
+			</tr>
+
+			<tr>
+		
+				<td class = "drccRequiredTextLabel">First Name : </td>
+				<td>
+					<input wicket:id = "piFirstName"  type = "text" class = "drccTextRequiredField" style = "width : 60%"/>
+				</td>
+			</tr>
+			<tr>
+				<td class = "drccRequiredTextLabel">E-mail : </td>
+				<td>
+					<input wicket:id = "piEMail" type = "text" class = "drccTextRequiredField" style = "width : 60%"/>
+				</td>
+			</tr>
+			
+			<tr>
+				<td class = "drccRequiredTextLabel">Address : </td>
+				<td>
+					<input wicket:id = "piAddress"  type = "text" class = "drccTextRequiredField" style = "width : 60%"/>
+				</td>
+			</tr>
+		
+			<tr>
+				<td class = "drccTextLabel">
+					<span>Phone : </span>
+				</td>
+				<td>
+					<input wicket:id = "piPhone"  type = "text" class = "drccTextField" style = "width : 60%"/>
+				</td>
+		 	</tr>
+		 </table>
+	</body>
+</wicket:panel>

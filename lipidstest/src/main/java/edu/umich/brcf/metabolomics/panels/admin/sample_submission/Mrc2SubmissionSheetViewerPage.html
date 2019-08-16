@@ -1,0 +1,209 @@
+	<html xmlns:wicket="http://wicket.apache.org/">
+	<head>
+		<link rel="stylesheet" type="text/css" href="dialog.css"/>
+	   
+		<style>
+			input[type="text"]:disabled { background: #eeeeee;  }	
+			select:disabled { background : #eeeeee; }
+			select { text-align : right; padding-right : 5px; }
+			input[type = "text"] { text-align : right ; padding-right : 5px}
+			
+
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	        
+	        .factorNameHeader { text-align : center; font-weight : bold ; width : 50%; border : none; color : light yellow }
+	        .pageTitle { font-weight : bold; font-size : 120%; color :  #0053CF}
+	        .sectionTitle { font-weight : 600; color : blue }
+	        .sampleAssayDrop { font-size : 11px; width : 100% }
+	    </style>
+	</head>	
+	
+	
+	
+	<body class = "dialog_background"> 
+		
+		<fieldset style = "vertical-align : middle">
+		   
+		 <legend style = "border : blue; background : transparent">
+			<span wicket:id = "pageTitle" style = "font-weight : bold; color :  #0053CF"> Add Samples</span>
+		</legend>
+
+		<span wicket:id = "feedback"/>
+ 		
+  		<form wicket:id = "registerSampleForm">   
+          
+  				<span wicket:id = "container">
+  			
+  				<div style = "width : 96%; margin-right : 2%; margin-left : 2%;">
+                    <span class = "sectionTitle" >1.  Defaults</span>
+                </div>
+  				
+  				<br/>
+  				
+				<table style = "width : 96%; margin-left : 2%; margin-right : 2%">	
+					<tr>
+                        <td nowrap style = "width : 50%; text-align  : left; padding-left : 20px; vertical-align : top; ">
+							<table style = "width : 100%">
+							
+								<tr>
+									<td nowrap style = "text-align : left">
+										<span style = "font-weight : 700">Location Id : </span>
+									</td>
+									<td style = "text-align : left">
+										<select wicket:id = "defaultLocationDrop"></select>
+									</td>
+									<td nowrap style = "text-align : left; padding-left : 40px;"> 
+										<span style = "font-weight : 700">&nbsp;&nbsp;Subject Ids : &nbsp;&nbsp;&nbsp;</span>
+                                    	<input disabled type="radio" name="subjectIdType" value= "new" checked>Create New&nbsp;&nbsp;
+										<input disabled type="radio" name="subjectIdType" value= "old"> Select From Existing Ids
+									</td>
+								</tr>
+								<tr style = "padding-top : 20px;">
+									<td nowrap style = "text-align : left; vertical-align: bottom">
+										<span style = "font-weight : 700">Genus Species Id : </span>
+									</td>
+									<td><br><br><br><input wicket:id = "defaultGenusSpecies" type = "text"/></td>
+									<td nowrap style = "text-align : left; padding-left : 20px; vertical-align : bottom">
+										<span style = "font-weight : 700">Search for id : </span>
+										<input wicket:id = "gsLookup" type = "text" style = "width : 500px"/>
+										<!-- <select wicket:id = "defaultSampleTypeDrop"></select> -->
+									</td>
+									
+								</tr>
+								<tr style = "padding-top : 20px;">
+									<td nowrap style = "text-align : left; vertical-align: bottom">
+										<span style = "font-weight : 700">Sample Type Id : </span>
+											<!-- <select wicket:id = "defaultGsDrop"></select> -->
+									</td>
+									<td><input wicket:id = "defaultSampleType" type = "text"/></td>
+									
+									<td nowrap style = "text-align : left; padding-left : 20px">
+										<span style = "font-weight : 700">Search for id : </span>
+										<input wicket:id = "stLookup" type = "text"  style = "width : 500px"/>	
+									</td>
+									
+								</tr>
+							</table>
+						</td>
+						<td style = "width : 50%">
+						</td>
+					</tr>
+				</table>
+				<br><br>
+
+  				<div style = "width : 96%; margin-right : 2%; margin-left : 2%;">
+                    <span class = "sectionTitle" ><hr><br>2.  Client Information<br><br></span>
+                </div>
+  			
+  				<table style = "width : 96%; margin-left : 2%; margin-right : 2%">
+	  				<tr>
+	  					<td style = "width : 50%; text-align : left">
+					  		<table style = "text-align : left">
+						  		<tr>
+									<td nowrap style = "text-align : left"><b>Experiment ID:&nbsp;</b></td>
+									<td style = "text-align : left"><input disabled wicket:id="experiment" type="text" size="20"/></td>
+                                    <td nowrap style = "text-align : right; padding-left : 90px"><span style = "font-weight : 700">Shortcode : </span></td>
+                                    <td nowrap> &nbsp;&nbsp;<input wicket:id="shortCode" type="text" size="20"/>
+                                 	</td>
+								</tr>
+								<tr>
+									<td nowrap style = "text-align : left"><b>Experiment Name:&nbsp;</b></td>
+									<td style = "text-align : left"><input disabled id="experimentName" style = "width : 90%" type="text" /></td>
+                                    <td nowrap style = "text-align : right; padding-left : 90px"><span style = "font-weight : 700">NIH Grant Number : </span></td>
+                                    <td nowrap> &nbsp;&nbsp;<input wicket:id="nihGrantNumber" type="text" size="20"/>
+                                 	</td>
+								</tr>
+								
+								<tr>
+									<td nowrap style = "text-align : left"><b>Principal Investigator:&nbsp;</b></td>
+									<td style = "text-align : left"><input disabled id="principalInvestigator" type="text" style = "width : 90%"/></td>
+                                    <td nowrap style = "text-align : right; padding-left : 90px"><span style = "font-weight : 700">Service Request Id : </span></td>
+                                    <td nowrap> &nbsp;&nbsp;<input class ="serviceRequestId" type="text" size="20"/>
+                                 	</td>
+								</tr>
+							</table>
+						</td>
+						<td style = "width : 50%">
+						</td>
+					</tr>
+				</table>
+			<br/><br>
+			
+		
+			
+				<div><br><br></div>
+				<div><br><br></div>
+				
+			  	<div style = "width : 96%; margin-right : 2%; margin-left : 2%;">
+                	<span class = "sectionTitle"><hr><br>4.  Study Design - Factors<br><br></span>
+                
+					<table>
+					<tr>
+						<th>Sample ID</th>
+						<th>Researcher Sample Id</th>
+						<th><input wicket:id = "factorLabels.0" class = "factorNameHeader"  type = "text" title = "Please enter the name of your first experimental factor here" value = "Factor 1"></input></th>
+						<th><input wicket:id = "factorLabels.1" class = "factorNameHeader"   type = "text"  title = "Please enter the name of your second experimental factor here" value = "Factor 2"></input></th>
+						<th><input wicket:id = "factorLabels.2" class = "factorNameHeader"  type = "text"  title = "Please enter the name of your third experimental factor here" value = "Factor 3"></input></th>
+						<th><input wicket:id = "factorLabels.3" class = "factorNameHeader"  type = "text" title = "Please enter the name of your fourth experimental factor here" value = "Factor 4"></input></th>
+						<th><input wicket:id = "factorLabels.4" class = "factorNameHeader"   type = "text"  title = "Please enter the name of your fifth experimental factor here" value = "Factor 5"></input></th>
+						<!-- <th><input wicket:id = "factorLabels.5" class = "factorNameHeader"   type = "text"  title = "Please enter the name of your sixth experimental factor here" value = "Factor 6"></input></th>
+						<th><input wicket:id = "factorLabels.6" class = "factorNameHeader" type = "text" s title = "Please enter the name of your seventh experimental factor here" value = "Factor 7"></input></th>  -->
+					</tr>
+					
+					<tr wicket:id = "factors">
+						<td><input wicket:id = "sampleId3" type="text" size="10" /></td>
+				  		<td><input wicket:id = "userSampleId" type="text" size="10" /></td>
+				  		<td><input wicket:id = "factorValues.0" type = "text" size ="17"></input></td>
+				  		<td><input wicket:id = "factorValues.1" type = "text" size ="17"/></td>
+				  		<td><input wicket:id = "factorValues.2" type = "text" size ="17"/></td>
+				  		<td><input wicket:id = "factorValues.3" type = "text" size ="17"/></td>
+				  		<td><input wicket:id = "factorValues.4" type = "text"  size ="17"/></td>
+				  		<!-- <td><input wicket:id = "factorValues.5" type = "text"  size ="17"/></td>
+				  		<td><input wicket:id = "factorValues.6" type = "text" size ="17"/></td>  -->
+					</tr>
+				</table>
+				</div>
+				
+				<div><br><br></div>
+
+				<div style = "width : 96%; margin-right : 2%; margin-left : 2%;">
+                      <span class = "sectionTitle"><hr><br>4.  Study Design - Assays<br><br></span>
+                      <table>
+							<tr>
+							  <th>Sample ID</th>
+							  <th>Assay 1</th>
+							  <th>Assay 2</th>
+							  <th>Assay 3</th>
+							  <th>Assay 4</th>
+							  <th>Assay 5</th>
+							  <th>Assay 6</th>
+						</tr>
+						
+						<tr wicket:id = "assays">
+							<td><input  wicket:id = "sampleID2" type="text" value = "Sample ID here" style = "font-size : 11px" size="10" /></td>
+	                        <td><select wicket:id = "assayNames.0" class = "sampleAssayDrop" ></select>	</td>
+					  		<td><select wicket:id = "assayNames.1" class = "sampleAssayDrop"></select>	</td>
+					  		<td><select wicket:id = "assayNames.2" class = "sampleAssayDrop"></select>	</td>
+					  		<td><select wicket:id = "assayNames.3" class = "sampleAssayDrop"></select>	</td>
+					  		<td><select wicket:id = "assayNames.4" class = "sampleAssayDrop"></select>	</td>
+					  		<td><select wicket:id = "assayNames.5" class = "sampleAssayDrop"></select>	</td>
+						</tr>
+					</table>
+                </div>
+			
+				<div><br><br></div>
+                <hr>
+                                
+               	<div style = "text-align : center">
+                    <br>
+					<input type="submit" wicket:id="saveChanges" value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"/>
+					<input type="submit" wicket:id="backButton" style = "margin-left :20px" value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Back&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"/>
+				</div>
+       		</span>
+       	</form>
+	</fieldset>  
+</body>
+</html>
+
+

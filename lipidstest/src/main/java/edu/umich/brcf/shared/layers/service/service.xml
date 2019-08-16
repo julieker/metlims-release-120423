@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	                    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+	                    http://www.springframework.org/schema/tx 
+	                    http://www.springframework.org/schema/tx/spring-tx-2.5.xsd" >
+	           
+
+	                   
+ 	
+ 	<bean id="assayService" class="edu.umich.brcf.shared.layers.service.AssayService">
+ 		<property name="assayDao" ref="assayDAO" />
+ 	</bean>
+ 	
+ 	<bean id="aliquotService" class="edu.umich.brcf.shared.layers.service.AliquotService">
+ 		<property name="aliquotDao" ref="aliquotDAO" />
+ 		<property name="sampleDao" ref="sampleDAO" />
+ 		<property name="userDao" ref="userDAO" />
+ 		<property name="inventoryDao" ref="inventoryDAO" />
+ 	</bean>
+ 
+ 	<bean id="barcodePrintingService" class="edu.umich.brcf.shared.layers.service.BarcodePrintingService">
+ 		<property name="barcodePrintingDao" ref="barcodePrintingDAO"/>
+ 		<property name="systemConfigDao" ref="systemConfigDAO"/>
+ 	</bean>
+ 	
+ 	 <bean id="clientService" class="edu.umich.brcf.shared.layers.service.ClientService">
+ 		<property name="clientDao" ref="clientDAO"/>
+ 		<property name="userDao" ref="userDAO" />
+ 		<property name="organizationDao" ref="organizationDAO" />
+ 		<property name="experimentDao" ref="experimentDAO" />
+ 	</bean>
+ 	
+ 	<bean id="clientReportService" class="edu.umich.brcf.shared.layers.service.ClientReportService">
+ 		<property name="assayDao" ref="assayDAO" />
+ 		<property name="clientReportDao" ref="clientReportDAO" />
+ 		<property name="userDao" ref="userDAO" />
+ 	</bean>
+ 	
+ 	 <bean id="controlService" class="edu.umich.brcf.shared.layers.service.ControlService">
+ 		<property name="assayDao" ref="assayDAO" />
+ 		<property name="controlDao" ref="controlDAO" />	
+ 		<property name="idGeneratorDao" ref="idGeneratorDAO" />
+ 		<property name="controlTypeDao" ref="controlTypeDAO" />
+ 		<property name="experimentDao" ref="experimentDAO" />
+ 	</bean>
+
+ 	<bean id="controlTypeService" class="edu.umich.brcf.shared.layers.service.ControlTypeService">
+ 		<property name="controlTypeDao" ref="controlTypeDAO" />
+ 	</bean>
+ 	
+ 	
+ 	<bean id="documentService" class="edu.umich.brcf.shared.layers.service.DocumentService">
+ 		<property name="assayDao" ref="assayDAO"/>
+ 		<property name="documentDao" ref="documentDAO"/>
+ 		<property name="sampleDao" ref="sampleDAO"/>
+ 		<property name="experimentDao" ref="experimentDAO"/>
+ 		<property name="projectDao" ref="projectDAO"/>
+ 		<property name="clientDao" ref="clientDAO"/>
+ 	</bean>
+ 
+	 
+ 	<bean id="experimentService" class="edu.umich.brcf.shared.layers.service.ExperimentService">
+ 		<property name="assayDao" ref="assayDAO"/>
+ 		<property name="clientReportDao" ref="clientReportDAO" />
+ 		<property name="experimentDao" ref="experimentDAO" />
+ 		<property name="projectDao" ref="projectDAO" />
+ 		<property name="userDao" ref="userDAO" />
+  	</bean>
+ 
+ 	 <bean id="factorService" class="edu.umich.brcf.shared.layers.service.FactorService">
+ 		<property name="factorDao" ref="factorDAO" />
+ 		<property name="experimentDao" ref="experimentDAO" />
+ 	</bean>
+
+ 		
+ 	
+  	<bean id="locationService" class="edu.umich.brcf.shared.layers.service.LocationService">
+ 		<property name="locationDao" ref="locationDAO" />
+ 	</bean>
+ 		
+ 		<!-- Issue 214 -->
+ 	 <bean id="metLIMSAutomatedMessageService" class="edu.umich.brcf.shared.layers.service.MetLIMSAutomatedMessageService">
+ 	 </bean>	
+ 	
+ 	 <bean id="organizationService" class="edu.umich.brcf.shared.layers.service.OrganizationService">
+ 		<property name="organizationDao" ref="organizationDAO"/>
+ 	</bean>
+ 
+ 	 <bean id="projectService" class="edu.umich.brcf.shared.layers.service.ProjectService">
+ 		<property name="projectDao" ref="projectDAO"/>
+ 			<property name="userDao" ref="userDAO" />
+ 			<property name="clientDao" ref="clientDAO" />
+ 	</bean>
+ 
+	 <bean id="protocolReportService" class="edu.umich.brcf.shared.layers.service.ProtocolReportService">
+ 		<property name="assayDao" ref="assayDAO" />
+ 		<property name="protocolReportDao" ref="protocolReportDAO" />
+ 		<property name="userDao" ref="userDAO" />
+ 	</bean>
+ 	
+ 	<bean id="protocolSheetService" class="edu.umich.brcf.shared.layers.service.ProtocolSheetService">
+		<property name="assayDao" ref="assayDAO" />
+ 		<property name="protocolSheetDao" ref="protocolSheetDAO" />
+ 		<property name="userDao" ref="userDAO" />
+ 	</bean>
+ 	
+ 	<bean id="rollbackItemService" class="edu.umich.brcf.shared.layers.service.RollbackItemService">
+ 		<property name="sampleDao" ref="sampleDAO" />
+ 		<property name="rollbackItemDao" ref="rollbackItemDAO" />
+  	</bean>
+ 
+ 
+ 	 <bean id="sampleAssayService" class="edu.umich.brcf.shared.layers.service.SampleAssayService">
+ 		<property name="sampleAssayDao" ref="sampleAssayDAO"/>
+ 		<property name="sampleDao" ref="sampleDAO"/>
+ 	</bean>
+ 
+ 	
+ 	<bean id="sampleLocationService" class="edu.umich.brcf.shared.layers.service.SampleLocationService">
+ 		<property name="sampleLocationDao" ref="sampleLocationDAO"/>
+ 		<property name="sampleDao" ref="sampleDAO"/>
+ 	</bean>
+ 	
+ 	
+ 	<bean id="samplePrepService" class="edu.umich.brcf.shared.layers.service.SamplePrepService">
+ 		<property name="samplePrepDao" ref="samplePrepDAO" />
+ 		<property name="sampleDao" ref="sampleDAO" />
+ 		<property name="userDao" ref="userDAO" />
+ 		<property name="experimentDao" ref="experimentDAO" />
+ 		<property name="instrumentDao" ref="instrumentDAO" />
+ 	</bean>
+ 	
+ 	
+ 	 <bean id="sampleService" class="edu.umich.brcf.shared.layers.service.SampleService">
+ 	 	<property name="expDao" ref="experimentDAO" />
+ 		<property name="sampleDao" ref="sampleDAO" />
+ 		<property name="statusDao" ref="sampleStatusDAO" />
+ 		<property name="sampleTypeDao" ref="sampleTypeDAO" />
+ 		<property name="userDao" ref="userDAO" />
+ 		<property name="idGeneratorDao" ref="idGeneratorDAO" />
+ 		<property name="factorDao" ref="factorDAO" />
+ 		<property name="subjectDao" ref="subjectDAO" />
+ 		<property name="assayDao" ref="assayDAO" />
+ 		<property name="sampleAssayStatusDao" ref="sampleAssayStatusDAO" />
+ 		<property name="genusSpeciesDao" ref="genusSpeciesDAO" />
+ 		<property name="locationDao" ref="locationDAO" />
+ 		<property name="tableAccessDao" ref="tableAccessDAO" />
+ 	</bean>
+ 
+ 	<bean id="sampleTypeService" class="edu.umich.brcf.shared.layers.service.SampleTypeService">
+ 		<property name="sampleTypeDao" ref="sampleTypeDAO"/>
+ 	</bean>
+ 
+	<bean id="standardProtocolService" class="edu.umich.brcf.shared.layers.service.StandardProtocolService">
+		<property name="standardProtocolDao" ref="standardProtocolDAO" />
+ 	</bean>
+ 
+ 	<bean id="subjectService" class="edu.umich.brcf.shared.layers.service.SubjectService">
+ 		<property name="subjectDao" ref="subjectDAO"/>
+ 	</bean>
+ 	
+ 	 <bean id="systemConfigService" class="edu.umich.brcf.shared.layers.service.SystemConfigService">
+ 		<property name="systemConfigDao" ref="systemConfigDAO"/>
+ 	</bean>
+ 	
+ 	
+ 	<bean id="userService" class="edu.umich.brcf.shared.layers.service.UserService">
+ 		<property name="userDao" ref="userDAO"/>
+ 	</bean>
+ 	
+ 	
+ 	
+ </beans>

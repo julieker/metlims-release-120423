@@ -1,0 +1,64 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+
+<head>
+	   
+	    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+	    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+	    <style>
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	    </style>
+	
+		<style>
+			div.wicket-aa 
+				{
+				font-family: "Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana;
+				font-size: 14px;
+				background-color: white;
+				border-width: 1px;
+				border-color: blue;
+			border-style: solid outset;
+				padding: 2px;
+				margin: 1px 0 0 0;
+				text-align:left;
+				z-index: 5;
+				}
+			div.wicket-aa ul { list-style:none; padding: 2px; margin:0px; }
+			div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0px; }
+		</style>
+	</head>
+	
+	<body class = "dialog_background">  <!-- "background : #E8ECEF"> -->
+		<center>
+		<fieldset style = "vertical-align : middle; height : 80%">
+	     	
+	     	<legend style = "border : blue; background : transparent">
+	     		<span style = "font-weight : bold; color :  #0053CF">Sample Submission</span>
+	     	</legend>
+			<span style = "font-size : 80%" wicket:id = "feedback"/>
+			
+    		<form wicket:id="createSampleForm">
+    	
+	    		<table style = "margin-top : 30px">
+	    			<tr>
+	    				<td style = "text-align : right; padding-right : 5px">File</td>
+	    				<td>
+				        	<input wicket:id="fileInput" id="upload" type="file" size="150"/>
+				        </td>
+				        <td>
+				        	<input wicket:id = "submitButton" type="submit" value="&nbsp;&nbsp;Upload&nbsp;&nbsp;"/>
+				        </td>
+				    </tr>
+			    </table>
+			    
+			    <span wicket:id="progress">[[ajax upload progressbar]]</span><br/>
+				    	
+		    </form>
+     	
+     	</fieldset>
+  
+    	
+
+     </center>
+  </body>
+</html>

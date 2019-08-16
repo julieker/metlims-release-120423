@@ -1,0 +1,257 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+   <link rel="stylesheet" type="text/css" href="dialog.css"/>
+     <style> 
+     	legend { border: 1px solid transparent; background-color: white; color: black; padding: 4px;}
+	    fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+     	.dialogButton { width : 25%; padding-top : 2px; padding-bottom : 2px}
+     </style>
+</head>
+   
+<body class = "dialog_background">
+<!-- Issue 422 -->
+	<fieldset class = "dialog_fieldset" style = "height : 90%; border-radius : 5px; margin-bottom : 3%; vertical-align: middle; width :90%; margin-left : 5%; margin-right : 5%">	
+   
+		<legend class = "dialog_legend">
+	   		<span  style = "text-align : left; font-weight : bold; color :  #0053CF; "><span >MoTrPAC Controls</span></span>
+	   	</legend>
+		   	
+		<span wicket:id = "feedback" class = "feedbackMsg80" style = "text-align : center"></span>
+		   	
+		<div style = "vertical-align : middle;">
+	  	 	<form wicket:id = "motrpacOptionsForm">  
+		
+  		
+  			<fieldset class = "dialog_fieldset" style = "text-align : left; border : #dddddd 1px solid;  border-radius : 8px; margin-bottom : 1%; margin-top : 2%; vertical-align: middle; width :90%; margin-left : 5%; margin-right : 5%">	
+   
+			<legend >
+	   			<span  style = "font-weight : bold; color :  grey">Reference Standards</span>
+	   		</legend>
+	
+	  			<table style = "width : 90%; margin-left : 5%; margin-right:5%; padding : 20px">
+					
+					<tr>
+						<td style = "text-align : right; width : 25%; padding-right : 15px">
+							<span style = "font-weight : 700">Gastrocnemius : </span> 
+						</td>
+						
+						<td style = "text-align : left; width : 75%">
+						    Exercise (80008) :
+							<select wicket:id = "nGastroExercise" style = "width : 80px">
+								<option>0</option>
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+								<option>6</option>
+							</select> 
+							<span style = "margin-left : 30px">Sedentary (80009) :</span>
+							<select wicket:id = "nGastroSedentary" style = "width : 80px">
+								<option>0</option>
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+								<option>6</option>
+							</select> 
+						</td>
+					</tr>
+					
+					<tr>
+						<td style = "text-align : right; width : 25%; padding-right : 15px">
+							<span style = "font-weight : 700">Liver : </span> 
+						</td>
+						
+						<td style = "text-align : left; width : 75%">
+						    Exercise (80010) :
+							<select wicket:id = "nLiverExcercise" style = "width : 80px">
+								<option>0</option>
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+								<option>6</option>
+							</select> 
+							<span style = "margin-left : 30px">Sedentary (80011) :</span>
+							<select wicket:id = "nLiverSedentary" style = "width : 80px">
+								<option>0</option>
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+								<option>6</option>
+							</select> 
+						</td>
+					</tr>
+					
+					<tr>
+						<td style = "text-align : right; width : 25%; padding-right : 15px">
+							<span style = "font-weight : 700">Adipose : </span> 
+						</td>
+						
+						<td style = "text-align : left; width : 75%">
+						    Exercise (80012) :
+							<select wicket:id = "nAdiposeExercise" style = "width : 80px">
+								<option>0</option>
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+								<option>6</option>
+							</select> 
+							<span style = "margin-left : 30px">Sedentary (80013) :</span>
+							<select wicket:id = "nAdiposeSedentary" style = "width : 80px">
+								<option>0</option>
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+								<option>6</option>
+							</select> 
+						</td>
+					</tr>
+		
+					<tr>
+						<td style = "text-align : right; width : 25%; padding-right : 15px">
+							<span style = "font-weight : 700">Plasma : </span> 
+						</td>
+						
+						<td style = "text-align : left; width : 75%">
+						    Exercise (80014) :
+							<select wicket:id = "nPlasmaExercise" style = "width : 80px">
+								<option>0</option>
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+								<option>6</option>
+							</select> 
+							<span style = "margin-left : 30px">Sedentary (80015) :</span>
+							<select wicket:id = "nPlasmaSedentary" style = "width : 80px">
+								<option>0</option>
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+								<option>6</option>
+							</select> 
+						</td>
+					</tr>
+					
+					</table>
+					</fieldset>
+			<fieldset class = "dialog_fieldset" style = "border : #dddddd 1px solid; border-radius : 8px; margin-bottom : 3%; vertical-align: middle; width :90%; margin-left : 5%; margin-right : 5%">	
+   
+			<legend class = "dialog_legend">
+	   			<span  style = " font-weight : bold; color : grey"><span >Other</span></span>
+	   		</legend>
+					<table style = "padding : 25px; width : 70%; margin-left : 15%; margin-right : 15%">
+					
+					<tr>
+						<td style = "text-align : right; width : 2%; padding-right : 10px">
+							<span style = "font-weight : 700">  </span> 
+						</td>
+						
+						<td style = "text-align : right; width : 98%">
+						    <span style = "text-align : right; font-weight : 700"> UM rat gastrocnemius control (CS0UMRG01) : </span> 
+							<select wicket:id = "nRatG" style = "width : 80px">
+								<option>0</option>
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+								<option>6</option>
+							</select> 
+							<span style = "margin-left : 110px"> </span>
+							
+						</td>
+					</tr>
+					
+					<tr>
+						<td style = "text-align : right; width : 2%; padding-right : 10px">
+							<span style = "font-weight : 700">  </span> 
+						</td>
+						
+						<td style = "text-align : right; width : 98%">
+						    <span style = "text-align : right; font-weight : 700"> UM rat liver control (CS0UMRL01) : </span> 
+							<select wicket:id = "nRatL" style = "width : 80px">
+								<option>0</option>
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+								<option>6</option>
+							</select> 
+							<span style = "margin-left : 110px"> </span>
+							
+						</td>
+					</tr>
+					
+					<tr>
+						<td style = "text-align : right; width : 2%; padding-right : 10px">
+							<span style = "font-weight : 700">  </span> 
+						</td>						
+						<td style = "text-align : right; width : 98%">
+						    <span style = "text-align : right; font-weight : 700">UM rat adipose control (CS0UMRA01) : </span> 
+							<select wicket:id = "nRatA" style = "width : 80px">
+								<option>0</option>
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+								<option>6</option>
+							</select> 
+							<span style = "margin-left : 110px"> </span>							
+						</td>
+					</tr>
+					<tr>
+						<td style = "text-align : right; width : 2%; padding-right : 10px">
+							<span style = "font-weight : 700">  </span> 
+						</td>
+						
+						<td style = "text-align : right; width : 98%">
+						    <span style = "font-weight : 700">UM rat plasma control (CS0UMRP01) : </span> 
+							<select wicket:id = "nRatPlasma" style = "width : 80px">
+								<option>0</option>
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+								<option>6</option>
+							</select> 
+							<span style = "margin-left : 110px"> </span>
+							
+						</td>
+					</tr>
+				</table>
+				</fieldset>
+						
+				<table style = "width : 90%; margin-left : 5%; margin-right :5%; margin-top : 2%">	    		 		
+	    		 	<tr>
+						<td style = "width : 100%; text-align : center;">
+				    		<input wicket:id = "cancelButton"  
+				    			style = "width: 15%; margin-right : 10px" type = "submit"  value = "&nbsp;&nbsp;Done&nbsp;&nbsp;" />	
+			        	<!--  
+			        		<input wicket:id="save"  
+			        			style = "width : 15%; margin-left : 10px" type="submit" value="&nbsp;&nbsp;Save&nbsp;&nbsp;"/>
+			        	-->		
+			    		</td>
+		    		</tr>
+		    	</table>
+	    	</form>
+		</div>
+	</fieldset>	
+</body>
+</html>

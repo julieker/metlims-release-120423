@@ -1,0 +1,486 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  
+  <style>
+
+    legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+    fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	        
+    table tr.odd { width : 800px; background  : white; padding-right : 10px;  }
+    table tr.even { width : 800px; background  : #dddddd	; padding-right : 10px }
+
+
+  	.normalTable
+	    {
+	    width : 96%;
+	    margin-right : 2%;
+	    margin-left : 2%;
+	    border : solid 1px grey;
+	    background : white;
+	    font-size : 85%;
+	    }
+	    
+	.borderlessTable
+	    {
+	    width : 96%;
+	    margin-right : 2%;
+	    margin-left : 2%;
+	    border : none;
+	    background : white;
+	    font-size : 85%;
+	    }    
+	    
+    select 
+    	{
+    	width : 100%;
+    	}
+   
+       
+    .drccSubSectionHeader
+        {
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+        font-weight: 700;
+   		font-size : 120%;  
+        background-color : white;
+        color : #A9E2F3 ;
+        font-style : oblique;
+        margin-left : 2%;
+    	}
+    
+     .drccDivisionHeader
+        {
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+        font-weight: 700;
+   		font-size : 140%;  
+        color : #003678;
+        font-style:  oblique;
+    	}
+    	
+    .drccTextRequiredField
+        {
+        background-color:  #fbffd3; 
+        color:  black;
+        width : 70%;
+       	}
+    	
+    .drccRequiredTextLabel
+        {
+        text-align : right;
+        padding-right : 10px;
+        background-color:  white; 
+        color : black;
+        font-weight : 600;
+        width : 23%;
+        }
+        
+     .warningLabel
+     	{
+     	text-align : center;
+     	color : black;
+     	font-style : italic;
+     	font-size : 120%;
+     	}	
+     	
+    	th { background : #0035CF ; color : white; }	
+		
+    </style>
+	</head>
+
+	<body style = "background : white">   <!-- "#EEEEEE"> --><!-- style = "background : #FFFFEE"> -->
+		<span wicket:id = "feedback"></span>
+		<form wicket:id = "editProtocolForm">
+		
+        <div> &nbsp;</div>
+		<table class = "normalTable" style = "border: none; margin-top : 10px">
+			<tr>
+				<td style = "width : 50%; text-align : center; vertical-align : top">
+					<span class = "drccDivisionHeader">Metabolomics Core Protocol Sheet</span><br>
+					<span class = "warningLabel">(Assay : <span wicket:id = "assayName">Gly TCA</span>)</span>
+				</td>
+			</tr>
+		</table>
+		
+		
+		<table class = "normalTable" style = "border: none" >
+        	<tr>
+            	<td style = "width : 75%; text-align : left; vertical-align : bottom;">
+					<br><span class = "drccSubSectionHeader">A.  Samples</span>
+				</td>
+				<td style = "width : 25%; margin-right : 4%; text-align : center">
+					<input wicket:id = "submitButton" type = "submit" style = "margin-right : 10px" value = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"/>
+					<input wicket:id = "cancelButton" type = "submit" style = "margin-left : 10px" value = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"/>
+				</td>
+        	</tr>
+       	</table>
+       	
+        <br>  	
+        
+        <table  class = "normalTable" style = "border : none"> 
+        	<tr>
+            	<td style = "width : 100%; padding-left : 1%">
+					<div style = "text-align : left;">
+						<div style = " font-weight : 500;" >
+							<table style = "margin-left : 4%; width : 25%; border : none">
+								<tr><td>Assay ID:</td>
+									<td style = "text-align : left">
+										<span  wicket:id = "assayId" style = "width : 30%">A003</span>
+									</td>
+								</tr>
+								
+								<tr><td>Experiment ID:</td>
+									<td style = "text-align : left">
+										<span wicket:id = "experimentId"  style = "width : 30%"></span>/								</td>
+								</tr>
+								
+								<tr>
+									<td># Samples </td>
+									<td>
+									<input wicket:id = "nSamples" type = "text" style = "width : 30%" value = ""/></td>
+								</tr>
+								<tr>	
+									<td># Cell Plates</td>
+									<td><input wicket:id = "nCellPlates"  type = "text" style = "width : 30%" value = ""/></td>
+								</tr> 
+								<tr>
+									<td>Location :</td>
+									<td><input type = "text" style = "width : 100%" value = ""/></td>
+								</tr>
+								
+							</table>
+						</div>
+					</div>
+				</td>
+        	</tr>
+       	</table>
+        
+		
+		<table class = "borderlessTable" style = "border: none"  >
+        	<tr>
+            	<td style = "width : 75%; text-align : left; vertical-align : bottom;">
+					<br><span class = "drccSubSectionHeader">B. Extraction Solvent </span>
+				</td>
+				<td style = "width : 25%"></td>
+        	</tr>
+       	</table>
+       	
+        <br>  	
+        
+		
+		<table  class = "normalTable" style = "border : none"> 
+        	<tr>
+            	<td style = "width : 100%; padding-left : 1%">
+					<div style = " text-align : left; ">
+						<div style = " font-weight : 500;" >
+							<table style = "margin-left : 4%; border : none">
+								<tr><td>Extraction solvent: <input type = "text" size = "5" /> mL of 8:1:1 (Methanol: Chloroform: H2O) +<input type = "text" size = "5" /> µL 13C Gly/Tca IS ( <input type = "text" size = "5" /> mL total). Add <input type = "text" size = "5" /> ul of 50mM Novaline (final conc. is 1mM in extraction solvent)</td></tr>
+								<tr><td>0.5ml for 6cm plate, 1.5ml for 10cm plate</td></tr>
+								<tr><td>Ratio of 811 to 13C Internal standard mix = 50:1, which is same as in calibration standard preparation.</td></tr>
+								<tr><td>Ratio of 811 to Novaline (50mM) = 50:1, which is same as in calibration standard preparation.</td></tr> 
+							</table>
+						</div>
+					</div>
+				</td>
+        	</tr>
+       	</table>
+          	  	
+          	  	
+        <table class = "normalTable" style = "border: none"   >
+        	<tr>
+            	<td style = "width : 75%; text-align : left; vertical-align : bottom;">
+					<br><span class = "drccSubSectionHeader">C. Standard Mix stock (STD) and Internal Standard stock (IS)</span>
+				</td>
+				<td style = "width : 25%"></td>
+        	</tr>
+       	</table>
+       	
+        <br>  	
+        
+		
+		<table class = "normalTable" style = "border: none">
+        	<tr>
+            	<td style = "width : 100%; padding-left : 1%">
+					<div style = "text-align : left;">
+						<div style = " font-weight : 500;" >
+							<table style = "margin-left : 4%; border : none">
+								<tr><td>GLY/TCA STD mix 200µM. (200mM, 25 x 80ul of 12C metabolites: a-kg, oaa, cit, mal, fum, 2pg, g6p, FAD,    F16,BP, g3p, g6p, pep, nadph, nadh, nadp, nadp, Lac, amp, adp, atp, sed, x5p, 6pg, r5p, e4p) (box F stored in -80°C)</td></tr>
+								<tr><td></td></tr>
+								<tr><td>TCA std mix: in Jordan’s std box</td></tr>
+								<tr><td>GLY/TCA IS: 13C 100µM</td></tr>
+								<tr><td>Novaline: 50mM</td></tr>
+							</table>
+						</div>
+					</div>
+				</td>
+        	</tr>
+       	</table>
+        
+			
+		<table class = "normalTable" style = "border: none" >
+        	<tr>
+            	<td style = "width : 75%; text-align : left; vertical-align : bottom;">
+					<br><span class = "drccSubSectionHeader">D. Standard Preparation (STD Mix)--LCMS</span>
+				</td>
+				<td style = "width : 25%"></td>
+        	</tr>
+       	</table>
+       	
+        <br>  	
+        
+		<table class = "normalTable" style = "border: none;">
+        	<tr>
+            	<td style = "width : 100%; padding-left : 1%">
+				<div style = "text-align : left; "> 
+					<span style = "font-style : italic; margin-left : 4%; font-weight : 500;">
+					Prepare standard solutions in autosampler vials (no inserts) as follows:<br>
+					</span>
+					
+						<table style = "margin-left : 4%;  margin-right : 4%;  width : 92%;">	
+
+ 					 
+							<tr style = "border : solid 1px black">
+								<th>STD [Final]	MeOH  (&mu;L)</th>
+								<th>ChCl3 (&mu;L)</th>
+								<th>H2O  (&mu;L)</th>
+								<th>Gly/TCA STD mix (&mu;L)</th>
+								<th>NADH/ NADPH mix (&mu;L)</th>
+								<th>13C IS mix (&mu;L) </th>
+								<th></th>
+							</tr>
+						
+							<tr style = "border : solid 1px black">
+								<td>STD [Final]</td>
+								<td>395</td>
+								<td>50</td>
+								<td>50</td>
+								<td>0</td>
+								<td>0</td>
+								<td></td>
+							</tr>
+							
+							<tr style = "border : solid 1px black">
+								<td>STD 1  [0.6 µM]</td>
+								<td>395</td>
+								<td>50</td>
+								<td>47</td>
+								<td>1.5</td>
+								<td>1.5</td>
+								<td></td>
+								
+							</tr>
+							
+							<tr style = "border : solid 1px black">
+								<td>STD 2  [2 µM]</td>
+								<td>395</td>
+								<td>50</td>
+								<td>40</td>
+								<td>5</td>
+								<td>5</td>
+								<td></td>
+							</tr>
+							
+							<tr style = "border : solid 1px black">
+								<td>STD 3  [6 µM]</td>
+								<td>395</td>
+								<td>50</td>
+								<td>20</td>
+								<td>15</td>
+								<td>15</td>
+								<td></td>
+							</tr>
+							
+							<tr style = "border : solid 1px black">
+								<td>STD 4  [20 µM]</td>
+								<td>345</td>
+								<td>50</td>
+								<td>0</td>
+								<td>50</td>
+								<td>50</td>
+								<td></td>
+							</tr>
+						</table>
+						
+					</div>
+						
+				</td>
+			</tr>
+		</table>
+						
+		<table class = "normalTable" style = "border: none" >
+        	<tr>
+            	<td style = "width : 75%; text-align : left; vertical-align : bottom;">
+					<br><span class = "drccSubSectionHeader">E. Standard Preparation (STD Mix)--GCMS</span>
+				</td>
+				<td style = "width : 25%"></td>
+        	</tr>
+       	</table>
+       	
+        <br>  	
+        
+		<table class = "normalTable" style = "border: none;">
+        	<tr>
+            	<td style = "width : 100%; padding-left : 1%">
+					<span style = "text-align : left; "></span>
+					
+					<table style = "margin-left : 4%;  margin-right : 4%;  width : 92%;">	
+						<tr>
+							<th>Standard name [ng/ml]</th>
+							<th>Volume of methanol</th>
+							<th>Volume of chloroform</th>
+							<th>Volume of water</th>
+							<th>Volume of TCA STD mix0</th>
+							<th>IS (Novaline)</th>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>STD 0/ 0</td>
+							<td>160</td>
+							<td>20</td>
+							<td>16</td>
+							<td>0</td>
+							<td>4</td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>STD 2/ 250</td>
+							<td>160</td>
+							<td>20</td>
+							<td>11</td>
+							<td>5</td>
+							<td>4</td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>STD 3/ 500</td>
+							<td>160</td>
+							<td>20</td>
+							<td>6</td>
+							<td>10</td>
+							<td>4</td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>STD 4/1000</td>
+							<td>156</td>
+							<td>20</td>
+							<td>0</td>
+							<td>20</td>
+							<td>4</td>
+						</tr>
+						
+						<tr style = "border : solid 1px black">
+							<td>STD 5/1250</td>
+							<td>126</td>
+							<td>20</td>
+							<td>0</td>
+							<td>50</td>
+							<td>4</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		
+		<table class = "normalTable"   style = "border: none">
+        	<tr>
+            	<td style = "width : 75%; text-align : left; vertical-align : bottom;">
+					<br><span class = "drccSubSectionHeader">F. Sample Preparation :</span>
+				</td>
+				<td style = "width : 25%"></td>
+        	</tr>
+       	</table>
+       	
+        <br>  	
+        
+		<table class = "normalTable" style = "border: none;">
+        	<tr>
+            	<td style = "width : 100%; padding-left : 1%">
+					<div style = "text-align : left;">
+						<span style = "font-weight : 700; font-size : 100; margin-left : 4%">GLY/TCA Sample extraction for cell plates: :
+						</span>
+						
+						<ol style = "width  96%; margin-right : 2%; margin-left : 2%; padding-top : 10px">
+						
+							<li>Place all samples on dry ice until extraction procedure has been completed.</li> 
+							<li>While over wet ice add Extraction solvent (0.5ml for 6cm plate, 1.5ml for 10cm plate) containing Internal Standards (ISs) to the plate, rock plate back and forth to allow chemical extraction to occur and release cells from plate bottom. Use a scraping device (disposable weigh spoon) to complete cell release and homogenization (making sure to scrape entire plate with swipe technique).</li>
+							<li>Transfer entire solvent sample from plate to pre-labeled, clean microtube, vortex.</li>
+							 
+							<li>Keep eppendorf tubes at 4°C for 10min to allow complete extraction, remove from 4°C repeat vortex.</li>
+							<li>Centrifuge all tubes at 14,000RPM for 10min in 4°C.</li> 
+							<li>Create a pooled sample by transferring 10µL of each sample to an autosampler vial with insert.</li>
+							<li>Transfer 100µL of supernatant to an autosampler vial (with insert) for LC-MS analysis.</li> 
+							<li>Centrifuge all vials for 1min to remove air bubbles.  Save samples in -80.</li>
+							<li>Aliquot 200µL of supernatant and prepare GCMS stds, drying under vacuum and 45°C for GCMS analysis.</li> 
+						</ol> 
+					</div>
+				</td>
+        	</tr>
+       	</table>
+       	
+       	
+        <table class = "normalTable"  style = "border: none">
+        	<tr>
+            	<td style = "width : 25%; text-align : left; vertical-align : bottom;">
+					<br><span class = "drccSubSectionHeader">G. LC-MS Analysis :</span>
+				</td>
+				<td style = "width : 75%"></td>
+        	</tr>
+       	</table>
+       	
+        <br>  	
+    	
+		<table class = "borderlessTable" style = "border: none; font-size : 120%; ">
+        	<tr>
+            	<td style = "width : 100%; padding-left : 1%">
+					<div style = "font-size : 80%; text-align : left; ">
+						<span style = " font-weight : 500; font-size : 100%" ></span>
+						
+						<table style = "margin-left : 4%; border : none">	
+							<tr><td>Q-Tof method:</td></tr>
+							<tr><td>Column: Luna Nh2 150x1mm column.</td></tr>
+							<tr><td>MP A: 5mM Ammonium Acetate in H2O, pH 9.9, adjust with LC-MS grade Ammonium Hydroxide</td></tr>
+							<tr><td>MP B: 100% Acetonitrile</td></tr>
+							<tr><td>GCMS:  DB5MS 30x0.25x0.25 column </td></tr>
+						</table>
+					</div>
+				</td>
+        	</tr>
+       	</table>
+          
+          
+        <table class = "normalTable" style = "border: none">
+        	<tr>
+            	<td style = "width : 75%; text-align : left; vertical-align : bottom;">
+					<br><span class = "drccSubSectionHeader">H. Notes/Observations :</span>
+				</td>
+				<td style = "width : 25%"></td>
+        	</tr>
+       	</table>
+       	
+        <br>  	
+        
+		<table class = "normalTable" style = "border: none; font-size : 120%; color : blue">
+        	<tr>
+            	<td style = "width : 100%; padding-left : 1%">
+				<div style = "font-size : 80%; text-align : left; color : #003678;font-style : italic;">
+					<span style = "font-weight : 700; font-size : 100%" ></span>
+					<textarea style = "width : 92%; margin-left : 4%; margin-right : 4%" rows="100" cols="50"></textarea>
+				</div>
+				</td>
+        	</tr>
+       	</table>  
+   
+      </form>
+     
+	<div><br><br><br></div>
+	
+		<center>
+	 			<br />
+				<img src="protocol_1.png"/>
+			</center>
+     
+</body>
+</html>

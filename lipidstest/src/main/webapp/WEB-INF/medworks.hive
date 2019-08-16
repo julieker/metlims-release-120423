@@ -1,0 +1,72 @@
+grant
+{
+	//permission ${ComponentPermission} "${myRoot}.tabs.pages.MasterPage", "render, enable";
+	//because the menubuttons are a secure link they won't show up without having the following rights
+	//permission ${ComponentPermission} "${myRoot}.tabs.pages.MasterPage:buttoncontainer", "inherit, render, enable";
+	//This is just another way of saying the same as above
+	//permission ${ComponentPermission} "org.apache.wicket.security.examples.tabs.pages.MasterPage", "inherit, render, enable";
+	//permission ${ComponentPermission} "${myRoot}.tabs.pages.MasterPageHiddenContents:buttoncontainer", "inherit, render, enable";
+	//permission ${ComponentPermission} "${myRoot}.tabs.pages.MasterPageHiddenTabs:buttoncontainer", "inherit, render, enable";
+	permission ${ComponentPermission} "${myRoot}.MedWorksMasterPage", "render, enable";
+	permission ${ComponentPermission} "${myRoot}.MedWorksMasterPage", "render, enable";
+};
+
+grant principal ${myRoot}.shared.panels.login.MedWorksPrincipal "Guest"
+{
+};
+grant principal ${myRoot}.shared.panels.login.MedWorksPrincipal "Client"
+{
+};
+grant principal ${myRoot}.shared.panels.login.MedWorksPrincipal "ClientAdmin"
+{
+};
+grant principal ${myRoot}.shared.panels.login.MedWorksPrincipal "Chemist"
+{
+};
+grant principal ${myRoot}.shared.panels.login.MedWorksPrincipal "ChemAdmin"
+{
+};
+grant principal ${myRoot}.shared.panels.login.MedWorksPrincipal "ConsortiumUser"
+{
+};
+
+grant principal ${myRoot}.shared.panels.login.MedWorksPrincipal "Admin"
+	{
+	permission ${ComponentPermission} "${myRoot}.MedWorksMasterPage", "render, enable";
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.workflow.WorkflowMainPanel", "inherit, render,enable"; 
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.admin.AdminPanel", "inherit, render,enable"; 
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.lims.LimsPanel", "inherit, render,enable"; 
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.lipidshome.LipidsMainTabPanel", "inherit, render,enable";
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.lipidshome.LimsPanel2", "inherit, render,enable";
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.lims.newexperiment.NewExperimentPage", "inherit, render, enable";
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.lims.newsample.SampleSearchResultsPage", "inherit, render, enable";
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.lims.newestprep.PrepSearchResultsPage", "inherit, render, enable";
+	permission ${ComponentPermission} "${myRoot}.shared.panels.lims.utilitypanels.IllegalBrowserPanel", "inherit, render, enable";
+	};
+	
+grant principal ${myRoot}.shared.panels.login.MedWorksPrincipal "AccountAdmin"
+	{
+	permission ${ComponentPermission} "${myRoot}.MedWorksMasterPage", "render, enable";
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.workflow.WorkflowMainPanel", "inherit, render,enable"; 
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.admin.AdminPanel", "inherit, render,enable"; 
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.lims.LimsPanel", "inherit, render,enable"; 
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.lipidshome.LipidsMainTabPanel", "inherit, render,enable";
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.lipidshome.LimsPanel2", "inherit, render,enable";
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.lims.newexperiment.NewExperimentPage", "inherit, render, enable";
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.lims.newsample.SampleSearchResultsPage", "inherit, render, enable";
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.lims.newestprep.PrepSearchResultsPage", "inherit, render, enable";
+	permission ${ComponentPermission} "${myRoot}.shared.panels.lims.utilitypanels.IllegalBrowserPanel", "inherit, render, enable";
+	};	
+
+
+grant principal ${myRoot}.shared.panels.login.MedWorksPrincipal "Adm1n"
+{
+	permission ${ComponentPermission} "${myRoot}.MedWorksMasterPage", "inherit, render, enable";
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.workflow.WorkflowMainPanel", "inherit, render,enable"; 
+	permission ${ComponentPermission} "${myRoot}.metabolomics.panels.lims.newexperiment.NewExperimentPage", "inherit, render, enable";
+	
+//permission ${ComponentPermission} "${myRoot}.panels.lims.compound.EditCompound","render,enable";
+	
+	
+	
+};

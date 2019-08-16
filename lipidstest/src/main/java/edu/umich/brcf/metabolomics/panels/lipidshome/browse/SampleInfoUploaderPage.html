@@ -1,0 +1,74 @@
+  <html>
+
+	<head>
+	    <title style = "background : #0053CF"></title>
+	    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+	    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+	    <style>
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	    </style>
+	</head>
+	
+	<wicket:head>
+		<style>
+		
+		</style>
+	</wicket:head>
+	
+	<body id = "dialog_background">  <!-- "background : #E8ECEF"> -->
+		
+	    
+	        <!--  TO DO :  Vertically align this (including upload bar) -->
+	    	<fieldset style = "vertical-align : middle">
+	      		
+	      		<legend style = "border : blue; background : transparent">
+	      			<span style = "font-weight : bold; color :  #0053CF">Upload Sample Info</span>
+
+	      		</legend>
+
+
+				<form wicket:id="randomizationForm" style = "margin : 1%; margin-bottom : 1%" >
+			        <center>
+						<span wicket:id = "feedback" style = "padding-bottom: 0px; padding-top : 0px; margin-top : 0px; font-size : 100%; margin-bottom : 0px" 
+							/>
+			    	</center>
+	        	
+		        	<table style = "margin-bottom : 2%">	
+		        		<tr>
+			        	   	<td style = "width : 20%; font-size : 80%; text-align: right">
+			        	   		<label for="assay">Upload Type&nbsp;:&nbsp;</label>
+			        	   	</td>
+				        	
+				        	<td  style = "width : 70%" >
+				        	<select wicket:id="randomizationType" style = "width : 50%"><option>Simple</option>
+									<option selected = "selected">Custom</option>
+									<option>Injections</option>
+								</select>
+							</td>
+				        	
+		        			<td style = "width : 10%; text-align : center">
+			        			<input style = "font-size : 90%; width: 100%" type = "submit" wicket:id = "cancelButton" 
+			        			value = "&nbsp;&nbsp;Close&nbsp;&nbsp;" />	
+		        			</td>
+		        		</tr> 
+		        		
+		        		<tr >
+		        		    <td style = "width : 20%; font-size : 80%; text-align: right"><label for="upload">File&nbsp:&nbsp;</label></td>
+			        		<td style = "width : 70%">
+			        			<input style = "font-size : 90%; width : 95%; padding-right : 2%; background : white; border : none" wicket:id="fileContents" type="file" size="60" value = "Select File..."/></td>
+		        			<td  style = "width : 10%; text-align : center">
+		        				<input wicket:id = "submitButton" style = "font-size : 90%; width : 100%" type="submit" value="&nbsp;Upload&nbsp;"/>  
+		        			</td>
+		        		</tr>
+			        </table>
+		            
+		        	<span wicket:id="progress">[[ajax upload progressbar]]</span>
+	        
+			</form>   
+		</fieldset>     			
+   </body>
+ </html>
+ 
+ 
+  

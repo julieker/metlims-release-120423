@@ -1,0 +1,2 @@
+//insert into RESEARCHER (RESEARCHER_ID, LAST_NAME, FIRST_NAME, LAB, EMAIL, PHONE, USERNAME, PASSWORD, FAX_NUMBER, DEFAULT_VIEWPOINT) values ('U00017', 'Wigginton', 'Jan', null, 'mtjohn@umich.edu', '7342320815', 'mjohnson', 'cat', null, 98.0);
+insert into RESEARCHER (RESEARCHER_ID, LAST_NAME, FIRST_NAME, LAB, EMAIL, PHONE, USERNAME, PASSWORD, FAX_NUMBER, DEFAULT_VIEWPOINT) values ('U00018', 'Wigginton', 'Jan', null, 'mtjohn@umich.edu', '7342320815', 'mjohnson', 'cat', null, 99.0);

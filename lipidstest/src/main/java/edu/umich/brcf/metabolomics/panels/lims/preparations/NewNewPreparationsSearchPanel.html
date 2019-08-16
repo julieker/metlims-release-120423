@@ -1,0 +1,81 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+	<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+	<style>
+        legend { border: 1px solid #e9601a; background-color: #bbb; color: #fff; padding: 4px;}
+        fieldset { border: 1px solid #e9601a; padding: 10px; margin-top: 10px;}
+    </style>
+</head>
+<wicket:head>
+	<style>
+		div.wicket-aa {
+			font-family: "Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana;
+			font-size: 12px;
+			background-color: white;
+			border-width: 1px;
+			border-color: #cccccc;
+			border-style: solid;
+			padding: 2px;
+			margin: 1px 0 0 0;
+			text-align:left;
+			z-index: 5;
+		}
+		div.wicket-aa ul { list-style:none; padding: 2px; margin:0; }
+		div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0; }
+	</style>
+</wicket:head>
+<body>
+<wicket:panel>
+	
+	<div><br>&nbsp;</div>
+	
+	<center>
+	 <span style = "color : blue" wicket:id = "feedback"></span>
+		<form wicket:id = "preparationForm">   
+		
+		<div wicket:id = "modal2"></div>
+
+	<div style = "text-align : center">
+	   	<div style = "margin-top : 10px; text-align : center">
+	  		<span style = "color : blue; font-weight : 600">Search for prep by:&nbsp; </span> &nbsp;
+		   	<a wicket:id = "creatorSearchLink" href = "#" >Creator</a>&nbsp;
+		   	<a wicket:id = "prepSearchLink" >Prep</a>&nbsp;
+		   	<a disabled  wicket:id = "dateSearchLink" onclick = "alert('Date search not available yet');">Date</a>&nbsp;
+		   	<a disabled wicket:id = "experimentSearchLink" onclick = "alert('Experiment search not available yet');"  href = "#" >Experiment</a>&nbsp;
+		   	<a disabled wicket:id = "assaySearchLink" onclick = "alert('Assay search not available yet');"  href = "#">Assay</a>&nbsp;
+			<a disabled wicket:id = "sampleSearchLink" onclick = "alert('Sample search not available yet');"  href = "#">Sample</a>&nbsp;
+		   			   	
+	   	</div>
+	
+	   	<div><br>&nbsp;</div>
+	
+	   	<input wicket:id = "createPrepLink" type="button"  value="&nbsp;&nbsp;Start New Prep..." /><br/><br/>
+	</div>
+	
+	<table style = "width : 100%; border : none">
+		<tr>
+			<td style = "max-width : 12%; vertical-align : top; border : none">
+				<div wicket:id = "sidePanel" style = "border:none"></div>
+			</td>
+			<td style = "min-width : 88%; vertical-align : top ; border : 1px #dddddd solid">
+					<table style = "width :100%;">
+				    	<tr>
+				    		<td colspan="2" style = "background : #eeeeee"> 
+				    			<span wicket:id="pdh"></span>
+				    		</td>
+				    	</tr>
+				    	<tr>
+				    		<td colspan="2" > 
+				    			<span wicket:id="tabs"  class="tabpanel2"></span>
+				    		</td>
+				    	</tr>
+				    </table>
+			</td>
+		</tr>
+	</table>
+	</form>
+	</center>
+</wicket:panel>
+</body>
+</html>

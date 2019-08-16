@@ -1,0 +1,58 @@
+
+<wicket:head>
+	 
+ 	 <style>
+     	.requiredHaveColumn  { color : white; background : #000079; text-align : center; }
+		.basicColEntry { vertical-align : middle; text-align : right ; padding-right :7px }	
+		.basicTable { width : 100%; margin-right : 0%; margin-left : 0%; font-size: 90% }
+		table tr.odd {  background  : white;  }
+		table tr.even { background  : #EFFBF2 }
+		
+     </style>
+</wicket:head>
+
+<wicket:panel>
+	<div><br/></div>
+	
+  	<table class="basicTable" >
+		<tr>
+			<td nowrap  style = "width : 75%; text-align : left; vertical-align : bottom">
+				<span style = "font-weight : 700;">Study Design for 
+					<span wicket:id = "expId" style = "color : green">EX00411</span>
+				</span>
+			</td>
+			<td style = "width : 25%"></td>
+		</tr>
+	</table>
+	
+	<div><br/></div>
+	
+<table class="basicTable" style = "border : solid 1px black; width : 100%" >
+		<tr>
+			<th wicket:id = "internalSampleId" class = "requiredHaveColumn"  >Sample ID</th>
+			<th wicket:id = "sampleName" class = "requiredHaveColumn"  >Researcher Sample ID</th>
+		  	<th wicket:id = "subjectId" class = "requiredHaveColumn"   >Researcher Subject ID</th>
+		  	<th wicket:id = "factorLabels.0" class = "requiredHaveColumn"></th>
+		  	<th wicket:id = "factorLabels.1" class = "requiredHaveColumn"></th>
+		  	<th wicket:id = "factorLabels.2" class = "requiredHaveColumn"></th>
+		  	<th wicket:id = "factorLabels.3" class = "requiredHaveColumn"></th>
+		  	<th wicket:id = "factorLabels.4" class = "requiredHaveColumn"></th>
+		  	<th wicket:id = "sampleType" class = "requiredHaveColumn">Sample Type</th>
+		</tr>
+	
+	  <tr wicket:id = "subjectInfo">
+	    	<td wicket:id = "sampleId" class = "basicColEntry" ></td>
+	      	<td wicket:id = "researcherSampleId" class = "basicColEntry"></td>
+	      	<td wicket:id = "subjectName" class = "basicColEntry"></td>
+	      	<td wicket:id = "factor0" class = "basicColEntry"></td>
+	      	<td wicket:id = "factor1" class = "basicColEntry"></td>
+	      	<td wicket:id = "factor2" class = "basicColEntry"></td>
+	      	<td wicket:id = "factor3" class = "basicColEntry"> </td>
+	      	<td wicket:id = "factor4" class = "basicColEntry"></td>
+	      	<td wicket:id = "userDefinedSampleType" class = "basicColEntry"> </td>     	
+	      		     
+	    </tr>
+  </table>	
+ 
+ 
+</wicket:panel>

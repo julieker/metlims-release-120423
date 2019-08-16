@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<wicket:panel>
+<br/>
+<div> &nbsp;<br/></div>
+
+<div style="overflow: auto;height: 450px; margin-left : 4%; margin-right : 4%">
+ <b>Assays for <font color="green">"<span wicket:id = "head"></span>"</font></b>
+ <br/><br/> 
+
+ <table style = "border : thin solid grey; width : 100%">
+	<tr><th style = "width : 30%; text-align : center">Sample ID</th>
+		<th style = "width : 70%; text-align : center">Assays</th>
+	</tr>
+	<tr wicket:id="sampleAssayList">
+	 <td style = "text-align : center; border : thin solid grey; ">
+        <span wicket:id = "sampleID"></span>
+      </td>
+      <td style = "border : solid thin grey">
+	      <table style = "width : 100%">
+	      	<tr wicket:id="assays" style = "vertical-align : top">
+	      		<td style ="background : #EFFBF2; text-align : right; padding-right : 2%">
+	      			<span style = "width : 100%; margin-right : 4%" wicket:id = "assay"></span>
+	      		</td>
+	      	</tr>
+	      </table>
+      </td>
+	</tr>
+ </table>
+ </div>
+</wicket:panel>
+</html>

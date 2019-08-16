@@ -1,0 +1,246 @@
+
+    <wicket:head>
+        <style>	
+        
+			#dialog_background 
+				{
+			  	background : #EEEEEE;
+			  	height : 200%;
+				}
+				
+			#good_font
+				{
+				 font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   				font-weight: 300;
+				}
+				
+			.col1 { border : none; text-align : right}
+			.col2 { border : none; text-align : left }
+			.col3 { border : none; text-align : left; padding-left : 10px; }
+			.col4 { border : none; }
+			
+			.sectionHeader 
+				{
+				width : 40%; 
+				text-align : left; 
+				color : #0053CF;
+				}
+				
+			.sectionContent
+				{
+				width : 90%; margin-left : 5%; margin-right: 5% ; margin-bottom : 50px;  
+				margin-top : 10px; background : white; height : 200px; padding: 30px; 
+				border-radius : 10px; border : groove grey thin; font-size : 90%;
+		    
+				}	
+			hr 
+				{
+			    border: 0;
+			    height: 0;
+			    border-top: 1px solid rgba(0, 0, 0, 0.1);
+			    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+			    margin-top : 20px;
+			    margin-bottom : 20px;
+			    margin-left : 15px;
+				}
+				
+			strong 
+				{
+				margin-left : 15px;
+				}
+		</style>	
+    </wicket:head>
+    
+    <wicket:panel>
+    
+    <body id = "dialog_background">
+    	
+    	<center>
+    		<div><br>&nbsp;</div>
+			<div style = "margin-top : 10px; font-weight : 500; font-size : 125%; color : #0053CF">M-CHEAR - Database Update</div>
+		</center>
+    	
+		<hr>
+		<form wicket:id = "launchDatabaseToolsForm">
+			<div wicket:id="modal"></div>
+			<div wicket:id="modal1"></div>
+	    	<div style = "text-align : center;  margin : 8px; margin-bottom : 15px">
+	        	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; margin-top : 30px ;  background : transparent; border : none" >
+			    	<tr> 
+			        	<td style = "width : 50%" class = "sectionHeader">
+			        		<strong>Add new :	</strong>
+			        	</td>
+			        	<td class = "sectionHeader" style = "width : 50%;">
+		   					<strong>Roll back sample submission :</strong>
+			        	 </td>
+			        </tr>
+		    	</table>
+		    
+			    <table class = "sectionContent">
+			       	<tr>
+				       	<td style = "vertical-align : middle; width : 50%">
+				      
+							<table style = "width : 96%; margin-left : 1%; margin-right : 1%;  text-align : left; border : black solid 1px">
+					       		<tr>
+					       			<td style = "text-align : left">
+					       				<span wicket:id = "addEntityPanel"></span>
+					       			</td>
+								</tr>
+									
+							</table>
+						</td>
+					
+			
+						<td style = "width : 50%; vertical-align : middle; border-left : 1px groove white; ">
+							<table style = "margin-left : 3%; margin-right : 4%;  text-align : left;">
+					       		
+								<tr>
+									<td style = "text-align :left" no wrap>
+										<span wicket:id = "invalidateSamplesPanel""><input type = "button" value = "Invalidate Samples"/></span>
+										
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+			
+			<hr>
+
+			<div style = "text-align : center;  margin : 8px; margin-bottom : 15px">
+	        	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; margin-top : 30px ;  background : transparent; border : none" >
+			    	<tr> 
+			        	<td style = "width : 50%" class = "sectionHeader">
+			        		<strong>Add/edit experimental factors :</strong>
+			        	</td>
+			        	<td class = "sectionHeader" style = "width : 50%;">
+		   					<strong>Add assay(s) to experiment : <span style = "color : red; font-style : italic"></span></strong>
+			        	 </td>
+			        </tr>
+		    	</table>
+		    
+				
+											    	
+			    <table class = "sectionContent">
+			       	<tr>
+				       	<td style = "vertical-align : middle; width : 50%">
+							<table style = "margin-left : 3%; margin-right : 4%;  text-align : left;">
+								<tr>
+									<td style = "text-align :left" nowrap>
+										<span wicket:id = "addFactorPanel"></span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					
+			
+						<td style = "width : 50%; vertical-align : middle; border-left : 1px groove white; ">
+							<table style = "margin-left : 7%; margin-right : 4%;  text-align : left;">
+								<tr>
+									<td style = "text-align :left">
+										<span wicket:id = "addAssayPanel"></span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+			
+			
+			<div style = "text-align : center;  margin : 8px; margin-bottom : 15px">
+	        	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; margin-top : 30px ;  background : transparent; border : none" >
+			    	<tr> 
+			        	<td style = "width : 50%" class = "sectionHeader">
+			        		<strong>Add sample(s) to experiment :</strong>
+			        	</td>
+			        	<td class = "sectionHeader" style = "width : 50%;">
+		   					<strong><span style = "color : red; font-style : italic"></span></strong>
+			        	 </td>
+			        </tr>
+		    	</table>
+		    
+				
+											    	
+			    <table class = "sectionContent">
+			       	<tr>
+				       	<td style = "vertical-align : middle; width : 50%">
+							<table style = "margin-left : 3%; margin-right : 4%;  text-align : left;">
+								<tr>
+									<td style = "text-align :left" >
+										<span  id = "addSamplesPanel"></span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					
+			
+						<td style = "width : 50%; vertical-align : middle; border-left : 1px groove white; ">
+							<table style = "margin-left : 7%; margin-right : 4%;  text-align : left;">
+								<tr>
+									<td style = "text-align :left">
+										<span id = "invalidateSamplesPanel"></span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<hr>
+			
+		 	<!--
+			<input wicket:id = "worksheetDownload" value = "Download Worksheet"/>
+				
+			<div style = "text-align : center;  margin : 8px; margin-bottom : 15px">
+	        	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; margin-top : 30px ;  background : transparent; border : none" >
+			    	<tr> 
+			        	<td style = "width : 50%" class = "sectionHeader">
+			        		<strong>Add Samples : <span style = "color : red; font-style : italic">(Under construction)</span>	</strong>
+			        	</td>
+			        	<td class = "sectionHeader" style = "width : 50%;">
+		   					<strong> : <span style = "color : red; font-style : italic"></span></strong>
+			        	 </td>
+			        </tr>
+		    	</table>
+		    
+			    <table class = "sectionContent">
+			       	<tr>
+				       	<td style = "vertical-align : middle; width : 50%">
+				      
+							<table style = "margin-left : 7%; margin-right : 4%;  text-align : left;">
+					       		<tr>
+					       			<td style = "text-align : left">
+					       				<span style = "font-style : italic"></span>
+					       			</td>
+								</tr>
+								<tr>
+									<td style = "text-align :left">
+										<div ></div>
+									</td>
+								</tr>
+							</table>
+						</td>
+					
+						<td style = "width : 50%; vertical-align : middle; border-left : 1px groove white; ">
+							<table style = "margin-left : 7%; margin-right : 4%;  text-align : left;">
+					       		<tr>
+					       			<td style = "text-align : left">
+					       				<span style = "font-style : italic"></span>
+					       			</td>
+								</tr>
+								<tr>
+									<td style = "text-align :left">
+										<div ></div>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>   -->
+		</form>
+		
+	</body>
+</wicket:panel>  

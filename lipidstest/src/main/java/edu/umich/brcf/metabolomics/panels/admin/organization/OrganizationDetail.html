@@ -1,0 +1,38 @@
+<html>
+
+<head style = "background : blue">
+     <link rel="stylesheet" type="text/css" href="dialog.css"/>
+     
+     <style>
+     	legend { border: 1px solid transparent; background-color: white; color: black; padding: 4px;}
+	    fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+     </style>
+</head>
+
+<body class = "dialog_background">
+	<fieldset class = "dialog_fieldset" style = "height : 70%; vertical-align : middle; width :90%; margin-left : 5%; margin-right : 5%">	
+		
+		<legend class = "dialog_legend">
+	   		<span style = "text-align : left; font-weight : bold; color :  #0053CF">Organization Detail</span>
+	   	</legend>
+    
+	    <center>
+	       	<table>
+			  	<tr>
+			  		<th style = "text-align : right">ID:</th>
+			  		<td><span wicket:id = "orgId">Moes ID</span></td>
+			  	</tr>
+				<tr>
+				  <th tyle = "text-align : right">Name:</th>
+				  <td><span wicket:id = "orgName">Moes Metabalome</span></td>
+				</tr>
+				<tr>
+					<th tyle = "text-align : right">Address:</th>
+					<td><span wicket:id = "orgAddress">Mark Twain</span></td>
+				</tr>
+			</table>
+		</center>
+	
+	</fieldset>
+</body>
+</html>

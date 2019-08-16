@@ -1,0 +1,55 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="dialog.css"/>
+</head>
+
+<body class = "dialog_background">
+
+	<fieldset class = "dialog_fieldset" style = "height : 80%; margin-top : 2%; margin-bottom : 2%; width :90%; margin-left : 5%; margin-right : 5%">	
+		<legend class = "dialog_legend">
+		  	<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">Edit Compound</span>
+		</legend>
+  		<center>
+   
+	  <span wicket:id = "feedback" class = "feedbackMsg"></span>
+	  <div style = "text-align : center">
+	  <br/>
+	  <form wicket:id = "editCompoundNameForm">        
+	 	    <table style = "width : 80%; margin-left : 10%; margin-right : 10%">
+			  	<tr>
+			  		<td style = "text-align : right">CID:</td>
+			  		<td><span wicket:id = "cid">Moes ID</span></td>
+			  	</tr>
+				<tr>
+				  <td style = "text-align : right">Name:</td>
+				  <td><input wicket:id = "newName" type="text" value="Moes Metabalome" size="60" /></td>
+				  <span wicket:id = "name">Moes ID</span>
+				</tr>
+				<tr>
+					<td style = "text-align : right">Type:</td>
+					<td><select wicket:id="type"></select></td>
+				</tr>
+				<tr>
+					<td style = "text-align : right">HTML:</td>
+					<td><input wicket:id="html" type="text" value="(123) 456-7890" size="20"/></td>
+				</tr>
+			</table>
+		    <br/>
+		    <table style = "width : 80%; margin-left : 10%; margin-right : 10%">
+			    <tr>
+				    <td style = "width : 20%"></td>
+				    <td nowrap style = "width : 60%">
+				    	<input type="submit" wicket:id="saveChanges" style = "margin-right : 15px; width : 100px;" value="Save"/>&nbsp;&nbsp;
+				    	<input type="submit" style = "margin-left : 15px; width : 100px;" wicket:id="close" value="Close"/>
+				    </td>
+				    <td style = "width : 20%"></td>
+			    </tr>
+		    </table>
+		    
+	  </form>
+	  </div>
+	</center>
+	</fieldset>
+</body>
+</html>

@@ -1,0 +1,27 @@
+.loginPanel
+	{
+	position : relative;
+	top: 110px;
+	margin-top: 50px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	width: 450px;
+	height: 300px;
+	background-image:url('./metlims_login_1_with_border.png');
+	background-repeat: no-repeat;
+	border: 0;
+	}
+
+.loginBox 
+	{
+	position: relative;
+	top: 120px;
+	left: 130px;
+	width: 250px;
+	}
+	
+	
+	
+
+}

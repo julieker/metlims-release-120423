@@ -1,0 +1,278 @@
+	
+
+    <wicket:head>
+    
+    	<link rel="stylesheet" type="text/css" href="tabstyles5.css"/>
+	
+	    <style>	
+        
+			.dialog_background 
+				{
+			  	background : #EEEEEE;
+			  	height : 400%;
+				}
+
+			
+			.sectionHeader 
+				{
+				width : 40%; 
+				text-align : left; 
+				color : #0053CF;
+				}
+				
+			.sectionContent
+				{
+				width : 90%; margin-left : 5%; margin-right: 5% ; margin-bottom : 30px;  
+				margin-top : 10px; background : white; height : 200px; padding: 30px; 
+				border-radius : 10px; border : groove grey thin; font-size : 90%;
+				}	
+			
+			.warningMsg { 
+				color : red; 
+				font-style : italic;
+				}
+			hr 
+				{
+			    border: 0;
+			    height: 0;
+			    border-top: 1px solid rgba(0, 0, 0, 0.1);
+			    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+			    margin-top : 20px;
+			    margin-bottom : 20px;
+			    margin-left : 15px;
+				}
+				
+		</style>	
+    </wicket:head>
+    
+    <wicket:panel>
+    
+    	<body class = "dialog_background">
+    		<div><br><br></div>
+	    	<center>
+	   			<span style = "margin-top : 2%; font-weight : 500; font-size : 125%; color : #0053CF">Metabolomics Core - Lab Prep Home</span><br>
+	   			<span style = "margin-top : 2%; font-style : italic; font-weight : 500; font-size : 100%; color : red; "> </span>
+			</center>
+	    	
+			<form wicket:id = "launchPrepToolsForm">
+				<div wicket:id = "modal1"></div>
+				<div wicket:id = "modal2"></div>
+		    	
+		    	<div style = "text-align : center;  margin : 8px; margin-bottom : 15px">
+		        	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; margin-top : 30px ;  background : transparent; border : none" >
+				    	<tr> 
+				        	<td class = "sectionHeader" style = "width : 50%" >
+				        		<strong>New protocol sheet for experiment :	</strong>
+				        	</td>
+				        	<td class = "sectionHeader" style = "width : 50%;">
+			   					<strong>View/edit saved protocol sheets (by date) :</strong>
+				        	 </td>
+				        </tr>
+			    	</table>
+			    
+				    <table class = "sectionContent">
+				       	<tr>
+					       	<td style = "vertical-align : middle; width : 50%">
+					      
+								<table style = "margin-left : 3%; margin-right : 4%;  text-align : left;">
+						       		
+						       		<tr>
+						       			<td>
+						       				<span wicket:id = "createProtocolSheet"></span>
+						       			</td>
+									</tr>
+								 <tr>
+										<td>
+											
+										</td>
+									</tr>
+										
+								</table>
+							</td>
+						
+						
+				
+							<td style = "width : 50%; vertical-align : middle; border-left : 1px groove white; ">
+								<table style = "margin-left : 3%; margin-right : 4%;  text-align : left;">
+						       		<tr>
+						       			<td>
+						       				<span wicket:id = "viewProtocolSheets"></span>
+						       			</td>
+									</tr>
+								 <tr>
+										<td>
+											
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</div>
+				
+				<hr>
+	
+				
+	
+				<div style = "text-align : center;  margin : 8px; margin-bottom : 15px">
+		        	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; margin-top : 30px ;  background : transparent; border : none" >
+				    	<tr> 
+				        	<td style = "width : 50%" class = "sectionHeader"> <!-- Issue 235 -->
+				        		<strong>Upload new standard protocol <i>Word or PDF only</i> :<span class = "warningMsg"></span>	</strong>
+				        	</td>
+				        	<td class = "sectionHeader" style = "width : 50%;">
+			   					<strong>View standard protocols :<span  class = "warningMsg"></span></strong>
+				        	 </td>
+				        </tr>
+			    	</table>
+			    
+				    <table class = "sectionContent">
+				       	<tr>
+					       	<td style = "vertical-align : middle; width : 50%">
+								<table style = "margin-left : 7%; margin-right : 4%;  text-align : left;">
+						       		<tr>
+						       			<td>
+						       				<span style = "font-style : italic"></span>
+						       			</td>
+									</tr>
+									<tr>
+										<td>
+											<span wicket:id = "protocolUploadLink"></span>
+										</td>
+									</tr>
+								</table>
+							</td>
+						
+							<td style = "width : 50%; vertical-align : middle; border-left : 1px groove white; ">
+								<table style = "margin-left : 7%; margin-right : 4%;  text-align : left;">
+						       		<tr>
+				       					<td>
+				       						<span style = "font-style : italic">View (or download) standard protocol documents </span>
+				       					</td>
+									</tr>
+									<tr><td></td></tr>
+									
+									<tr>
+										<td>
+											<span wicket:id = "allProtocolsLink"></span>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</div>
+	
+				<hr>
+	
+	
+	<div style = "text-align : center;  margin : 8px; margin-bottom : 15px">
+		        	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; margin-top : 30px ;  background : transparent; border : none" >
+				    	<tr> 
+				        	<td style = "width : 50%" class = "sectionHeader">
+				        		<strong>Create prep :</strong>
+				        	</td>
+				        	<td class = "sectionHeader" style = "width : 50%;">
+			   					<strong>Prep search : <span class = "warningMsg"></span></strong>
+				        	 </td>
+				        </tr>
+			    	</table>
+			    
+					
+												    	
+				    <table class = "sectionContent">
+				       	<tr>
+					       	<td style = "vertical-align : middle; width : 50%">
+					      
+								<table style = "margin-left : 3%; margin-right : 4%;  text-align : center;">
+						       		<tr>
+				       					<td>
+				       						<span style = "font-style : italic"></span>
+				       					</td>
+									</tr>
+									<tr><td><br></td></tr>
+									<tr>
+										<td nowrap style = "text-align : center">
+											<input disabled wicket:id = "createPrepLink" type = "button" value = "Create Prep..."  title = "Create Prep"></input>
+										</td>
+									</tr>
+								</table>
+							</td>
+						
+						
+				
+							<td style = "width : 50%; vertical-align : middle; border-left : 1px groove white; ">
+								<table style = "margin-left : 7%; margin-right : 4%;  text-align : center;">
+						       		<tr>
+				       					<td>
+				       						<span style = "font-style : italic"></span>
+				       					</td>
+									</tr>
+									<tr><td><br></td></tr>
+									<tr>
+										<td>
+											<span class = "addFactorPanel"></span>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</div>
+			
+				<hr>
+				<!--
+				<div style = "text-align : center;  margin : 8px; margin-bottom : 15px">
+		        	<table style = "width : 90%; text-align : left; margin-left : 5%; margin-right : 5%; margin-top : 30px ;  background : transparent; border : none" >
+				    	<tr> 
+				        	<td style = "width : 50%" class = "sectionHeader">
+				        		<strong>:<span style = "color : red; font-style : italic"></span>	</strong>
+				        	</td>
+				        	<td class = "sectionHeader" style = "width : 50%;">
+			   					<strong><span class = "warningMsg"></span></strong>
+				        	</td>
+						</tr>
+			    	</table>
+	
+	
+					<table class = "sectionContent">
+				       	<tr>
+					       	<td style = "vertical-align : middle; width : 50%">
+					      
+								<table style = "margin-left : 7%; margin-right : 4%;  text-align : left;">
+						       		<tr>
+						       			<td style = "text-align : left">
+						       				<span style = "font-style : italic"></span>
+						       			</td>
+									</tr>
+									<tr>
+										<td style = "text-align :left">
+											<span wicket:id = "viewSubmissionSheetPanel"></span>
+										</td>
+									</tr>
+								</table>
+							</td>
+						
+							<td style = "width : 50%; vertical-align : middle; border-left : 1px groove white; ">
+								<table style = "margin-left : 7%; margin-right : 4%;  text-align : left;">
+						       		<tr>
+						       			<td style = "text-align : left">
+						       				<span style = "font-style : italic"></span>
+						       			</td>
+									</tr>
+									
+									<tr>
+										<td style = "text-align :left">
+											<span id = "addFactorPanel" style = "visibility : hidden"></span>
+										</td>
+									</tr>
+								</table>
+								
+							</td>
+						</tr>
+					</table>
+				</div>
+			-->
+		</form>
+	</body>
+</wicket:panel>  

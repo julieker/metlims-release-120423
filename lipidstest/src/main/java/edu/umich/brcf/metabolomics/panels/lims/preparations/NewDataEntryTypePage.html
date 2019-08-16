@@ -1,0 +1,115 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+    <style>
+    	legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+    	fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;
+    </style>
+</head>
+
+<body id = "dialog_background">  
+		  		
+  		<!-- <span wicket:id = "feedback" style = "font-size : 75%; text-align : left;  width : 90%; margin-left : 5%; 
+  		margin-right : 5%"/> -->		
+ 	
+    
+		 		
+ 		<fieldset style = "width : 93%; margin-right : 5%; margin-left : 2%; vertical-align : middle; height : 88%;">
+	
+			<legend style = "background : transparent; border : none; text-align : left">
+	   			<span style = "font-weight : bold; color :  #0053CF; text-align : left">Create New Prep</span>
+	   		</legend>	
+  
+ 
+  			<span wicket:id = "feedback"></span>
+  			<form wicket:id = "detForm">
+ 			
+ 			<div><br><br>&nbsp;</div>
+ 			<div style = "height : 70%; vertical-align : middle">
+  			<table style = "border : groove #dddddd thin; border-radius : 10px; padding : 30px;  width : 90%; margin-right : 5%; margin-left : 5%">
+				<tr>
+					<td nowrap style = "text-align : right; font-weight : 600; "> Experiment :&nbsp;&nbsp;</td>
+					<td>
+						<table style = "width : 100%"> 
+							<tr>
+								<td style = "text-align : left; width : 75%">
+									<select wicket:id = "selectedExperimentDrop" style = "width : 130px; margin-left : 10px" >
+										<option>Please Select </option>
+									</select>
+								</td>
+								<td style = "text-align : right; margin-right : 40%; width : 25%">
+									<input wicket:id = "addExp" type = "submit" value = "&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;&nbsp;" style = "font-weight : bold" title = "Add another experiment" />
+									<input wicket:id = "clearAll" type = "submit" value = "&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp;" style = "font-weight : bold" title = "Start over" />
+								</td>
+							</tr>
+						</table> 
+					</td>		
+				</tr>
+
+				<tr style = "height : 10px"><td></td><td></td></tr>
+
+				<tr>
+					<td  nowrap style = "text-align : right; font-weight : 600;  ">
+						<label for="expid" >Assay :&nbsp;&nbsp;</label> 
+					</td>
+					<td style = "vertical-align : top ; ">
+						<select wicket:id = "selectedAssayDrop" style = "width : 450px; margin-left : 12px" >
+							<option>Please Select </option>
+							<option>A001</option>
+						</select>
+					</td>	
+				</tr>
+
+				<tr style = "height : 10px"><td></td><td></td></tr>
+
+				<tr>
+					<td  nowrap style = "font-weight : 600; text-align : right">
+						<label>Prep Title :&nbsp;&nbsp;</label> 
+					</td>
+					
+					<td>
+						<table style = "width : 100%">
+							<tr>
+								<td style = "width : 75%">
+									<input wicket:id = "prepTitleFld" type = "text" size = "75" style = "width : 650px; margin-left : 10px; border : 1px solid grey"/>
+								</td>	
+								<td style = "text-align : right; margin-right : 40%; width : 25%">
+									<span style = "font-weight : 600">Tag : </span>
+									<input wicket:id = "titleTag" type = "text"  size = "5" style = "font-weight : bold"  />
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+
+			<br><br>
+
+			<table style = "border : groove  #dddddd  thin; border-radius : 10px; padding : 30px;  width : 90%; margin-right : 5%; margin-left : 5%">
+  				<tr>
+  					<td style = "vertical-align : top; text-align : right; font-weight : 600; ">Data Entry Type : </td>
+					<td nowrap>
+						<span wicket:id="choice1">
+               				<input type="radio"/>
+               				<input type = "radio"/>
+               			</span>
+            		</td>
+				 	<td style = "vertical-align : top; text-align : right; border-left : thin groove #eeeeee; font-weight : 600"> Plate Format : </td>
+					<td><span wicket:id="choice2" style ="vertical-align : top" >
+               				<input type="radio" ></input>
+               			</span>
+               		</td>
+				</tr>
+			</table>
+			
+			<br/>
+			<div style = "text-align : center">
+    			<input type="submit" wicket:id="save" value="&nbsp;&nbsp;&nbsp;OK&nbsp;&nbsp;&nbsp;" style = "padding-top : 2px; padding-bottom 2px"/>
+  			</div>
+  			</div>
+  	</form>
+  </fieldset>
+</body>
+</html>

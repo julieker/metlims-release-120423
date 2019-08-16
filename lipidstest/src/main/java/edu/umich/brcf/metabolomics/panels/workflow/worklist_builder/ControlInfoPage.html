@@ -1,0 +1,71 @@
+  <html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="dialog.css"/>
+   
+    <style>
+        legend { border: none; background: transparent; color: black; padding: 4px;}
+        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px; vertical-align : middle}
+    </style>
+</head>
+
+<wicket:head>
+	<style>
+		.controlType { vertical-align : top; text-decoration : underline; font-style : italic; color : blue }
+	</style> 
+</wicket:head>
+	
+<body class = "dialog_background">  
+	<fieldset>
+     	<legend>
+     		<span style = "font-weight : bold; color :  #0053CF">Control Types</span>
+     	</legend>
+       	
+   		<form wicket:id="controlInfoForm" style = "margin : 1%; margin-bottom : 2%" >
+        	
+			<span style = "margin-left : 5%">
+				<table style = "font-size: 60%">
+					<tr>
+						<td class = "controlType">Process Blank</td><td>Well, tube or sample vessel treated as if it contains sample. Used to discriminate endogenous from additive content (what our prep and MS system may add to the sample) and to detect “matrix effects”. Contains the 
+						internal standards from the protein precipitation steps.</td>
+					</tr>
+					<tr>
+						<td style = "padding-top : 0px;" class = "controlType">Solvent Blank</td> 
+						<td> Solvent used in the final steps of prep (reconstituting solvent).  Used to determine source of any contaminants.</td>
+					</tr>
+					<tr>
+						<td class = "controlType">Matrix Blank</td>
+						<td> Synonym for in-house human pooled plasma. Prep replicates client or unknown sample prep (as much as possible). Used for system/column conditioning, to determine unknown sample issues (i.e. contaminants, matrix interruption of metabolite signal) and to evaluate system day-to-day health, robustness, signal response and sensitivity. </td>
+					</tr>
+					<tr>
+						<td class = "controlType">Neat Blank</td>
+						<td> Best described as a library sample or a pure compound in solvent - no biomatrix.</td>
+					</tr>
+					<tr>
+						<td class = "controlType">Pool</td>
+						<td> Sample taken from a pool of unknown or client samples. Pooling may be done by matrix, group (e.g. all unknowns labelled 'Control' or 'Group 1") or neither (all unknowns pooled without considering matrix or grouping).</td>
+					</tr>
+					<tr>
+						<td class = "controlType">Reference</td>
+						<td> Reference standards for CHEAR samples, either urine or plasma.</td>
+					</tr>	
+				</table>
+			</span>
+			
+			<center>
+	        	<table style = "margin-bottom : 1%">	
+	        		<tr>
+	        			<td style = "text-align : center">
+		        			<input wicket:id = "cancelButton" style = "font-size : 70%" type = "submit"  value = "&nbsp;&nbsp;Close&nbsp;&nbsp;" />	
+	        			</td>
+	        		</tr> 
+		        </table>
+	        </center>
+		
+		</form>   
+	</fieldset>     			
+</body>
+ </html>
+ 
+ 
+  

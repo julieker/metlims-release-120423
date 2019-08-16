@@ -1,0 +1,27 @@
+
+<wicket:panel>
+	
+ 	<form wicket:id = "searchByProjectForm" style = "vertical-align : top; margin-top : 0%; border : none"  >
+	
+		<div wicket:id = "container">
+		  	<table>
+		  		<tr>
+					<td style = "text-align : left">
+						<input wicket:id="project" type="text" value="" size="70"/>
+						<select wicket:id= "projDrop"><option>PR0254</option><option>PR0253</option><option>PR0252</option></select>
+					</td>
+					<td style = "text-align : left">
+						&nbsp;&nbsp;
+						<input  wicket:id="selectButton" type="submit" value="&nbsp;&nbsp;&nbsp;Search&nbsp;&nbsp;&nbsp;"/>
+					</td>
+				</tr>
+			</table>
+		</div>
+	  </form>
+	  
+	  <span wicket:id = "feedback" style = "color : red; font-weight : 400" /> 
+	
+
+</wicket:panel>
+
+

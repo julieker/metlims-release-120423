@@ -1,0 +1,48 @@
+<wicket:panel>
+		
+	<div wicket:id="feedback"></div>
+		
+	<form wicket:id = "hubActionSelectorForm">
+	    <table style = "text-align : left; margin-left : 5%">
+	        <tr>
+		       <td style = " vertical-align : top ; text-align: left">
+		        	<table>
+		        		<tr>
+		        			<td>Core</td>
+		        			<td>
+		        				<select  wicket:id = "editHubDropDown" style = "width : 100px; margin-left : 10px" >
+									<option>Please Select </option>
+									<option>CHEARS Hub</option>
+									<option>Metabolomics</option>
+									<option>Epigenomics</option>
+									<option>Environmental Health</option>
+									<option>NSF</option>
+								</select>
+		        			</td>
+		        			<td></td>
+		        			
+		        		</tr>
+						<tr>
+							<td  nowrap style = "text-align : right">
+								<label>Action:&nbsp;&nbsp;</label> 
+							</td>
+			    			<td style = "vertical-align : top ; ">
+								<select wicket:id = "actionSelectorDrop" style = "width : 100px; margin-left : 10px"  >
+									<option>Please Select </option>
+									<option selected>Check In Samples</option>
+									<option>Update Comments</option>
+								</select>
+							</td>	
+							
+							<td  style = "text-align : left; vertical-align : top ;  ">
+					        	<input  wicket:id = "actionButton" style = "width : 100px; margin-left : 30px" type="submit" value="&nbsp;Scan Barcodes&nbsp;"/>  
+					       	</td>
+						</tr>
+					</table>
+				</td>
+				<td style = "width : 40%" ></td>	     		
+			</tr>
+			
+		</table>	
+	</form>
+</wicket:panel>

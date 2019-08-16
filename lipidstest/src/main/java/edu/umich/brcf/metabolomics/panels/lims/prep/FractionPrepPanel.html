@@ -1,0 +1,51 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+	<title>Fraction Prep</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<wicket:head>
+	<style>
+		div.wicket-aa {
+			font-family: "Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana;
+			font-size: 12px;
+			background-color: white;
+			border-width: 1px;
+			border-color: #cccccc;
+			border-style: solid;
+			padding: 2px;
+			margin: 1px 0 0 0;
+			text-align:left;
+			z-index: 5;
+		}
+		div.wicket-aa ul { list-style:none; padding: 2px; margin:0; }
+		div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0; }
+		
+	</style>
+</wicket:head>
+<body>
+<wicket:panel>
+<br/>
+	<center>
+	 <span wicket:id = "feedback"></span>
+		<form wicket:id = "preparationForm">   
+		<br/>
+		     <table><div wicket:id="modal1"></div>
+		     	<tr>
+		     		<td align="right">No. of Fractions: </td>
+		     		<td align="center"><input type="text" wicket:id="numberOfSamples" size="25"/></td>
+		     		<td><input type="submit" wicket:id="create" value="Create Plate"/></td>
+		     	</tr>
+		     	<tr>
+		     		<td align="right">Prep Title: </td>
+		     		<td align="center"><input type="text" wicket:id="title" size="25"/></td>
+		     		<td><input type="submit" wicket:id="getPrep" value="Get Plate"/> or <input type="submit" wicket:id="uploadLink" value="Upload Prep List"/></td>
+		     	</tr>
+		     </table>
+		     <br/>
+		     <div wicket:id="tabs"  class="tabpanel1"></div>
+		</form>
+	</center>
+</wicket:panel>
+</body>
+</html>

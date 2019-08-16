@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	                    http://www.springframework.org/schema/beans/spring-beans-2.0.xsd 
+	                    http://www.springframework.org/schema/tx 
+	                    http://www.springframework.org/schema/tx/spring-tx.xsd 
+	                    http://www.springframework.org/schema/aop 
+	                    http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	
+	<bean id="compoundDAO" class="edu.umich.brcf.metabolomics.layers.dao.CompoundDAO" />
+	<bean id="compoundNameDAO" class="edu.umich.brcf.metabolomics.layers.dao.CompoundNameDAO" />
+	<bean id="fractionationDAO" class="edu.umich.brcf.metabolomics.layers.dao.FractionationDAO" />
+	<bean id="generatedWorklistDAO" class="edu.umich.brcf.metabolomics.layers.dao.GeneratedWorklistDAO" />
+	<bean id="generatedWorklistItemDAO" class="edu.umich.brcf.metabolomics.layers.dao.GeneratedWorklistItemDAO" />
+	<bean id="genusSpeciesDAO" class="edu.umich.brcf.metabolomics.layers.dao.GenusSpeciesDAO" />
+	<bean id="injectionsDAO" class="edu.umich.brcf.metabolomics.layers.dao.InjectionsDAO" />
+	<bean id="instrumentDAO" class="edu.umich.brcf.metabolomics.layers.dao.InstrumentDAO" />
+	<bean id="lipidBlastPrecursorDAO" class="edu.umich.brcf.metabolomics.layers.dao.LipidBlastPrecursorDAO" />
+	<bean id="lipidMapsClassDAO" class="edu.umich.brcf.metabolomics.layers.dao.LipidMapsClassDAO" />
+	<bean id="lipidMapsEntryDAO" class="edu.umich.brcf.metabolomics.layers.dao.LipidMapsEntryDAO" />
+	<bean id="ms2DataSetDAO" class="edu.umich.brcf.metabolomics.layers.dao.Ms2DataSetDAO" />
+	<bean id="ms2PeakSetDAO" class="edu.umich.brcf.metabolomics.layers.dao.Ms2PeakSetDAO" />
+	<bean id="ms2PeakDAO" class="edu.umich.brcf.metabolomics.layers.dao.Ms2PeakDAO" />
+	<bean id="ms2SampleMapDAO" class="edu.umich.brcf.metabolomics.layers.dao.Ms2SampleMapDAO" />
+	<bean id="tableAccessDAO" class="edu.umich.brcf.metabolomics.layers.dao.TableAccessDAO" />
+	
+</beans>

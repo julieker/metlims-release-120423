@@ -1,0 +1,21 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title>Run Plate</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+<center>
+	<br/> 
+	<span wicket:id = "feedback"/><br/>
+	<form wicket:id = "runPlateForm">  
+		<b>Select Samples for Run</b>
+	 	<span wicket:id = "selectionPanel"/><br/>
+		Tray: <select wicket:id="tray"></select><br/><br/>
+		<input wicket:id="randomize" type="checkbox">&nbsp;Randomize<br/><br/>
+		<input type="submit" wicket:id="run" value="Run"/>
+		<input type="button" wicket:id="createInjections" value="Create Injections"/>
+	</form>
+</center>
+</body>
+</html>

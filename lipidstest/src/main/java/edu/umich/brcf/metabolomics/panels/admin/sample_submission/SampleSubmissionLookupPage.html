@@ -1,0 +1,60 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<wicket:head>
+	<style>
+		div.wicket-aa ul li.selected { background-color: #FFFF00; padding: 2px; margin:0; }
+		
+		 legend { border: 1px solid #e9601a; background-color: #bbb; color: #fff; padding: 4px;}
+      	fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	</style>
+</wicket:head>
+				
+<body id = "dialog_background">
+
+<br/>
+ 	    
+	<fieldset id = "dialog_fieldset">
+	   	<legend style = "border : blue; background : transparent">
+	   		<span style = "font-weight : bold; color :  #0053CF">Sample Submission Support</span>
+	   	</legend>
+
+ <center>
+ <br/>
+ 
+  <span wicket:id = "feedback"/>
+  <p>
+  <form wicket:id = "sssForm">        
+ 	    <table>
+ 	    <tr><td colspan="5" style = "text-align : left; color : #0053CF; font-weight : 500" >Search for genus id</td></tr>
+ 	    <tr><td colspan="5">&nbsp;</td></tr>
+		  	<tr>
+		  		<td style = "text-align : right; font-weight : 500; font-size: 80%">Genus Name:</td>
+		  		<td><input wicket:id = "genusName" type="text" value="Moes Metabolome" size="30" />
+		  		<span wicket:id="hiddengenus">value</span></td>
+		  		<td><input type="submit" style = "font-size : 80%;; margin-right : 10px" wicket:id="getGenusID" value="&nbsp;&nbsp;Look up id&nbsp;&nbsp;"/></td>
+		  		<td style = "text-align : right ; font-size : 80%">Genus ID:</td>
+		  		<td><input wicket:id = "gsID" type="text" value="Moes Metabolome" size="30" /></td>
+		  	</tr>
+		  	<tr><td colspan="5">&nbsp;</td></tr>
+		  	<tr><td colspan = "5">&nbsp;</td></tr>
+		  	<tr><td colspan="5"  style = "text-align : left;; color : #0053CF; font-weight : 500">Search for sample type id</td></tr>
+		  	<tr><td colspan="5">&nbsp;</td></tr>
+			<tr>
+		  		<td style = "text-align : right ; font-size : 80%">Sample Type:</td>
+		  		<td><input wicket:id = "sampleType" type="text" value="Moes Metabalome" size="30" />
+		  		<span wicket:id="hiddenst">value</span></td>
+		  		<td><input style ="font-size : 80%; margin-right : 10px" type =  "submit" wicket:id="getSampleTypeID" value="&nbsp;&nbsp;Look up id&nbsp;&nbsp;"/></td>
+		  		<td style = "text-align : right ; font-size : 80%">Type ID:</td>
+		  		<td><input  wicket:id = "stID" type="text" value="Moes Metabalome" size="30" /></td>
+		  	</tr>
+		</table>
+  </form>
+ 
+  </center>
+  </fieldset>
+</body>
+</html>

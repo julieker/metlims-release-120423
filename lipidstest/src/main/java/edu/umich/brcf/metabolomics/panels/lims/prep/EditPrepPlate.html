@@ -1,0 +1,43 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title>Prep Plate</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+<center>
+<br/>
+<h2>Scan Sample Barcodes</h2>       
+ <br/>
+  <span wicket:id = "feedback"/>
+		<form wicket:id = "preparationPlateForm">   
+<!--		<div wicket:id="modal1"></div>-->
+			<table>
+				<tr>
+					<td>Volume</td>
+					<td><input type="text" wicket:id="volume" size="10"/></td>
+					<td>Units</td>
+					<td><select wicket:id="volUnits"></select></td>
+				</tr>
+			</table>
+			
+			<table>
+				<tr>
+					<td wicket:id="cols">
+						<table>
+							<tr wicket:id="rows">
+								<td><span wicket:id = "index"></span><input type="text" wicket:id="cell" size="10"/></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+<!--			<tr wicket:id="rows"><td wicket:id="cols"><span wicket:id = "index"></span><input type="text" wicket:id="cell" size="10"/></td></tr>-->
+			</table>
+			<br/>
+			<p>Create plate for: <select wicket:id="instrumentName"></select>
+			&nbsp;<input type="submit" wicket:id="save" value="Save" /></p>
+		</form>
+	</center>
+</body>
+</html>
+	

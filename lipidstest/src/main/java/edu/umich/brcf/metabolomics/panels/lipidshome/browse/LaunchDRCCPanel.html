@@ -1,0 +1,54 @@
+<wicket:panel>
+		
+		<form wicket:id = "launchDrccForm">
+		
+        <table style = "text-align : left; margin-left : 0%">
+	        <tr>
+		       <td style = " vertical-align : top ; text-align: left; border : none">
+		        	<table style = "width: 96%; margin-left : 2%; margin-right : 2%; ">
+
+	    	
+						<tr>
+							<td style = "text-align : right ; padding-right : 3px" nowrap>Experiment :
+							</td>
+			    			<td style = "text-align : left; vertical-align : top ; ">
+								<select wicket:id = "editExperimentDrop" style = "width : 110px">
+									<option>Please Select </option>
+									<option>EX00001</option>
+									<option>EX00002</option>
+								</select>
+							</td>	
+						</tr>
+
+						<tr>
+							<td style = "text-align : right ; padding-right : 3px" nowrap>Run Date :
+							</td>
+			    			<td style = "text-align : left; vertical-align : top ; ">
+			    					<!--<select wicket:id = "runDateDrop" style = "width : 110px"  >
+										<option>Please Select </option>
+										<option>EX00001</option>
+										<option>EX00002</option>
+									</select> -->
+									<input  wicket:id = "analysisDate" readonly type = "text" style = "text-align :left; padding-left : 3px; width : 110px"/>
+									
+								<div wicket:id = "container">
+								</div>
+							</td>	
+						</tr>
+						
+						
+						<tr>
+							<td nowrap style = "width : 33%; text-align : right; padding-right : 3px">Ion Mode(s) :</td>
+							<td nowrap style = "width : 67%; text-align : left">
+								<select  wicket:id = "modeDrop" style = "width : 110px"><option>Positive</option><option>Negative</option><option>Both</option></select>
+								<input  wicket:id = "editButton" style = "width : 110px" type="submit" value="&nbsp;View Report&nbsp;"/>  
+					       	</td>
+						</tr>
+
+					</table>
+				</td>
+				<td style = "width : 20%" ></td>	     		
+			</tr>
+		</table>	
+		</form>
+</wicket:panel>

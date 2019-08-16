@@ -1,0 +1,67 @@
+<wicket:panel>
+		
+		<form wicket:id = "launchDrccForm">
+		
+		<div wicket:id = "feedback"></div>
+		<table style = "text-align : left; margin-left : 0%; ">
+	        <tr>
+		       <td style = " vertical-align : top ; text-align: left; border : none">
+		        	<table style = "width: 90%; margin-left : 5%; margin-right : 5%; ">
+		        		
+						<tr>
+							<td style = "text-align : right ; padding-right : 3px" nowrap>
+								Document Type :
+							</td>
+			    			<td style = "text-align : left; vertical-align : top ; ">
+								<select wicket:id = "docTypeDropdown" style = "width : 300px">
+									<option>Please Select </option>
+									<option>STANDARD PROTOCOL</option>
+								</select>
+							</td>	
+						</tr>
+						
+						<tr>
+							<td style = "text-align : right ; padding-right : 3px" nowrap>
+								Assay :
+							</td>
+			    			<td style = "text-align : left; vertical-align : top ; ">
+								<select wicket:id = "assayDropdown" style = "width : 300px">
+									<option>Please Select </option>
+									<option>A001</option>
+									<option>A002</option>
+								</select>
+							</td>	
+							
+							<td  style = "text-align : left; vertical-align : top">
+					        	  
+					       	</td>
+						</tr>
+						
+						<tr>
+				       		<td style = "text-align : right ; padding-right : 3px" nowrap>
+								Sample Type :
+							</td>
+			    			<td style = "text-align : left; vertical-align : top ; ">
+								<input wicket:id = "labelField" type = "text">
+							</td>	
+				       		<td></td>
+			       		</tr>
+			       		
+			       		<tr>
+		        		    <td style = "text-align : right : padding-right : 3px" nowrap>File&nbsp;&nbsp;</td>
+			        		<td>
+			        			<input wicket:id="fileContents" type="file"  style = "width : 300px; border : none"   value = "Select File..."/></td>
+		        			<td  style = "text-align : center; border : none">
+		        				<input wicket:id = "uploadButton" type="submit" style = "width : 110px"  value="&nbsp;Upload&nbsp;"/>  
+		        			</td>
+		        		</tr>
+					</table>
+				</td>
+				<td style = "width : 30%" ></td>	     		
+			</tr>
+		</table>
+		
+		<div wicket:id = "progress"></div>	
+		</form>
+		
+</wicket:panel>

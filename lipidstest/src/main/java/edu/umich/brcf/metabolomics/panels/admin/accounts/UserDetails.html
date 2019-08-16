@@ -1,0 +1,48 @@
+<wicket:head>
+	<link rel="stylesheet" type="text/css" href="dialog.css"/>
+	
+</wicket:head>
+
+<wicket:panel>
+
+<div class = "dialog_background">
+	<fieldset class = "dialog_fieldset">	
+		
+		<legend class = "dialog_legend">
+	   		<span style = "text-align : left; font-weight : bold; color :  #0053CF">User Details</span>
+	   	</legend>
+
+	   	<table style = "width : 90%; margin-right : 5%; margin-left : 5%">
+		  	<tr>
+		  		<td style = "text-align : right">User ID:</td>
+		  		<td><span wicket:id = "id">Moes ID</span></td>
+		  	</tr>
+			<tr>
+				<td style = "text-align : right">Name:</td>
+				<td>
+					<span wicket:id = "name">Moes Metabalome</span>
+					(<span wicket:id = "userName">mmet</span>) - <span wicket:id = "viewpoint">dude</span>
+				</td>
+			</tr>
+			<tr>
+				<td style = "text-align : right">Phone:</td>
+				<td><span wicket:id="phone">(123) 456-7890</span></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right">fax:</td>
+				<td><span wicket:id="fax">(123) 456-7890</span></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right">EMail:</td>
+				<td><span wicket:id="email">Moes Email</span></td>
+			</tr>
+			<tr>
+				<td style = "text-align : right">Lab:</td>
+				<td><span wicket:id="lab">Moes Lab</span></td>
+			</tr>
+	    </table>
+	    
+	</fieldset>
+</div>
+
+</wicket:panel>

@@ -1,0 +1,51 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title></title>
+     <link rel="stylesheet" type="text/css" href="dialog.css"/>
+</head>
+
+<wicket:head>
+	<link rel="stylesheet" type="text/css" href="dialog.css"/>
+	<style>
+		legend { border: 1px solid transparent; background-color: white; color: black; padding: 4px;}
+	    fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	</style>
+</wicket:head>
+
+<body class = "dialog_background">
+	<div>
+		<fieldset class = "dialog_fieldset" style = "height : 75%; margin-top : 2%; margin-bottom : 2%; width :90%; margin-left : 5%; margin-right : 5%">	
+		
+			<legend class = "dialog_legend">
+		   		<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">Edit Organization</span>
+		   	</legend>
+		   	
+		   	<center>
+			  	<span wicket:id = "feedback" class = "feedbackMsg" />
+			  	
+			  	<form wicket:id = "editOrganizationForm">  
+			  	    <table style = "width : 70%; margin-right : 15%; margin-left : 15%">
+					  	<tr>
+						  <td style = "text-align : right; width : 20%">Name:</td>
+						  <td style = "width : 80%"><input wicket:id = "orgName" type="text" value="Moes Metabalome" style = "width : 80%" /></td>
+						</tr>
+						<tr>
+							<td style = "text-align : right">Address:</td>
+							<td><input wicket:id = "orgAddress" type="text" value="Mark Twain"   style = "width : 80%"/></td>
+						</tr>
+					</table>
+			    
+			    
+			    <input wicket:id = "saveChanges" style = "width : 15%" class = "dialog_button" type="submit"  value="&nbsp;&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;&nbsp;"/>
+ 			     <input wicket:id = "closeButton"  style = "width : 15%" class = "dialog_button"  type="submit" value="&nbsp;&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;&nbsp;"/>
+			    
+			   <!--       <input wicket:id = "saveChanges" style = "margin-top : 2%"  type="submit"  value="&nbsp;&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;&nbsp;"/>
+			    	<input wicket:id = "closeButton"  style = "margin-top : 2%"  type="submit" value="&nbsp;&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;&nbsp;"/>
+			    -->	
+				</form>
+	  		</center>
+	  	
+	  	</fieldset>
+	</div>
+ </body>
+</html>

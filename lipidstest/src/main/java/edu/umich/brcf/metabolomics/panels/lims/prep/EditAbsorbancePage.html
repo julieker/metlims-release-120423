@@ -1,0 +1,22 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+    <title>METWorks</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+<center>
+<br/>
+  <span wicket:id = "feedback"/>
+  <form wicket:id = "absorbanceForm">
+	<br/>
+   <h4><span wicket:id = "fileUploadText"></span></h4>
+        <p>
+        <label wicket:id="fileText" for="upload"></label>
+        <input wicket:id="fileInput" id="upload" type="file" size="80"/>
+        </p>
+        <input type="submit" wicket:id="upload" value="Upload!"/><br/>
+  </form>
+</center>
+</body>
+</html>

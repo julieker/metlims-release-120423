@@ -1,0 +1,68 @@
+<wicket:head>
+<style>
+		legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+		fieldset { border: 2px outset #4D94FF; background-color : white; padding: 4px; "}
+		
+		.dialog_legend { font-weight : bold; background : transparent; color : blue; border : none; padding: 4px;  text-align : left;	 }
+		.dialog_background  { background : #F4F4F4 ; height : 100%}
+		.dialog_fieldset {  border: 2px outset #4D94FF; background-color : white; }	
+	</style>
+</wicket:head>
+
+<wicket:panel>
+	<div>
+		<fieldset class = "dialog_fieldset" style = "height : 80%; margin-top : 2%; margin-bottom : 2%; width :90%; margin-left : 5%; margin-right : 5%">	
+			
+			<legend class = "dialog_legend" >
+		   		<span  style = "text-align : left; font-weight : bold; color :  #0053CF">Search for <span wicket:id = "searchLabel"></span> Details</span>
+		   	</legend>
+	
+			<form wicket:id = "experimentSearchForm">   
+				   
+				<div wicket:id = "container" class = "container">
+			     <div wicket:id="modal1"></div>
+			   	<table style = "text-align : center; width : 96%; margin-top : 20px">
+			   		<tr>
+			   			<td nowrap style = "vertical-align : top; text-align : right; border : none ">
+			   				<span style = "color : darkblue; font-weight : 500">Search by :&nbsp; </span> &nbsp;
+			   				
+			   			</td>
+			   			<td style = "vertical-align : top; text-align : left; border : none">
+			   				<select wicket:id = "searchType"><option>Experiment</option><option>Project</option></select>&nbsp;&nbsp;
+			   			</td>
+			   			<td></td>
+			   			<td style = "text-align : center">
+			   			
+			   			<input wicket:id = "cancelButton" type = "button"   value = "&nbsp;&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;&nbsp;" title = "Close"/>
+					
+			   			</td>
+			   		</tr>
+			   		<tr>
+			   			<td style = "text-align : right; border : none">
+			   				<span style = "color : darkblue; font-weight : 500">For :&nbsp; </span> &nbsp;
+			   			</td>
+			   			<td style = "vertical-align : top;  text-align : left; border : none">
+			   				<span wicket:id = "searchForExperimentPanel"></span>
+						   	<span wicket:id = "searchForContactPanel"></span>
+						   	<span wicket:id = "searchForProjectPanel"></span>
+						   	<span wicket:id = "searchForOrganizationPanel"></span>
+						   	<span wicket:id = "searchForSamplePanel"></span>
+						</td>
+						<td></td>
+			   			<td style = "text-align : center"> 	<input wicket:id = "details" type = "submit"  value = "&nbsp;Search...&nbsp;" title = "Search..."/>
+					</td>
+					</tr>
+				</table>
+					
+				<div><br/></div>
+				<div style = "text-align : center">
+				
+					
+				
+				</div>
+				</div>
+			</form>
+		</fieldset>
+		
+	</div>
+</wicket:panel>

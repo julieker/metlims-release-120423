@@ -1,0 +1,106 @@
+<wicket:head>
+ 	 <link rel="stylesheet" type="text/css" href="drcc.css"/>
+     <style> </style>
+</wicket:head>
+
+<wicket:panel>
+<body>
+
+	<div> &nbsp; <br></div>
+	<table style = "width : 96%; font-size : 100%;  margin-top : 5px; margin-right : 2%; margin-left : 2%"  class="dataview">
+		<tr>
+			<td style = "width : 25%; text-align : left; vertical-align : bottom">
+				<br><br><span class = "drccSubSectionHeader">F. Sample Prep</span>
+			</td>
+			<td style = "width : 50%; text-align : center; vertical-align : top">
+				<br>
+				<span class = "drccDivisionHeader">Metabolomics Core - DRCC Data Reporting Tool</span><br>
+				<br>
+			</td>
+			<td style = "width : 25%"></td>
+		
+		</tr>
+	</table>
+
+	<br>
+	
+
+	<table style = "width : 96%; margin-left : 2%; margin-right : 2%">
+			<tr>
+				<td class = "drccTextLabel" >Sample Prep Summary :  </td>
+				<td><input wicket:id = "samplePrepSummary" type = "text" class = "drccTextField" /></td>
+			</tr>
+	
+	  		<tr>
+				<td class = "drccTextLabel" > Sample Prep Protocol Id :  </td>
+				<td><input wicket:id = "protocolId" type = "text" class = "drccTextField" /></td>
+			</tr>
+		
+	  		<tr>
+				<td class = "drccTextLabel" > Sample Prep Protocol Filename:  </td>
+				<td><input wicket:id = "protocolFilename" type = "text" class = "drccTextField" /></td>
+			</tr>
+	
+	  		<tr>
+				<td class = "drccTextLabel" > Sample Prep Protocol Comments:  </td>
+				<td><input wicket:id = "protocolComments" type = "text" class = "drccTextField"  /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" > Processing Method: <br>Lyophilization, Homogenization, Lysis, etc </td>
+				<td><input wicket:id = "processingMethod" type = "text" class = "drccTextField"   /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" > Processing Storage Conditions:  </td>
+				<td><input wicket:id = "processingStorageConditions" type = "text" class = "drccTextField"   /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" > Extraction Method:  </td>
+				<td><input wicket:id = "extractionMethod" type = "text" class = "drccTextField"  /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" > Extract Concentration/Dilution :  </td>
+				<td><input wicket:id = "extractConcentration" type = "text" class = "drccTextField"   /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" > Extract Enrichment: <br>(SPE, Desalting, etc) </td>
+				<td><input wicket:id = "extractEnrichment" type = "text" class = "drccTextField"  /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" > Extract Cleanup:  </td>
+				<td><input wicket:id = "extractCleanup" type = "text" class = "drccTextField"  /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" > Extract Storage:  </td>
+				<td><input wicket:id = "extractStorage" type = "text" class = "drccTextField"   /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" > Sample Resuspension:  </td>
+				<td><input wicket:id = "sampleResuspension" type = "text" class = "drccTextField"   /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" > Sample Derivatization:  </td>
+				<td><input wicket:id = "sampleDerivatization" type = "text" class = "drccTextField"   /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" > Sample Spiking: <br>(Internal Standards, Retention Standards, etc) </td>
+				<td><input wicket:id = "sampleSpiking" type = "text" class = "drccTextField"   /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" > Organ:  </td>
+				<td><input wicket:id = "organ" type = "text" class = "drccTextField"   /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" > Organ Specification:  </td>
+				<td><input wicket:id = "organSpecification" type = "text" v = "drccTextField"   /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" > Cell Type:  </td>
+				<td><input wicket:id = "cellType" type = "text" class = "drccTextField"  /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" > Subcellular Location:  </td>
+				<td><input wicket:id = "subCellularLocation" type = "text" class = "drccTextField"   /></td>
+			</tr>
+  		</table>
+	</body>
+</wicket:panel>

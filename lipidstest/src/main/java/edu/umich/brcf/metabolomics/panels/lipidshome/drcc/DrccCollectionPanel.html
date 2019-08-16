@@ -1,0 +1,117 @@
+<wicket:head>
+	 
+ 	 <link rel="stylesheet" type="text/css" href="css/style.css"/>
+     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+     <link rel="stylesheet" type="text/css" href="drcc.css"/>
+     
+</wicket:head>
+
+<wicket:panel>
+<body>
+
+	<div> &nbsp; <br></div>
+		<table style = "width : 96%; font-size : 100%;  margin-top : 5px; margin-right : 2%; margin-left : 2%"  class="dataview">
+			<tr>
+				<td style = "width : 25%; text-align : left; vertical-align : bottom">
+					<br><br><span class = "drccSubSectionHeader">E. Collection</span>
+				</td>
+				<td style = "width : 50%; text-align : center; vertical-align : top">
+					<br>
+					<span class = "drccDivisionHeader">Metabolomics Core - DRCC Data Reporting Tool</span><br>
+					<br>
+				</td>
+				<td style = "width : 25%"></td>
+				
+			</tr>
+		</table>
+
+		<br>
+		<br>
+
+	  	<table style = "width : 96%; margin-left : 2%; margin-right : 2%">
+			<tr>
+				<td class = "drccTextLabel">Collection Summary :  </td>
+				<td><input wicket:id = "collectionSummary" type = "text" class = "drccTextField" style = "width : 80%" /></td>
+			</tr>
+	
+	  		<tr>
+				<td class = "drccTextLabel" >Collection Protocol Id :  </td>
+				<td><input wicket:id = "collectionProtocolId" type = "text" class = "drccTextField" style = "width : 80%" /></td>
+			</tr>
+		
+	  		<tr>
+				<td class = "drccTextLabel" >Collection Protocol Filename :  </td>
+				<td><input wicket:id = "collectionProtocolFilename" type = "text" class = "drccTextField" style = "width : 80%" /></td>
+			</tr>
+	
+	  		<tr>
+				<td class = "drccTextLabel" >Collection Protocol Comments :  </td>
+				<td><input wicket:id = "collectionProtocolComments" type = "text" class = "drccTextField" style = "width : 80%" /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccRequiredTextLabel" > Sample Type : </td>
+				<td>
+					<select wicket:id = "sampleType" type = "text" class = "drccTextField" style = "width : 80%"></select>
+				</td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" >Collection Method :</td>
+				<td><input wicket:id = "collectionMethod" type = "text" class = "drccTextField" style = "width : 80%" /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" >Collection Location : </td>
+				<td><input wicket:id = "collectionLocation" type = "text" class = "drccTextField" style = "width : 80%" /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" >Collection Frequency :  </td>
+				<td><input wicket:id = "collectionFrequency" type = "text" class = "drccTextField" /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" >Collection Duration :  </td>
+				<td><input wicket:id = "collectionDuration" type = "text" class = "drccTextField" /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" >Time of Collection (Relative to dose) : </td>
+				<td><input wicket:id = "collectionTime" type = "text" class = "drccTextField"  /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" >Volume/Amount Collected : </td>
+				<td><input wicket:id = "collectionVolume" type = "text" class = "drccTextField"  /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" >Storage Conditions :  </td>
+				<td><input wicket:id = "storageConditions" type = "text" class = "drccTextField"  /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" >Collection Vials :  </td>
+				<td><input wicket:id = "collectionVials" type = "text" class = "drccTextField"  /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" >Storage Vials : <br>(Internal Standards, Retention Standards, etc) </td>
+				<td><input wicket:id = "storageVials" type = "text" id = "drccTextField"  /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" >Collection Tube Temp :  </td>
+				<td><input wicket:id = "collectionTubeTemp" type = "text" id = "drccTextField"  /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" >Additives :  </td>
+				<td><input wicket:id = "additives" type = "text" class = "drccTextField" /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" >Blood Serum or Plasma :  </td>
+				<td><input wicket:id = "bloodSerumPlasma" type = "text" class = "drccTextField" /></td>
+			</tr>
+	  		<tr>
+				<td class = "drccTextLabel" >Tissue/Cell Identification :  </td>
+				<td><input wicket:id = "tissueCellId" type = "text" class = "drccTextField"  /></td>
+			</tr>
+			
+			<tr>
+				<td class = "drccTextLabel" >Tissue/Cell Quantity Taken :  </td>
+				<td><input wicket:id = "tissueCellQuantity" type = "text" class = "drccTextField" /></td>
+			</tr>
+			
+  		</table>
+	</body>
+</wicket:panel>

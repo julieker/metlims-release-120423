@@ -1,0 +1,41 @@
+	<wicket:head>
+	<style>
+		body 
+			{
+		   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+		   font-weight: 300;
+			}
+		
+		table tr th { width : 800px; background   white; padding-left : 20px; padding-right : 20px; text-align : center }
+		table tr.even { width : 800px; background  : white; padding-right : 10px;  }
+		table tr.odd { width : 800px; background  : #EFFBFB; padding-right : 10px }
+				
+	</style>
+</wicket:head>
+
+<wicket:panel>
+	<body  style = "margin-top : 50px">
+	
+		<div wicket:id="feedback"></div>
+		
+		<form wicket:id = "dataReportForm">
+			<h3><span wicket:id = "panelTitle" style = "margin-left : 10%; margin-top: 5%; color :  #0053CF;"> Title here</span></h3>
+			
+			<span wicket:id = "container">	
+				
+				<table style = "font-size : 90%; background : white; border : solid grey 1px; width : 80%; margin-left : 10% ; margin-right : 10%">
+					<tr style = "border : solid 1px white; background : #0053CF; color : white; font-weight : 300">	
+						<th>Data Set Id</th>
+						<th>Experiment Id</th>
+						<th># Compounds</th>
+						<th>Run Date</th>
+						<th>Upload Date</th>
+						<th>Uploaded By </th>
+						<th></th>
+					</tr>		
+					 
+				</table>
+			</span>				
+		</form>
+	</body>
+</wicket:panel>

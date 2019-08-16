@@ -1,0 +1,44 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+
+<head>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+
+    <style>
+        legend { border: 1px solid #e9601a; background : transparent; color: black; padding: 4px;}
+        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+        .dialog_legend { font-weight : bold; background : transparent; color : blue; padding: 4px;  text-align : left;	 }
+		.dialog_legend_text { font-weight : bold;  color :  #0053CF"; }
+		.dialog_background  { background : #F4F4F4 }
+		.dialog_fieldset {  border: 2px outset #4D94FF; background-color : white; margin: 2% }	
+		.feedbackMsg { color : red; font-weight : 600; text-align : left }
+	</style>
+</head>
+
+<body class = "dialog_background">  <!-- "background : #E8ECEF"> -->
+	<fieldset class = "dialog_fieldset" style = "vertical-align : middle; height : 80%">
+
+     	<legend style = "border : blue; background : transparent; text-align : left">
+     		<span wicket:id = "title" style = "font-weight : bold; color :  #0053CF"></span>
+     	</legend>
+		
+   		<form wicket:id="createSampleForm">
+   			<table style = "margin-top : 30px; width : 96%; margin-right : 2%; margin-left : 2%">
+    			<tr>
+    				<td style = "text-align : right; padding-right : 5px">File</td>
+    				<td>
+			        	<input wicket:id="fileInput" class ="upload" type="file" size="150"/>
+			        </td>
+			        <td>
+			        	<input type="submit" value="&nbsp;&nbsp;Upload&nbsp;&nbsp;"/>
+			        </td>
+			    </tr>
+		    </table>
+		    <center>
+		    	<span wicket:id="progress">[[ajax upload progressbar]]</span><br/>
+		    </center>
+		</form>
+    <span wicket:id = "feedback"/>
+    </fieldset>
+</body>
+</html>

@@ -1,0 +1,30 @@
+35a36
+> import edu.umich.brcf.shared.util.utilpackages.StringUtils;
+336,340c337,357
+< 		while (c.getCid()!=c.getParent().getCid())
+< 		{
+< 			c=compoundService.loadCompoundById(c.getParent().getCid());
+< 			parentageList.add(c);
+< 		}
+---
+> 		
+> 		if (c.getParent() != null)
+> 		    {
+> 			   System.out.println("Going in the while loop");
+> 			   System.out.println(".....this is c get id:" + c.getCid());
+> 			   System.out.println(".....this is parent:" + c.getParent().getCid());
+> 				while (c.getCid()!=c.getParent().getCid())
+> 				{
+> 	
+> 			        System.out.println("In the while loop:" + c.getId());
+> 					c=compoundService.loadCompoundById(c.getParent().getCid());
+> 					System.out.println("just before == null past compoundservice");
+> 					if (c.getParent()==null)
+> 					{
+> 						System.out.println("IN .........the c==null");
+> 						
+> 						break;
+> 					}
+> 					parentageList.add(c);
+> 				}
+> 			}

@@ -1,0 +1,143 @@
+.tabpanel1 div.tab-row ul 
+	{
+  	margin:0;
+  	padding:10px 10px 0;
+  	list-style:none;
+  	}
+  
+  
+.tabpanel1 div.tab-row li 
+	{
+	float:left;
+  	background:url("tabs1/left.gif") no-repeat left top;
+  	margin:0;
+  	padding:0 0 0 9px;
+  	}
+  
+  
+.tabpanel1 div.tab-row a {
+  display:block;
+  background : transparent;
+  border : none;
+  padding:2px 15px 2px 6px;
+  margin-bottom : 2px;
+  text-decoration:none;
+  font-weight:bold;
+  color:grey;
+  white-space:nowrap;
+  }
+  
+  
+.tabpanel1 div.tab-row a:hover 
+	{
+  	color:green;
+ 	}
+  
+.tabpanel1  div.tab-row li.selected 
+	{
+  	color : red;
+  	}
+  
+.tabpanel1  div.tab-row li.selected a 
+	{
+	color:red;
+  	padding-bottom:2px;
+  	}
+
+.tabpanel1 div div.tab-row ul 
+	{
+  	margin-top : 2px;
+  	padding:2px 2px 0;
+  	list-style:none;
+  	margin-bottom : 30px;
+  	z-index : -1;
+  	}
+  
+.tabpanel1 div div.tab-row li 
+	{
+  	float:left;
+ 
+  	margin-top :0px;
+  	padding:0 0 0 0px;
+  	z-index : -1;
+  	}
+  
+.tabpanel1 div div.tab-row a 
+	{
+	  display:block;
+	  background : transparent;
+	  border : none;
+	  padding:2px 15px -5px -5px;
+	  text-decoration:none;
+	  font-weight:bold;
+	  
+	  color:grey;
+	  white-space:nowrap;
+	  z-index : -1;
+  	}
+  
+.tabpanel1 div div.tab-row a:hover 
+	{
+  	color:green;
+    z-index : -1;
+  	}
+  
+.tabpanel1 div div.tab-row li.selected {
+	
+  color : red;
+    z-index : -1;
+  }
+  
+.tabpanel1 div div.tab-row li.selected a {
+  color:red;
+  padding:5px 15px -5px -5px;
+  font-weight : bold;
+  background : transparent;
+  z-index : -1;
+  }
+  
+  
+ .tabpanel1 div div div.tab-row ul {
+  margin-top: 2px;
+  padding:0px 0px 0;
+  list-style:none;
+  
+  }
+  
+.tabpanel1 div div div.tab-row li {
+	margin-top : 2px;
+  float:left;
+  background: transparent;
+  border : none;
+  padding:0 0 0 2px;
+ 
+  }
+  
+.tabpanel1 div div div.tab-row a {
+  display:block;
+  background : transparent;
+  border : none;
+  padding:2px 2px -5px -5px;
+  text-decoration:none;
+  font-weight:bold;
+  
+  color:grey;
+  white-space:nowrap;
+  }
+.tabpanel1 div div div.tab-row a:hover {
+  green;
+  }
+  
+.tabpanel1 div div div.tab-row li.selected {
+  background : transparent;
+  color : red;
+  border : none;
+  }
+  
+.tabpanel1 div div div.tab-row li.selected a {
+  color:red;
+  background  : transparent;
+  font-weight : 600;
+   padding: 2px 15px -5px -5px;
+ 
+  } 

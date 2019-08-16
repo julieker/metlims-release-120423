@@ -1,0 +1,138 @@
+ 
+ <html xmlns:wicket="http://wicket.apache.org/">
+
+	<head>
+	    <link rel="stylesheet" type="text/css" href="dialog.css"/>
+
+	    <style>
+	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
+	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	    </style>
+	</head>
+	
+
+	<body class = "dialog_background">  
+	
+		<span wicket:id = "feedback" class = "feedbackMsg"/>
+		
+		<form wicket:id = "editSampleForm">      
+	    	<fieldset style = "width : 90%; margin-right : 5%; margin-left : 5%; margin-bottom : 2%;  margin-top : 2%; height : 80%; vertical-align : middle">
+	      		
+	      		 <div style="overflow: auto; height : 85%; width : 96%; padding-right : 10px;">
+		   		<legend style = "background : transparent; border : none">
+		   			<span style = "font-weight : bold; color :  #0053CF">Edit Sample</span>
+		   		</legend>
+		
+	      		<table style = "width : 96%; margin-right : 2%; margin-left : 2%">
+	 	   		
+	 	   			<tr>
+						<td style = "text-align: right">Experiment ID:</td>
+						<td><span wicket:id="expID" ></span></td>
+						<td></td>					
+					</tr>
+		
+				  	<tr>
+				  		<td style = "text-align: right">Sample ID:</td>
+				  		<td><span wicket:id = "id"></span></td>
+						<td></td>			  		
+				  	</tr>
+		
+					<tr>
+					  <td style = "text-align: right">Researcher Sample ID:</td>
+					  <td colspan= "2"><input wicket:id = "sampleName" type="text" size="40" /></td>
+					 			  
+					</tr>
+		
+					<tr>
+						<td style = "text-align: right">User Description:</td>
+						<td colspan = "2"><input wicket:id = "userDescription" type="text" size="40" /></td>
+					</tr>
+		
+					<tr>
+						<td style = "text-align: right">Original Volume:</td>
+						<td><input wicket:id="volume" type="text" size="10"/></td>
+						<td></td>
+					</tr>
+					
+					<tr>
+						<td style = "text-align: right">Current Volume:</td>
+						<td><input wicket:id="currVolume" type="text" size="10"/></td>
+						<td></td>
+					</tr>
+				
+					<tr>
+						<td style = "text-align: right">Volume Units:</td>
+						<td><select wicket:id="volUnits"></select></td>
+						<td></td>
+					</tr>
+				
+					<tr>
+						<td style = "text-align: right">Sample Type ID :</td>
+						<td><input wicket:id="sampleTypeId" type="text" size="15"></td>
+						<td  nowrap style = "text-align : right">Sample Type Description : <input nowrap wicket:id="userDefSampleType" type="text" size = "50" style = "padding-left : 20px"></td>
+					</tr>
+				
+					<tr>
+						<td style = "text-align: right">Genus Or Species ID:</td>
+						<td><input wicket:id="genusOrSpeciesID" type="text" size="15" /></td>
+						<td  nowrap style = "text-align : right">GOS Description : <input  nowrap  wicket:id="userDefGOS" type="text" size = "50" style = "padding-left : 20px"/></td>
+					</tr>
+				
+					<tr>
+					 <td nowrap style = "text-align : right">Curr. Location : </td>
+								<td>		
+									<select wicket:id = "locationDrop"><option>Location 1 </option><option>Location 2</option></select>
+								</td>
+					</tr>
+					
+					
+					<tr>
+						<td style = "text-align: right">Subject ID:</td>
+						<td> <select wicket:id = "subjectId"><option>SU02221</option></select>
+							<!-- <input wicket:id="subjectIsNew" type="checkbox">New Id &nbsp;&nbsp;&nbsp; -->
+						</td >
+						<td  nowrap style = "text-align : right" >Researcher Subject Id : <input wicket:id="subjectName" type="text" size = "50" style = "padding-left : 20px" /> </td>
+					</tr>
+					
+					<tr>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+				<br><br>
+					
+				<table style = "overflow : auto;  width : 96%; margin-left :  2%; margin-right : 2%">
+					<tr>
+						<th>Factor Name</th>
+						<th>Factor Value</th>
+					</tr>
+					
+					<tr wicket:id = "factorValues">
+						<td><input wicket:id = "factorName" style = "width : 100%" /></td>
+						<td><input wicket:id = "factorValue" style = "width : 100%" /></td>
+					</tr>
+				</table>
+				
+				</div>
+			</fieldset>
+		    
+		    
+		    <table style = "width : 96%; margin-left : 2%; margin-right : 2%">
+			    <tr>
+				    <td style = "width : 50%; text-align : right; margin-right : 20px">
+				    	<input wicket:id="saveButton" type="submit"  style = "width : 25%"  value="&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;"/>
+				    </td>
+				    <td style = "width : 50%; text-align : left; margin-left : 20px">
+				    	<input wicket:id="cancelButton" type="submit"  style = "width : 25%" value="&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;"/>
+				    	
+				    </td>
+			    </tr>
+		    </table>
+			    
+			 <br>
+	  	</form>
+	</body>
+</html>
+ 
+

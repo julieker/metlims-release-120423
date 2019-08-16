@@ -1,0 +1,85 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<wicket:panel>
+<div wicket:id="modal1"></div>
+<h2>Prepped Samples:</h2>
+  <table style = "width : 100%" class="dataview">
+	<tr>
+	  <th>Index</th>
+	  <th>Sample ID</th>
+	  <th width="15%">Name</th>
+	  <th>Well</th>
+	  <th>Volume</th>
+<!--	  <th>Units</th>-->
+<!--	  <th>Buffer</th>-->
+<!--	  <th>Buf Volume</th>-->
+	  <th>Homogenization</th>
+<!--	  <th>Diluted</th>-->
+<!--	  <th>Dilutant</th>-->
+<!--	  <th>Dil Volume</th>-->
+<!-- 	  <th>PD_SOP</th> -->
+	  <th>Crash_SOP</th>
+<!-- 	  <th>Protein</th> -->
+<!-- 	  <th>Vol Trans</th> -->
+	</tr>
+    <tr wicket:id = "sampleList">
+    	<td><span wicket:id = "index"></span></td>
+    	<td><a wicket:id = "sidLink" href="#"><span wicket:id = "sid"/></a></td>
+    	<td><span wicket:id = "name"></span></td>
+    	<td><span wicket:id = "well"></span></td>
+    	<td><span wicket:id = "volume"></span></td>
+<!--    	<td><span wicket:id = "units"></span></td>-->
+<!--    	<td><span wicket:id = "bufferType"></span></td>-->
+<!--    	<td><span wicket:id = "bufferVolume"></span></td>-->
+    	<td><a wicket:id = "homogenizationLink" href="#"><span wicket:id = "homogenization"/></a></td>
+<!--    	<td><span wicket:id = "diluted"></span></td>-->
+<!--    	<td><span wicket:id = "dilutant"></span></td>-->
+<!--    	<td><span wicket:id = "dilutantVolume"></span></td>-->
+<!--     	<td><a wicket:id = "protienDeterLink" href="#"><span wicket:id = "protienDeter"/></a></td> -->
+    	<td><a wicket:id = "generalPrepLink" href="#"><span wicket:id = "generalPrep"/></a></td>
+<!--     	<td><span wicket:id = "protienReading"></span></td> -->
+<!--     	<td><span wicket:id = "volTransferred"></span></td> -->
+    </tr>
+  </table>
+  <h2>Plates:</h2>
+  <table style = "width : 100%" class="dataview">
+	<tr>
+	  <th>New -- ID</th>
+	  <th>Instrument</th>
+	  <th>Prep_SOP</th>
+<!--	  <th>Other Methods</th>-->
+	  <th></th>
+	</tr>
+    <tr wicket:id = "plateList">
+    	<td><span wicket:id = "plateID"></span></td>
+    	<td><span wicket:id = "instrument"></span></td>
+    	<td><a wicket:id = "platePrepLink" href="#"><span wicket:id = "sop"></span></a></td>
+    	<td><input type="submit" value="&nbsp;&nbsp;&nbsp;Generate Worklist&nbsp;&nbsp;&nbsp;" />
+    		<input type="submit" wicket:id="worklist" value="&nbsp;&nbsp;&nbsp;Generate Worklist&nbsp;&nbsp;&nbsp;" />
+<!--    	&nbsp;<input type="button" wicket:id="report" value="Generate Report" />-->
+    	</td>
+    </tr>
+  </table>
+  <h2>Sample Observations:</h2>
+  <table style = "width : 100%" class="dataview">
+	<tr>
+	  <th style = "width : 50%">Observation</th>
+	  <th>Associated Locations</th>
+	</tr>
+    <tr wicket:id = "sampleObservationsList">
+    	<td><span wicket:id = "sampleNotes"></span></td>
+    	<td><span wicket:id = "samplesAssociated"></span></td>
+    </tr>
+  </table>
+  <h2>Plate Observations:</h2>
+  <table style = "width : 100%" class="dataview">
+	<tr>
+	  <th style = "width : 50%">Observation</th>
+	  <th>Associated Plate</th>
+	</tr>
+    <tr wicket:id = "plateObservationsList">
+    	<td><span wicket:id = "plateNotes"></span></td>
+    	<td><span wicket:id = "platesAssociated"></span></td>
+    </tr>
+  </table>
+</wicket:panel>
+</html>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<wicket:panel>
+
+	<div wicket:id="modal1"></div>
+
+	<table style="width: 1000px" cellpadding="0" cellspacing="0">
+		<tr >
+			<th style = "width : 4%; text-align : center;"></th>
+			<th style = "width : 4%; text-align : center; padding-left : 10px" > <input wicket:id="selectAll" type="checkbox"></th>
+  			<th style = "width : 15%; text-align : center">Sample ID</th>
+			<th style = "width : 23%; text-align : center">Name</th>
+	
+			<th style = "width : 23%; text-align : center">Location 
+			   &nbsp;&nbsp;&nbsp;&nbsp;<input wicket:id = "changeLocation" type="button"   style ="font-weight : 400; 
+			   background : white;  border : solid 1px grey; margin-top : 7px;
+			   margin-bottom : 7px" value="&nbsp;&nbsp;Update...&nbsp;&nbsp;" />
+			</th>
+	
+			<th style = "width : 23%; text-align : center">Status
+			   &nbsp;&nbsp;&nbsp;&nbsp;<input wicket:id = "changeStatus" type="button"  style ="font-weight : 400; background : white; margin-top : 7px;
+			   margin-bottom : 7px" value="&nbsp;&nbsp;Update...&nbsp;&nbsp;" />
+   		 	</th>
+   		 	
+   		 	<th style = "width : 23%; text-align : center">Current Volume
+   		 	</th>
+		</tr>
+	</table>
+
+
+	<div style="overflow: auto; height: 450px; width: 1000px;">
+    	<table style="width: 1000px">
+			<tr wicket:id = "samples" style = "width : 100%">
+	  			<td style = "width : 4%; text-align : right; padding-right : 1%"> 
+	  				<span wicket:id = "index"> </span>
+	  			</td>
+
+		      	<td style = "width : 4%; text-align : right; padding-right : 1%">
+     	   			<input wicket:id="selected" type="checkbox">
+      			</td>
+
+		      	<td style = "width : 15%; text-align : right ; padding-right : 2%">
+     	 			<span wicket:id = "sampleId"></span>
+      			</td>
+
+	    	  	<td style = "width : 23%; text-align : right ; padding-right : 2%">
+      				<span wicket:id = "sampleName"></span>
+      			</td>
+      
+	      		<td style = "width : 23%; text-align : right ; padding-right : 2%; ">
+      				<span wicket:id = "location"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      				<input wicket:id  = "locationHistory" title = "History" value = "&nbsp;&nbsp;History...&nbsp;&nbsp;" 
+      				type = "button"/>
+      			</td>
+      
+			    <td wicket:id="cell" style = "width : 23%; text-align : right ; padding-right : 2%">
+      				<span wicket:id = "sampleStatus" style = "width : 100%"></span>
+     	 		</td>
+     	 		
+     	 		<td style = "width : 8%; text-align : center">.5 ml</td>
+    		</tr>
+  		</table>	
+ 	 </div>
+ 
+</wicket:panel>
+</html>

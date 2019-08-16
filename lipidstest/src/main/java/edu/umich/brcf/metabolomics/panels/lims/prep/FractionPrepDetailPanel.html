@@ -1,0 +1,40 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<wicket:panel>
+<h2>Prepped Fractions:</h2>
+<div wicket:id="modal1"></div>
+  <table width = "100%" class="dataview">
+	<tr>
+	  <th>Index</th>
+	  <th>Fraction ID</th>
+	  <th>Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+	  <th>Well</th>
+	  <th>Diluted(mg)</th>
+	  <th>Dilutant</th>
+	  <th>Dilutant Volume(ul)</th>
+	</tr>
+    <tr wicket:id = "fractionsList">
+    	<td><span wicket:id = "index"></span></td>
+    	<td><span wicket:id = "id"></span></td>
+    	<td><span wicket:id = "name"></span></td>
+    	<td><span wicket:id = "well"></span></td>
+    	<td><span wicket:id = "volume"></span></td>
+    	<td></td>
+    	<td></td>
+    </tr>
+  </table>
+  <h2>Plates:</h2>
+  <table width = "100%" class="dataview">
+	<tr>
+	  <th>ID</th>
+	  <th>Instrument</th>
+	  <th></th>
+	</tr>
+    <tr wicket:id = "plateList">
+    	<td><span wicket:id = "plateID"></span></td>
+    	<td><span wicket:id = "instrument"></span></td>
+    	<td><input type="submit" wicket:id="run" value="Run" /></td>
+    </tr>
+  </table>
+</wicket:panel>
+</html>
