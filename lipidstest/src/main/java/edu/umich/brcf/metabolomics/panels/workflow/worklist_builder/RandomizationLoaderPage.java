@@ -40,6 +40,7 @@ import edu.umich.brcf.shared.layers.domain.Sample;
 import edu.umich.brcf.shared.layers.service.ExperimentService;
 import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.panels.utilitypanels.ConfirmBox;
+import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.util.FormatVerifier;
 import edu.umich.brcf.shared.util.METWorksException;
 import edu.umich.brcf.shared.util.utilpackages.ListUtils;
@@ -54,6 +55,8 @@ public abstract class RandomizationLoaderPage extends WebPage
 	
 	//private FileUploadField fileUploadField;
 	private String UPLOAD_FOLDER = "./";
+	
+	final ModalWindow modalRandom = ModalCreator.createModalWindow("modalRandom", 500, 300); // issue 464
 	
 	@SpringBean 
 	SampleService sampleService;
@@ -90,7 +93,7 @@ public abstract class RandomizationLoaderPage extends WebPage
 			expId = eid;
 			add(new FeedbackPanel("feedback"));
 			this.setOutputMarkupId(true);
-			
+			add (modalRandom);
 			setMultiPart(true);				
 		 	add(assayType = buildDropdownAssayType("randomizationType"));
 		 	setSelectedAssay("Custom");
@@ -154,7 +157,7 @@ public abstract class RandomizationLoaderPage extends WebPage
 	    		    	if (sampleInvalidIds.size()> 0 )
 				            { 
 	    		            showConfirmBoxWarning("Are you sure that you want to do this randomization?.  The following samples are not in the correct format:" + System.getProperty("line.separator") + ListUtils.prettyPrint(sampleInvalidIds), sampleInvalidIds.size());	    		        	
-	    		            modal1.show(target); 
+	    		            modalRandom.show(target); 
 				            } 
 	    		        else
 	    		            {
@@ -233,9 +236,9 @@ public abstract class RandomizationLoaderPage extends WebPage
 		public void showConfirmBoxWarning(final String msg, int numberInvalidSamples)
 		    {			
 	    	//////////// Issue 268	
-			 modal.setInitialWidth(800);			 
-             modal.setInitialHeight(fnScaledHeight(numberInvalidSamples));	            
-             modal.setPageCreator(new ModalWindow.PageCreator()
+			 modalRandom.setInitialWidth(800);			 
+             modalRandom.setInitialHeight(fnScaledHeight(numberInvalidSamples));	            
+             modalRandom.setPageCreator(new ModalWindow.PageCreator()
                  {
                  public Page createPage()
  	                { 	        	        			
