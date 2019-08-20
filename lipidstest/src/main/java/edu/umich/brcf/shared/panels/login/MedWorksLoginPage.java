@@ -82,7 +82,7 @@ public class MedWorksLoginPage extends WebPage
 					try { System.out.println("============" + ((MedWorksSession) getSession()).getBrowserHeight());   } 
 					catch (Exception e)  {    }
 					} 
-				catch (Exception e)  {  return false;   }
+				catch (Exception e)  {  e.printStackTrace(); return false;   }
 
 				return true;
 				}

@@ -27,21 +27,22 @@ public final class MedWorksLoginContext extends LoginContext {
 	 * 
 	 * @param username
 	 * @param password
+	 * 
+	 * 
 	 */
+	
 	public MedWorksLoginContext(String username, String password, UserService userService) 
 		{
 		this.username = username;
 		this.password = password;
 		this.userService = userService;
 		}
-
 	
 	public MedWorksLoginContext() 
 		{
 		username = null;
 		password = null;
 		}
-
 
 	public Subject login() throws LoginException 
 		{

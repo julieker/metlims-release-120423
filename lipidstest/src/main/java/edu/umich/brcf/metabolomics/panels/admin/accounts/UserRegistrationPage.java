@@ -88,35 +88,35 @@ public abstract class UserRegistrationPage extends WebPage
 		add(new Label("id", userId));
 		
 		AjaxUpdatingRequiredTextField lastNameFld, firstNameFld;
-		add(lastNameFld = new AjaxUpdatingRequiredTextField("lastName", "onblur", 30));
+		add(lastNameFld = new AjaxUpdatingRequiredTextField("lastName", "blur", 30));
 		lastNameFld.setLabel(new Model<String>("Last Name"));
 		lastNameFld.add(addUpdatingBehavior("name", user));
 		
-		add(firstNameFld = new AjaxUpdatingRequiredTextField("firstName", "onblur", 20));
+		add(firstNameFld = new AjaxUpdatingRequiredTextField("firstName", "blur", 20));
 		firstNameFld.setLabel(new Model<String>("First Name"));
 		firstNameFld.add(addUpdatingBehavior("name", user));
 		
 		
-		AjaxUpdatingRequiredTextField phoneFld = new AjaxUpdatingRequiredTextField("phone", "onblur", 26);
+		AjaxUpdatingRequiredTextField phoneFld = new AjaxUpdatingRequiredTextField("phone", "blur", 26);
 		phoneFld.setLabel(new Model<String>("Phone"));
 		//phoneFld.add(new PhoneNumberValidator());
 		
-		AjaxUpdatingTextField faxFld = new AjaxUpdatingTextField("faxNumber","onblur", 26);
+		AjaxUpdatingTextField faxFld = new AjaxUpdatingTextField("faxNumber","blur", 26);
 		faxFld.setLabel(new Model<String>("Fax"));
 		//faxFld.add(new PhoneNumberValidator());
 		
 		add(phoneFld);
 		add(faxFld);
 		
-		AjaxUpdatingRequiredTextField emailFld = new AjaxUpdatingRequiredTextField("email", "onblur", 50);
+		AjaxUpdatingRequiredTextField emailFld = new AjaxUpdatingRequiredTextField("email", "blur", 50);
 		emailFld.setLabel(new Model<String>("E-mail"));
 		add(emailFld); 
 		emailFld.add(EmailAddressValidator.getInstance());
 		
-		add(new AjaxUpdatingTextField("lab", "onblur", 50).setLabel(new Model<String>("Lab")));
+		add(new AjaxUpdatingTextField("lab", "blur", 50).setLabel(new Model<String>("Lab")));
 		
 		
-		add(userNameFld = new AjaxUpdatingRequiredTextField("userName", "onblur", 15)
+		add(userNameFld = new AjaxUpdatingRequiredTextField("userName", "blur", 15)
 			{
 			public boolean isEnabled() { return ifNew; }
 			});
@@ -221,7 +221,7 @@ public abstract class UserRegistrationPage extends WebPage
 	
 		private AjaxFormComponentUpdatingBehavior addUpdatingBehavior(final String type, final UserDTO dto) 
 			{
-			return new AjaxFormComponentUpdatingBehavior("onblur") 
+			return new AjaxFormComponentUpdatingBehavior("blur") 
 				{
 				protected void onUpdate(AjaxRequestTarget target)  
 					{
@@ -300,14 +300,14 @@ public abstract class UserRegistrationPage extends WebPage
 			
 			add(new Label("id", userId));
 			
-			add(new AjaxUpdatingRequiredTextField("lastName", "onblur", 30));
-			add(new AjaxUpdatingRequiredTextField("firstName", "onblur", 20));
-			add(new AjaxUpdatingRequiredTextField("phone", "onblur", 26));
-			add(new AjaxUpdatingTextField("faxNumber","onblur", 26 ));
-			add(new AjaxUpdatingRequiredTextField("email", "onblur", 50));
+			add(new AjaxUpdatingRequiredTextField("lastName", "blur", 30));
+			add(new AjaxUpdatingRequiredTextField("firstName", "blur", 20));
+			add(new AjaxUpdatingRequiredTextField("phone", "blur", 26));
+			add(new AjaxUpdatingTextField("faxNumber","blur", 26 ));
+			add(new AjaxUpdatingRequiredTextField("email", "blur", 50));
 
-			add(new AjaxUpdatingTextField("lab", "onblur", 50));
-			add(new AjaxUpdatingRequiredTextField("userName", "onblur", 15)
+			add(new AjaxUpdatingTextField("lab", "blur", 50));
+			add(new AjaxUpdatingRequiredTextField("userName", "blur", 15)
 				{
 				public boolean isEnabled() { return ifNew; }
 				}
@@ -405,7 +405,7 @@ public abstract class UserRegistrationPage extends WebPage
 		
 		private AjaxFormComponentUpdatingBehavior addUpdatingBehavior() 
 			{
-			return new AjaxFormComponentUpdatingBehavior("onblur") 
+			return new AjaxFormComponentUpdatingBehavior("blur") 
 				{
 				protected void onUpdate(AjaxRequestTarget target)  { target.add(getFormComponent()); }
 				};

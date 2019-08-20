@@ -6,6 +6,7 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
@@ -37,9 +38,9 @@ public class HeaderPanel extends Panel
 		}
 
 	
-	private Link buildSignoutLink(String id)
+	private Link buildSignoutLink(String id) // issue 464
 		{
-		final Link signOutLink = new Link(id, new Model("")) 
+		final Link signOutLink = new Link  (id, new Model("")) 
 			{
 			public void onClick() { invalidateSession(); }
 			@Override // issue 464
@@ -101,7 +102,8 @@ public class HeaderPanel extends Panel
 		//getSession().getPageMaps().clear();
 		//getSession().getPageManager().getPage(.)
 	
-		((MChearApplication) getApplication()).getLogoffContext();
+		((MedWorksSession) getSession()).logoff(((MChearApplication) getApplication()).getLogoffContext()); // issue 464
+		
 		setResponsePage(MedWorksLoginPage.class);
 		}
 	}

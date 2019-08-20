@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebPage;
@@ -62,7 +63,7 @@ public class RegisterFactorPage extends WebPage
 
 	public class RegisterFactorAddForm extends Form
 		{
-		IndicatingAjaxLink saveButton;
+		AjaxSubmitLink saveButton;
 		Boolean disableSubmit = false;
 
 		public RegisterFactorAddForm(String id, WebPage backPage, String eid, final METWorksPctSizableModal modal2)
@@ -80,7 +81,7 @@ public class RegisterFactorPage extends WebPage
 
 			add(new AjaxCancelLink("cancelButton", modal2));
 			
-			add(saveButton = new IndicatingAjaxLink("saveButton")
+			add(saveButton = new AjaxSubmitLink ("saveButton")
 				{
 				@Override
 				public boolean isEnabled()
@@ -91,15 +92,15 @@ public class RegisterFactorPage extends WebPage
 							&& !disableSubmit;
 					}
 
-				@Override // issue 464
+				/*@Override // issue 464
 				public MarkupContainer setDefaultModel(IModel model) 
 				    {
 					// TODO Auto-generated method stub
 					return this;
-				    }
+				    }*/
 
 				@Override
-				public void onClick(AjaxRequestTarget target)
+				public void onSubmit(AjaxRequestTarget target)
 					{	
 					String msg = "";
 					if (!factorInfo.valuesInitialized())
