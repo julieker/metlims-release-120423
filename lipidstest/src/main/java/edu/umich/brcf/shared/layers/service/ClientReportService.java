@@ -109,7 +109,8 @@ public class ClientReportService
 	public String getDescriptorString(String reportId)
 		{
 		List <String> descriptionList =  clientReportDao.getDescriptorList(reportId);
-		String assayId = descriptionList.get(0).toString();
+		//String assayId = descriptionList.get(0).toString();
+		String assayId = descriptionList.get(0); // issue 479
 		Assay assay = assayId == null ? null : assayDao.loadAssayByID(assayId);
 		String assayName = assay == null ? "" : assay.getAssayName();
 		final String userName = userDao.getFullNameByUserId(descriptionList.get(1).toString());
