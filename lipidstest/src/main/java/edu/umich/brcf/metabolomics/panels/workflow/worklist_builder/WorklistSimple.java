@@ -497,7 +497,7 @@ public class WorklistSimple implements Serializable
 		        		else 
 		        			continue;
 		        		int indexUnderscore = item.getSampleName().lastIndexOf("-");        		
-		        		Integer iTotalControlType = ctrlTypeToRunningTotal.get(item.getSampleName().substring(0,indexUnderscore));
+		        		Integer iTotalControlType = ctrlTypeToRunningTotal.get(item.getSampleName().substring(0,indexUnderscore)) -1;// issue 486
 		        		iSuffixStr =  String.format("%0" + iTotalControlType.toString().length() + "d", Integer.parseInt(iSuffixStr));
 		        		item.setSampleName(item.getSampleName().substring(0,indexUnderscore) + "-" + (iSuffixStr));
 		        		String outname = grabOutputFileName(item.getSampleName(), item);
