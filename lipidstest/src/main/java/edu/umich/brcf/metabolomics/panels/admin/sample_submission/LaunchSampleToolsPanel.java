@@ -151,7 +151,11 @@ public class LaunchSampleToolsPanel extends Panel
 						return;
 
 					Boolean searchByRunDate = (searchType == null ? false : searchType.equals("Run Date"));
-					try { setResponsePage(new ExperimentCompletionReport("searchResults", (WebPage) this.getPage(),fromDate, toDate)); } 
+					try 
+					    { 
+						return;
+						// issue 464 setResponsePage(new ExperimentCompletionReport("searchResults", (WebPage) this.getPage(),fromDate, toDate));
+						} 
 					catch (Exception e) {  }
 					}
 				};
