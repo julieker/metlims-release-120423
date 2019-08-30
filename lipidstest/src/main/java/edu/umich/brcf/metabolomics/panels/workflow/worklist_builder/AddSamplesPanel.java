@@ -305,7 +305,7 @@ public class AddSamplesPanel extends Panel
 	// issue 464
 	private AjaxLink buildBuildButton(String id, final WorklistSampleGroup item, final WebMarkupContainer container)
 		{
-		return new IndicatingAjaxLink(id)
+		return new IndicatingAjaxLink <Void> (id)
 			{
 			public boolean isVisible()
 				{
@@ -368,11 +368,7 @@ public class AddSamplesPanel extends Panel
 						tag.put("title","Please select an instrument before building your worklist");
 				}
 
-			@Override
-			public MarkupContainer setDefaultModel(IModel arg0) {
-				// TODO Auto-generated method stub
-				return (MarkupContainer) this.getDefaultModel();
-			}
+			
 			};
 		}
 
