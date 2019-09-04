@@ -34,7 +34,8 @@
                                         <td nowrap style = "text-align : right; padding-right : 10px; font-weight : 800">Experiment Id :</td>
                                         <td><input wicket:id="expId" style = "text-align : left; border : none" type="text" value="(123) 456-7890" size="20"/></td>
                                     	<td>
-                                    		<input wicket:id = "cancelButton" type = "submit" value = "&nbsp;&nbsp;&nbsp;Back&nbsp;&nbsp;&nbsp;" style = "width : 100px; margin-left : 120px;"/>
+                                    	    <!-- issue 464 -->
+                                    		<input wicket:id = "cancelButton" type = "button" value = "&nbsp;&nbsp;&nbsp;Back&nbsp;&nbsp;&nbsp;" style = "width : 100px; margin-left : 120px;"/>
 										</td>
                                     </tr>
                                     <tr style = "height  : 30px; vertical-align : bottom">
