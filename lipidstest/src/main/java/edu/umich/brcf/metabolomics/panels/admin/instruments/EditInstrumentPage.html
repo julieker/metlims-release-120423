@@ -63,7 +63,8 @@
 				</table>
 		    
 		    	<input wicket:id="saveChanges"  type="submit"  style = "margin-top : 2%; margin-right : 20px"   value="&nbsp;&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;&nbsp;"/>
-	  			<input wicket:id="cancelButton" type="submit"  style = "margin-left : 20px" value="&nbsp;&nbsp;Close&nbsp;&nbsp;"/>
+	  			<!-- issue 464 -->
+	  			<input wicket:id="cancelButton" type="button"  style = "margin-left : 20px" value="&nbsp;&nbsp;Close&nbsp;&nbsp;"/>
 			</form>
   		
   	</fieldset>
