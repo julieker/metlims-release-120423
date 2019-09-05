@@ -145,6 +145,11 @@ public class LaunchSampleToolsPanel extends Panel
 			ExperimentOrDateSearchPanel panel = new ExperimentOrDateSearchPanel(id)
 				{
 				@Override
+				public boolean isEnabled()
+					{
+					return false;  // issue 464
+					}
+				@Override
 				public void doSubmit(String searchType, String selectedExperiment, Calendar fromDate, Calendar toDate)
 					{
 					if (StringUtils.isEmptyOrNull(searchType))
