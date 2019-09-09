@@ -605,7 +605,7 @@ public class WorklistBuilderPanel extends Panel
 				{
 					@Override
 					protected void onUpdate(AjaxRequestTarget target)
-						{
+						{						
 						switch (response)
 							{
 							case "updateForDate":

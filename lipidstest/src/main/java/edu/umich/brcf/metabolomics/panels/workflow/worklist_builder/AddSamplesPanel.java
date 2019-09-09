@@ -76,7 +76,7 @@ public class AddSamplesPanel extends Panel
 	List<String> availableAssays;
 
 	boolean excludedSamplesWarningGiven = false, secondBuild = false, buildWarningGiven = false;
-
+    boolean doRefresh = true;
     
 	public AddSamplesPanel(String id)
 		{		
@@ -150,8 +150,8 @@ public class AddSamplesPanel extends Panel
 				    }		
 				target.add(modal1.getParent().getParent());
 				target.add(modal1.getParent());					
-				//refreshPage(target);
-				refreshCurrentPage(target);
+				refreshPage(target);
+				//refreshCurrentPage(target);
 				}
 			});
 	
@@ -303,7 +303,7 @@ public class AddSamplesPanel extends Panel
 		}
 
 	// issue 464
-	private AjaxLink buildBuildButton(String id, final WorklistSampleGroup item, final WebMarkupContainer container)
+	private IndicatingAjaxLink buildBuildButton(String id, final WorklistSampleGroup item, final WebMarkupContainer container)
 		{
 		return new IndicatingAjaxLink <Void> (id)
 			{
@@ -356,7 +356,8 @@ public class AddSamplesPanel extends Panel
 					}
 				originalWorklist.updateSampleNamesArray();
 				WorklistSampleGroup curr = sampleGroupsList.get(0);
-				refreshCurrentPage(target);// issue 464
+				refreshPage(target);// issue 464
+				
 				secondBuild = true;
 				}
 
@@ -409,6 +410,7 @@ public class AddSamplesPanel extends Panel
 			@Override
 			protected void onUpdate(AjaxRequestTarget target)
 				{
+				doRefresh = true;
 				switch (response)
 					{
 					case "updateForRandomDrop":
@@ -531,20 +533,7 @@ public class AddSamplesPanel extends Panel
 		if (container != null)
 			target.add(container);
 		}
-
-	// issue 464
-		private void refreshCurrentPage(AjaxRequestTarget target)
-			{
-			originalWorklist.updateIndices();
-		
-			
-		//	for (int i = 0; i < sibContainers.size(); i++)			  
-			//		target.add(sibContainers.get(i)); 	
-			if (container != null)
-				target.add(container);		
-			}
-		
-		
+	
 	public void reinitializeAssays()
 		{
 		if (availableAssays != null)
