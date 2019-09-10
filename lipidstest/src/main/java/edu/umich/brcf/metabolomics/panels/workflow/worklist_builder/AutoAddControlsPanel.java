@@ -60,8 +60,8 @@ public class AutoAddControlsPanel extends Panel
 	DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop, qcDrop1, qcDrop2, chearBlankTypeDrop;
 	String nStandardsStr = "1", poolSpacingStrA = "0 (NO POOLS)", poolSpacingStrB = "0 (NO POOLS)", nBlanksStr = "1", nMatrixBlanksStr = "0", nChearBlanksStr= "0";
 	String chearBlankType = "Urine";
-	Integer nStandards = 1, poolSpacingA = 0, poolSpacingB = 0, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
-
+	Integer nStandards = 1, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
+    public Integer poolSpacingA = 0, poolSpacingB = 0;
 	private Boolean needsRebuild = false;
 
 	WebMarkupContainer container = new WebMarkupContainer("container");
@@ -169,6 +169,18 @@ public class AutoAddControlsPanel extends Panel
 	        @Override
 	        public void onClick(AjaxRequestTarget target)
 		        {
+	        	// issue 509
+	        	if (!(poolSpacingA > 0) &&  ( ((MedWorksSession) Session.get()).getNMasterPoolsAfter()  > 0  ||  ((MedWorksSession) Session.get()).getNMasterPoolsBefore()  > 0))	        		
+	        		{
+	        		target.appendJavaScript(StringUtils.makeAlertMessage("There is customization for Pool A.  Please choose a value for Pool Spacing A "));
+	        		return;
+	        		}
+	        	// issue 509
+	        	if (!(poolSpacingB > 0) &&  ( ((MedWorksSession) Session.get()).getNBatchPoolsAfter()  > 0  ||  ((MedWorksSession) Session.get()).getNBatchPoolsBefore()  > 0))	        		
+	        		{
+	        		target.appendJavaScript(StringUtils.makeAlertMessage("There is customization for Pool B.  Please choose a value for Pool Spacing B "));
+	        		return;
+	        		}	        	
 	        	originalWorklist.clearControlGroups(); // issue 431
 	        	if (worklist.getSelectedPlatform() == null || "agilent".equals(worklist.getSelectedPlatform().toLowerCase()))
 			        addStandardsToAgilentList(worklist);

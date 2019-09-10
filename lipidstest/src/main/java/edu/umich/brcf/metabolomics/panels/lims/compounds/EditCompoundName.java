@@ -151,7 +151,7 @@ public class EditCompoundName extends WebPage
 
 				if (!err)
 					{
-					CompoundName cname = cnService.save(cnDto);
+					CompoundName cname = cnService.save(cnDto, newFlag); // issue 446
 					EditCompoundName.this.info("Compound name saved!!!");
 					if (container!=null)
 						{

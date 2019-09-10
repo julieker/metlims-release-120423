@@ -65,8 +65,9 @@ public class WorklistSimple implements Serializable
 	private boolean randomizeByPlate = true; // issue 416
     private boolean isCircularRelationship;
     private int lastPoolBlockNumber = 0;
-   
-	public WorklistSimple()
+    private Map<String, Integer> ctrlTypeToRunningTotal = new HashMap<String, Integer>();
+	private List<Integer> largestPadding = new ArrayList <Integer>();
+    public WorklistSimple()
 		{
 		this("", "");
 		}
@@ -393,7 +394,7 @@ public class WorklistSimple implements Serializable
         rowsPerPlate = (isPlatformChosenAs("absciex") ? 6 : 6);  
         Map <String, Integer> controlTypeMap = buildControlTypeMap();
         updateItemsFromSampleGroups();
-        Map<String, Integer> ctrlTypeToRunningTotal = new HashMap<String, Integer>();	       
+       	       
         // issue 426 Do this if the related samples are SAMPLES
         List<WorklistControlGroup> controlGroupsRelatedToSamples = buildGroupListWithRelatedSamples(controlGroupsList);
         List<WorklistControlGroup> controlGroupsRelatedToControls = buildGroupListWithRelatedControls(controlGroupsList);
@@ -487,6 +488,7 @@ public class WorklistSimple implements Serializable
         //// issue 456
             if (this.getSelectedPlatform().equals("agilent"))
 	            {
+            	Integer iTotalControlType = getPadding();
 		        for (WorklistItemSimple item : getItems())
 		        	{         	
 		        	if (item.getRepresentsControl())
@@ -497,7 +499,7 @@ public class WorklistSimple implements Serializable
 		        		else 
 		        			continue;
 		        		int indexUnderscore = item.getSampleName().lastIndexOf("-");        		
-		        		Integer iTotalControlType = ctrlTypeToRunningTotal.get(item.getSampleName().substring(0,indexUnderscore)) -1;// issue 486
+		        		//Integer iTotalControlType = ctrlTypeToRunningTotal.get(item.getSampleName().substring(0,indexUnderscore)) -1;// issue 486
 		        		iSuffixStr =  String.format("%0" + iTotalControlType.toString().length() + "d", Integer.parseInt(iSuffixStr));
 		        		item.setSampleName(item.getSampleName().substring(0,indexUnderscore) + "-" + (iSuffixStr));
 		        		String outname = grabOutputFileName(item.getSampleName(), item);
@@ -508,7 +510,19 @@ public class WorklistSimple implements Serializable
 		    nPlates = updatePlatePositions();
         }       
 	///////////////////////////////
-	
+	public Integer getPadding()
+		{
+		 for (Map.Entry<String,Integer> entry : ctrlTypeToRunningTotal.entrySet())  
+	           // System.out.println("Key = " + entry.getKey() + 
+	                    //         ", Value = " + entry.getValue());
+			 largestPadding.add(entry.getValue());
+		 Collections.sort(largestPadding);
+		 if (largestPadding.size() > 0 )
+		       return largestPadding.get(largestPadding.size()-1);
+		 else 
+			   return 0;
+		 
+		}
 	public boolean isRelatedControlFoundInItems (String relatedControl)
 		{
 		for (WorklistItemSimple item: getItems())

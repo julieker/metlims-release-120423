@@ -41,13 +41,13 @@ public class CompoundNameService
 		}
 	
 	
-	public CompoundName save(CompoundNameDTO cnDto)
+	public CompoundName save(CompoundNameDTO cnDto, boolean newFlag)
 		{
 		Assert.notNull(cnDto);
 		Compound cmpd=compoundDao.loadCompoundById(cnDto.getCid());
 		CompoundName cname = null;
-		
-		if (cnDto.getCid() != null)
+		// issue 446
+		if (!newFlag)
 			try
 				{
 				cname = compoundNameDao.loadName(cnDto.getCid(), cnDto.getNewName());
