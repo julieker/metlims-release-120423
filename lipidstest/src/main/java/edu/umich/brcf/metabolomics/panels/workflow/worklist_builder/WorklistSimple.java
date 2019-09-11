@@ -372,7 +372,8 @@ public class WorklistSimple implements Serializable
 	
 	// issue 456
 	public  Map<String, Integer> populateRunningTotalMap ( Map<String, Integer> ctrlTypeToRunningTotal )
-		{      
+		{  
+		    System.out.println("here in the running total map");
 		    for (int i = 0; i< controlGroupsList.size(); i++) 
 		        {  
 	        	String controlType = controlGroupsList.get(i).getControlType();
@@ -509,20 +510,19 @@ public class WorklistSimple implements Serializable
 	            }
 		    nPlates = updatePlatePositions();
         }       
-	///////////////////////////////
+	/////////////////////////////// issue 456 or 486 issue 4 in metlims.2019
 	public Integer getPadding()
 		{
-		 for (Map.Entry<String,Integer> entry : ctrlTypeToRunningTotal.entrySet())  
-	           // System.out.println("Key = " + entry.getKey() + 
-	                    //         ", Value = " + entry.getValue());
-			 largestPadding.add(entry.getValue());
-		 Collections.sort(largestPadding);
-		 if (largestPadding.size() > 0 )
-		       return largestPadding.get(largestPadding.size()-1);
-		 else 
-			   return 0;
-		 
+		largestPadding = new ArrayList <Integer> ();
+		for (Map.Entry<String,Integer> entry : ctrlTypeToRunningTotal.entrySet())  	          
+			largestPadding.add(entry.getValue());
+		Collections.sort(largestPadding);
+		if (largestPadding.size() > 0 )		    
+		    return largestPadding.get(largestPadding.size()-1) -1;
+		else 
+			return 0;		 
 		}
+	
 	public boolean isRelatedControlFoundInItems (String relatedControl)
 		{
 		for (WorklistItemSimple item: getItems())
