@@ -67,6 +67,7 @@ public class AutoAddControlsPanel extends Panel
 	WebMarkupContainer container = new WebMarkupContainer("container");
 	List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
 	String example = "";
+	public boolean isDownloadDisabled = false;
 	
     
 	public AutoAddControlsPanel(String id, final WorklistSimple worklist)
@@ -188,6 +189,7 @@ public class AutoAddControlsPanel extends Panel
 			        addStandardsToList(worklist);
 		        worklist.rebuildEverything();
 		        worklist.updateSampleNamesArray();
+		        isDownloadDisabled = false;
 		        refreshPage(target);
 	        	
 		        }
@@ -642,8 +644,10 @@ public class AutoAddControlsPanel extends Panel
  		    @Override
  		    public void onClose(AjaxRequestTarget target)
  			    {	
+ 		    	isDownloadDisabled = true; // issue 509
                 // refresh worklist on callback ,  will need to update the page too..
-                worklist.rebuildEverything();                
+                worklist.rebuildEverything();    
+                refreshPage(target);// issue 509
  			    }		
  		    });
 
@@ -683,8 +687,9 @@ public class AutoAddControlsPanel extends Panel
  			  			    }
            			    };
  					}
- 				});               
+ 				});  
  			modal1.show(target);
+ 			
  			}
  		};
  	    link.setOutputMarkupId(true);
@@ -700,8 +705,10 @@ public class AutoAddControlsPanel extends Panel
 		    @Override
 		    public void onClose(AjaxRequestTarget target)
 			    {	
+		    	isDownloadDisabled = true; // issue 509
             // refresh worklist on callback ,  will need to update the page too..
                 worklist.rebuildEverything();
+                refreshPage(target);// issue 509
 			    }		
 		    });
 
@@ -722,6 +729,7 @@ public class AutoAddControlsPanel extends Panel
 			    modal1.setInitialWidth(1100);
 			    modal1.setInitialHeight(550);// issue 427
 			    modal1.setPageCreator(new ModalWindow.PageCreator()
+			    
 					{
 					public Page createPage()
 						{
@@ -746,7 +754,8 @@ public class AutoAddControlsPanel extends Panel
 				  			    }
 	       			        };
 						}
-					});            
+					});   
+		    
 		    modal1.show(target); 
 			}
 		};
@@ -984,7 +993,8 @@ public class AutoAddControlsPanel extends Panel
 			{
 			@Override
 			protected void onUpdate(AjaxRequestTarget target)
-				{
+				{	
+				isDownloadDisabled = true;
 				switch (response)
 					{
 					case "updateForQuantityDrop":
@@ -1004,7 +1014,9 @@ public class AutoAddControlsPanel extends Panel
 							nChearBlanks = Integer.parseInt(nChearBlanksStr);
 						
 						needsRebuild = true;
+						refreshPage(target);// issue 509
 						break;
+						
 					}
 
 			////	target.add(buildButton);

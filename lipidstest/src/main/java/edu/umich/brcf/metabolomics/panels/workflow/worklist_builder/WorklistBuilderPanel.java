@@ -68,7 +68,7 @@ public class WorklistBuilderPanel extends Panel
 	private String selectedRand = null;
     private int controlsLimit = 495;
 	static final String WORKLIST_DATE_FORMAT = "MM/dd/yy";
-	
+    
 	public WorklistBuilderPanel()  { this(""); }
 	
 	public WorklistBuilderPanel(String id)
@@ -196,7 +196,7 @@ public class WorklistBuilderPanel extends Panel
 			addGroupsPanel.addSibContainer(agPanel.getContainer());
 			addGroupsPanel.addSibContainer(addControlsPanel);
 			addGroupsPanel.addSibContainer(addControlsPanel.getContainer());
-			
+			addGroupsPanel.addSibContainer(this); // issue 509
 			addSamplesPanel.addSibContainer(addControlsPanel.getContainer());
 			
 			add(containerOther);
@@ -605,7 +605,7 @@ public class WorklistBuilderPanel extends Panel
 				{
 					@Override
 					protected void onUpdate(AjaxRequestTarget target)
-						{						
+						{					    
 						switch (response)
 							{
 							case "updateForDate":
@@ -812,13 +812,19 @@ public class WorklistBuilderPanel extends Panel
 			ValidatingAjaxExcelDownloadLink link = new ValidatingAjaxExcelDownloadLink(linkId, writer)
 				{
 				@Override
-				public boolean isEnabled() { return true; } //!worklist.getItems().isEmpty(); }
+				public boolean isEnabled() 
+					{ 
+					if (addGroupsPanel.isDownloadDisabled)
+						return false;
+					return true; 
+					} //!worklist.getItems().isEmpty(); }
 
 
 				// Artifact of upgrade -- not called by validating button
 				@Override
 				public boolean validate(AjaxRequestTarget target, IWriteableSpreadsheet report)
 					{
+				
 					if (worklist.getItems() == null || worklist.getItems().size() == 0)
 						return false;
 
@@ -830,6 +836,7 @@ public class WorklistBuilderPanel extends Panel
 				@Override
 				public boolean validate()
 					{
+				
 					if (worklist.getItems() == null || worklist.getItems().size() == 0)
 						return false;
 

@@ -76,7 +76,7 @@ public class AddSamplesPanel extends Panel
 	List<String> availableAssays;
 
 	boolean excludedSamplesWarningGiven = false, secondBuild = false, buildWarningGiven = false;
-    boolean doRefresh = true;
+  
     
 	public AddSamplesPanel(String id)
 		{		
@@ -410,23 +410,19 @@ public class AddSamplesPanel extends Panel
 			@Override
 			protected void onUpdate(AjaxRequestTarget target)
 				{
-				doRefresh = true;
 				switch (response)
 					{
-					case "updateForRandomDrop":
-                        
+					case "updateForRandomDrop":                        
 						item.setIsRandomized(false);
 						// issue 387
 						((MedWorksSession) Session.get()).setExpRand(null);						
-						if (originalWorklist != null) originalWorklist.clearAllItems();
-	
+						if (originalWorklist != null) originalWorklist.clearAllItems();	
 						//issue 268
 						//if (originalWorklist.getSelectedPlatform().equalsIgnoreCase("agilent") && item.getRandomizationType().equals("Custom"))
 							//{
 							//target.appendJavaScript("alert('Custom randomization has been disabled for Agilent platform.  If you would like to use this feature, please contact wiggie@umich.edu for an introduction.')");
 							//item.setRandomizationType("None");
-							//}
-	
+							//}	
 						if (item.getRandomizationType().equals("Simple"))
 							{
 							String expDescript = originalWorklist != null && !originalWorklist.getDefaultExperimentId().equals("") ? "for experiment "
@@ -458,7 +454,6 @@ public class AddSamplesPanel extends Panel
 							target.appendJavaScript("warning('Unable to determine assay name -- labelling output file with assay tag 'Error'.\n  "
 									+ "Please e-mail wiggie@umich.edu to report this error')");
 						originalWorklist.setDefaultAssayId(aid);
-
 						break;
 
 					case "updateForExperimentDrop":
