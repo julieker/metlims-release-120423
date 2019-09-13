@@ -373,12 +373,11 @@ public class WorklistSimple implements Serializable
 	// issue 456
 	public  Map<String, Integer> populateRunningTotalMap ( Map<String, Integer> ctrlTypeToRunningTotal )
 		{  
-		    System.out.println("here in the running total map");
-		    for (int i = 0; i< controlGroupsList.size(); i++) 
-		        {  
-	        	String controlType = controlGroupsList.get(i).getControlType();
-		        ctrlTypeToRunningTotal.put(StringParser.parseId(controlType), 1);	
-		        } 
+	    for (int i = 0; i< controlGroupsList.size(); i++) 
+	        {  
+        	String controlType = controlGroupsList.get(i).getControlType();
+	        ctrlTypeToRunningTotal.put(StringParser.parseId(controlType), 1);	
+	        } 
 		return ctrlTypeToRunningTotal;
 		}
 	

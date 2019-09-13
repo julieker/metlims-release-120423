@@ -67,8 +67,6 @@ public class AutoAddControlsPanel extends Panel
 	WebMarkupContainer container = new WebMarkupContainer("container");
 	List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
 	String example = "";
-	public boolean isDownloadDisabled = false;
-	
     
 	public AutoAddControlsPanel(String id, final WorklistSimple worklist)
 		{
@@ -189,7 +187,6 @@ public class AutoAddControlsPanel extends Panel
 			        addStandardsToList(worklist);
 		        worklist.rebuildEverything();
 		        worklist.updateSampleNamesArray();
-		        isDownloadDisabled = false;
 		        refreshPage(target);
 	        	
 		        }
@@ -644,10 +641,8 @@ public class AutoAddControlsPanel extends Panel
  		    @Override
  		    public void onClose(AjaxRequestTarget target)
  			    {	
- 		    	isDownloadDisabled = true; // issue 509
                 // refresh worklist on callback ,  will need to update the page too..
                 worklist.rebuildEverything();    
-                refreshPage(target);// issue 509
  			    }		
  		    });
 
@@ -705,10 +700,8 @@ public class AutoAddControlsPanel extends Panel
 		    @Override
 		    public void onClose(AjaxRequestTarget target)
 			    {	
-		    	isDownloadDisabled = true; // issue 509
             // refresh worklist on callback ,  will need to update the page too..
                 worklist.rebuildEverything();
-                refreshPage(target);// issue 509
 			    }		
 		    });
 
@@ -993,8 +986,7 @@ public class AutoAddControlsPanel extends Panel
 			{
 			@Override
 			protected void onUpdate(AjaxRequestTarget target)
-				{	
-				isDownloadDisabled = true;
+				{					
 				switch (response)
 					{
 					case "updateForQuantityDrop":
@@ -1005,16 +997,12 @@ public class AutoAddControlsPanel extends Panel
 						if (!StringUtils.isEmptyOrNull(poolSpacingStrB))
 							poolSpacingB= Integer.parseInt(StringParser.parseName(poolSpacingStrB));
 						if (!StringUtils.isEmptyOrNull(nBlanksStr))
-							nBlanks = Integer.parseInt(nBlanksStr);
-						
+							nBlanks = Integer.parseInt(nBlanksStr);						
 						if (!StringUtils.isEmptyOrNull(nMatrixBlanksStr))
-							nMatrixBlanks = Integer.parseInt(nMatrixBlanksStr);
-						
+							nMatrixBlanks = Integer.parseInt(nMatrixBlanksStr);						
 						if (!StringUtils.isEmptyOrNull(nChearBlanksStr))
-							nChearBlanks = Integer.parseInt(nChearBlanksStr);
-						
+							nChearBlanks = Integer.parseInt(nChearBlanksStr);						
 						needsRebuild = true;
-						refreshPage(target);// issue 509
 						break;
 						
 					}

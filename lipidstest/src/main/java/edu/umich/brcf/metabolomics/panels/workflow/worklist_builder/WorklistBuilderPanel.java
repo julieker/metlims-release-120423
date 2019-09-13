@@ -49,8 +49,6 @@ import edu.umich.brcf.shared.util.utilpackages.DateUtils;
 import edu.umich.brcf.shared.util.utilpackages.StringUtils;
 import edu.umich.brcf.shared.util.widgets.METWorksAjaxUpdatingDateTextField;
 
-
-
 public class WorklistBuilderPanel extends Panel
 	{
 	@SpringBean
@@ -196,7 +194,6 @@ public class WorklistBuilderPanel extends Panel
 			addGroupsPanel.addSibContainer(agPanel.getContainer());
 			addGroupsPanel.addSibContainer(addControlsPanel);
 			addGroupsPanel.addSibContainer(addControlsPanel.getContainer());
-			addGroupsPanel.addSibContainer(this); // issue 509
 			addSamplesPanel.addSibContainer(addControlsPanel.getContainer());
 			
 			add(containerOther);
@@ -814,8 +811,6 @@ public class WorklistBuilderPanel extends Panel
 				@Override
 				public boolean isEnabled() 
 					{ 
-					if (addGroupsPanel.isDownloadDisabled)
-						return false;
 					return true; 
 					} //!worklist.getItems().isEmpty(); }
 
