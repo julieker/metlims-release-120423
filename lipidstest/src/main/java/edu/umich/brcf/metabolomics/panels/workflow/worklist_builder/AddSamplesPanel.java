@@ -437,7 +437,7 @@ public class AddSamplesPanel extends Panel
 					case "updateForAssayDrop":
 						String val = item.getAssayType();
 						clearOutMotorPacControls(); // issue 422
-						clearOutPoolIDDAControls();// issue 432
+						originalWorklist.clearOutPoolIDDAControls();// issue 432
 						String[] tokens = val != null ? val.split("\\(") : null;
 						item.setIsRandomized(false);
 						originalWorklist.setOpenForUpdates(true); // issue 329
@@ -463,7 +463,7 @@ public class AddSamplesPanel extends Panel
 						// issue 387
 						((MedWorksSession) Session.get()).setExpRand(null);
 						clearOutMotorPacControls();// issue 422
-						clearOutPoolIDDAControls();// issue 432
+						originalWorklist.clearOutPoolIDDAControls();// issue 432
 						item.setRandomizationType("None"); //issue 384
 						String eid = item.getExperimentId();
 						try
@@ -557,16 +557,8 @@ public class AddSamplesPanel extends Panel
 		}
 	
 	// issue 432
-	public void clearOutPoolIDDAControls ()
-		{
-		((MedWorksSession) Session.get()).setNBatchPoolsAfter(0);
-		((MedWorksSession) Session.get()).setNBatchPoolsBefore(0);
-		((MedWorksSession) Session.get()).setNMasterPoolsBefore(0);
-		((MedWorksSession) Session.get()).setNMasterPoolsAfter(0);
-		((MedWorksSession) Session.get()).setNCE10Reps(0);
-		((MedWorksSession) Session.get()).setNCE20Reps(0);
-		((MedWorksSession) Session.get()).setNCE40Reps(0);	
-		}	
+	// issue 11 in metlims.2019 move clearOutPoolIDDAControls () to WorklistSimple
+	
 	}
 
 

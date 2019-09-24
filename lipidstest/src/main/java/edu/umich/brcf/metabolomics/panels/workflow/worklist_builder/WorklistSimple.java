@@ -21,12 +21,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 //import org.hibernate.mapping.Set;
 
 import edu.umich.brcf.shared.layers.domain.Sample;
 import edu.umich.brcf.shared.layers.service.SampleService;
+import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.util.FormatVerifier;
 import edu.umich.brcf.shared.util.METWorksException;
 import edu.umich.brcf.shared.util.StringParser;
@@ -72,6 +74,18 @@ public class WorklistSimple implements Serializable
 		this("", "");
 		}
 	
+    // issue 11
+    public void clearOutPoolIDDAControls ()
+		{
+		((MedWorksSession) Session.get()).setNBatchPoolsAfter(0);
+		((MedWorksSession) Session.get()).setNBatchPoolsBefore(0);
+		((MedWorksSession) Session.get()).setNMasterPoolsBefore(0);
+		((MedWorksSession) Session.get()).setNMasterPoolsAfter(0);
+		((MedWorksSession) Session.get()).setNCE10Reps(0);
+		((MedWorksSession) Session.get()).setNCE20Reps(0);
+		((MedWorksSession) Session.get()).setNCE40Reps(0);	
+		}	
+    
 	// issue 432 
 	public int getLastPoolBlockNumber()
 		{

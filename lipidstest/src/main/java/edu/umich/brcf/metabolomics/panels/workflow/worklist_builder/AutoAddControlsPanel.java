@@ -202,6 +202,7 @@ public class AutoAddControlsPanel extends Panel
 			public void onClick(AjaxRequestTarget target)
 				{
 				originalWorklist.clearControlGroups();
+				originalWorklist.clearOutPoolIDDAControls(); // issue 11 metlims 2019
 				originalWorklist.updateSampleNamesArray();
 				originalWorklist.setOpenForUpdates(true);
 				originalWorklist.updatePlatePositions(); // issue 417 and 409

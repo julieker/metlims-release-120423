@@ -400,6 +400,7 @@ public class AddControlsPanel extends Panel
 			public void onClick(AjaxRequestTarget target)
 				{
 				originalWorklist.clearControlGroups();
+				originalWorklist.clearOutPoolIDDAControls();// issue 11
 				originalWorklist.updateSampleNamesArray();
 				originalWorklist.setOpenForUpdates(true);
 				originalWorklist.updatePlatePositions(); // issue 417 issue 409
