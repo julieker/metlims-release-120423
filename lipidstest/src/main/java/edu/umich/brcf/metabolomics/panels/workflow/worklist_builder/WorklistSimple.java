@@ -69,6 +69,8 @@ public class WorklistSimple implements Serializable
     private int lastPoolBlockNumber = 0;
     private Map<String, Integer> ctrlTypeToRunningTotal = new HashMap<String, Integer>();
 	private List<Integer> largestPadding = new ArrayList <Integer>();
+	private String poolTypeA; //issue 13
+	
     public WorklistSimple()
 		{
 		this("", "");
@@ -85,6 +87,19 @@ public class WorklistSimple implements Serializable
 		((MedWorksSession) Session.get()).setNCE20Reps(0);
 		((MedWorksSession) Session.get()).setNCE40Reps(0);	
 		}	
+    
+    
+    // issue 13
+    public String getPoolTypeA()
+		{
+		return 	poolTypeA;
+		}
+    
+    // issue 13
+    public void setPoolTypeA(String vPoolTypeA)
+		{
+		poolTypeA = vPoolTypeA;
+		}
     
 	// issue 432 
 	public int getLastPoolBlockNumber()

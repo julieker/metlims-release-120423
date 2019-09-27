@@ -51,15 +51,18 @@ public class AutoAddControlsPanel extends Panel
 	List availableSpacingQuantities = Arrays.asList(new String[] {"0 (NO POOLS)", "1", "2", "3", "4", "5", "6", "7",
 			"8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"}); // issue 315
 	List<String> availableChearBlankTypes = Arrays.asList(new String[] {"Urine", "Plasma"});
-	
+	List<String> poolTypes = Arrays.asList(new String[] {"Master Pool   (CS00000MP)", "Batch Pool.M1 (CS000QCMP)",  "Batch Pool.M2 (CS000BPM2)", "Batch Pool.M3 (CS000BPM3)", "Batch Pool.M4 (CS000BPM4)", "Batch Pool.M5 (CS000BPM5)"});
+	List<String> poolTypesB = Arrays.asList(new String[] {"Batch Pool.M1 (CS000QCMP)",  "Batch Pool.M2 (CS000BPM2)", "Batch Pool.M3 (CS000BPM3)", "Batch Pool.M4 (CS000BPM4)", "Batch Pool.M5 (CS000BPM5)"});
 	IndicatingAjaxLink buildButton,clearButton;
 
 	AjaxLink customizeButton;
     AjaxLink motrpacButton;
 	// Issue 302
-	DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop, qcDrop1, qcDrop2, chearBlankTypeDrop;
+	DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop, qcDrop1, qcDrop2, chearBlankTypeDrop, poolTypeADrop, poolTypeBDrop;  // issue 13
 	String nStandardsStr = "1", poolSpacingStrA = "0 (NO POOLS)", poolSpacingStrB = "0 (NO POOLS)", nBlanksStr = "1", nMatrixBlanksStr = "0", nChearBlanksStr= "0";
 	String chearBlankType = "Urine";
+	String poolTypeA =  "Master Pool   (CS00000MP)"; // issue 13
+	String poolTypeB =  "Batch Pool.M1 (CS000QCMP)"; // issue 13
 	Integer nStandards = 1, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
     public Integer poolSpacingA = 0, poolSpacingB = 0;
 	private Boolean needsRebuild = false;
@@ -92,6 +95,9 @@ public class AutoAddControlsPanel extends Panel
 		container.add(qcDrop2 = buildQuantityDropdown("qcDrop2","nChearBlanksStr"));
 		container.add(chearBlankTypeDrop = buildChearBlankTypeDropdown("chearBlankTypeDrop","chearBlankType"));
 		//customizeButton
+		// issue 13
+		container.add(poolTypeADrop = buildPoolTypeDropdownA("poolTypeADrop","poolTypeA"));
+		container.add(poolTypeBDrop = buildPoolTypeDropdownB("poolTypeBDrop","poolTypeB"));
 		container.add(customizeButton = buildLinkToCustomizeModal("customizeButton", modal1, worklist ));
 		container.add (motrpacButton = buildLinkToMotrPacModal("motrpacButton", modal1, worklist ));
 		container.add(buildButton = buildBuildButton("buildButton",container, worklist));
@@ -119,6 +125,50 @@ public class AutoAddControlsPanel extends Panel
 				};
 
 		drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForChearBlankTypeDrop", null));
+		return drp;
+		}
+	
+	
+	// issue 13
+	private DropDownChoice buildPoolTypeDropdownA(final String id,  final String propertyName)
+		{
+		DropDownChoice drp = new DropDownChoice(id, new PropertyModel(this, propertyName), new LoadableDetachableModel<List<String>>()
+			{
+			@Override
+			protected List<String> load() 
+		        { 
+				ArrayList tempArrayList = new ArrayList<>(poolTypes );
+				tempArrayList.remove(poolTypeB);
+				return tempArrayList ; 
+			    }
+			})
+			{
+			public boolean isEnabled()
+				{
+				if (!originalWorklist.getOpenForUpdates()) return false;					
+				return originalWorklist.getItems().size() > 0;
+				}
+			};	
+		drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForPoolTypeDrop", null));
+		return drp;
+		}
+	
+	// issue 13
+	private DropDownChoice buildPoolTypeDropdownB(final String id,  final String propertyName)
+		{
+		DropDownChoice drp = new DropDownChoice(id, new PropertyModel(this, propertyName), new LoadableDetachableModel<List<String>>()
+			{
+			@Override
+			protected List<String> load() { return poolTypesB ; }
+			})
+			{
+			public boolean isEnabled()
+				{
+				if (!originalWorklist.getOpenForUpdates()) return false;					
+				return originalWorklist.getItems().size() > 0;
+				}
+			};	
+		drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForPoolTypeDropB", null));
 		return drp;
 		}
 		
@@ -179,7 +229,12 @@ public class AutoAddControlsPanel extends Panel
 	        		{
 	        		target.appendJavaScript(StringUtils.makeAlertMessage("There is customization for Pool B.  Please choose a value for Pool Spacing B "));
 	        		return;
-	        		}	        	
+	        		}	
+	        	if (StringParser.parseId(poolTypeA).equals(StringParser.parseId(poolTypeB)))
+	        		{
+	        		target.appendJavaScript(StringUtils.makeAlertMessage("Pool A and Pool B are both :" + StringParser.parseId(poolTypeB) + " Please make sure you choose a different pool for Pool A and Pool B"));
+	        		return;
+	        		}	
 	        	originalWorklist.clearControlGroups(); // issue 431
 	        	if (worklist.getSelectedPlatform() == null || "agilent".equals(worklist.getSelectedPlatform().toLowerCase()))
 			        addStandardsToAgilentList(worklist);
@@ -215,6 +270,7 @@ public class AutoAddControlsPanel extends Panel
 	// issue 394 391 324
     private void addStandardsToAgilentList(WorklistSimple worklist)
 		{
+    	originalWorklist.setPoolTypeA(StringParser.parseId(poolTypeA)); // issue 13
 		if (worklist.getItems().size() == 0)
 			return;			
 		worklist.updatePoolReplicates(((MedWorksSession) Session.get()).getNMasterPoolsBefore(), 
@@ -226,6 +282,7 @@ public class AutoAddControlsPanel extends Panel
 		String firstSample =  nItems <= 0 ? null : worklist.getItem(0).getSampleName();
 		String lastSample =  nItems <= 0 ? null : worklist.getItem(nItems -1).getSampleName();
 		String id = "", finalLabel = "";
+		
 		for (int i = 0; i < nBlanks; i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
@@ -394,12 +451,13 @@ public class AutoAddControlsPanel extends Panel
 			originalWorklist.addControlGroup(group3);
 			}
 		
+		// issue 13
 		if (poolSpacingA > 0) 
-			{
-			
+			{			
 			for (int i = 0; i < 1; i++)	
 			    {
-			    id = controlService.controlIdForNameAndAgilent("Master Pool");
+			    //id = controlService.controlIdForNameAndAgilent("Master Pool");
+				id = StringParser.parseId(poolTypeA);
 			    finalLabel = controlService.dropStringForIdAndAgilent(id);
 			    WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, worklist.getMasterPoolsBefore().toString(), "Before", firstSample, worklist);
 			    group3.setStandardNotAddedControl(true);
@@ -411,7 +469,8 @@ public class AutoAddControlsPanel extends Panel
 		    {
 		    for (int i = 0; i < 1; i++)
 			    {
-			    id = controlService.controlIdForNameAndAgilent("Batch Pool.M1");
+			    //id = controlService.controlIdForNameAndAgilent("Batch Pool.M1");
+		    	id = StringParser.parseId(poolTypeB);
 			    finalLabel = controlService.dropStringForIdAndAgilent(id);
 			    WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel,  worklist.getBatchPoolsBefore().toString(), "Before", firstSample, worklist);
 			    group3.setStandardNotAddedControl(true);
@@ -581,12 +640,15 @@ public class AutoAddControlsPanel extends Panel
 			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
-			}											
+			}	
+		
+		// issue 13
 		if (poolSpacingA > 0) 
 		    {
 		    for (int i = 0; i < 1; i++)
 			    {
-			    id = controlService.controlIdForNameAndAgilent("Master Pool");
+			    //id = controlService.controlIdForNameAndAgilent("Master Pool");
+		    	id = StringParser.parseId(poolTypeA);
 			    finalLabel = controlService.dropStringForIdAndAgilent(id);
 			    WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, worklist.getMasterPoolsAfter().toString(), "After", lastSample, worklist);
 			    group3.setStandardNotAddedControl(true);
@@ -598,19 +660,22 @@ public class AutoAddControlsPanel extends Panel
 		    {
 		    for (int i = 0; i < 1; i++)
 			    {
-			    id = controlService.controlIdForNameAndAgilent("Batch Pool.M1");
-			    finalLabel = controlService.dropStringForIdAndAgilent(id);
+			    //id = controlService.controlIdForNameAndAgilent("Batch Pool.M1");
+		    	id = StringParser.parseId(poolTypeB);
+		    	finalLabel = controlService.dropStringForIdAndAgilent(id);
 			    WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel,  worklist.getBatchPoolsAfter().toString(), "After", lastSample, worklist);
 			    group3.setStandardNotAddedControl(true);
 			    originalWorklist.addControlGroup(group3);
 			    }
 		    }	
 		// issue 302
+		// issue 13
 		if (poolSpacingA > 0) 
 			{
 			List<String> insertionPoints =  getPoolInsertionPoints(poolSpacingA);
 			originalWorklist.setLastPoolBlockNumber(insertionPoints.size());
-			id = controlService.controlIdForNameAndAgilent("Master Pool");
+			//id = controlService.controlIdForNameAndAgilent("Master Pool");
+			id = StringParser.parseId(poolTypeA);
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
 			for (String pt : insertionPoints)
 				{
@@ -620,10 +685,12 @@ public class AutoAddControlsPanel extends Panel
 				}
 			}	
 		// issue 302
+		// issue 13
 		if (poolSpacingB > 0) 
 		    {
 		    List<String> insertionPoints =  getPoolInsertionPoints(poolSpacingB);
-		    id = controlService.controlIdForNameAndAgilent("Batch Pool.M1");
+		    //id = controlService.controlIdForNameAndAgilent("Batch Pool.M1");
+		    id = StringParser.parseId(poolTypeB);// issue 13
 		    finalLabel = controlService.dropStringForIdAndAgilent(id);
 		    for (String pt : insertionPoints)
 			    {
@@ -767,7 +834,7 @@ public class AutoAddControlsPanel extends Panel
 		//		return; 
 		if (worklist.getItems().size() == 0)
 			return;		
-		originalWorklist.getControlGroupsList().clear();		
+		originalWorklist.getControlGroupsList().clear();	
 		int nItems = worklist.getItems().size();
 		String firstSample =  nItems <= 0 ? null : worklist.getItem(0).getSampleName();
 		String lastSample =  nItems <= 0 ? null : worklist.getItem(nItems -1).getSampleName();
@@ -825,12 +892,14 @@ public class AutoAddControlsPanel extends Panel
 			originalWorklist.addControlGroup(group3);
 			}
 		
-		// issue 314	
+		// issue 314
+		// issue 13
 		if (poolSpacingA > 0) 
 		    {
 		    for (int i = 0; i < 1; i++)
 			    {
-			    id = controlService.controlIdForNameAndAgilent("Pool.1");
+			    //id = controlService.controlIdForNameAndAgilent("Pool.1");
+		    	id = StringParser.parseId(poolTypeA);
 			    finalLabel = controlService.dropStringForIdAndAgilent(id);
 			    WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "3", "Before", firstSample, worklist);
 			    group3.setStandardNotAddedControl(true);
@@ -838,11 +907,14 @@ public class AutoAddControlsPanel extends Panel
 			    }
 		    }
 		  
+		// issue 13
 	    if (poolSpacingB > 0) 
 	        {
 		    for (int i = 0; i < 1; i++)
 			    {
-			    id = controlService.controlIdForNameAndAgilent("Pool.1b");
+		    	//id = controlService.controlIdForNameAndAgilent("Pool.1");
+		    	id = StringParser.parseId(poolTypeB); // issue 13
+			    //id = controlService.controlIdForNameAndAgilent("Pool.1b");
 			    finalLabel = controlService.dropStringForIdAndAgilent(id);
 			    WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
 			    group3.setStandardNotAddedControl(true);
@@ -908,7 +980,8 @@ public class AutoAddControlsPanel extends Panel
 		    {
 		    for (int i = 0; i < 1; i++)
 			    {
-			    id = controlService.controlIdForNameAndAgilent("Pool.1");
+			    //id = controlService.controlIdForNameAndAgilent("Pool.1");
+		    	id = StringParser.parseId(poolTypeA);
 			    finalLabel = controlService.dropStringForIdAndAgilent(id);
 			    WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
 			    group3.setStandardNotAddedControl(true);
@@ -921,7 +994,8 @@ public class AutoAddControlsPanel extends Panel
 		    {
 		    for (int i = 0; i < 1; i++)
 			    {
-			    id = controlService.controlIdForNameAndAgilent("Pool.1b");
+			    //id = controlService.controlIdForNameAndAgilent("Pool.1b");
+		    	id = StringParser.parseId(poolTypeB); // issue 13
 			    finalLabel = controlService.dropStringForIdAndAgilent(id);
 			    WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
 			    group3.setStandardNotAddedControl(true);
@@ -930,11 +1004,13 @@ public class AutoAddControlsPanel extends Panel
 		    }
 
 		// issue 302
+		// issue 13
 		if (poolSpacingA > 0) 
 			{
 			List<String> insertionPoints =  getPoolInsertionPoints(poolSpacingA);
 		
-			id = controlService.controlIdForNameAndAgilent("Pool.1");
+			//id = controlService.controlIdForNameAndAgilent("Pool.1");
+			id = StringParser.parseId(poolTypeA);
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
 			for (String pt : insertionPoints)
 				{
@@ -948,7 +1024,8 @@ public class AutoAddControlsPanel extends Panel
 		if (poolSpacingB > 0) 
 		    {
 		    List<String> insertionPoints =  getPoolInsertionPoints(poolSpacingB);
-		    id = controlService.controlIdForNameAndAgilent("Pool.1b");
+		    //id = controlService.controlIdForNameAndAgilent("Pool.1b");
+		    id = StringParser.parseId(poolTypeB); // issue 13
 		    finalLabel = controlService.dropStringForIdAndAgilent(id);
 		    for (String pt : insertionPoints)
 			    {
@@ -1004,9 +1081,13 @@ public class AutoAddControlsPanel extends Panel
 						if (!StringUtils.isEmptyOrNull(nChearBlanksStr))
 							nChearBlanks = Integer.parseInt(nChearBlanksStr);						
 						needsRebuild = true;
-						break;
-						
+						break;	
+						// issue 13
+					case "updateForPoolTypeDropB" :
+					    refreshPage(target);
+					    break;
 					}
+				
 
 			////	target.add(buildButton);
 				}
@@ -1100,6 +1181,17 @@ public class AutoAddControlsPanel extends Panel
 		return chearBlankType;
 		}
 
+	// issue 13
+	public String getPoolTypeA ()
+		{
+		return  poolTypeA ;
+		}
+	
+	// issue 13
+	public void setPoolTypeA (String strPoolTypeA)
+		{
+		poolTypeA =  strPoolTypeA;
+		}
 
 	public void setnMatrixBlanksStr(String nMatrixBlanksStr)
 		{

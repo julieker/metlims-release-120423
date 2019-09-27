@@ -187,7 +187,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
         PoiUtils.createBlankRow(rowCt++,  sheet);
             
         int startPoint = worklist.getMasterPoolsBefore() + worklist.getLastPoolBlockNumber() + 1;
-        String iddaPlatePos = grabPlatePosition("CS00000MP-" + startPoint) ;
+        String iddaPlatePos = grabPlatePosition(worklist.getPoolTypeA() + "-" + startPoint) ;
         String iddaStr = "";
         String fileStr = worklist.grabOutputFileNameIDDA();
         // issue 456
@@ -195,7 +195,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
         numToPad = numToPad.toString().length();
 		for (int i = startPoint; i < startPoint + worklist.getMasterPoolsAfter();i++)
 			{
-			iddaStr = 	"CS00000MP-" + String.format("%0" + numToPad +"d",i); // issue 456
+			iddaStr = 	worklist.getPoolTypeA() + "-" + String.format("%0" + numToPad +"d",i); // issue 456 // issue 13
 			for (int j = 0; j <= ((MedWorksSession) Session.get()).getNCE10Reps();j++)
 			    {
 				if (((MedWorksSession) Session.get()).getNCE10Reps() == 0)
