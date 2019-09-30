@@ -1084,6 +1084,8 @@ public class AutoAddControlsPanel extends Panel
 						break;	
 						// issue 13
 					case "updateForPoolTypeDropB" :
+						if (poolTypeA.equals(poolTypeB))
+							poolTypeA = "Master Pool   (CS00000MP)";
 					    refreshPage(target);
 					    break;
 					}
