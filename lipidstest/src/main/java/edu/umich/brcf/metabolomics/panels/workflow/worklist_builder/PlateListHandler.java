@@ -35,17 +35,19 @@ public class PlateListHandler implements Serializable
 	// issue 391 issue 403 issue 418
 	// issue 422
 	public static List <String> CONTROL_TYPES_IN_END_TO_START_ORDER = Arrays.asList(new String []
-	     { "R00CHRUR1",   "R00CHRUR2", "R00CHRPL1", "R00CHRPL2",
-		"CSMR80015",   "CSMR80014", "CSMR80013", "CSMR80012",
-		"CSMR80011",   "CSMR80010", "CSMR80009", "CSMR80008","CS0UMRP01", "CS0UMRA01","CS0UMRL01", "CS0UMRG01", 
-		"CS00000RC",   "CS00000MP", "CS000QCMP", "CS000BPM2",
-		"CS000BPM3",   "CS000BPM4", "CS000BPM5", "CS0000OP0",
-		"CS0000OP1",   "CS0000OP2", "CS0000OP3", "CS0000OP4",   "CS0000OP5", "CS0000OP6",
-		"CS000STD0",   "CS000STD1", "CS000STD2", "CS000STD3",   "CS000STD4",
-		"CS000STD5",   "CS000STD6", "CS000STD7", "CS000STD8",   "CS000STD9",
-		"CS00STD10",   "CS00STD11", "CS00STD12", 
-		"CS00000PB",   "CS00000SB", "CS00000NB", "CS00000QC" } // issue 450  
-			);
+		     { "R00CHRUR1",   "R00CHRUR2", "R00CHRPL1", "R00CHRPL2",
+			"CSMR80015",   "CSMR80014", "CSMR80013", "CSMR80012",
+			"CSMR80011",   "CSMR80010", "CSMR80009", "CSMR80008","CS0UMRP01", "CS0UMRA01","CS0UMRL01", "CS0UMRG01", 
+			"CS00000RC",   "CS00000MP", 
+			"CS000QCMP", 
+			"CS000BPM1", "CS000BPM2", // issue 17
+			"CS000BPM3",   "CS000BPM4", "CS000BPM5", "CS0000OP0",
+			"CS0000OP1",   "CS0000OP2", "CS0000OP3", "CS0000OP4",   "CS0000OP5", "CS0000OP6",
+			"CS000STD0",   "CS000STD1", "CS000STD2", "CS000STD3",   "CS000STD4",
+			"CS000STD5",   "CS000STD6", "CS000STD7", "CS000STD8",   "CS000STD9",
+			"CS00STD10",   "CS00STD11", "CS00STD12", 
+			"CS00000PB",   "CS00000SB", "CS00000NB", "CS00000QC" } // issue 450  
+				);
 	
 	PlateListHandler(int nRows, int nCols, boolean useCarousel)
 		{
@@ -90,6 +92,7 @@ public class PlateListHandler implements Serializable
 				}
 			
 			uniqueItems.add(item);
+		
 			}
 		return uniqueItems;
 		}
@@ -103,7 +106,7 @@ public class PlateListHandler implements Serializable
 		String lastPlate = null, currPlate = null;
 		boolean movedToNextPage = false;			
 		while (itemsAdded < uniqueItems.size())
-			{			
+			{		
 			String targetLabel = getExpectedPosition(j);
 	               if (j%nPositions == 0 )
 	                   lastPlate = null;
@@ -182,7 +185,7 @@ public class PlateListHandler implements Serializable
 	// issue 325
 	
 	// issue 391 327
-	 Map<String, Integer> buildControlPositionIdxByTypeMap(List<WorklistItemSimple> items) 
+	 Map<String, Integer> buildControlPositionIdxByTypeMap(List<WorklistItemSimple> items, WorklistSimple worklist) 
 		{
 		Map<String, Integer> controlTypeCountsMap = new HashMap<String, Integer>();
 		Map<String, Integer> controlTypeToPositionIndexMap = new HashMap<String, Integer>();
@@ -191,7 +194,11 @@ public class PlateListHandler implements Serializable
 			WorklistItemSimple item = items.get(i);			
 			if (!item.getRepresentsControl()) continue;			
 			String controlType = (item.getRepresentsUserDefinedControl() ? item.getNameForUserControlGroup() : ((WorklistControlGroup) item.getGroup()).getControlType());
-			controlType = StringParser.parseId(controlType);		
+			controlType = StringParser.parseId(controlType);
+			// issue 17
+			if (controlType.indexOf("CS000QCMP") > -1  && worklist.getBothQCMPandMP())
+				continue;
+			
 			if (!controlTypeCountsMap.containsKey(controlType))
 				controlTypeCountsMap.put(controlType, 0);
 			int nOfType = controlTypeCountsMap.get(controlType);
@@ -209,9 +216,9 @@ public class PlateListHandler implements Serializable
 			WorklistItemSimple item = items.get(i);
 			if (!item.getRepresentsUserDefinedControl()) continue;
 			
-			String controlType = item.getNameForUserControlGroup(); 
-	                if (!controlTypeToPositionIndexMap.containsKey(controlType) )
-			      controlTypeToPositionIndexMap.put(controlType, prevIdx--);
+			String controlType = item.getNameForUserControlGroup();
+	        if (!controlTypeToPositionIndexMap.containsKey(controlType) )
+			    controlTypeToPositionIndexMap.put(controlType, prevIdx--);
 			}
 		
 		return controlTypeToPositionIndexMap;
@@ -223,15 +230,24 @@ public class PlateListHandler implements Serializable
 	 private int placeControlsByTypeOnPlate(WorklistSimple worklist,  Map<Integer, String> map, int plate) throws METWorksException 
 		{
 		List<WorklistItemSimple> items = worklist.getItems();	
-		Map<String, Integer> controlPositionIdxByTypeMap =  buildControlPositionIdxByTypeMap(items);
+		Map<String, Integer> controlPositionIdxByTypeMap =  buildControlPositionIdxByTypeMap(items, worklist);
 		Map<String, String> foundControlTypesMap = new HashMap<String, String>();		
 		int  idx = 0, targetIdx = 0, spotsLeft  = nPositions;
 		String plateStr = "P" + plate; 	
 		for (int i = 0; i < items.size(); i++)
 			{
+			
 			WorklistItemSimple item = items.get(i);			
 			if (!item.getRepresentsControl()) continue;			
 			String controlType = (item.getRepresentsUserDefinedControl() ? item.getNameForUserControlGroup() : ((WorklistControlGroup) item.getGroup()).getControlType());			
+			// issue 17
+			if (controlType.indexOf("CS000QCMP") > -1 && worklist.getBothQCMPandMP())
+				{
+				targetIdx = controlPositionIdxByTypeMap.get("CS00000MP");
+				item.setSamplePosition(plateStr + "-" + map.get(targetIdx));
+				item.setRackPosition(plateStr + "-" + map.get(targetIdx));
+				continue;
+				}
 			if (spotsLeft < 0) 
 				throw new METWorksException("Error while placing controls");			
 			if (!foundControlTypesMap.containsKey(controlType))
@@ -245,6 +261,7 @@ public class PlateListHandler implements Serializable
 			    targetIdx = controlPositionIdxByTypeMap.get(StringParser.parseId(controlType));
 			item.setSamplePosition(plateStr + "-" + map.get(targetIdx));
 			item.setRackPosition(plateStr + "-" + map.get(targetIdx));
+			//System.out.println("here is plate string:" + item.getSampleName() + " " +  item.getSamplePosition());
 			}
 	    return spotsLeft;
 	    }
@@ -282,6 +299,11 @@ public class PlateListHandler implements Serializable
 			if (!useCarousel)
 				plateStr = ((plate > 0 && spotsLeft >= 0)? "P" + plate + "-" : "");			
 			targetIdx = idxForPage % nPositions;
+			if (item.getSampleName().indexOf("CS000QCMP") > 0)
+			    {
+				idxForPage++;
+			    continue;
+			    }
 			item.setSamplePosition(plateStr + map.get(targetIdx));
 			item.belongsToPlate = (plate - 1);
 			pageItemsArray.add(item);			

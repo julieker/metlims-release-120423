@@ -28,8 +28,9 @@ import edu.umich.brcf.shared.util.widgets.AjaxCancelLink;
 public class PlatePreviewPage extends WebPage
 	{
 	final int nItemsPerRow, nItemsPerCol;
+	boolean gBothQCMPandMP;
 	
-	public PlatePreviewPage(Page backPage, List<WorklistItemSimple> items, ModalWindow modal1, boolean useCarousel)
+	public PlatePreviewPage(boolean bothQCMPandMP, Page backPage, List<WorklistItemSimple> items, ModalWindow modal1, boolean useCarousel)
 		{
 		super();
 
@@ -45,6 +46,7 @@ public class PlatePreviewPage extends WebPage
 		PlatePreviewForm rlf = new PlatePreviewForm("platePreviewForm",
 				listCopy, modal1, useCarousel);
 		add(rlf);
+		gBothQCMPandMP=bothQCMPandMP;
 		}
 
 	
@@ -95,7 +97,7 @@ public class PlatePreviewPage extends WebPage
 						{
 						String property = "name." + i;
 						String label = "position" + (i + 1);
-						listItem.add(WorklistFieldBuilder.buildPlateLabelWorklistField(label, item.getItem(i), "sampleName"));
+						listItem.add(WorklistFieldBuilder.buildPlateLabelWorklistField(gBothQCMPandMP, label, item.getItem(i), "sampleName"));
 						}
 					}
 				};

@@ -370,7 +370,8 @@ public class WorklistBuilderPanel extends Panel
 					setPageDimensions(modal1, 0.7, 0.6);
 					modal1.setPageCreator(new ModalWindow.PageCreator()
 						{
-						public Page createPage() { return ((Page) (new PlatePreviewPage(getPage(), worklist.getItems(), modal1, worklist.getUseCarousel()))); }
+						// issue 17
+						public Page createPage() { return ((Page) (new PlatePreviewPage(worklist.getBothQCMPandMP(), getPage(), worklist.getItems(), modal1, worklist.getUseCarousel()))); }
 						});
 
 					modal1.show(target);

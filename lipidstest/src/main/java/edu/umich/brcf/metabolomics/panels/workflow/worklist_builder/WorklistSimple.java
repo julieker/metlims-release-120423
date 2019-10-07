@@ -70,6 +70,19 @@ public class WorklistSimple implements Serializable
     private Map<String, Integer> ctrlTypeToRunningTotal = new HashMap<String, Integer>();
 	private List<Integer> largestPadding = new ArrayList <Integer>();
 	private String poolTypeA; //issue 13
+	private boolean bothQCMPandMP = false; // issue 17
+	
+	// issue 17
+	public boolean getBothQCMPandMP ()
+		{
+		return bothQCMPandMP;
+		}
+	
+	// issue 17
+	public void setBothQCMPandMP (boolean vBothQCMPandMP)
+		{
+		bothQCMPandMP = vBothQCMPandMP;
+		}
 	
     public WorklistSimple()
 		{

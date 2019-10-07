@@ -95,16 +95,26 @@ public class WorklistFieldBuilder implements Serializable
 
 	
 	// onComponentTag
-	public static Label buildPlateLabelWorklistField(final String id, final WorklistItemSimple item,  String field)
+	public static Label buildPlateLabelWorklistField(boolean bothQCMPandMP , final String id, final WorklistItemSimple item,  String field)
 		{
 		// Issue 268 
 		// issue 346
+		// issue 17
+		if (bothQCMPandMP)
+			if (item.getShortSampleName().equals("CS00000MP") || item.getShortSampleName().equals("CS000QCMP"))
+			    {
+				item.setShortSampleName("CS00000MP\nCS000QCMP");
+				item.setMpQcmpName("Master Pool (CS00000MP)\nMaster Pool.QCMP (CS000QCMP)");
+			    }
 		if (!item.getNameForUserControlGroup().equals(""))
 			field = "shortNameForUserControlGroup";
 		else 
 			field = "shortSampleName";
 		Label pLabel = WorklistFieldBuilder.buildPlateLabelField(id, item, field);
-		pLabel.add(AttributeModifier.append("title", item.getSampleName()));
+		pLabel.add(AttributeModifier.append("title",item.getSampleName()));
+		if (bothQCMPandMP)
+		    if (item.getShortSampleName().equals("CS00000MP\nCS000QCMP"))
+			    pLabel.add(AttributeModifier.replace("title",item.getMpQcmpName()));			  
 		return pLabel;
 		}
 

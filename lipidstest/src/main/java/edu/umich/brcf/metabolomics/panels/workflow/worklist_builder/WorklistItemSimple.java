@@ -35,7 +35,7 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
     private String relatedSample;
 	private String randomIdx;
 	private String sampleName = "", sampleType, samplePosition,
-			 shortSampleName = ""; // issue 268
+			 shortSampleName = "", mpQcmpName = ""; // issue 268 issue 17
 	private String sampleTypeTagForFilename = "";
     public String sampleWorklistLabel; // issue 411
 	private String injectionVolume;
@@ -52,6 +52,18 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 
 	int belongsToPlate;
 
+	// issue 17
+	public String getMpQcmpName ()
+		{
+		return this.mpQcmpName;	
+		}
+	
+	//issue 17
+	public void setMpQcmpName (String vMpQcmpName)
+		{
+	    this.mpQcmpName = vMpQcmpName;	
+		}
+	
 	public WorklistItemSimple()
 		{
 		this("", null, null);
@@ -236,6 +248,8 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
         {
         this.shortSampleName = shortSample;
         }
+	
+	
 
 	public String getSampleWorklistLabel()
 		{

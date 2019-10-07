@@ -51,8 +51,8 @@ public class AutoAddControlsPanel extends Panel
 	List availableSpacingQuantities = Arrays.asList(new String[] {"0 (NO POOLS)", "1", "2", "3", "4", "5", "6", "7",
 			"8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"}); // issue 315
 	List<String> availableChearBlankTypes = Arrays.asList(new String[] {"Urine", "Plasma"});
-	List<String> poolTypes = Arrays.asList(new String[] {"Master Pool   (CS00000MP)", "Batch Pool.M1 (CS000QCMP)",  "Batch Pool.M2 (CS000BPM2)", "Batch Pool.M3 (CS000BPM3)", "Batch Pool.M4 (CS000BPM4)", "Batch Pool.M5 (CS000BPM5)"});
-	List<String> poolTypesB = Arrays.asList(new String[] {"Batch Pool.M1 (CS000QCMP)",  "Batch Pool.M2 (CS000BPM2)", "Batch Pool.M3 (CS000BPM3)", "Batch Pool.M4 (CS000BPM4)", "Batch Pool.M5 (CS000BPM5)"});
+	List<String> poolTypes = Arrays.asList(new String[] {"Master Pool   (CS00000MP)", "Batch Pool.M1 (CS000BPM1)",  "Batch Pool.M2 (CS000BPM2)", "Batch Pool.M3 (CS000BPM3)", "Batch Pool.M4 (CS000BPM4)", "Batch Pool.M5 (CS000BPM5)"});
+	List<String> poolTypesB = Arrays.asList(new String[] {"Master Pool.QCMP (CS000QCMP)", "Batch Pool.M1 (CS000BPM1)", "Batch Pool.M2 (CS000BPM2)", "Batch Pool.M3 (CS000BPM3)", "Batch Pool.M4 (CS000BPM4)", "Batch Pool.M5 (CS000BPM5)"});
 	IndicatingAjaxLink buildButton,clearButton;
 
 	AjaxLink customizeButton;
@@ -229,7 +229,10 @@ public class AutoAddControlsPanel extends Panel
 	        		{
 	        		target.appendJavaScript(StringUtils.makeAlertMessage("There is customization for Pool B.  Please choose a value for Pool Spacing B "));
 	        		return;
-	        		}	
+	        		}		        	
+	        	// issue 17
+	        	worklist.setBothQCMPandMP (StringParser.parseId(poolTypeA).equals("CS00000MP") && StringParser.parseId(poolTypeB).equals("CS000QCMP") && poolSpacingA > 0 && poolSpacingB > 0);
+	        	       		
 	        	if (StringParser.parseId(poolTypeA).equals(StringParser.parseId(poolTypeB)))
 	        		{
 	        		target.appendJavaScript(StringUtils.makeAlertMessage("Pool A and Pool B are both :" + StringParser.parseId(poolTypeB) + " Please make sure you choose a different pool for Pool A and Pool B"));

@@ -199,7 +199,22 @@ public class AddControlsPanel extends Panel
 		return drp;
 		}
 
-	
+	// issue 17
+	private boolean doBothQCMPandMPExist (WorklistSimple originalWorklist)
+	    {
+		boolean MPExists = false;
+		boolean QCMPExists = false;
+		for (WorklistControlGroup grp : originalWorklist.getControlGroupsList())
+			{
+			if (grp.getControlType().indexOf("CS00000MP") > -1 && (!MPExists))
+				MPExists = true;
+			if (grp.getControlType().indexOf("CS000QCMP") > -1 && (!QCMPExists))
+				QCMPExists = true;
+			if (MPExists && QCMPExists)
+				return true;
+			}
+		return false;
+	    }
 	private AjaxLink buildDeleteButton(String id, final WorklistControlGroup item, final WebMarkupContainer container)
 		{
 		return new AjaxLink(id)
@@ -209,9 +224,12 @@ public class AddControlsPanel extends Panel
 			@Override
 			public void onClick(AjaxRequestTarget target)
 				{
+				// issue 17	
 				if (originalWorklist.countGroups(true) > 1)
 					{
 					originalWorklist.deleteControlItem(item);
+					if (! doBothQCMPandMPExist(originalWorklist))
+						originalWorklist.setBothQCMPandMP(false);
 					originalWorklist.rebuildEverything();
 
 					target.appendJavaScript("alert('After deleting a control group, please verify that remaining control groups still"
@@ -363,6 +381,8 @@ public class AddControlsPanel extends Panel
 			@Override
 			public void onClick(AjaxRequestTarget target)
 				{
+				if (! doBothQCMPandMPExist(originalWorklist))
+					originalWorklist.setBothQCMPandMP(false); // issue 17
 				originalWorklist.rebuildEverything();
 				// issue 426
 				String circularSample = originalWorklist.isThereCircular();

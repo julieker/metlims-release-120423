@@ -180,7 +180,8 @@ public class ControlDAO extends BaseDAO
 	tempArray.add("Neat Blank    (CS00000NB)");
 
 	tempArray.add("Master Pool   (CS00000MP)");
-	tempArray.add("Batch Pool.M1 (CS000QCMP)"); // issue 450
+	tempArray.add("Master Pool.QCMP (CS000QCMP)"); // issue 450 // issue 17
+	tempArray.add("Batch Pool.M1 (CS000BPM1)");// issue 17
 	tempArray.add("Batch Pool.M2 (CS000BPM2)"); 
 	tempArray.add("Batch Pool.M3 (CS000BPM3)"); 
 	tempArray.add("Batch Pool.M4 (CS000BPM4)"); 
