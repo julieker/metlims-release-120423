@@ -16,10 +16,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.injection.Injector;
@@ -71,11 +74,25 @@ public class WorklistSimple implements Serializable
 	private List<Integer> largestPadding = new ArrayList <Integer>();
 	private String poolTypeA; //issue 13
 	private boolean bothQCMPandMP = false; // issue 17
+	private int amountToPad = 2; // issue 16
+	private int limitNumberControls = 99;
 	
 	// issue 17
 	public boolean getBothQCMPandMP ()
 		{
 		return bothQCMPandMP;
+		}
+	
+	// issue 16
+	public int getLimitNumberControls ()
+		{
+		return limitNumberControls;
+		}
+	
+	// issue 16
+	public void setLimitNumberControls (int vLimitNumberControls)
+		{
+		limitNumberControls =  vLimitNumberControls;
 		}
 	
 	// issue 17
@@ -530,7 +547,7 @@ public class WorklistSimple implements Serializable
         //// issue 456
             if (this.getSelectedPlatform().equals("agilent"))
 	            {
-            	Integer iTotalControlType = getPadding();
+            	//Integer iTotalControlType = getPadding();
 		        for (WorklistItemSimple item : getItems())
 		        	{         	
 		        	if (item.getRepresentsControl())
@@ -542,7 +559,8 @@ public class WorklistSimple implements Serializable
 		        			continue;
 		        		int indexUnderscore = item.getSampleName().lastIndexOf("-");        		
 		        		//Integer iTotalControlType = ctrlTypeToRunningTotal.get(item.getSampleName().substring(0,indexUnderscore)) -1;// issue 486
-		        		iSuffixStr =  String.format("%0" + iTotalControlType.toString().length() + "d", Integer.parseInt(iSuffixStr));
+		        	//	iSuffixStr =  String.format("%0" + iTotalControlType.toString().length() + "d", Integer.parseInt(iSuffixStr));
+		        		iSuffixStr =  String.format("%0" + amountToPad + "d", Integer.parseInt(iSuffixStr));
 		        		item.setSampleName(item.getSampleName().substring(0,indexUnderscore) + "-" + (iSuffixStr));
 		        		String outname = grabOutputFileName(item.getSampleName(), item);
 						item.setOutputFileName(outname);
@@ -552,7 +570,7 @@ public class WorklistSimple implements Serializable
 		    nPlates = updatePlatePositions();
         }       
 	/////////////////////////////// issue 456 or 486 issue 4 in metlims.2019
-	public Integer getPadding()
+	/*public Integer getPadding()
 		{
 		largestPadding = new ArrayList <Integer> ();
 		for (Map.Entry<String,Integer> entry : ctrlTypeToRunningTotal.entrySet())  	          
@@ -562,7 +580,35 @@ public class WorklistSimple implements Serializable
 		    return largestPadding.get(largestPadding.size()-1) -1;
 		else 
 			return 0;		 
-		}
+		}*/
+	
+	// issue 16
+	// issue 19
+	public CountPair getLargestControlTypeTotal() 
+	    {
+	    Map<String, Integer> controlTypeCts = new HashMap<String, Integer>();
+	    int maxCt = 0;
+	    String vControltype = "";
+	    CountPair countPair = new CountPair();	    
+	    for (WorklistControlGroup controlGroup :  getControlGroupsList())   
+	        {
+	        String type = controlGroup.getControlType();	
+	        int iQuantity = controlGroup.getIntQuantity();
+	        if (!controlTypeCts.containsKey(type))
+	            controlTypeCts.put(type, 0);
+	        Integer ct = controlTypeCts.get(type);
+	        controlTypeCts.put(type, ct + iQuantity);
+	        ct = ct + iQuantity;
+	        if (ct > maxCt)
+	            {
+	            maxCt = ct;
+	            vControltype = controlGroup.getControlType();
+	            }
+	        }
+	    countPair.setTag(vControltype);
+	    countPair.setCount(maxCt);
+	    return countPair;
+	    }
 	
 	public boolean isRelatedControlFoundInItems (String relatedControl)
 		{

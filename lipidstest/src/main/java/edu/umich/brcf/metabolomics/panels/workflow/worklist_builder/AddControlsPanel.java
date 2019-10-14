@@ -9,6 +9,7 @@ package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
@@ -226,12 +227,19 @@ public class AddControlsPanel extends Panel
 				{
 				// issue 17	
 				if (originalWorklist.countGroups(true) > 1)
-					{
+					{	
+					CountPair countPair = originalWorklist.getLargestControlTypeTotal();
+					// issue 16
+		        	// issue 19
+					if (countPair.getCount() - item.getIntQuantity() > 99)
+			        	{
+		        		target.appendJavaScript(StringUtils.makeAlertMessage("The control type:" + countPair.getTag() + " will have " + (countPair.getCount() - item.getIntQuantity()) + " entries. Please limit this to " + originalWorklist.getLimitNumberControls() + " before deleting. "));
+		        		return;	
+			        	}
 					originalWorklist.deleteControlItem(item);
 					if (! doBothQCMPandMPExist(originalWorklist))
 						originalWorklist.setBothQCMPandMP(false);
 					originalWorklist.rebuildEverything();
-
 					target.appendJavaScript("alert('After deleting a control group, please verify that remaining control groups still"
 							+ " have a valid insertion point selected.  If not, select a new insertion point (for each group missing one) and click Update Controls to refresh your worklist');");
 					} 
@@ -383,12 +391,20 @@ public class AddControlsPanel extends Panel
 				{
 				if (! doBothQCMPandMPExist(originalWorklist))
 					originalWorklist.setBothQCMPandMP(false); // issue 17
+	        	CountPair countPair = originalWorklist.getLargestControlTypeTotal();
+	        	// issue 16
+	        	// issue 19
+		        	if (countPair.getCount() > 99)
+			        	{
+		        		target.appendJavaScript(StringUtils.makeAlertMessage("The control type:" + countPair.getTag() + " has " + countPair.getCount() + " entries. Please limit this to " + originalWorklist.getLimitNumberControls()));
+		        		return;	
+			        	}				
 				originalWorklist.rebuildEverything();
 				// issue 426
 				String circularSample = originalWorklist.isThereCircular();
 				if (circularSample != null)
 					target.appendJavaScript("alert('There is a circular relationship "
-							+ " Starting with sample: " +  circularSample +  "');");
+					+ " Starting with sample: " +  circularSample +  "');");
 				originalWorklist.updateSampleNamesArray();
 				refreshPage(target);
 				}

@@ -7,6 +7,8 @@ package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
 
 import org.apache.wicket.MarkupContainer;
@@ -243,9 +245,20 @@ public class AutoAddControlsPanel extends Panel
 			        addStandardsToAgilentList(worklist);
 		        else
 			        addStandardsToList(worklist);
+	        	// issue 17
+	        	// issue 19
+	        	CountPair countPair = originalWorklist.getLargestControlTypeTotal();
+	        	// issue 16
+		        	if (countPair.getCount() > 99)
+			        	{
+		        		target.appendJavaScript(StringUtils.makeAlertMessage("The control type:" + countPair.getTag() + " has " + countPair.getCount() + " entries. Please redo the controls and limit this to " + originalWorklist.getLimitNumberControls()));
+		        		originalWorklist.clearOutPoolIDDAControls();
+		        		refreshPage(target);
+		        		return;	
+			        	}	
 		        worklist.rebuildEverything();
-		        worklist.updateSampleNamesArray();
-		        refreshPage(target);
+			    worklist.updateSampleNamesArray();
+			    refreshPage(target);
 	        	
 		        }
 	        };
@@ -454,12 +467,11 @@ public class AutoAddControlsPanel extends Panel
 			originalWorklist.addControlGroup(group3);
 			}
 		
-		// issue 13
-		if (poolSpacingA > 0) 
+		// issue 13 issue 17 issue 19
+		if (poolSpacingA > 0 &&  worklist.getMasterPoolsBefore()> 0 ) 
 			{			
 			for (int i = 0; i < 1; i++)	
 			    {
-			    //id = controlService.controlIdForNameAndAgilent("Master Pool");
 				id = StringParser.parseId(poolTypeA);
 			    finalLabel = controlService.dropStringForIdAndAgilent(id);
 			    WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, worklist.getMasterPoolsBefore().toString(), "Before", firstSample, worklist);
@@ -467,8 +479,8 @@ public class AutoAddControlsPanel extends Panel
 			    originalWorklist.addControlGroup(group3);
 			    }
 			}
-
-		if (poolSpacingB > 0) 
+		// issue 13 issue 17 issue 19
+		if (poolSpacingB > 0 &&  worklist.getBatchPoolsBefore()> 0) 
 		    {
 		    for (int i = 0; i < 1; i++)
 			    {
@@ -646,7 +658,9 @@ public class AutoAddControlsPanel extends Panel
 			}	
 		
 		// issue 13
-		if (poolSpacingA > 0) 
+		// issue 17
+		// issue 19
+		if (poolSpacingA > 0 && worklist.getMasterPoolsAfter() > 0) 
 		    {
 		    for (int i = 0; i < 1; i++)
 			    {
@@ -659,7 +673,9 @@ public class AutoAddControlsPanel extends Panel
 			    }
 			}	
 		// issue 302
-		if (poolSpacingB > 0) 
+		// issue 17
+		// issue 19
+		if (poolSpacingB > 0 && worklist.getBatchPoolsAfter() > 0) 
 		    {
 		    for (int i = 0; i < 1; i++)
 			    {
