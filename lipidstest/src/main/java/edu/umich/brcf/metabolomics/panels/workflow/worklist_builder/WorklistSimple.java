@@ -649,7 +649,7 @@ public class WorklistSimple implements Serializable
 		    }
 		}
 	
-	private Map<String, Integer> buildControlTypeMap()
+	protected Map<String, Integer> buildControlTypeMap()
 		{
 		Map<String, Integer> controlTypeMap = new HashMap<String, Integer>();
 		int nUniqueControlTypes = 0;

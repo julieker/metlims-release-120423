@@ -245,6 +245,14 @@ public class AutoAddControlsPanel extends Panel
 			        addStandardsToAgilentList(worklist);
 		        else
 			        addStandardsToList(worklist);
+	        	// issue 22
+	        	Map<String, Integer> controlTypeMap = worklist.buildControlTypeMap();
+	        	int numberDistinctControls = controlTypeMap.size()  ;
+	        	if ( numberDistinctControls > worklist.getMaxItemsAsInt())
+	        	    {
+	        		target.appendJavaScript(StringUtils.makeAlertMessage("There are currently: " + numberDistinctControls + " total User Defined and standard controls.  Please add fewer standard controls to keep this number at " + worklist.getMaxItemsAsInt() +  " or less") );
+	        		originalWorklist.clearControlGroups();
+	        	    }
 	        	// issue 17
 	        	// issue 19
 	        	CountPair countPair = originalWorklist.getLargestControlTypeTotal();
@@ -424,8 +432,87 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-		
-	
+         // issue 22
+		for (int i = 0; i < ((MedWorksSession) Session.get()).getNLungExercise(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Lung, Exercise");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}	
+		for (int i = 0; i < ((MedWorksSession) Session.get()).getNLungSedentary(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Lung, Sedentary");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		for (int i = 0; i < ((MedWorksSession) Session.get()).getNKidneyExercise(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Kidney, Exercise");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}	
+		for (int i = 0; i < ((MedWorksSession) Session.get()).getNKidneySedentary(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Kidney, Sedentary");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		for (int i = 0; i < ((MedWorksSession) Session.get()).getNHeartExercise(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Exercise");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}	
+		for (int i = 0; i < ((MedWorksSession) Session.get()).getNHeartSedentary(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Sedentary");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		for (int i = 0; i < ((MedWorksSession) Session.get()).getNBrownAdiposeExercise(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Brown Adipose, Exercise");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}	
+	    for (int i = 0; i < ((MedWorksSession) Session.get()).getNBrownAdiposeSedentary(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Brown Adipose, Sedentary");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		for (int i = 0; i < ((MedWorksSession) Session.get()).getNHippoCampusExercise(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Hippocampus, Exercise");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}	
+		for (int i = 0; i < ((MedWorksSession) Session.get()).getNHippoCampusSedentary(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Hippocampus, Sedentary");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
 		// Issue 422 		
 		// issue 427
 		
@@ -466,7 +553,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-		
+						
 		// issue 13 issue 17 issue 19
 		if (poolSpacingA > 0 &&  worklist.getMasterPoolsBefore()> 0 ) 
 			{			
@@ -495,7 +582,7 @@ public class AutoAddControlsPanel extends Panel
 	
 		// issue 422 for MotrPac		
 		// Issue 422
-		// Issue 427		
+		// Issue 427		    
 		for (int i = 0; i < ((MedWorksSession) Session.get()).getNRatPlasma(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("UM rat   plasma control");
@@ -530,8 +617,88 @@ public class AutoAddControlsPanel extends Panel
 			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
+			}		
+        // issue 22		
+		for (int i = 0; i < ((MedWorksSession) Session.get()).getNHippoCampusSedentary(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Hippocampus, Sedentary");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
 			}
-		
+        for (int i = 0; i < ((MedWorksSession) Session.get()).getNHippoCampusExercise(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Hippocampus, Exercise");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+        for (int i = 0; i < ((MedWorksSession) Session.get()).getNBrownAdiposeSedentary(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Brown Adipose, Sedentary");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+        for (int i = 0; i < ((MedWorksSession) Session.get()).getNBrownAdiposeExercise(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Brown Adipose, Exercise");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}       
+        for (int i = 0; i < ((MedWorksSession) Session.get()).getNHeartSedentary(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Sedentary");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+        for (int i = 0; i < ((MedWorksSession) Session.get()).getNHeartExercise(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Exercise");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+    	for (int i = 0; i < ((MedWorksSession) Session.get()).getNKidneySedentary(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Kidney, Sedentary");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+    	for (int i = 0; i < ((MedWorksSession) Session.get()).getNKidneyExercise(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Kidney, Exercise");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}  
+        for (int i = 0; i < ((MedWorksSession) Session.get()).getNLungSedentary(); i++)
+   			{
+   			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Lung, Sedentary");
+   			finalLabel = controlService.dropStringForIdAndAgilent(id);
+   			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+   			group3.setStandardNotAddedControl(true);
+   			originalWorklist.addControlGroup(group3);
+            }
+        for (int i = 0; i < ((MedWorksSession) Session.get()).getNLungExercise(); i++)
+   			{
+   			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Lung, Exercise");
+   			finalLabel = controlService.dropStringForIdAndAgilent(id);
+   			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+   			group3.setStandardNotAddedControl(true);
+   			originalWorklist.addControlGroup(group3);
+            } 
 		
 		// issue 422
 		for (int i = 0; i < ((MedWorksSession) Session.get()).getNPlasmaSedentary(); i++)
@@ -729,7 +896,7 @@ public class AutoAddControlsPanel extends Panel
  		    public void onClose(AjaxRequestTarget target)
  			    {	
                 // refresh worklist on callback ,  will need to update the page too..
-                worklist.rebuildEverything();    
+                // issue 22 worklist.rebuildEverything();    
  			    }		
  		    });
 
@@ -788,7 +955,7 @@ public class AutoAddControlsPanel extends Panel
 		    public void onClose(AjaxRequestTarget target)
 			    {	
             // refresh worklist on callback ,  will need to update the page too..
-                worklist.rebuildEverything();
+            // issue 22    worklist.rebuildEverything();
 			    }		
 		    });
 
@@ -817,7 +984,12 @@ public class AutoAddControlsPanel extends Panel
 	       			        {
 							@Override
 							// issue 427
-							protected void onSave(Integer nGastroExercise, Integer nGastroSedentary, Integer nLiverExcercise, Integer nLiverSedentary, Integer nAdiposeExercise, Integer nAdiposeSedentary, Integer nPlasmaExercise, Integer nPlasmaSedentary, Integer nRatPlasma, Integer nRatG, Integer nRatL, Integer nRatA ) 
+							protected void onSave(Integer nGastroExercise, Integer nGastroSedentary, Integer nLiverExcercise, Integer nLiverSedentary, Integer nAdiposeExercise, Integer nAdiposeSedentary, Integer nPlasmaExercise, Integer nPlasmaSedentary, Integer nRatPlasma, Integer nRatG, Integer nRatL, Integer nRatA,
+									    Integer nLungExercise, Integer nLungSedentary,
+				                        Integer nKidneyExercise, Integer nKidneySedentary,
+				                        Integer nHeartExercise, Integer nHeartSedentary,
+				                        Integer nBrownAdiposeExercise, Integer nBrownAdiposeSedentary,
+				                        Integer nHippoCampusExercise, Integer nHippoCampusSedentary) 
 								{
 								((MedWorksSession) Session.get()).setNGastroExercise(nGastroExercise);	
 								((MedWorksSession) Session.get()).setNGastroSedentary(nGastroSedentary);	
@@ -831,6 +1003,17 @@ public class AutoAddControlsPanel extends Panel
 								((MedWorksSession) Session.get()).setNRatG(nRatG);
 								((MedWorksSession) Session.get()).setNRatL(nRatL);
 								((MedWorksSession) Session.get()).setNRatA(nRatA);
+								// issue 22
+								((MedWorksSession) Session.get()).setNLungExercise(nLungExercise);
+								((MedWorksSession) Session.get()).setNLungSedentary(nLungSedentary);
+								((MedWorksSession) Session.get()).setNKidneyExercise(nKidneyExercise);
+								((MedWorksSession) Session.get()).setNKidneySedentary(nKidneySedentary);
+								((MedWorksSession) Session.get()).setNHeartExercise(nHeartExercise);
+								((MedWorksSession) Session.get()).setNHeartSedentary(nHeartSedentary);
+								((MedWorksSession) Session.get()).setNBrownAdiposeExercise(nBrownAdiposeExercise);
+								((MedWorksSession) Session.get()).setNBrownAdiposeSedentary(nBrownAdiposeSedentary);
+								((MedWorksSession) Session.get()).setNHippoCampusExercise(nHippoCampusExercise);
+								((MedWorksSession) Session.get()).setNHippoCampusSedentary(nHippoCampusSedentary);								
 				  			    }
 	       			        };
 						}

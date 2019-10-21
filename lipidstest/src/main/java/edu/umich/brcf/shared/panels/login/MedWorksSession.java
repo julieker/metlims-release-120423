@@ -65,6 +65,18 @@ public final class MedWorksSession extends WaspSession {
 	private int nPlasmaExercise;
 	private int nPlasmaSedentary;
 	private int nRatPlasma;
+		
+	// issue 22
+    private int nLungExercise;
+    private int nLungSedentary;
+    private int nKidneyExercise;
+    private int nKidneySedentary;
+    private int nHeartExercise;
+    private int nHeartSedentary;
+    private int nBrownAdiposeExercise;
+    private int nBrownAdiposeSedentary;
+    private int nHippoCampusExercise;
+    private int nHippoCampusSedentary;
 	
 	// Issue 427
 	private int nRatG;
@@ -311,6 +323,115 @@ public final class MedWorksSession extends WaspSession {
 		this.nBatchPoolsAfter = nBatchPoolsAfter;
 		}
 	
+	// issue 22
+	public int getNLungExercise() 
+		{
+		return nLungExercise;
+		}
+
+	public void setNLungExercise(int nLungExercise) 
+		{
+		this.nLungExercise = nLungExercise;
+		}
+	
+	// issue 22
+	public int getNLungSedentary() 
+		{
+		return nLungSedentary;
+		}
+
+	public void setNLungSedentary(int nLungSedentary) 
+		{
+		this.nLungSedentary = nLungSedentary;
+		}
+	
+	// issue 22
+	public int getNKidneyExercise() 
+		{
+		return nKidneyExercise;
+		}
+
+	public void setNKidneyExercise(int nKidneyExercise) 
+		{
+		this.nKidneyExercise = nKidneyExercise;
+		}
+	
+	// issue 22
+	public int getNKidneySedentary() 
+		{
+		return nKidneySedentary;
+		}
+
+	public void setNKidneySedentary(int nKidneySedentary) 
+		{
+		this.nKidneySedentary = nKidneySedentary;
+		}
+		
+	// issue 22
+	public int getNHeartExercise() 
+		{
+		return nHeartExercise;
+		}
+
+	public void setNHeartExercise(int nHeartExercise) 
+		{
+		this.nHeartExercise = nHeartExercise;
+		}
+	
+	// issue 22
+	public int getNHeartSedentary() 
+		{
+		return nHeartSedentary;
+		}
+
+	public void setNHeartSedentary(int nHeartSedentary) 
+		{
+		this.nHeartSedentary = nHeartSedentary;
+		}
+	
+	// issue 22
+	public int getNBrownAdiposeExercise() 
+		{
+		return nBrownAdiposeExercise;
+		}
+
+	public void setNBrownAdiposeExercise(int nBrownAdiposeExercise) 
+		{
+		this.nBrownAdiposeExercise = nBrownAdiposeExercise;
+		}
+	
+	// issue 22
+	public int getNBrownAdiposeSedentary() 
+		{
+		return nBrownAdiposeSedentary;
+		}
+	
+    public void setNBrownAdiposeSedentary(int nBrownAdiposeSedentary) 
+		{
+		this.nBrownAdiposeSedentary = nBrownAdiposeSedentary;
+		}
+       
+	// issue 22
+	public int getNHippoCampusExercise() 
+		{
+		return nHippoCampusExercise;
+		}
+
+	public void setNHippoCampusExercise(int nHippoCampusExercise) 
+		{
+		this.nHippoCampusExercise = nHippoCampusExercise;
+		}
+	
+	// issue 22
+	public int getNHippoCampusSedentary() 
+		{
+		return nHippoCampusSedentary;
+		}
+
+	public void setNHippoCampusSedentary(int nHippoCampusSedentary) 
+		{
+		this.nHippoCampusSedentary = nHippoCampusSedentary;
+		}
 	
 	// issue 422
 	public int getNGastroExercise() 

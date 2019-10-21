@@ -49,7 +49,16 @@ public final class MotrpacOptionsForm extends Form
 			 nRatL = 1,
 			 nRatA = 1;
 	
-	         
+    Integer nLungExercise = 1;
+    Integer nLungSedentary = 1;
+    Integer nKidneyExercise = 1;
+    Integer nKidneySedentary = 1;
+    Integer nHeartExercise = 1;
+    Integer nHeartSedentary = 1;
+    Integer nBrownAdiposeExercise  = 1;
+    Integer nBrownAdiposeSedentary = 1;
+    Integer nHippoCampusExercise = 1;
+    Integer nHippoCampusSedentary = 1;          
 	
 	protected List<Integer> countOptions = Arrays.asList(new Integer [] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15} );
 	
@@ -65,6 +74,18 @@ public final class MotrpacOptionsForm extends Form
 		add(buildCountDropdown("nAdiposeSedentary", "nAdiposeSedentary"));
 		add(buildCountDropdown("nPlasmaExercise", "nPlasmaExercise"));
 		add(buildCountDropdown("nPlasmaSedentary", "nPlasmaSedentary"));
+		// issue 22
+		add(buildCountDropdown("nLungExercise", "nLungExercise"));
+		add(buildCountDropdown("nLungSedentary", "nLungSedentary"));
+		add(buildCountDropdown("nKidneyExercise", "nKidneyExercise"));
+		add(buildCountDropdown("nKidneySedentary", "nKidneySedentary"));
+		add(buildCountDropdown("nHeartExercise", "nHeartExercise"));
+		add(buildCountDropdown("nHeartSedentary", "nHeartSedentary"));
+		add(buildCountDropdown("nBrownAdiposeExercise", "nBrownAdiposeExercise"));
+		add(buildCountDropdown("nBrownAdiposeSedentary", "nBrownAdiposeSedentary"));
+		add(buildCountDropdown("nHippoCampusExercise", "nHippoCampusExercise"));
+		add(buildCountDropdown("nHippoCampusSedentary", "nHippoCampusSedentary"));
+			
 		add(buildCountDropdown("nRatPlasma", "nRatPlasma"));
 		// Issue 427
 		add(buildCountDropdown("nRatG", "nRatG"));
@@ -77,7 +98,8 @@ public final class MotrpacOptionsForm extends Form
     		@Override
     		public void onClick(AjaxRequestTarget target) 
     			{
-    			MotrpacOptionsPage.this.onSave(nGastroExercise,nGastroSedentary,nLiverExercise,nLiverSedentary,nAdiposeExercise,nAdiposeSedentary,nPlasmaExercise,nPlasmaSedentary,nRatPlasma, nRatG, nRatL, nRatA);
+    			MotrpacOptionsPage.this.onSave(nGastroExercise,nGastroSedentary,nLiverExercise,nLiverSedentary,nAdiposeExercise,nAdiposeSedentary,nPlasmaExercise,nPlasmaSedentary,nRatPlasma, nRatG, nRatL, nRatA,
+    					                       nLungExercise, nLungSedentary,nKidneyExercise, nKidneySedentary,nHeartExercise, nHeartSedentary, nBrownAdiposeExercise, nBrownAdiposeSedentary,nHippoCampusExercise, nHippoCampusSedentary);
     			if (modal1 != null)
     				modal1.close(target);
     			}
@@ -98,6 +120,17 @@ public final class MotrpacOptionsForm extends Form
 		nRatG = ((MedWorksSession) Session.get()).getNRatG();
 		nRatL = ((MedWorksSession) Session.get()).getNRatL();
 		nRatA = ((MedWorksSession) Session.get()).getNRatA();
+		// issue 22
+		nLungExercise = ((MedWorksSession) Session.get()).getNLungExercise();	
+		nLungSedentary = ((MedWorksSession) Session.get()).getNLungSedentary();
+		nKidneyExercise = ((MedWorksSession) Session.get()).getNKidneyExercise();	
+		nKidneySedentary = ((MedWorksSession) Session.get()).getNKidneySedentary();	
+		nHeartExercise = ((MedWorksSession) Session.get()).getNHeartExercise();	
+		nHeartSedentary = ((MedWorksSession) Session.get()).getNHeartSedentary();
+		nBrownAdiposeExercise = ((MedWorksSession) Session.get()).getNBrownAdiposeExercise();	
+		nBrownAdiposeSedentary = ((MedWorksSession) Session.get()).getNBrownAdiposeSedentary();	
+		nHippoCampusExercise = ((MedWorksSession) Session.get()).getNHippoCampusExercise();	
+		nHippoCampusSedentary = ((MedWorksSession) Session.get()).getNHippoCampusSedentary();			
 		}
 
 	private DropDownChoice<Integer> buildCountDropdown(String id, String property)
@@ -232,8 +265,124 @@ public final class MotrpacOptionsForm extends Form
 		{
 		this.nAdiposeSedentary = nAdiposeSedentary;
 		}	
+	// issue 22
+	// issue 22
+	public int getNLungExercise() 
+		{
+		return nLungExercise;
+		}
+
+	public void setNLungExercise(int nLungExercise) 
+		{
+		this.nLungExercise = nLungExercise;
+		}
+	
+	// issue 22
+	public int getNLungSedentary() 
+		{
+		return nLungSedentary;
+		}
+
+	public void setNLungSedentary(int nLungSedentary) 
+		{
+		this.nLungSedentary = nLungSedentary;
+		}
+	
+	// issue 22
+	public int getNKidneyExercise() 
+		{
+		return nKidneyExercise;
+		}
+
+	public void setNKidneyExercise(int nKidneyExercise) 
+		{
+		this.nKidneyExercise = nKidneyExercise;
+		}
+	
+	// issue 22
+	public int getNKidneySedentary() 
+		{
+		return nKidneySedentary;
+		}
+
+	public void setNKidneySedentary(int nKidneySedentary) 
+		{
+		this.nKidneySedentary = nKidneySedentary;
+		}
+
+	// issue 22
+	public int getNHeartExercise() 
+		{
+		return nHeartExercise;
+		}
+
+	public void setNHeartExercise(int nHeartExercise) 
+		{
+		this.nHeartExercise = nHeartExercise;
+		}
+	
+	// issue 22
+	public int getNHeartSedentary() 
+		{
+		return nHeartSedentary;
+		}
+
+	public void setNHeartSedentary(int nHeartSedentary) 
+		{
+		this.nHeartSedentary = nHeartSedentary;
+		}
+	
+	// issue 22
+	public int getNBrownAdiposeExercise() 
+		{
+		return nBrownAdiposeExercise;
+		}
+
+	public void setNBrownAdiposeExercise(int nBrownAdiposeExercise) 
+		{
+		this.nBrownAdiposeExercise = nBrownAdiposeExercise;
+		}
+	
+	// issue 22
+	public int getNBrownAdiposeSedentary() 
+		{
+		return nBrownAdiposeSedentary;
+		}
+	
+    public void setNBrownAdiposeSedentary(int nBrownAdiposeSedentary) 
+		{
+		this.nBrownAdiposeSedentary = nBrownAdiposeSedentary;
+		}
+       
+	// issue 22
+	public int getNHippoCampusExercise() 
+		{
+		return nHippoCampusExercise;
+		}
+
+	public void setNHippoCampusExercise(int nHippoCampusExercise) 
+		{
+		this.nHippoCampusExercise = nHippoCampusExercise;
+		}
+	
+	// issue 22
+	public int getNHippoCampusSedentary() 
+		{
+		return nHippoCampusSedentary;
+		}
+
+	public void setNHippoCampusSedentary(int nHippoCampusSedentary) 
+		{
+		this.nHippoCampusSedentary = nHippoCampusSedentary;
+		}
 	}
 
 // issue 422 issue 427
- protected abstract void onSave(Integer nGastroExercise, Integer nGastroSedentary, Integer nLiverExcercise, Integer nLiverSedentary, Integer nAdiposeExercise, Integer nAdiposeSedentary,  Integer nPlasmaExercise, Integer nPlasmaSedentary, Integer nratPlasma, Integer nRatG, Integer nRatL, Integer nRatA );
+ protected abstract void onSave(Integer nGastroExercise, Integer nGastroSedentary, Integer nLiverExcercise, Integer nLiverSedentary, Integer nAdiposeExercise, Integer nAdiposeSedentary,  Integer nPlasmaExercise, Integer nPlasmaSedentary, Integer nratPlasma, Integer nRatG, Integer nRatL, Integer nRatA,
+		                        Integer nLungExercise, Integer nLungSedentary,
+		                        Integer nKidneyExercise, Integer nKidneySedentary,
+		                        Integer nHeartExercise, Integer nHeartSedentary,
+		                        Integer nBrownAdiposeExercise, Integer nBrownAdiposeSedentary,
+		                        Integer nHippoCampusExercise, Integer nHippoCampusSedentary
+		                        );
 }

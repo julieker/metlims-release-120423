@@ -193,6 +193,18 @@ public class ControlDAO extends BaseDAO
 	tempArray.add("Other Pool.4  (CS0000OP4)");
 	tempArray.add("Other Pool.5  (CS0000OP5)");
 
+    // issue 22
+	tempArray.add("MoTrPAC -   Hippocampus, Sedentary  (CSMR80025)");
+	tempArray.add("MoTrPAC -   Hippocampus, Exercise  (CSMR80024)");
+	tempArray.add("MoTrPAC -   Brown Adipose, Sedentary  (CSMR80023)");
+	tempArray.add("MoTrPAC -   Brown Adipose, Exercise  (CSMR80022)");
+	tempArray.add("MoTrPAC -   Heart, Sedentary  (CSMR80021)");
+	tempArray.add("MoTrPAC -   Heart, Exercise (CSMR80020)");
+	tempArray.add("MoTrPAC -   Kidney, Sedentary (CSMR80019)");
+	tempArray.add("MoTrPAC -   Kidney, Exercise (CSMR80018)");
+	tempArray.add("MoTrPAC -   Lung, Sedentary (CSMR80017)");
+	tempArray.add("MoTrPAC -   Lung, Exercise (CSMR80016)");
+	
 	// Issue 422
 	tempArray.add("MoTrPAC -   Plasma, Sedentary  (CSMR80015)");
 	tempArray.add("MoTrPAC -   Plasma, Exercise (CSMR80014)");

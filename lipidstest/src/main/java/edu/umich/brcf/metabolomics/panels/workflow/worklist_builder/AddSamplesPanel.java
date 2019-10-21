@@ -554,6 +554,17 @@ public class AddSamplesPanel extends Panel
 		((MedWorksSession) Session.get()).setNRatG(0);
 		((MedWorksSession) Session.get()).setNRatL(0);
 		((MedWorksSession) Session.get()).setNRatA(0);
+		// issue 22
+		((MedWorksSession) Session.get()).setNLungExercise(0);
+		((MedWorksSession) Session.get()).setNLungSedentary(0);
+		((MedWorksSession) Session.get()).setNHeartExercise(0);
+		((MedWorksSession) Session.get()).setNHeartSedentary(0);
+		((MedWorksSession) Session.get()).setNKidneyExercise(0);
+		((MedWorksSession) Session.get()).setNKidneySedentary(0);
+		((MedWorksSession) Session.get()).setNBrownAdiposeExercise(0);
+		((MedWorksSession) Session.get()).setNBrownAdiposeSedentary(0);
+		((MedWorksSession) Session.get()).setNHippoCampusExercise(0);
+		((MedWorksSession) Session.get()).setNHippoCampusSedentary(0);
 		}
 	
 	// issue 432

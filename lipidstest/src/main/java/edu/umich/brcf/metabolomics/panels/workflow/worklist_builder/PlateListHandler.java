@@ -36,6 +36,9 @@ public class PlateListHandler implements Serializable
 	// issue 422
 	public static List <String> CONTROL_TYPES_IN_END_TO_START_ORDER = Arrays.asList(new String []
 		     { "R00CHRUR1",   "R00CHRUR2", "R00CHRPL1", "R00CHRPL2",
+		    // issue 22
+		    "CSMR80025","CSMR80024","CSMR80023","CSMR80022", "CSMR80021",
+		    "CSMR80020","CSMR80019","CSMR80018","CSMR80017", "CSMR80016",
 			"CSMR80015",   "CSMR80014", "CSMR80013", "CSMR80012",
 			"CSMR80011",   "CSMR80010", "CSMR80009", "CSMR80008","CS0UMRP01", "CS0UMRA01","CS0UMRL01", "CS0UMRG01", 
 			"CS00000RC",   "CS00000MP", 
@@ -293,11 +296,17 @@ public class PlateListHandler implements Serializable
 				idxForPage = 0;
 				plate++;
 				spotsLeft = (plate == 2 ? nSpotsLeftOn2 : nPositions); 
+				// issue 404
+				if (plate ==2 && nSpotsLeftOn2 == 0 ) 
+				    {
+				    plate ++;
+				    spotsLeft = nPositions;
+				    }
 				idx = 1;
 				}
 			plateStr = "";
 			if (!useCarousel)
-				plateStr = ((plate > 0 && spotsLeft >= 0)? "P" + plate + "-" : "");			
+				plateStr = ( "P" + plate + "-");
 			targetIdx = idxForPage % nPositions;
 			if (item.getSampleName().indexOf("CS000QCMP") > 0)
 			    {

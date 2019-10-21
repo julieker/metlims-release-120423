@@ -200,6 +200,18 @@ public class AddControlsPanel extends Panel
 		return drp;
 		}
 
+	// issue 22
+	private int getTotalNullControlTypes(List<WorklistControlGroup> controlGroupList) 
+		{
+		int totNull = 0;
+		for (WorklistControlGroup grp : controlGroupList)
+			{
+			if (grp.getControlType() == null) // issue 22
+				totNull++;
+			}
+		return totNull + 1;
+		}
+		
 	// issue 17
 	private boolean doBothQCMPandMPExist (WorklistSimple originalWorklist)
 	    {
@@ -207,12 +219,15 @@ public class AddControlsPanel extends Panel
 		boolean QCMPExists = false;
 		for (WorklistControlGroup grp : originalWorklist.getControlGroupsList())
 			{
-			if (grp.getControlType().indexOf("CS00000MP") > -1 && (!MPExists))
-				MPExists = true;
-			if (grp.getControlType().indexOf("CS000QCMP") > -1 && (!QCMPExists))
-				QCMPExists = true;
-			if (MPExists && QCMPExists)
-				return true;
+			if (grp.getControlType() != null) // issue 22
+				{
+				if (grp.getControlType().indexOf("CS00000MP") > -1 && (!MPExists))
+					MPExists = true;
+				if (grp.getControlType().indexOf("CS000QCMP") > -1 && (!QCMPExists))
+					QCMPExists = true;
+				if (MPExists && QCMPExists)
+					return true;
+				}
 			}
 		return false;
 	    }
@@ -235,7 +250,7 @@ public class AddControlsPanel extends Panel
 			        	{
 		        		target.appendJavaScript(StringUtils.makeAlertMessage("The control type:" + countPair.getTag() + " will have " + (countPair.getCount() - item.getIntQuantity()) + " entries. Please limit this to " + originalWorklist.getLimitNumberControls() + " before deleting. "));
 		        		return;	
-			        	}
+			        	}			
 					originalWorklist.deleteControlItem(item);
 					if (! doBothQCMPandMPExist(originalWorklist))
 						originalWorklist.setBothQCMPandMP(false);
@@ -270,10 +285,19 @@ public class AddControlsPanel extends Panel
 				return !StringUtils.isEmptyOrNull(item.getControlType()) && !item.getQuantity().equals("0")
 						&& !item.getDirection().equals("") && !StringUtils.isEmptyOrNull(item.getRelatedSample());
 				}
-
 			@Override
 			public void onClick(AjaxRequestTarget target)
 				{
+			  	// issue 22
+	        	Map<String, Integer> controlTypeMap = originalWorklist.buildControlTypeMap();
+	        	// issue 22
+	        	int numberDistinctControls = controlTypeMap.size()  ;
+	        	int numberNullControls = getTotalNullControlTypes(controlGroupsList);
+	        	if ( numberDistinctControls + numberNullControls - (numberNullControls > 1 ? 1 : 0 ) > originalWorklist.getMaxItemsAsInt())
+	        	    {		        		
+	        		target.appendJavaScript(StringUtils.makeAlertMessage("By adding a control there will be: " + (numberDistinctControls + numberNullControls  - (numberNullControls > 1 ? 1 : 0 )) + " total controls.  Please delete controls before adding to bring the number down to: " + originalWorklist.getMaxItemsAsInt() +  " or less") );
+	        		return;
+	        	    }		
 				originalWorklist.addControlGroup();
 				target.add(container);
 				}
@@ -398,7 +422,15 @@ public class AddControlsPanel extends Panel
 			        	{
 		        		target.appendJavaScript(StringUtils.makeAlertMessage("The control type:" + countPair.getTag() + " has " + countPair.getCount() + " entries. Please limit this to " + originalWorklist.getLimitNumberControls()));
 		        		return;	
-			        	}				
+			        	}
+		          	// issue 404 issue 8
+		        	Map<String, Integer> controlTypeMap = originalWorklist.buildControlTypeMap();
+		        	int numberDistinctControls = controlTypeMap.size()  ;
+		        	if ( numberDistinctControls > originalWorklist.getMaxItemsAsInt())
+		        	    {
+		        		target.appendJavaScript(StringUtils.makeAlertMessage("There are currently: " + numberDistinctControls + " total User Defined and standard controls.  Please add fewer standard controls to keep this number at " + originalWorklist.getMaxItemsAsInt() +  " or less") );
+		        		return;
+		        	    }
 				originalWorklist.rebuildEverything();
 				// issue 426
 				String circularSample = originalWorklist.isThereCircular();

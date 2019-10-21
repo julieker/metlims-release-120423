@@ -357,6 +357,27 @@ public class WorklistFieldBuilder implements Serializable
 			style += "#F6C9CC";	
 		else if (item.getSampleType().startsWith("UM rat   gastrocnemius control"))
 			style += "#D0A9AA";	
+		// issue 22
+		else if (item.getSampleType().startsWith("MoTrPAC -   Lung, Exercise"))
+			style += "#FFDF00";
+		else if (item.getSampleType().startsWith("MoTrPAC -   Lung, Sedentary"))
+			style += "#D4AF37";
+		else if (item.getSampleType().startsWith("MoTrPAC -   Kidney, Exercise"))
+			style += "#CFB53B";
+		else if (item.getSampleType().startsWith("MoTrPAC -   Kidney, Sedentary"))
+			style += "#C5B358";
+		else if (item.getSampleType().startsWith("MoTrPAC -   Heart, Exercise"))
+			style += "#E6BE8A";
+		else if (item.getSampleType().startsWith("MoTrPAC -   Heart, Sedentary"))
+			style += "#DAA520";
+		else if (item.getSampleType().startsWith("MoTrPAC -   Brown Adipose, Exercise"))
+			style += "#CD853F";
+		else if (item.getSampleType().startsWith("MoTrPAC -   Brown Adipose, Sedentary"))
+			style += "#D2691E";
+		else if (item.getSampleType().startsWith("MoTrPAC -   Hippocampus, Exercise"))
+			style += "#EEE8AA";
+		else if (item.getSampleType().startsWith("MoTrPAC -   Hippocampus, Sedentary"))
+			style += "#FAFAD2";
 		
 		// color will be good choice when pool1b is no longer use 
 		else if (item.getRepresentsUserDefinedControl())
