@@ -10,6 +10,9 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.apache.wicket.Session;
+
+import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.util.interfaces.ICommentObject;
 import edu.umich.brcf.shared.util.interfaces.IWriteConvertable;
 import edu.umich.brcf.shared.util.structures.SelectableObject;
@@ -492,21 +495,21 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		return sb.toString();
 		}
 
+	// issue 25
 	public String writeInAgilentFormat(char separator)
 		{
-		StringBuilder sb = new StringBuilder();
-
+		StringBuilder sb = new StringBuilder();       
 		sb.append(this.getRandomIdx().toString() + separator);
 		sb.append(this.getSampleName() + separator);
 		sb.append(this.getSamplePosition() + separator);
 		sb.append(this.getInjectionVolume() + separator);
 		sb.append(this.getMethodFileName() + separator);
 		sb.append(this.getOverrideMethod() + separator);
-		sb.append(this.getOutputFileName());
-
+		// issue 25
+		sb.append(this.getOutputFileName());       
 		return sb.toString();
 		}
-
+	
 	public WorklistGroup getGroup()
 		{
 		return group;

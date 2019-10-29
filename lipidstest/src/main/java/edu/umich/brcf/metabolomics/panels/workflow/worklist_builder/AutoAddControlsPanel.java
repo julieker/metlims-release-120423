@@ -231,7 +231,8 @@ public class AutoAddControlsPanel extends Panel
 	        		{
 	        		target.appendJavaScript(StringUtils.makeAlertMessage("There is customization for Pool B.  Please choose a value for Pool Spacing B "));
 	        		return;
-	        		}		        	
+	        		}
+	        	
 	        	// issue 17
 	        	worklist.setBothQCMPandMP (StringParser.parseId(poolTypeA).equals("CS00000MP") && StringParser.parseId(poolTypeB).equals("CS000QCMP") && poolSpacingA > 0 && poolSpacingB > 0);
 	        	       		
@@ -896,7 +897,7 @@ public class AutoAddControlsPanel extends Panel
  		    public void onClose(AjaxRequestTarget target)
  			    {	
                 // refresh worklist on callback ,  will need to update the page too..
-                // issue 22 worklist.rebuildEverything();    
+                // issue 22 worklist.rebuildEverything(); 
  			    }		
  		    });
 

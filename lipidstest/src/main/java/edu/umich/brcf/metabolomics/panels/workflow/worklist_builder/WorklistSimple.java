@@ -76,6 +76,18 @@ public class WorklistSimple implements Serializable
 	private boolean bothQCMPandMP = false; // issue 17
 	private int amountToPad = 2; // issue 16
 	private int limitNumberControls = 99;
+	// issue 27
+	// issue 25
+	public int getAmountToPad ()
+		{
+		return amountToPad;
+		}
+
+    // issue 25
+	public void setAmountToPad (int vAmountToPad)
+		{
+		amountToPad =  vAmountToPad;
+		}
 	
 	// issue 17
 	public boolean getBothQCMPandMP ()

@@ -112,6 +112,20 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 	    return sheet;
 	    }
 	
+	// issue 25
+	private String fileNamePredicateWithIdda(String vOutputFileName, String iddaString)
+		{
+		String fileName = "";
+		String [] fileNameArray = StringUtils.splitAndTrim(vOutputFileName, "\\\\");
+		if (fileNameArray.length >= 7)
+			{
+			fileName = fileNameArray[0] + "\\"  +  fileNameArray[1] + "\\"  + fileNameArray[2] + "\\" +  fileNameArray[3] + "\\" + fileNameArray[4] + "\\" + fileNameArray[5] +  "\\IDDA\\" + iddaString; 
+			return fileName;
+			}
+	    return "";
+		}
+	
+	
 	// issue 450
 	public Sheet createWorklistSheet(String title, Workbook workBook, WorklistSimple worklist, boolean isPlatformAgilent, String strMode)
 		{
@@ -122,7 +136,8 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		List<WorklistItemSimple> items = worklist.getItems();
 		List<String> headers = worklist.getColTitles();
 		int rowCt = 0;
-	
+	    String outputFileNameBase = "";
+	    boolean initializedOutputFileNameBase = false;
 		// issue 450
 		//Sheet sheet = createEmptySheet("Worklist Builder Sheet",  workBook, 1, worklist.getColTitles(), 1);
 		Sheet sheet = createEmptySheet(title,  workBook, 1, worklist.getColTitles(), 1);
@@ -132,9 +147,14 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		rowCt++;
 		for (WorklistItemSimple item : items)
 			{
+			// issue 25
+			if (!initializedOutputFileNameBase)
+				{
+			    outputFileNameBase = item.getOutputFileName();
+			    initializedOutputFileNameBase = true;
+				}			
 			String itemStr = item.toCharDelimited(",");	
 			String [] tokens = StringUtils.splitAndTrim(itemStr, ",", true);
-			
 			PoiUtils.createBlankRow(rowCt,  sheet);
 			for (int i = 0; i < tokens.length; i++)
 				{				
@@ -148,23 +168,26 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 			rowCt++;
 			}
 		// issue 432
-		printOutIDDA  (workBook, sheet, rowCt, strMode) ; 
+		// issue 25		
+		if (worklist.getControlGroupsList().size() > 1)
+			printOutIDDA  (workBook, sheet, rowCt, strMode, outputFileNameBase) ; 
 		return sheet;
 		}
 	
 	// issue 432
-	public String grabPlatePosition(String lastPoolName)
+	public String grabPlatePosition()
 		{
 		for (WorklistItemSimple item : worklist.getItems())	
 			{
-			if (item.getSampleName().equals(lastPoolName))
+			// issue 27
+			if (item.getSampleName().contains(worklist.getPoolTypeA()))
 				return item.getSamplePosition();
 			}
 		return null;
 		}
 	
 	// issue 432
-	public void printOutIDDA(Workbook workBook, Sheet sheet, int rowCt, String strMode)
+	public void printOutIDDA(Workbook workBook, Sheet sheet, int rowCt, String strMode, String outputFileBase)
 		{
 		Font font = workBook.createFont();
 	    XSSFCellStyle styleColorBlue = grabStyleWhite(workBook, true);
@@ -182,63 +205,60 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
         styleItalic.setAlignment(HorizontalAlignment.LEFT);
         styleItalic.setIndention((short) 2);
         styleItalic.setFont(font);
-
+        
         PoiUtils.createBlankRow(rowCt++,  sheet);
-        PoiUtils.createBlankRow(rowCt++,  sheet);
-            
-        int startPoint = worklist.getMasterPoolsBefore() + worklist.getLastPoolBlockNumber() + 1;
-        String iddaPlatePos = grabPlatePosition(worklist.getPoolTypeA() + "-" + startPoint) ;
-        String iddaStr = "";
+        PoiUtils.createBlankRow(rowCt++,  sheet);     
+        int startPoint = worklist.getMasterPoolsBefore() + worklist.getLastPoolBlockNumber() + 1 + worklist.getMasterPoolsAfter();// issue 25
+        String iddaPlatePos = grabPlatePosition() ;// issue 27
         String fileStr = worklist.grabOutputFileNameIDDA();
-        // issue 456
-        Integer numToPad = startPoint + worklist.getMasterPoolsAfter() -1;
-        numToPad = numToPad.toString().length();
-		for (int i = startPoint; i < startPoint + worklist.getMasterPoolsAfter();i++)
-			{
-			iddaStr = 	worklist.getPoolTypeA() + "-" + String.format("%0" + numToPad +"d",i); // issue 456 // issue 13
-			for (int j = 0; j <= ((MedWorksSession) Session.get()).getNCE10Reps();j++)
-			    {
-				if (((MedWorksSession) Session.get()).getNCE10Reps() == 0)
-					continue;
-				PoiUtils.createBlankRow(rowCt,  sheet);
-				if (j==0) // issue 453
-					fileStr = worklist.grabOutputFileNameIDDA() + "-"  + iddaStr + "-" + (strMode.contains("Positive") ? "P" : "N") + ".d"  ;
-				else
-					fileStr = worklist.grabOutputFileNameIDDA() + "-" +iddaStr +  "-IDDA_ce10" + "_" + j + "-" + (strMode.contains("Positive") ? "P" : "N") +   ".d";
-			    PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
-                PoiUtils.createRowEntry(rowCt,CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
-                PoiUtils.createRowEntry(rowCt,IDDADATAFILECOL, sheet, fileStr, j == 0 ? styleColorBlue : styleStandard); //use constant
-			    rowCt ++;
-			    }
-			for (int j = 0; j <= ((MedWorksSession) Session.get()).getNCE20Reps();j++)
-			    {
-				if (((MedWorksSession) Session.get()).getNCE20Reps() == 0)
-					continue;
-				PoiUtils.createBlankRow(rowCt,  sheet);
-				if (j==0) // issue 453
-					fileStr = worklist.grabOutputFileNameIDDA() + "-"  + iddaStr + "-" + (strMode.contains("Positive") ? "P" : "N") + ".d"  ;
-				else
-			        fileStr = worklist.grabOutputFileNameIDDA() + "-" +iddaStr +  "-IDDA_ce20" + "_" + j + "-" + (strMode.contains("Positive") ? "P" : "N") +   ".d";
-				PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
-	            PoiUtils.createRowEntry(rowCt, CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
-	            PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, fileStr, j == 0 ? styleColorBlue : styleStandard); //use constant
-			    rowCt ++;
-			    }
-			for (int j = 0; j <= ((MedWorksSession) Session.get()).getNCE40Reps();j++)
-			    { 
-				if (((MedWorksSession) Session.get()).getNCE40Reps() == 0)
-					continue;
-				PoiUtils.createBlankRow(rowCt,  sheet);
-			    if (j==0) // issue 453
-					fileStr = worklist.grabOutputFileNameIDDA() + "-"  + iddaStr + "-" + (strMode.contains("Positive") ? "P" : "N") + ".d"  ;
-				else
-					fileStr = worklist.grabOutputFileNameIDDA() + "-" +iddaStr +  "-IDDA_ce40" + "_" + j + "-" + (strMode.contains("Positive") ? "P" : "N") +   ".d";
-			    PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
-	            PoiUtils.createRowEntry(rowCt, CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
-	            PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, fileStr, j == 0 ? styleColorBlue : styleStandard); //use constant
-			    rowCt ++;
-			    }			
+        /// issue 25
+		String iddaStr = 	worklist.getPoolTypeA() + "-" + String.format("%0" + worklist.getAmountToPad() +"d",startPoint); // issue 456 // issue 13
+		for (int j = 0; j <= ((MedWorksSession) Session.get()).getNCE10Reps();j++)
+		    {
+			if (((MedWorksSession) Session.get()).getNCE10Reps() == 0)
+				continue;
+			PoiUtils.createBlankRow(rowCt,  sheet);
+			if (j==0) // issue 453
+				fileStr = worklist.grabOutputFileNameIDDA() + "-"  + iddaStr + "-" + (strMode.contains("Positive") ? "P" : "N") + ".d"  ;
+			else
+				fileStr = worklist.grabOutputFileNameIDDA() + "-" +iddaStr +  "-IDDA_ce10" + "_" + j + "-" + (strMode.contains("Positive") ? "P" : "N") +   ".d";
+		    PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
+            PoiUtils.createRowEntry(rowCt,CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
+            PoiUtils.createRowEntry(rowCt,IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
+		    rowCt ++;
 		    }
+        startPoint++;
+        iddaStr = 	worklist.getPoolTypeA() + "-" + String.format("%0" + worklist.getAmountToPad() +"d",startPoint);
+		for (int j = 0; j <= ((MedWorksSession) Session.get()).getNCE20Reps();j++)
+		    {
+			if (((MedWorksSession) Session.get()).getNCE20Reps() == 0)
+				continue;
+			PoiUtils.createBlankRow(rowCt,  sheet);
+			if (j==0) // issue 453
+				fileStr = worklist.grabOutputFileNameIDDA() + "-"  + iddaStr + "-" + (strMode.contains("Positive") ? "P" : "N") + ".d"  ;
+			else
+		        fileStr = worklist.grabOutputFileNameIDDA() + "-" +iddaStr +  "-IDDA_ce20" + "_" + j + "-" + (strMode.contains("Positive") ? "P" : "N") +   ".d";
+			PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
+            PoiUtils.createRowEntry(rowCt, CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
+            PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
+		    rowCt ++;
+		    }
+		startPoint++;
+        iddaStr = 	worklist.getPoolTypeA() + "-" + String.format("%0" + worklist.getAmountToPad() +"d",startPoint);
+		for (int j = 0; j <= ((MedWorksSession) Session.get()).getNCE40Reps();j++)
+		    { 
+			if (((MedWorksSession) Session.get()).getNCE40Reps() == 0)
+				continue;
+			PoiUtils.createBlankRow(rowCt,  sheet);
+		    if (j==0) // issue 453
+				fileStr = worklist.grabOutputFileNameIDDA() + "-"  + iddaStr + "-" + (strMode.contains("Positive") ? "P" : "N") + ".d"  ;
+			else
+				fileStr = worklist.grabOutputFileNameIDDA() + "-" +iddaStr +  "-IDDA_ce40" + "_" + j + "-" + (strMode.contains("Positive") ? "P" : "N") +   ".d";
+		    PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
+            PoiUtils.createRowEntry(rowCt, CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
+            PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
+		    rowCt ++;
+		    }			
 	    }
 	}
 

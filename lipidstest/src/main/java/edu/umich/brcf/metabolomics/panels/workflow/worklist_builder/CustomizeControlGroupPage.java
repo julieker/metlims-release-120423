@@ -23,6 +23,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
+import edu.umich.brcf.shared.util.io.StringUtils;
 import edu.umich.brcf.shared.util.widgets.AjaxCancelLink;
 
 
@@ -43,10 +44,8 @@ public final class CustomizeControlGroupForm extends Form
 	
 	public CustomizeControlGroupForm(final String id, final ModalWindow modal1)
 		{
-		super(id);
-		
+		super(id);	
 		initializeValuesFromSession();
-		
 		add(buildCountDropdown("nMasterBefore", "nMasterBefore")); 
 		add(buildCountDropdown("nMasterAfter", "nMasterAfter")); 
 		add(buildCountDropdown("nBatchBefore", "nBatchBefore")); 
@@ -59,6 +58,12 @@ public final class CustomizeControlGroupForm extends Form
 			@Override
 			public void onClick(AjaxRequestTarget target) 
 				{
+			 	// issue 25
+	        	if ( ( nCE10Reps > 0  || nCE20Reps > 0 || nCE40Reps > 0 ) &&  nMasterAfter == 0    )
+		        	{
+	        		target.appendJavaScript(StringUtils.makeAlertMessage("There are NCE values for an IDDA run.  Please choose an after amount for Pool A "));
+	        		return;	
+		        	}
 				CustomizeControlGroupPage.this.onSave(getNMasterBefore(), getNMasterAfter(), getNBatchBefore(), getNBatchAfter(), getNCE10Reps(),  getNCE20Reps(), getNCE40Reps());
 				if (modal1 != null)
 					modal1.close(target);
