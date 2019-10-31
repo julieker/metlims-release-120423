@@ -900,7 +900,6 @@ public class AutoAddControlsPanel extends Panel
                 // issue 22 worklist.rebuildEverything(); 
  			    }		
  		    });
-
  	    // issue 432
  	    AjaxLink link = new AjaxLink<Void>(linkID) 
  		    {
@@ -918,33 +917,32 @@ public class AutoAddControlsPanel extends Panel
 	 			modal1.setInitialWidth(1100);
 	 			modal1.setInitialHeight(450);
 	 			modal1.setPageCreator(new ModalWindow.PageCreator()
- 				{
- 				public Page createPage()
- 					{
- 					// issue 432
- 					return new CustomizeControlGroupPage(modal1)
-           			    {
- 						@Override
- 						protected void onSave(Integer nMasterBefore, Integer nMasterAfter, Integer nBatchBefore, Integer nBatchAfter, Integer nCE10Reps, Integer nCE20Reps, Integer nCE40Reps ) 
- 							{
- 							((MedWorksSession) Session.get()).setNMasterPoolsBefore(nMasterBefore);		
- 							((MedWorksSession) Session.get()).setNMasterPoolsAfter(nMasterAfter);	
- 							((MedWorksSession) Session.get()).setNBatchPoolsBefore(nBatchBefore);	
- 							((MedWorksSession) Session.get()).setNBatchPoolsAfter(nBatchAfter);	
- 							((MedWorksSession) Session.get()).setNCE10Reps(nCE10Reps);	
- 							((MedWorksSession) Session.get()).setNCE20Reps(nCE20Reps);	
- 							((MedWorksSession) Session.get()).setNCE40Reps(nCE40Reps);	
- 			  			    }
-           			    };
- 					}
- 				});  
- 			modal1.show(target);
- 			
- 			}
- 		};
+	 				{
+	 				public Page createPage()
+	 					{
+	 					// issue 432
+	 					return new CustomizeControlGroupPage(modal1)
+	           			    {
+	 						@Override
+	 						protected void onSave(Integer nMasterBefore, Integer nMasterAfter, Integer nBatchBefore, Integer nBatchAfter, Integer nCE10Reps, Integer nCE20Reps, Integer nCE40Reps ) 
+	 							{
+	 							((MedWorksSession) Session.get()).setNMasterPoolsBefore(nMasterBefore);		
+	 							((MedWorksSession) Session.get()).setNMasterPoolsAfter(nMasterAfter);	
+	 							((MedWorksSession) Session.get()).setNBatchPoolsBefore(nBatchBefore);	
+	 							((MedWorksSession) Session.get()).setNBatchPoolsAfter(nBatchAfter);	
+	 							((MedWorksSession) Session.get()).setNCE10Reps(nCE10Reps);	
+	 							((MedWorksSession) Session.get()).setNCE20Reps(nCE20Reps);	
+	 							((MedWorksSession) Session.get()).setNCE40Reps(nCE40Reps);	
+	 			  			    }
+	           			    };
+	 					}
+	 				});  
+ 			    modal1.show(target);			
+ 			    }
+ 		    };
  	    link.setOutputMarkupId(true);
  	    return link;
- 	    }
+ 	    } 
 
      //Issue 422
     
@@ -959,7 +957,6 @@ public class AutoAddControlsPanel extends Panel
             // issue 22    worklist.rebuildEverything();
 			    }		
 		    });
-
 	    AjaxLink link = new AjaxLink<Void>(linkID) 
 		    {
 	    	@Override
@@ -968,16 +965,14 @@ public class AutoAddControlsPanel extends Panel
 	    		// issue 431
 	    		if (originalWorklist.getItems().size() == 0)
 	    		    return false;
-	    		return true;
-	    		 
+	    		return true;	    		 
 			    }
 		    @Override
 		    public void onClick(final AjaxRequestTarget target)
 			    {
 			    modal1.setInitialWidth(1100);
 			    modal1.setInitialHeight(550);// issue 427
-			    modal1.setPageCreator(new ModalWindow.PageCreator()
-			    
+			    modal1.setPageCreator(new ModalWindow.PageCreator()			    
 					{
 					public Page createPage()
 						{
@@ -1018,8 +1013,7 @@ public class AutoAddControlsPanel extends Panel
 				  			    }
 	       			        };
 						}
-					});   
-		    
+					});   		    
 		    modal1.show(target); 
 			}
 		};
