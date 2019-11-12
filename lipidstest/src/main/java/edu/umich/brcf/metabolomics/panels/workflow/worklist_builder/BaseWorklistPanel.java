@@ -14,11 +14,13 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.markup.html.navigation.paging.IPagingLabelProvider;
@@ -28,6 +30,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.validation.validator.StringValidator;
 
 import edu.umich.brcf.metabolomics.layers.service.GeneratedWorklistService;
 import edu.umich.brcf.metabolomics.panels.admin.accounts.UserRegistrationPage;
@@ -59,7 +62,7 @@ public abstract class BaseWorklistPanel extends Panel
 	protected ModalWindow modal1;
 	protected List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
     protected ICommentObject commentObject;
-    
+    private int maxLength = 50;
     
 	public BaseWorklistPanel(String id)
 		{
@@ -91,17 +94,21 @@ public abstract class BaseWorklistPanel extends Panel
 
 		container.add(this.buildSelectAllBox(id, container));
 		container.add(this.buildIncludeSampleName(id, container));// issue 288
+		// issue 32 
+		container.add(this.buildCustomDirectoryStructure( container));
+	    // issue 32	
+		container.add(this.buildCustomDirectoryName( container));
+		container.add(this.buildCustomDirectoryLabel( container));
+		
+		
 		container.add(worklistView = buildListView());
 		worklistView.setOutputMarkupId(true);
-
 		container.add(new Label("tableLabel", new Model("Worklist Preview")));
-
 		container.add(pagingNavigator = buildPagingNavigator("navigator",worklistView));
 		pagingNavigator.setOutputMarkupId(true);
 
 		container.setOutputMarkupId(true);
 		}
-
 	
 	public PageableListView buildListView()
 		{
@@ -114,7 +121,6 @@ public abstract class BaseWorklistPanel extends Panel
 				}
 			};
 		}
-	
 	
 	protected AjaxLink buildCommentsButton(String id, final WorklistItemSimple item)
 		{
@@ -246,6 +252,71 @@ public abstract class BaseWorklistPanel extends Panel
 	
 	
 	// issue 288 
+	// issue 32
+	protected AjaxCheckBox buildCustomDirectoryStructure( final WebMarkupContainer container)
+	    {
+	    AjaxCheckBox box = new AjaxCheckBox("customDirectoryStructure", new PropertyModel(worklist, "isCustomDirectoryStructure"))
+		    {
+		    @Override
+		    public void onUpdate(AjaxRequestTarget target)
+			    {
+		    	worklist.updateOutputFileNames();
+				target.add(container);
+			    }
+		    };
+	    return box;
+	    }
+	
+	// issue 32
+	protected TextField buildCustomDirectoryName( final WebMarkupContainer container)
+	    {
+		TextField<String> custDirectoryFld = new TextField<String>("customFileName", new PropertyModel(worklist, "customDirectoryStructureName"))
+		    {
+		    @Override
+		    public boolean isVisible()
+			    {
+			    return worklist.getIsCustomDirectoryStructure();	
+			    }
+		    };
+		custDirectoryFld.add(this.buildStandardFormComponentUpdateBehavior("change", "updateCustomDirectory"));    
+		custDirectoryFld.add(StringValidator.maximumLength(maxLength));
+		return custDirectoryFld;
+	    }
+	
+	// issue 32
+	protected Label buildCustomDirectoryLabel( final WebMarkupContainer container)
+	    {
+		Label customDirLabel = new Label("customDirectoryLabel", new Model("Custom Directory for IDDA:"))
+	        {
+		    @Override
+		    public boolean isVisible()
+			    {
+			    return worklist.getIsCustomDirectoryStructure();	
+			    }
+		    };	
+		return customDirLabel;
+	    }
+	
+	/// issue 32
+	private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior(final String event, final String response)
+	    {
+	    return new AjaxFormComponentUpdatingBehavior(event)
+		    {
+	    	@Override
+			protected void onUpdate(AjaxRequestTarget target)
+				{
+	    		switch (response)
+					{
+					case "updateCustomDirectory":
+						//worklist.updateOutputFileNames();
+						target.add(container);
+						break;
+					}
+				}
+		    };
+		}
+	
+	// issue 32
 	protected AjaxCheckBox buildIncludeSampleName(String id, final WebMarkupContainer container)
 	    {
 	    AjaxCheckBox box = new AjaxCheckBox("includeResearcherId", new PropertyModel(worklist, "includeResearcherId"))

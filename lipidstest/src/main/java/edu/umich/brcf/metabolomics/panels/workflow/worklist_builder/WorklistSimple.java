@@ -21,9 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.wicket.Session;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -58,6 +55,8 @@ public class WorklistSimple implements Serializable
 	private Boolean openForUpdates = true;
 	private boolean plateWarningGiven = false, plateWarningGivenTwice = false;
 	private boolean includeResearcherId = true; // issue 288 issue 312
+	private boolean isCustomDirectoryStructure = false; // issue 32
+	private String customDirectoryStructureName = "<custom directory>"; // issue 32
 	private ArrayList <String> sampleNamesArray = new ArrayList<String>();
 	private List <WorklistItemSimple> items = new ArrayList <WorklistItemSimple>();
 	private List <WorklistSampleGroup> sampleGroupsList = new ArrayList<WorklistSampleGroup>();
@@ -1140,8 +1139,7 @@ public class WorklistSimple implements Serializable
 			String dts,  String instrument, String mode)
 		{
 		String tagLabel = ""; //(tag != null && tag.length() > 0) ? tag + "-" : "";
-		
-		return "D:\\MassHunter\\Data\\" + yearStr + "\\" +  monthAsStr + "\\" + expId +  "\\" + dts + "-" + expId + "-" + aid
+		return "D:\\MassHunter\\Data\\" + yearStr + "\\" +  monthAsStr + "\\" + expId +  "\\"  + dts + "-" + expId + "-" + aid
  					+ "-" + instrument + "-" + tagLabel + sampleLabel + "-" + mode;
 		}
 	
@@ -1301,6 +1299,28 @@ public class WorklistSimple implements Serializable
 		return includeResearcherId;
 		}
 	
+	// issue 32
+	public void setIsCustomDirectoryStructure(Boolean isCustStruct) // issue 288
+		{
+		isCustomDirectoryStructure= isCustStruct;
+		}
+
+    public Boolean getIsCustomDirectoryStructure() // issue 288
+		{
+		return isCustomDirectoryStructure;
+		}
+    
+ // issue 32
+ 	public void setCustomDirectoryStructureName(String vcustStructName) // issue 288
+ 		{
+ 		customDirectoryStructureName= vcustStructName;
+ 		}
+
+     public String getCustomDirectoryStructureName() // issue 288
+ 		{
+ 		return customDirectoryStructureName;
+ 		}
+    	
 	public void setRandomizeByPlate(Boolean rp) // issue 416
 		{
 		randomizeByPlate= rp;		

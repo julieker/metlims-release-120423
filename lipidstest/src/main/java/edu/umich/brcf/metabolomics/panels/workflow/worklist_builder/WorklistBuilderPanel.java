@@ -522,7 +522,6 @@ public class WorklistBuilderPanel extends Panel
 			{
 			TextField<String> fld = new TextField<String>(id, new PropertyModel(worklist, "defaultMethodFileName"));
 			fld.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForMethodFile"));
-
 			return fld;
 			}
 

@@ -116,6 +116,10 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 	private String fileNamePredicateWithIdda(String vOutputFileName, String iddaString)
 		{
 		String fileName = "";
+		// issue 32
+		if (worklist.getIsCustomDirectoryStructure())
+		    return worklist.getCustomDirectoryStructureName() + "\\" + iddaString; ;	
+			
 		if (vOutputFileName.indexOf("\\") < 0 )
 		    return vOutputFileName;
 		String [] fileNameArray = StringUtils.splitAndTrim(vOutputFileName, "\\\\");
