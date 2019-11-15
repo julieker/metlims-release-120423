@@ -20,6 +20,7 @@ import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PageableListView;
@@ -260,7 +261,6 @@ public abstract class BaseWorklistPanel extends Panel
 		    @Override
 		    public void onUpdate(AjaxRequestTarget target)
 			    {
-		    	worklist.updateOutputFileNames();
 				target.add(container);
 			    }
 		    };
@@ -268,9 +268,9 @@ public abstract class BaseWorklistPanel extends Panel
 	    }
 	
 	// issue 32
-	protected TextField buildCustomDirectoryName( final WebMarkupContainer container)
+	protected TextArea buildCustomDirectoryName( final WebMarkupContainer container)
 	    {
-		TextField<String> custDirectoryFld = new TextField<String>("customFileName", new PropertyModel(worklist, "customDirectoryStructureName"))
+		TextArea <String> custDirectoryFld = new TextArea<String>("customFileName", new PropertyModel(worklist, "customDirectoryStructureName"))
 		    {
 		    @Override
 		    public boolean isVisible()
@@ -308,7 +308,6 @@ public abstract class BaseWorklistPanel extends Panel
 	    		switch (response)
 					{
 					case "updateCustomDirectory":
-						//worklist.updateOutputFileNames();
 						target.add(container);
 						break;
 					}
