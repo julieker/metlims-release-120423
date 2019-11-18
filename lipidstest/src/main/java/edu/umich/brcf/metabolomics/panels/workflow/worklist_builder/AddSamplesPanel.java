@@ -390,6 +390,9 @@ public class AddSamplesPanel extends Panel
 				originalWorklist.clearAll();
 				originalWorklist.updateSampleNamesArray();
 				secondBuild = false;
+				// issue 32
+				originalWorklist.setCustomDirectoryStructureName("<custom directory>");
+				originalWorklist.setIsCustomDirectoryStructure(false);
 				refreshPage(target);
 				}
 
@@ -454,6 +457,9 @@ public class AddSamplesPanel extends Panel
 							target.appendJavaScript("warning('Unable to determine assay name -- labelling output file with assay tag 'Error'.\n  "
 									+ "Please e-mail wiggie@umich.edu to report this error')");
 						originalWorklist.setDefaultAssayId(aid);
+						// issue 32
+						originalWorklist.setCustomDirectoryStructureName("<custom directory>");
+						originalWorklist.setIsCustomDirectoryStructure(false);
 						break;
 
 					case "updateForExperimentDrop":
@@ -475,6 +481,9 @@ public class AddSamplesPanel extends Panel
 							availableAssays = assayService.allAssayNamesForPlatformAndExpId(platform, eid);
 							// issue 464
 							item.setAssayType((availableAssays.size() == 1 ? availableAssays.get(0) : null));
+							// issue 32
+							originalWorklist.setCustomDirectoryStructureName("<custom directory>");
+							originalWorklist.setIsCustomDirectoryStructure(false);
 							} 
 						catch (Exception e)
 							{
