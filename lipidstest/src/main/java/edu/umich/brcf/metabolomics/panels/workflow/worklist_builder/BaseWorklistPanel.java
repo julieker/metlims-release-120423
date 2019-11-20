@@ -63,8 +63,7 @@ public abstract class BaseWorklistPanel extends Panel
 	protected ModalWindow modal1;
 	protected List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
     protected ICommentObject commentObject;
-    private int maxLength = 50;
-    
+    private int maxLength = 90;
 	public BaseWorklistPanel(String id)
 		{
 		this(id, null);
@@ -73,7 +72,8 @@ public abstract class BaseWorklistPanel extends Panel
 	public BaseWorklistPanel(String id, WorklistSimple w)
 		{
 		super(id);
-
+		
+		
 		container = new WebMarkupContainer("container");
 		add(container);
 
@@ -258,9 +258,17 @@ public abstract class BaseWorklistPanel extends Panel
 	    {
 	    AjaxCheckBox box = new AjaxCheckBox("customDirectoryStructure", new PropertyModel(worklist, "isCustomDirectoryStructure"))
 		    {
+	    	@Override
+		    public boolean isEnabled()
+			    {
+			    return worklist.getItems().size() > 0;	
+			    }
 		    @Override
 		    public void onUpdate(AjaxRequestTarget target)
 			    {
+		    	// issue 32
+		    	if (worklist.getIsCustomDirectoryStructure())
+		    		target.appendJavaScript("alert('Please enter in a non-blank custom IDDA directory');");
 				target.add(container);
 			    }
 		    };
@@ -268,9 +276,9 @@ public abstract class BaseWorklistPanel extends Panel
 	    }
 	
 	// issue 32
-	protected TextArea buildCustomDirectoryName( final WebMarkupContainer container)
+	protected TextField buildCustomDirectoryName( final WebMarkupContainer container)
 	    {
-		TextArea <String> custDirectoryFld = new TextArea<String>("customFileName", new PropertyModel(worklist, "customDirectoryStructureName"))
+	    TextField <String> custDirectoryFld = new TextField<String>("customFileName", new PropertyModel(worklist, "customDirectoryStructureName"))
 		    {
 		    @Override
 		    public boolean isVisible()
