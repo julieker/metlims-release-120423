@@ -475,6 +475,19 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		return null;
 		}
 
+	// issue 32
+	public String grabDataFileWithCustomDirectory()
+		{
+		if (this.getOutputFileName().indexOf("\\") < 0 )
+	        return parent.getCustomDirectoryStructureName() + "\\" + this.getOutputFileName();
+		else
+			{
+			String [] fileNameArray = StringUtils.splitAndTrim(this.getOutputFileName(), "\\\\");	
+			String lastPartDataFile = fileNameArray[fileNameArray.length -1];
+			return parent.getCustomDirectoryStructureName() + "\\" + lastPartDataFile;
+			}			
+	    }
+	
 	public String writeInAbsciexFormat(char separator)
 		{
 		StringBuilder sb = new StringBuilder();
@@ -506,7 +519,8 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		sb.append(this.getMethodFileName() + separator);
 		sb.append(this.getOverrideMethod() + separator);
 		// issue 25
-		sb.append(this.getOutputFileName());       
+		// issue 32
+		sb.append((parent.getIsCustomDirectoryStructure() ? this.grabDataFileWithCustomDirectory() : this.getOutputFileName()  )+ separator);      
 		return sb.toString();
 		}
 	
