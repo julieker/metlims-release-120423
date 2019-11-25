@@ -479,12 +479,12 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	public String grabDataFileWithCustomDirectory()
 		{
 		if (this.getOutputFileName().indexOf("\\") < 0 )
-	        return parent.getCustomDirectoryStructureName() + "\\" + this.getOutputFileName();
+	        return (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()) ? " " : parent.getCustomDirectoryStructureName()) + "\\" + this.getOutputFileName();
 		else
 			{
 			String [] fileNameArray = StringUtils.splitAndTrim(this.getOutputFileName(), "\\\\");	
 			String lastPartDataFile = fileNameArray[fileNameArray.length -1];
-			return parent.getCustomDirectoryStructureName() + "\\" + lastPartDataFile;
+			return (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()) ? " " : parent.getCustomDirectoryStructureName()) + "\\" + lastPartDataFile;
 			}			
 	    }
 	
