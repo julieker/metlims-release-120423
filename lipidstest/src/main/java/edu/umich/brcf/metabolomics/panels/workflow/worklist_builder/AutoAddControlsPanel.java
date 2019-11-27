@@ -306,6 +306,7 @@ public class AutoAddControlsPanel extends Panel
 		int nItems = worklist.getItems().size();
 		String firstSample =  nItems <= 0 ? null : worklist.getItem(0).getSampleName();
 		String lastSample =  nItems <= 0 ? null : worklist.getItem(nItems -1).getSampleName();
+		worklist.setLastSample(lastSample); // issue 29
 		String id = "", finalLabel = "";
 		
 		for (int i = 0; i < nBlanks; i++)

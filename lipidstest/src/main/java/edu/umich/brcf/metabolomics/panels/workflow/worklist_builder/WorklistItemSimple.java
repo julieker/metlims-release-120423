@@ -54,6 +54,19 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	private Boolean isDeleted, isHandEdited;
 
 	int belongsToPlate;
+	private int direction;
+	
+	// issue 29
+	public int getDirection ()
+		{
+		return this.direction;	
+		}
+		
+	//issue 29
+	public void setDirection (int vDirection)
+		{
+	    this.direction = vDirection;	
+		}
 
 	// issue 17
 	public String getMpQcmpName ()

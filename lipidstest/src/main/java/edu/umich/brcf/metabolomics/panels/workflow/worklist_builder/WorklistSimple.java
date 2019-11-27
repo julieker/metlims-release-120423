@@ -75,6 +75,31 @@ public class WorklistSimple implements Serializable
 	private boolean bothQCMPandMP = false; // issue 17
 	private int amountToPad = 2; // issue 16
 	private int limitNumberControls = 99;
+	private String lastSample ; // issue 29
+	private int startingPoint ; // issue 29
+	// issue 29
+	public String getLastSample()
+		{
+		return lastSample;	
+		}
+	
+	// issue 29
+	public void setLastSample(String vLastSample)
+		{
+		lastSample = vLastSample;
+		}
+	
+	// issue 29
+	public int getStartingPoint()
+		{
+		return startingPoint;	
+		}
+	
+	// issue 29
+	public void setStartingPoint(int vStartingpoint)
+		{
+		startingPoint = vStartingpoint;
+		}
 	// issue 27
 	// issue 25
 	public int getAmountToPad ()
@@ -492,6 +517,12 @@ public class WorklistSimple implements Serializable
 		        e.printStackTrace();
 		       // continue;
 		        }	
+	        // issue 29
+	        for (int i = 0; i< controlItemsToAdd.size(); i++)
+	            {
+	        	controlItemsToAdd.get(i).setRelatedSample(grp.getRelatedSample());
+	        	controlItemsToAdd.get(i).setDirection(grp.getDirection().equals("After") ? Constants.AFTER : Constants.BEFORE);
+	            }
 	        addItemsAt(insertPt, controlItemsToAdd); 
 	        ctrlTypeToRunningTotal = new HashMap<String, Integer>();	               
 	        ctrlTypeToRunningTotal = populateRunningTotalMap(ctrlTypeToRunningTotal) ; 
@@ -558,6 +589,8 @@ public class WorklistSimple implements Serializable
         //// issue 456
             if (this.getSelectedPlatform().equals("agilent"))
 	            {
+            	// issue 29
+            	this.setStartingPoint(0);
             	//Integer iTotalControlType = getPadding();
 		        for (WorklistItemSimple item : getItems())
 		        	{         	
@@ -575,6 +608,9 @@ public class WorklistSimple implements Serializable
 		        		item.setSampleName(item.getSampleName().substring(0,indexUnderscore) + "-" + (iSuffixStr));
 		        		String outname = grabOutputFileName(item.getSampleName(), item);
 						item.setOutputFileName(outname);
+						// issue 29
+						if (item.getSampleName().contains(this.getPoolTypeA()) && item.getRelatedSample().equals(this.lastSample) && item.getDirection() == Constants.AFTER)
+                            this.setStartingPoint(Integer.parseInt(iSuffixStr));
 		    	    	}
 		        	}
 	            }

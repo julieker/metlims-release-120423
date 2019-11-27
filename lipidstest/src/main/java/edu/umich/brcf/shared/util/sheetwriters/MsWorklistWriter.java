@@ -175,7 +175,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 			}
 		// issue 432
 		// issue 25		
-		if (worklist.getControlGroupsList().size() > 1)
+		if (worklist.getControlGroupsList().size() > 1 && worklist.isPlatformChosenAs("agilent"))
 			printOutIDDA  (workBook, sheet, rowCt, strMode, outputFileNameBase) ; 
 		return sheet;
 		}
@@ -213,12 +213,15 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
         styleItalic.setFont(font);
         
         PoiUtils.createBlankRow(rowCt++,  sheet);
-        PoiUtils.createBlankRow(rowCt++,  sheet);     
-        int startPoint = worklist.getMasterPoolsBefore() + worklist.getLastPoolBlockNumber() + 1 + worklist.getMasterPoolsAfter();// issue 25
+        PoiUtils.createBlankRow(rowCt++,  sheet);
+        int startPoint = worklist.getStartingPoint() + 1;// issue 29
         String iddaPlatePos = grabPlatePosition() ;// issue 27
         String fileStr = worklist.grabOutputFileNameIDDA();
         /// issue 25
 		String iddaStr = 	worklist.getPoolTypeA() + "-" + String.format("%0" + worklist.getAmountToPad() +"d",startPoint); // issue 456 // issue 13
+		// issue 29
+		if (startPoint == 1)
+		    return;
 		for (int j = 0; j <= ((MedWorksSession) Session.get()).getNCE10Reps();j++)
 		    {
 			if (((MedWorksSession) Session.get()).getNCE10Reps() == 0)
