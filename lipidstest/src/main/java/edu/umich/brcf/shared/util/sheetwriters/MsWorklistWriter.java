@@ -236,7 +236,9 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
             PoiUtils.createRowEntry(rowCt,IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
 		    rowCt ++;
 		    }
-        startPoint++;
+		// issue 38
+		if (((MedWorksSession) Session.get()).getNCE10Reps() > 0)
+			startPoint++;
         iddaStr = 	worklist.getPoolTypeA() + "-" + String.format("%0" + worklist.getAmountToPad() +"d",startPoint);
 		for (int j = 0; j <= ((MedWorksSession) Session.get()).getNCE20Reps();j++)
 		    {
@@ -252,7 +254,9 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
             PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
 		    rowCt ++;
 		    }
-		startPoint++;
+		// issue 38
+		if (((MedWorksSession) Session.get()).getNCE20Reps() > 0)
+			startPoint++;
         iddaStr = 	worklist.getPoolTypeA() + "-" + String.format("%0" + worklist.getAmountToPad() +"d",startPoint);
 		for (int j = 0; j <= ((MedWorksSession) Session.get()).getNCE40Reps();j++)
 		    { 
