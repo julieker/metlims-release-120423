@@ -112,18 +112,18 @@ public abstract class EditExperiment extends WebPage
 			TextField txtServiceRequest = new TextField("serviceRequest");
 			// issue 442
 			txtServiceRequest.add(StringValidator.maximumLength(serviceRequestLength));
-			add(txtServiceRequest);			
-			add(new TextArea("notes")
+			add(txtServiceRequest);	
+			// issue 42
+			TextArea textAreaNotes = new TextArea("notes")
 				{
 				public boolean isRequired() 
 					{
 				    return (priorityDD.getConvertedInput()!=null && (((String) priorityDD.getConvertedInput()).trim().equals("LOW")));
 					}
-				});
-				
-			add(new AjaxCancelLink("cancelButton", modal1));
-			
-			
+				};
+			textAreaNotes.add(StringValidator.maximumLength(4000));
+			add(textAreaNotes);
+			add(new AjaxCancelLink("cancelButton", modal1));		
 			add(saveLink = new AjaxSubmitLink ("saveChanges", this)
 				{
 				@Override
