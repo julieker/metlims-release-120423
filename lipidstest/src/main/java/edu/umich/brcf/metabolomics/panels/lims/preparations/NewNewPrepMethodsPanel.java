@@ -131,16 +131,10 @@ public class NewNewPrepMethodsPanel extends Panel
 	
 	private AjaxLink grabLinkToNotesModal(String id, final String tag, final ModalWindow modal1)
 		{
-		return new AjaxLink(id)
+		return new AjaxLink <Void> (id)
 	        {
 	        @Override
 	        public void onClick(AjaxRequestTarget target) { createNotesModal(modal1, target,tag); }
-	    	@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 	        };
 		}
 
@@ -177,7 +171,8 @@ public class NewNewPrepMethodsPanel extends Panel
 	public AjaxLink buildLinkToModal(final String linkID, final METWorksPctSizableModal modal1, final String value,
 			final NewNewPrepMethodsPanel pmp) 
 		{
-		return new AjaxLink(linkID)
+		// issue 39
+		return new AjaxLink <Void>(linkID)
         	{
 			@Override
             public void onClick(AjaxRequestTarget target)
@@ -218,12 +213,6 @@ public class NewNewPrepMethodsPanel extends Panel
             	target.add(pmp.getParent().getParent().getParent());
             	modal1.show(target);
             	}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
         	};
 		}
 
@@ -553,7 +542,7 @@ public class NewNewPrepMethodsPanel extends Panel
 	    
    	    private AjaxLink buildNotesLink(String id, final ModalWindow modal1, final NewNewPrepMethodsPanel pmp)
 	    	{
-		    return new AjaxLink("addNotes")
+		    return new AjaxLink<Void>("addNotes")
 	        	{
 	            @Override
 	            public void onClick(AjaxRequestTarget target)
@@ -588,12 +577,6 @@ public class NewNewPrepMethodsPanel extends Panel
             			target.add(modal1);
             			target.add(pmp.getParent().getParent().getParent());
             			}
-	        	@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 	            	};
 		    	}
 	    

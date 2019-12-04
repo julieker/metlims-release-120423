@@ -83,8 +83,8 @@ public class EditCompoundName extends WebPage
 			htmlFld.add(StringValidator.maximumLength(500));
 			
 			add(buildSaveButton("saveChanges", container));
-					
-			add( new AjaxLink("close")
+			// issue 39		
+			add( new AjaxLink <Void>("close")
 				{
 				public void onClick(AjaxRequestTarget target)
 					{
@@ -98,12 +98,6 @@ public class EditCompoundName extends WebPage
 						}
 					modal1.close(target);
 					}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 				});
 			}
 

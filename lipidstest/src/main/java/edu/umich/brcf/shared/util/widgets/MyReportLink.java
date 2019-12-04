@@ -20,7 +20,8 @@ import org.apache.wicket.util.resource.IResourceStream;
 import edu.umich.brcf.shared.layers.domain.ClientReport;
 
 
-public class MyReportLink  extends Link
+public class MyReportLink  extends Link <Void>
+// issue 39
 	{
 	ClientReport cRep;
 	
@@ -29,13 +30,6 @@ public class MyReportLink  extends Link
 		super(id);
 		cRep=(ClientReport) model.getObject();
 		}
-
-	@Override // issue 464
-	public MarkupContainer setDefaultModel(IModel model) 
-	    {
-		// TODO Auto-generated method stub
-		return this;
-	    }
 	@Override
 	public void onClick() 
 		{

@@ -29,19 +29,14 @@ public abstract class ConfirmBox extends WebPage
 
 	public IndicatingAjaxLink buildConfirmButton(String id, final ModalWindow modal)
 		{
-		return new IndicatingAjaxLink(id)
+		// issue 39
+		return new IndicatingAjaxLink <Void>(id)
 			{
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				doAction(target);
 				modal.close(target);
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		}
 	

@@ -40,19 +40,14 @@ public abstract class NewPreparationsListPanel extends Panel{
 				final String samplePrep = (String)listItem.getModelObject();
 				
 				AjaxLink idLink;
-				listItem.add(idLink=new AjaxLink("idLink")
+				// issue 39
+				listItem.add(idLink=new AjaxLink<Void>("idLink")
 					{
 					@Override
 					public void onClick(AjaxRequestTarget target) 
 						{
 						NewPreparationsListPanel.this.onIdClick(StringParser.parseId(samplePrep), target);
 						}
-					@Override // issue 464
-					public MarkupContainer setDefaultModel(IModel model) 
-					    {
-						// TODO Auto-generated method stub
-						return this;
-					    }
 					});
 
 				idLink.add(new Label("id", new Model(StringParser.parseId(samplePrep))));

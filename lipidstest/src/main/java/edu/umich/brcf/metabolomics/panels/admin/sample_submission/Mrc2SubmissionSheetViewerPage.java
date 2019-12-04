@@ -290,10 +290,10 @@ public class Mrc2SubmissionSheetViewerPage extends WebPage
 				};
 			}
 
-		
+		// issue 39
 		private IndicatingAjaxLink buildSaveLink(String id, Object obj)
 			{
-			return new IndicatingAjaxLink(id)
+			return new IndicatingAjaxLink <Void>(id)
 				{
 				@Override
 				public void onClick(AjaxRequestTarget arg0) 
@@ -303,12 +303,6 @@ public class Mrc2SubmissionSheetViewerPage extends WebPage
 					
 					///sampleService.saveSamplesAndControls(inputData);}
 					}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 				};
 			}
 

@@ -68,7 +68,8 @@ public abstract class ExperimentSelectorWithPopupConfirm extends AccessLimitedPa
 	
 	Link createDummyLink(String id)
 		{
-		Link lnk = new Link(id) 
+		// issue 39
+		Link lnk = new Link <Void>(id) 
 			{
 			@Override 
 			public boolean isEnabled(){ return false; }
@@ -78,12 +79,6 @@ public abstract class ExperimentSelectorWithPopupConfirm extends AccessLimitedPa
 			
 			@Override
 			public void onClick() { } 
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		
 		lnk.setOutputMarkupId(true);
@@ -93,7 +88,8 @@ public abstract class ExperimentSelectorWithPopupConfirm extends AccessLimitedPa
 	
 	Link createConfirmLink(String id) 
 		{
-		Link lnk = new Link(id) 
+		// issue 39
+		Link lnk = new Link <Void>(id) 
 			{
 			@Override
 			public boolean isVisible()
@@ -108,12 +104,6 @@ public abstract class ExperimentSelectorWithPopupConfirm extends AccessLimitedPa
 				doSubmit(selectedId);
 				setSelectedExperiment(null);
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		
 		confirmMsg = "Are you sure that you would like to remove all samples and metadata for experiment " + selectedExperiment + "?";

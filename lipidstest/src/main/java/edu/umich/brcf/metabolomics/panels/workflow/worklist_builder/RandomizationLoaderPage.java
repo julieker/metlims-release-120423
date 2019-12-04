@@ -111,18 +111,12 @@ public abstract class RandomizationLoaderPage extends WebPage
 					}
 	        	});
 			 			 	
-		    add(new AjaxLink("cancelButton")
+		    add(new AjaxLink <Void>("cancelButton")
         	    {
 			    public void onClick(AjaxRequestTarget target)
 				    {
 				    if (modal1 != null)
 					    modal1.close(target);
-				    }
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
 				    }
 			    });
                      

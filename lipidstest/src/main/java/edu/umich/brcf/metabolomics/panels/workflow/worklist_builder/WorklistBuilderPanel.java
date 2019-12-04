@@ -215,7 +215,8 @@ public class WorklistBuilderPanel extends Panel
 		// Issue 464
 		private IndicatingAjaxLink buildVisibilityButton(String id, final String property)
 			{
-			IndicatingAjaxLink link = new IndicatingAjaxLink(id)
+			// Issue 39
+			IndicatingAjaxLink link = new IndicatingAjaxLink <Void>(id)
 				{
 				@Override
 				public boolean isEnabled() 
@@ -324,13 +325,6 @@ public class WorklistBuilderPanel extends Panel
 					
 					tag.put("style", label);
 					}
-
-				@Override
-				public MarkupContainer setDefaultModel(IModel arg0) {
-					// TODO Auto-generated method stub
-					return (MarkupContainer) this.getDefaultModel();
-					
-				}
 				};
 				
 			link.setOutputMarkupId(true);	
@@ -353,7 +347,8 @@ public class WorklistBuilderPanel extends Panel
 			// Issue 464
 		private IndicatingAjaxLink buildLinkToPlatePreview(final String linkID, final ModalWindow modal1)
 			{
-			IndicatingAjaxLink link = new IndicatingAjaxLink(linkID)
+			// issue 39
+			IndicatingAjaxLink link = new IndicatingAjaxLink <Void>(linkID)
 				{
 				@Override
 				public boolean isEnabled()
@@ -376,12 +371,6 @@ public class WorklistBuilderPanel extends Panel
 
 					modal1.show(target);
 					}
-
-				@Override
-				public MarkupContainer setDefaultModel(IModel arg0) {
-					// TODO Auto-generated method stub
-					return (MarkupContainer) this.getDefaultModel();
-				}
 				};
 				
 			link.setOutputMarkupId(true);
@@ -727,7 +716,7 @@ public class WorklistBuilderPanel extends Panel
 	 // issue 464
 		private IndicatingAjaxLink buildRandomizeButton(final String linkID)
 			{
-			IndicatingAjaxLink link = new IndicatingAjaxLink(linkID)
+			IndicatingAjaxLink link = new IndicatingAjaxLink <Void>(linkID)
 				{
 				@Override
 				public boolean isEnabled()
@@ -755,12 +744,6 @@ public class WorklistBuilderPanel extends Panel
 					tag.put("value", label);
 					tag.put("title", label);					
 					}
-
-				@Override
-				public MarkupContainer setDefaultModel(IModel arg0) {
-					// TODO Auto-generated method stub
-					return (MarkupContainer) this.getDefaultModel();
-				}
 				};
 			link.setOutputMarkupId(true);
 			return link;
@@ -806,6 +789,7 @@ public class WorklistBuilderPanel extends Panel
 		protected ValidatingAjaxExcelDownloadLink buildExcelDownloadLink(String linkId, final WorklistSimple worklist)
 			{
 			IWriteableSpreadsheet writer = new MsWorklistWriter( worklist);// issue 450
+			// issue 39
 			ValidatingAjaxExcelDownloadLink link = new ValidatingAjaxExcelDownloadLink(linkId, writer)
 				{
 				@Override
@@ -813,7 +797,6 @@ public class WorklistBuilderPanel extends Panel
 					{ 
 					return true; 
 					} //!worklist.getItems().isEmpty(); }
-
 
 				// Artifact of upgrade -- not called by validating button
 				@Override
@@ -827,7 +810,6 @@ public class WorklistBuilderPanel extends Panel
 					return true;
 					}
 
-
 				@Override
 				public boolean validate()
 					{
@@ -838,13 +820,6 @@ public class WorklistBuilderPanel extends Panel
 					persistWorksheetToDatabase();
 					return true;
 					}
-
-
-				@Override
-				public MarkupContainer setDefaultModel(IModel arg0) {
-					// TODO Auto-generated method stub
-					return (MarkupContainer) this.getDefaultModel();
-				}
 				};
 			
 			link.setOutputMarkupId(true);

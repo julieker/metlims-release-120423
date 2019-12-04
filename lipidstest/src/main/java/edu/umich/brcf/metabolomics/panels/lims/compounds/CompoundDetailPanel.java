@@ -211,7 +211,8 @@ public class CompoundDetailPanel extends Panel
    
 	private AjaxLink buildLinkToModal(final String linkID, final ModalWindow modal1, final CompoundDetailPanel cdp) 
 		{
-		return new AjaxLink(linkID)
+		// issue 39
+		return new AjaxLink <Void>(linkID)
 			{
 			@Override
 			public void onClick(AjaxRequestTarget target)
@@ -225,13 +226,6 @@ public class CompoundDetailPanel extends Panel
 			
 				modal1.show(target);
 				}
-
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		}
 	
@@ -308,19 +302,13 @@ public class CompoundDetailPanel extends Panel
 	 
 	private AjaxLink getAjaxLinkForCid(String linkName, String labelName, final String cid, final CompoundDetailPanel cdp) 
 		{
-		AjaxLink link= new AjaxLink(linkName) 
+		// issue 39
+		AjaxLink link= new AjaxLink <Void> (linkName) 
 			{
 			public void onClick(AjaxRequestTarget target) {
 				setCmpId(cid);
 				target.add(cdp);
-			}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
-			
+			}			
 		};
 		link.add(new Label(labelName, cid));
 		return link;
@@ -329,7 +317,8 @@ public class CompoundDetailPanel extends Panel
 	
 	public AjaxLink buildAjaxLink(String linkName, final ModalWindow modal1, final Page targetPage) 
 		{
-		AjaxLink link=new AjaxLink(linkName)
+		// issue 39
+		AjaxLink link=new AjaxLink <Void> (linkName)
 			{
 			@Override
 			public void onClick(AjaxRequestTarget target)
@@ -343,13 +332,6 @@ public class CompoundDetailPanel extends Panel
 					});
 				modal1.show(target);
 				}
-			
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		return link;
 		}
@@ -412,19 +394,14 @@ public class CompoundDetailPanel extends Panel
 	
 	private Link buildInvLink() 
 		{
-		Link link = new Link("goToInv") 
+		// issue 39
+		Link link = new Link <Void>("goToInv") 
 			{
 			public void onClick() 
 				{
 				List<Inventory> invList = inventoryService.loadByCid(getCmpId());
 				setResponsePage(new InventorySearch(getPage(), invList, getCompound()));
 				}
-
-			@Override
-			public MarkupContainer setDefaultModel(IModel model) {
-				// TODO Auto-generated method stub
-				return (MarkupContainer) this.getDefaultModel();
-			}
 			};
 			link.setPopupSettings(new PopupSettings(PopupSettings.RESIZABLE
 			| PopupSettings.STATUS_BAR | PopupSettings.SCROLLBARS).setHeight(300).setWidth(800));

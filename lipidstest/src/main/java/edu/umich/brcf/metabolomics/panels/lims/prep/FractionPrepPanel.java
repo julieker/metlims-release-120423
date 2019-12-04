@@ -92,7 +92,8 @@ public class FractionPrepPanel extends Panel{
 					target.add(createLink);
 				}
 			});
-		    add(createLink=new AjaxLink("create"){
+		    // issue 39
+		    add(createLink=new AjaxLink <Void>("create"){
 				@Override
 				public void onClick(AjaxRequestTarget target){
 					updatePanels(null);
@@ -114,12 +115,6 @@ public class FractionPrepPanel extends Panel{
 						FractionPrepPanel.this.error("Please enter a number between 0 and 98! ");
 						target.add(fPanel);}
 				}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 			});
 	         final AutoCompleteTextField title = new AutoCompleteTextField("title", new Model("")){
 					@Override
@@ -166,7 +161,8 @@ public class FractionPrepPanel extends Panel{
 	}
 	
 	private AjaxLink buildLink(final String linkID, final TextField title, final ModalWindow modal1) {
-		AjaxLink link=new AjaxLink(linkID)
+		// issue 39
+		AjaxLink link=new AjaxLink <Void>(linkID)
         {
             @Override
             public void onClick(AjaxRequestTarget target)
@@ -218,12 +214,6 @@ public class FractionPrepPanel extends Panel{
             	}
             	target.add(fPanel);
             }
-        	@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
         };
 		return link;
 	}

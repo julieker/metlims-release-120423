@@ -88,7 +88,8 @@ public abstract class EditSampleLocation extends WebPage
 			unitsDD.setRequired(true);
 			add(unitsDD);
 				
-			add(new IndicatingAjaxLink ("saveChanges")
+			add(new IndicatingAjaxLink <Void> ("saveChanges")
+			// issue 39
 				{
 				@Override
 				public void onClick(AjaxRequestTarget target)
@@ -101,12 +102,6 @@ public abstract class EditSampleLocation extends WebPage
 						}
 					catch (Exception e) { EditSampleLocation.this.error("Save unsuccessful. Please re-check values entered."); }
 					}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 				});
 				
 			add(new AjaxCancelLink("close", modal));

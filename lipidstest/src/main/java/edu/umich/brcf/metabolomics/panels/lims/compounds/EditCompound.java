@@ -127,8 +127,8 @@ public class EditCompound extends WebPage
 			TextField htmlFld;
 			add(htmlFld =new TextField("html"));
 			htmlFld.add(StringValidator.maximumLength(500));
-			
-			add( new AjaxLink("close")
+			// issue 39
+			add( new AjaxLink<Void>("close")
 				{
 				public void onClick(AjaxRequestTarget target)
 					{ 
@@ -139,12 +139,6 @@ public class EditCompound extends WebPage
 						}
 					window.close(target);
 					}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 				});
 			
 			add(new Button("saveChanges")

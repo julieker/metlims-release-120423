@@ -200,12 +200,7 @@ public abstract class OptimizedBarcodeSelectorPanel extends Panel
 					String label = getButtonLabel();
 					tag.put("value", label);
 					}	
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
+				// issue 39
 				 };
 			}
 		

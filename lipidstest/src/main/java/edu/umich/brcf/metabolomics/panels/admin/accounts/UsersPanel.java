@@ -72,7 +72,8 @@ public class UsersPanel extends Panel
 	
 	private IndicatingAjaxLink buildLinkToModal(final String linkID,final ModalWindow modal1, final UserDTO dto)
 		{
-		return new IndicatingAjaxLink(linkID)
+		// issue 39
+		return new IndicatingAjaxLink <Void>(linkID)
 			{
 			@Override
 			public void onClick(AjaxRequestTarget target)
@@ -129,12 +130,6 @@ public class UsersPanel extends Panel
 
 				modal1.show(target);
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		}
 
@@ -177,7 +172,7 @@ public class UsersPanel extends Panel
 	
 	Link createRemoveLink(String id, final UserDTO user, final WebMarkupContainer wmc)
 		{
-		Link lnk = new Link("remove", new Model(user)) 
+		Link lnk = new Link <Void>("remove", new Model(user)) 
 			{
 			@Override
 			public boolean isEnabled()
@@ -192,14 +187,6 @@ public class UsersPanel extends Panel
 				//System.out.println("Here we would delete");
 				userService.delete(user);
 				}
-			
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
-				
 			};
 
 		String confirmMsg = "Are you sure that you would like to delete user " + user.getUserName() + "?";
@@ -223,16 +210,11 @@ public class UsersPanel extends Panel
 	
 	public AjaxLink createLinkToModalWindow(final String linkName, final ModalWindow modal) 
 		{
-		return new AjaxLink(linkName) 
+		// issue 39
+		return new AjaxLink <Void> (linkName) 
 			{
 			@Override
 			public void onClick(AjaxRequestTarget target) { modal.show(target); }
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			@Override
 			public boolean isVisible()
 				{

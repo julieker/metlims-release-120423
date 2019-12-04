@@ -195,7 +195,8 @@ public class LipidBlastMatchesPage extends WebPage
 		public AjaxLink buildLinkToLipidMapsInfo(String id, final String subClass, final String lipidMapsClassName, 
 				final ModalWindow modal)
 			{
-			return new AjaxLink(id)
+			// issue 39
+			return new AjaxLink <Void>(id)
 				{
 				 @Override
 			       public void onClick(final AjaxRequestTarget target)
@@ -210,12 +211,6 @@ public class LipidBlastMatchesPage extends WebPage
 			             
 			        	modal.show(target);
 			        	}
-					@Override // issue 464
-					public MarkupContainer setDefaultModel(IModel model) 
-					    {
-						// TODO Auto-generated method stub
-						return this;
-					    }
 			    	};
 				}
 			

@@ -161,19 +161,14 @@ public class NewExperimentSamplesPanel extends Panel
 	
 	private AjaxLink buildLinkToModal(final String linkID, final ModalWindow modal1, final String id) 
 		{
-		return new AjaxLink(linkID)
+		// issue 39
+		return new AjaxLink <Void>(linkID)
         	{
             @Override
             public void onClick(final AjaxRequestTarget target)
             	{
             	doClick(linkID, target, modal1, id);
             	}
-        	@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
         	};
 		}
 	

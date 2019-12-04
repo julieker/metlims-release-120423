@@ -106,8 +106,8 @@ public final class ClientDetails extends WebPage
 				};	
 			}
     	
-		
-		private class MyPopupLink extends Link 	
+		// issue 39
+		private class MyPopupLink extends Link <Void> 	
 			{
 			private MyPopupLink(String id, IModel model) 
 				{
@@ -119,12 +119,6 @@ public final class ClientDetails extends WebPage
 			@Override
 			public void onClick()  {  }
 
-			@Override
-			// issue 464
-			public MarkupContainer setDefaultModel(IModel arg0) {
-				// TODO Auto-generated method stub
-				return (MarkupContainer) getDefaultModel();
-			}
 			}
 		
 		

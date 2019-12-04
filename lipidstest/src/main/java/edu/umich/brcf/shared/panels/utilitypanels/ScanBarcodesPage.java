@@ -182,7 +182,8 @@ public abstract class ScanBarcodesPage extends WebPage
 		
 		public AjaxLink buildNextScanButton(String id, final WebMarkupContainer container)
 			{
-			return new AjaxLink(id)
+			return new AjaxLink <Void>(id)
+			// issue 39
 				{
 				@Override
 				public void onClick(AjaxRequestTarget target)
@@ -205,14 +206,6 @@ public abstract class ScanBarcodesPage extends WebPage
 
 					target.add(container);
 					}
-
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
-				
 				@Override
 				protected void onComponentTag(ComponentTag tag)
 					{
@@ -257,7 +250,8 @@ public abstract class ScanBarcodesPage extends WebPage
 		
 		private AjaxLink buildDeleteButton(String id, final DeleteableItem item, final WebMarkupContainer container)
 			{
-			return new AjaxLink(id)
+			// issue 39
+			return new AjaxLink <Void>(id)
 				{
 				@Override
 				public void onClick(AjaxRequestTarget target)
@@ -266,12 +260,6 @@ public abstract class ScanBarcodesPage extends WebPage
 					currentCount = itemsList.size();
 					target.add(container);
 					}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 				};
 			}
 

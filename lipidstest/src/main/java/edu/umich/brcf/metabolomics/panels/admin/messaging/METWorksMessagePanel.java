@@ -73,7 +73,8 @@ public class METWorksMessagePanel extends Panel
 			});
 
 		add(new AjaxUpdatingRequiredTextField("message", "onblur"));
-		add(new AjaxLink("sendMessage")
+		// issue 39
+		add(new AjaxLink <Void>("sendMessage")
 			{
 				public void onClick(AjaxRequestTarget target)
 					{
@@ -84,12 +85,6 @@ public class METWorksMessagePanel extends Panel
 						}
 					target.add(this);
 					}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 			});
 		container.add(view);
 		add(container);

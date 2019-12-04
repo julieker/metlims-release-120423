@@ -184,8 +184,8 @@ public class SortableProjectPanel extends Panel
 	private AjaxLink buildLinkToCreateModal(final String linkID, final String projectId, final ModalWindow modal1) 
 		{
 		final Project project = ( projectId!=null ? projectService.loadById(projectId) : null);
-		
-		return new AjaxLink(linkID)
+		// issue 39
+		return new AjaxLink <Void> (linkID)
         	{
             @Override
             public void onClick(final AjaxRequestTarget target)
@@ -208,12 +208,6 @@ public class SortableProjectPanel extends Panel
             	
             	modal1.show(target);
             	}
-        	@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
         	};
 		}
 	

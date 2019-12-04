@@ -99,7 +99,8 @@ public abstract class HubActionSelectorPanel extends Panel
 
 		private AjaxLink buildActionButton()
 			{
-			AjaxLink link = new AjaxLink("actionButton")
+			// issue 39
+			AjaxLink link = new AjaxLink <Void>("actionButton")
 				{
 					@Override
 					public void onClick(AjaxRequestTarget target)
@@ -115,12 +116,6 @@ public abstract class HubActionSelectorPanel extends Panel
 						String label = getButtonLabel();
 						tag.put("value", label);
 						}
-					@Override // issue 464
-					public MarkupContainer setDefaultModel(IModel model) 
-					    {
-						// TODO Auto-generated method stub
-						return this;
-					    }
 				};
 
 			link.setOutputMarkupId(true);

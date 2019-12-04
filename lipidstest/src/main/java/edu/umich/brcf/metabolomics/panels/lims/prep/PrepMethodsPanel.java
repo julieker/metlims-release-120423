@@ -207,7 +207,8 @@ public class PrepMethodsPanel extends Panel
 			 add(buildLinkToModal("protienDetermination", modal1,null, pmp).setVisible(isSamplePrep));
 			 add(buildLinkToModal("generalPrep", modal1, null, pmp).setVisible(isSamplePrep));
 			 add(buildLinkToModal("absorbance", modal1, null, pmp).setVisible(isSamplePrep));
-		     add(new AjaxLink("addNotes")
+		     // issue 39
+			 add(new AjaxLink <Void>("addNotes")
 		        {
 		            @Override
 		            public void onClick(AjaxRequestTarget target)
@@ -230,12 +231,6 @@ public class PrepMethodsPanel extends Panel
 		            	}
 		            	target.add(pmp.getParent().getParent().getParent());
 	            	}
-		        	@Override // issue 464
-					public MarkupContainer setDefaultModel(IModel model) 
-					    {
-						// TODO Auto-generated method stub
-						return this;
-					    }
 				});
 		     setMultiPart(true);
 //	         add(fileUploadField = new FileUploadField("fileInput"));
@@ -256,33 +251,23 @@ public class PrepMethodsPanel extends Panel
 			 derivatization.setVisible(isSamplePrep);
 			 reconstitution.setVisible(isSamplePrep);
 			 add(buildLinkToModal("createNewPlate", modal1, null, pmp));
-			 add(gcNotes=new AjaxLink("gcNotes")
+			 // issue 39
+			 add(gcNotes=new AjaxLink<Void>("gcNotes")
 		        {
 		            @Override
 		            public void onClick(AjaxRequestTarget target)
 		            {
 		            	createNotesModal(modal1, target,"GC");
 					}
-		        	@Override // issue 464
-					public MarkupContainer setDefaultModel(IModel model) 
-					    {
-						// TODO Auto-generated method stub
-						return this;
-					    }
 		        });
-			 add(lcNotes=new AjaxLink("lcNotes")
+			 // issue 39
+			 add(lcNotes=new AjaxLink <Void>("lcNotes")
 		        {
 		            @Override
 		            public void onClick(AjaxRequestTarget target)
 		            {
 		            	createNotesModal(modal1, target,"LC");
 					}
-		        	@Override // issue 464
-					public MarkupContainer setDefaultModel(IModel model) 
-					    {
-						// TODO Auto-generated method stub
-						return this;
-					    }
 		        });
 			 add(buildLinkToModal("addSample", modal1, null, pmp).setVisible(!isSamplePrep));
 			 checkComponentVisibility();
@@ -312,7 +297,8 @@ public class PrepMethodsPanel extends Panel
 	}
 	
 	public AjaxLink buildLinkToModal(final String linkID, final ModalWindow modal1, final String value, final PrepMethodsPanel pmp) {
-		return new AjaxLink(linkID)
+		// issue 39
+		return new AjaxLink <Void>(linkID)
         	{
 			@Override 
 			public boolean isEnabled()
@@ -505,12 +491,6 @@ public class PrepMethodsPanel extends Panel
             	target.add(pmp.getParent().getParent().getParent());
             	modal1.show(target);
             }
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
         };
 	}
 	

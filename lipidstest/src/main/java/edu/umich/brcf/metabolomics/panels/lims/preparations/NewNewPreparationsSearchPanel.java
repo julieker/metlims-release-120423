@@ -336,19 +336,14 @@ SearchByAssay buildSearchByAssay(final ModalWindow modal1)
 
 	private AjaxLink buildLinkToModal(final String linkID, final METWorksPctSizableModal modal1) 
 		{
-		return new AjaxLink(linkID)
+		// issue 39
+		return new AjaxLink <Void> (linkID)
 	    	{
 	        @Override
 	        public void onClick(final AjaxRequestTarget target)
 	        	{
 	        	doClick(modal1, target, linkID);
 	        	}
-	    	@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		}
 	

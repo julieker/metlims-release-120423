@@ -124,7 +124,8 @@ public class FractionPrepDetailPanel extends Panel{
 	}
 	
 	private AjaxLink buildLinkToModal(String linkID, final ModalWindow modal1, final WebPage page) {
-		return new AjaxLink(linkID)
+		// issue 39
+		return new AjaxLink <Void>(linkID)
         {
             @Override
             public void onClick(AjaxRequestTarget target)
@@ -138,12 +139,6 @@ public class FractionPrepDetailPanel extends Panel{
                     });
            	    modal1.show(target);
                 }
-        	@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }  
         };
 	}
 }

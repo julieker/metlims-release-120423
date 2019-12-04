@@ -21,7 +21,8 @@ import edu.umich.brcf.shared.layers.domain.ProtocolReport;
 import edu.umich.brcf.shared.layers.domain.StandardProtocol;
 
 
-public class MyStandardProtocolLink  extends Link
+public class MyStandardProtocolLink  extends Link <Void>
+// issue 39
 	{
 		StandardProtocol cRep;
 		
@@ -30,13 +31,6 @@ public class MyStandardProtocolLink  extends Link
 			super(id);
 			cRep=(StandardProtocol) model.getObject();
 			}
-		@Override // issue 464
-		public MarkupContainer setDefaultModel(IModel model) 
-		    {
-			// TODO Auto-generated method stub
-			return this;
-		    }
-
 		@Override
 		public void onClick() 
 			{

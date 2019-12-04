@@ -36,6 +36,7 @@ public abstract class ProjectExperimentsPanel extends Panel
 			{
 			public void populateItem(final ListItem listItem) 
 				{
+				// issue 39
 				final Project project = (Project) listItem.getModelObject();
 				
 				listItem.add(new Label("projname",project.getProjectName() + " (" + project.getStartDateString() + ")"));
@@ -43,20 +44,13 @@ public abstract class ProjectExperimentsPanel extends Panel
 					{
 					public void populateItem(final ListItem childListItem) {
 					final Experiment exp = (Experiment) childListItem.getModelObject();
-					childListItem.add(new IndicatingAjaxLink("expLink")
+					childListItem.add(new IndicatingAjaxLink<Void>("expLink")
 						{
 						@Override
 						public void onClick(AjaxRequestTarget target)
 							{
 							ProjectExperimentsPanel.this.onExpLinkClicked(exp.getExpID(), target);
 							}
-						@Override // issue 464
-						public MarkupContainer setDefaultModel(IModel model) 
-						    {
-							// TODO Auto-generated method stub
-							return this;
-						    }
-					    
 						}.add(new Label("expname", exp.getExpName())));
 					}
 				};

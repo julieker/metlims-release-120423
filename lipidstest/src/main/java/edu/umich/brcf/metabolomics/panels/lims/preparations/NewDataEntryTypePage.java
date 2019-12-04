@@ -139,7 +139,7 @@ public abstract class NewDataEntryTypePage extends WebPage
 		
 		private IndicatingAjaxLink buildAddExpButton(String id)
 			{
-			return new IndicatingAjaxLink(id)
+			return new IndicatingAjaxLink <Void>(id)
 				{
 				@Override
 				public void onClick(AjaxRequestTarget target) 
@@ -149,18 +149,13 @@ public abstract class NewDataEntryTypePage extends WebPage
 					target.add(selectedExperimentDrop);
 					target.add(selectedAssayDrop);
 					}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 				};
 			}
 		// issue 464
 		private IndicatingAjaxLink buildClearAllButton(String id)
 			{
-			return new IndicatingAjaxLink(id)
+			// isuse 39
+			return new IndicatingAjaxLink <Void>(id)
 				{
 				@Override
 				public void onClick(AjaxRequestTarget target) 
@@ -175,12 +170,6 @@ public abstract class NewDataEntryTypePage extends WebPage
 					target.add(prepTitleFld);
 					target.add(tagFld);
 					}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 				};
 			}
 		

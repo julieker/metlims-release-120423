@@ -79,7 +79,7 @@ public class OrganizationsPanel extends Panel{
 		{
 		final Organization organization = org!=null ? organizationService.loadById(org) : null;
 	
-		return new AjaxLink(linkID)
+		return new AjaxLink <Void>(linkID)
         	{
             @Override
             public void onClick(AjaxRequestTarget target)
@@ -103,12 +103,6 @@ public class OrganizationsPanel extends Panel{
             		});
             	 modal1.show(target);
             	}
-            @Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) // issue 425
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
         	};
 		}
 		

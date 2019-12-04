@@ -158,7 +158,7 @@ public class AddSamplesPanel extends Panel
 		
         // Issue 268
 		// issue 464
-		AjaxLink link = new AjaxLink(linkID) // issue 307
+		AjaxLink link = new AjaxLink <Void>(linkID) // issue 307
 			{
 			public boolean isEnabled() 
 			    { 
@@ -191,11 +191,6 @@ public class AddSamplesPanel extends Panel
 					});               
 				modal1.show(target);
 				}
-			@Override
-			public MarkupContainer setDefaultModel(IModel arg0) {
-				// TODO Auto-generated method stub
-				return this;
-			}
 			};
 		link.setOutputMarkupId(true);
 		return link;
@@ -254,7 +249,7 @@ public class AddSamplesPanel extends Panel
 	// issue 464
 	private AjaxLink buildDeleteButton(String id, final WorklistSampleGroup item, final WebMarkupContainer container)
 		{
-		return new AjaxLink(id)
+		return new AjaxLink <Void> (id)
 			{
 			public boolean isEnabled() { return item != sampleGroupsList.get(0); }
 
@@ -268,19 +263,13 @@ public class AddSamplesPanel extends Panel
 
 				target.add(container);
 				}
-
-			@Override
-			public MarkupContainer setDefaultModel(IModel arg0) {
-				// TODO Auto-generated method stub
-				return (MarkupContainer) this.getDefaultModel();
-			}
 			};
 		}
 
 	// Issue 464
 	private AjaxLink buildAddButton(String id, final WorklistSampleGroup item, final WebMarkupContainer container)
 		{
-		return new AjaxLink(id)
+		return new AjaxLink<Void>(id)
 			{
 			public boolean isEnabled()
 				{
@@ -293,12 +282,6 @@ public class AddSamplesPanel extends Panel
 				originalWorklist.addSampleGroup();
 				target.add(container);
 				}
-
-			@Override
-			public MarkupContainer setDefaultModel(IModel arg0) {
-				// TODO Auto-generated method stub
-				return (MarkupContainer) this.getDefaultModel();
-			}
 			};
 		}
 
@@ -374,9 +357,10 @@ public class AddSamplesPanel extends Panel
 		}
 
 	// issue 464
+	// issue 39
 	private AjaxLink buildClearButton(String id, final WorklistSampleGroup item, final WebMarkupContainer container)
 		{
-		return new IndicatingAjaxLink(id)
+		return new IndicatingAjaxLink <Void>(id)
 			{
 			@Override
 			public boolean isVisible() { return item == sampleGroupsList.get(sampleGroupsList.size() - 1); }
@@ -395,12 +379,6 @@ public class AddSamplesPanel extends Panel
 				originalWorklist.setIsCustomDirectoryStructure(false);
 				refreshPage(target);
 				}
-
-			@Override
-			public MarkupContainer setDefaultModel(IModel arg0) {
-				// TODO Auto-generated method stub
-				return (MarkupContainer) this.getDefaultModel();
-			}
 			};
 		}
 

@@ -130,7 +130,8 @@ public class SelectablePlateMapPanel extends Panel
 	public AjaxLink buildLinkToModal(final String linkID, final METWorksPctSizableModal modal1, final String value,
 			final SelectablePlateMapPanel pmp) 
 		{
-		return new AjaxLink(linkID)
+		// issue 39
+		return new AjaxLink <Void>(linkID)
         	{
 			@Override
             public void onClick(AjaxRequestTarget target)
@@ -148,12 +149,6 @@ public class SelectablePlateMapPanel extends Panel
             	target.add(pmp.getParent().getParent().getParent());
             	modal1.show(target);
             	}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
         	};
 		}
 

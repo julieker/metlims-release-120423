@@ -254,6 +254,7 @@ public class DrccAnalysisPanel extends Panel
 			//	}
 			
 			@Override
+			// issue 39
 			public boolean isVisible()
 				{
 				analysisInfo.setViewNegativeMode(!("Positive".equals(selectedMode)));
@@ -263,12 +264,6 @@ public class DrccAnalysisPanel extends Panel
 					|| (j == 1 && !("Negative".equals(getSelectedMode())) )
 					|| (j == 2));
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 		 	};
 		//if (id.equals("selectedMode"))
 		//	drp.add(this.buildModeChangeUpdateBehavior("change", "updateForMode"));

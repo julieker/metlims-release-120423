@@ -91,17 +91,12 @@ public abstract class SampleDetailPanel extends Panel
 	}
 		
 	private AjaxLink buildEditLink(final IModel sampleModel) {
-		AjaxLink link = new AjaxLink("edit"){//, sampleModel, 400, 600) {
+		// issue 39
+		AjaxLink link = new AjaxLink <Void>("edit"){//, sampleModel, 400, 600) {
 			 public void onClick(final AjaxRequestTarget target){
 				 SampleDetailPanel.this.onEdit(sampleModel, target);
 //				setResponsePage(new EditSample(getPage(), getModel()));
 			}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 		};
 		return link;
 	}

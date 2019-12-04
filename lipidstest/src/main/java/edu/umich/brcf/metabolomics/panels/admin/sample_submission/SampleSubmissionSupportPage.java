@@ -49,7 +49,7 @@ public class SampleSubmissionSupportPage extends WebPage
 	private AjaxLink buildLinkToModal(final String linkID,
 			final ModalWindow modal1)
 		{
-		return new AjaxLink(linkID)
+		return new AjaxLink <Void>(linkID)
 			{
 				@Override
 				public void onClick(AjaxRequestTarget target)
@@ -68,12 +68,6 @@ public class SampleSubmissionSupportPage extends WebPage
 
 					modal1.show(target);
 					}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 			};
 		}
 

@@ -54,11 +54,12 @@ public class UserListPanel extends Panel
 		add(container);
 		userList = new ListView("users", usersModel)
 			{
+			// issue 39
 			public void populateItem(ListItem item)
 				{
 				final User user = (User) item.getModelObject();
 				item.add(new Label("name", user.getFullName()));
-				item.add(new AjaxLink("delete")
+				item.add(new AjaxLink <Void>("delete")
 					{
 					public void onClick(AjaxRequestTarget target)
 						{
@@ -66,17 +67,11 @@ public class UserListPanel extends Panel
 						updateUserList();
 						target.add(container);
 						}
-					@Override // issue 464
-					public MarkupContainer setDefaultModel(IModel model) 
-					    {
-						// TODO Auto-generated method stub
-						return this;
-					    }
 					});
 				}
 			};
 		container.add(userList);
-		container.add(new AjaxLink("add")
+		container.add(new AjaxLink <Void>("add")
 			{
 			public void onClick(AjaxRequestTarget target)
 				{
@@ -84,12 +79,6 @@ public class UserListPanel extends Panel
 				target.add(userChoice);
 				target.add(container);
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 		});
 		container.add(userChoice = new DropDownChoice("userChoiceBox",
 				new PropertyModel(this, "selectedUser"), userService.getUsersForInstrumentAssociations(),

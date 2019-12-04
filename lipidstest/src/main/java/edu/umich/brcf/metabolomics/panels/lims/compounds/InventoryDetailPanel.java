@@ -97,7 +97,8 @@ public class InventoryDetailPanel extends Panel
 	
 	private AjaxLink buildEditLink(Inventory inv, final InventoryDetailPanel detailPanel, final ModalWindow modal2) 
 		{
-		AjaxLink link=new AjaxLink("editInv", new Model(inv))
+		// issue 39
+		AjaxLink link=new AjaxLink <Void>("editInv", new Model(inv))
 			{
             @Override
             public void onClick(AjaxRequestTarget target)
@@ -111,12 +112,6 @@ public class InventoryDetailPanel extends Panel
             		 });
             	 modal2.show(target);
             	}
-        	@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		return link;
 		}

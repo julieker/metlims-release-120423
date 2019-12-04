@@ -125,7 +125,7 @@ public abstract class BaseWorklistPanel extends Panel
 	
 	protected AjaxLink buildCommentsButton(String id, final WorklistItemSimple item)
 		{
-		return new AjaxLink(id)
+		return new AjaxLink <Void>(id)
 			{
 			@Override
 			public void onClick(AjaxRequestTarget target)
@@ -153,18 +153,14 @@ public abstract class BaseWorklistPanel extends Panel
 					});
 				    modal1.show(target);
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
+			
 			};
 		}
 
+	// issue 39
 	protected AjaxLink buildDeleteButton(String id, final WorklistItemSimple item, final WebMarkupContainer container)
 		{  // issue 464
-		AjaxLink lnk = new AjaxLink(id)
+		AjaxLink lnk = new AjaxLink <Void> (id)
 			{
 			public boolean isVisible() {
 				return item.getIsDeleted() == false; // item.getRepresentsControl()
@@ -181,21 +177,15 @@ public abstract class BaseWorklistPanel extends Panel
 				worklist.deleteItem(item);
 				target.add(container);
 				}
-
-			@Override
-			public MarkupContainer setDefaultModel(IModel arg0) {
-				// TODO Auto-generated method stub
-				return (MarkupContainer) this.getDefaultModel();
-			}
 			};
 
 		return lnk;
 		}
 
-	
+	// issue 39
 	protected AjaxLink buildUnDeleteButton(String id, final WorklistItemSimple item, final WebMarkupContainer container)
 		{
-		AjaxLink lnk = new AjaxLink(id)
+		AjaxLink lnk = new AjaxLink <Void> (id)
 			{
 			public boolean isVisible() { return false; }
 
@@ -205,12 +195,6 @@ public abstract class BaseWorklistPanel extends Panel
 				worklist.unDeleteItem(item);
 				target.add(container);
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 
 		return lnk;

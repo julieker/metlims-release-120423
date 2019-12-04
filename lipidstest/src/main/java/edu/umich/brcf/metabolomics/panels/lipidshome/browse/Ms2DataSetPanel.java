@@ -134,7 +134,8 @@ protected AjaxExcelDownloadLink buildExcelDownloadLink(String linkId, final Ms2D
 		//LipidsDataSetWriter
 		IWriteableSpreadsheet writer = new LipidsDataSetWriter(handler);
 		
-		AjaxExcelDownloadLink link = new AjaxExcelDownloadLink(linkId, writer)
+		// issue 39
+		AjaxExcelDownloadLink link = new AjaxExcelDownloadLink (linkId, writer)
 			{
 			@Override
 			public boolean isVisible()
@@ -148,12 +149,6 @@ protected AjaxExcelDownloadLink buildExcelDownloadLink(String linkId, final Ms2D
 				System.out.println("Validating");
 				return true;
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		
 		return link;
@@ -329,7 +324,8 @@ protected TextDownloadLink buildTextDownloadLink(String linkId, final Ms2DataSet
 	
 	private IndicatingAjaxLink buildPersistButton(String id)
 		{
-		return new IndicatingAjaxLink(id)
+		//Issue 39
+		return new IndicatingAjaxLink <Void>(id)
 			{
 			public boolean isVisible() { return !dataAlreadyLoaded; }
 			
@@ -340,19 +336,14 @@ protected TextDownloadLink buildTextDownloadLink(String linkId, final Ms2DataSet
 				target.appendJavaScript(alertString);
 				dataHandler.persistToDatabase();
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		}
 
 
 	private IndicatingAjaxLink buildReportButton(String id)
 		{
-		return new IndicatingAjaxLink(id)
+		// issue 39
+		return new IndicatingAjaxLink <Void>(id)
 			{
 			@Override
 			public boolean isVisible() { return dataAlreadyLoaded; }
@@ -366,12 +357,6 @@ protected TextDownloadLink buildTextDownloadLink(String linkId, final Ms2DataSet
 				List selectedIds =  new ArrayList <String>();
 				setResponsePage(new DataReportPage("reportPage", (WebPage) this.getPage(), "dataSetId", selectedIds));
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		}
 

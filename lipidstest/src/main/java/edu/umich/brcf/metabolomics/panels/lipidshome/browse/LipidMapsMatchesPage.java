@@ -150,7 +150,8 @@ public class LipidMapsMatchesPage extends WebPage
      	
      public AjaxLink buildLinkToImage(String id, final String smiles, final String commonName, final ModalWindow modal)
 			{
-			return new AjaxLink(id)
+    	 // issue 39
+			return new AjaxLink <Void>(id)
 				{
 				public boolean isVisible()	
 					{
@@ -177,12 +178,6 @@ public class LipidMapsMatchesPage extends WebPage
 			             
 			        	modal.show(target);
 			        	}
-					@Override // issue 464
-					public MarkupContainer setDefaultModel(IModel model) 
-					    {
-						// TODO Auto-generated method stub
-						return this;
-					    }
 			    	};
 				}
 			

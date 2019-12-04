@@ -21,8 +21,9 @@ import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheet;
 
 
 
-public class ExcelDownloadLink extends Link // IndicatingAjaxLink
-	{
+public class ExcelDownloadLink extends Link <Void> // IndicatingAjaxLink
+	// issue 39
+    {
 	IWriteableSpreadsheet report;
 	
 	public ExcelDownloadLink(String id, IWriteableSpreadsheet report)
@@ -87,14 +88,6 @@ public class ExcelDownloadLink extends Link // IndicatingAjaxLink
 		{
 		return this.report;
 		}
-
-	
-	@Override // issue 464
-	public MarkupContainer setDefaultModel(IModel model) 
-	    {
-		// TODO Auto-generated method stub
-		return this;
-	    }
 	}
 	
 

@@ -100,24 +100,15 @@ public class SampleInfoUploaderPage extends WebPage
 			
 			SampleInfoUploaderPage.this.info("Document uploaded successfully.");
 		 	add(uploadTypeDrop = buildDropdownUploadType("randomizationType"));
-		 	
-		    add(new AjaxLink("cancelButton")
+		 	// issue 39
+		    add(new AjaxLink <Void>("cancelButton")
             	{
 				public void onClick(AjaxRequestTarget target)
 					{
 					if (modal1 != null)
 						modal1.close(target);
 					}	
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
-				});
-           
-            
-		  
+				}); 
             add(fileUploadField = new FileUploadField("fileContents", new Model(filesUploaded)));
 			
             add(new AjaxSubmitLink("submitButton", this)

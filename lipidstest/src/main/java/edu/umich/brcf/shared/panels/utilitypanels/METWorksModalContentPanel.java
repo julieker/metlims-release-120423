@@ -30,46 +30,31 @@ public abstract class METWorksModalContentPanel extends Panel {
 		AjaxLink close;
 
 		// form.
-		add(save = new AjaxLink("save") {
+		// issue 39
+		add(save = new AjaxLink <Void>("save") {
 			public void onClick(AjaxRequestTarget target) {
 				((MedWorksSession) getSession()).resetTimeoutClock();
 				onSave(target, panel.getDefaultModel());
 			}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 		});
 
 		// Add a cancel / close button.
 		// form.
-		add(cancel = new AjaxLink("cancel") {
+		// issue 39
+		add(cancel = new AjaxLink <Void>("cancel") {
 			public void onClick(AjaxRequestTarget target) {
 				((MedWorksSession) getSession()).resetTimeoutClock();
 				onCancel(target);
 			}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 		});
 
 		// form.
-		add(close = new AjaxLink("close") {
+		// issue 39
+		add(close = new AjaxLink <Void>("close") {
 			public void onClick(AjaxRequestTarget target) {
 				((MedWorksSession) getSession()).resetTimeoutClock();
 				onCancel(target);
 			}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 		});
 
 		

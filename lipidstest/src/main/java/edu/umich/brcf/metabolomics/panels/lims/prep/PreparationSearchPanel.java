@@ -158,7 +158,8 @@ public class PreparationSearchPanel extends Panel
 	
 	private AjaxLink buildLinkToModal(String linkID, final TextField title, final ModalWindow modal1, final PreparationSearchPanel pp) 
 		{
-		AjaxLink link=new AjaxLink(linkID)
+		// issue 39
+		AjaxLink link=new AjaxLink <Void>(linkID)
         	{
             @Override
             public void onClick(AjaxRequestTarget target)
@@ -211,12 +212,6 @@ public class PreparationSearchPanel extends Panel
             	}
             	target.add(pp);
             }
-        	@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
         };
 		return link;
 	}

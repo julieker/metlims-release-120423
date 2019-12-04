@@ -40,15 +40,10 @@ public class HeaderPanel extends Panel
 	
 	private Link buildSignoutLink(String id) // issue 464
 		{
-		final Link signOutLink = new Link  (id, new Model("")) 
+		// issue 39
+		final Link signOutLink = new Link <Void> (id, new Model("")) 
 			{
 			public void onClick() { invalidateSession(); }
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 
 		signOutLink.add(new AbstractAjaxTimerBehavior(Duration.minutes(MedWorksBasePage.TIMER_INTERVAL_MINUTES)) 

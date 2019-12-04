@@ -346,7 +346,8 @@ public class ExperimentDetail extends Panel
 	
 	private IndicatingAjaxLink buildDeleteButton(String id, final String documentId, final Boolean forPrep, final ModalWindow modalwin)
 	{
-	IndicatingAjaxLink lnk  = new IndicatingAjaxLink(id)
+		// issue 39
+	IndicatingAjaxLink lnk  = new IndicatingAjaxLink <Void>(id)
 		{
 		@Override
 		public void onClick(AjaxRequestTarget target) 
@@ -371,12 +372,6 @@ public class ExperimentDetail extends Panel
 				});
         	 modalwin.show(target);
 			 }
-		@Override // issue 464
-		public MarkupContainer setDefaultModel(IModel model) // issue 464
-		    {
-			// TODO Auto-generated method stub
-			return this;
-		    }
     	};
 	return lnk;	
 	}
@@ -530,7 +525,8 @@ public class ExperimentDetail extends Panel
 	
 	private AjaxLink buildLinkToModal(final String linkID, final METWorksPctSizableModal modalwin) 
 		{
-		editLink = new AjaxLink(linkID)
+		// issue 39
+		editLink = new AjaxLink <Void>(linkID)
         	{
 			@Override
             public void onClick(final AjaxRequestTarget target)
@@ -558,12 +554,6 @@ public class ExperimentDetail extends Panel
 			
 			@Override
 			public boolean isEnabled() { return  getExperiment()!= null; }
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
         	};
         	
 		return editLink;
@@ -604,7 +594,8 @@ public class ExperimentDetail extends Panel
 	
 	public AjaxLink buildLinkToProjectDetails(final String linkID, final ModalWindow modal1, final String projectId)
 		{
-		return new AjaxLink(linkID)
+		// issue 39
+		return new AjaxLink <Void> (linkID)
 			{
 			@Override
 			public void onClick(AjaxRequestTarget target)
@@ -624,12 +615,6 @@ public class ExperimentDetail extends Panel
 		    	
 		    	modal1.show(target); 
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		}
 	
@@ -645,7 +630,8 @@ public class ExperimentDetail extends Panel
 		AjaxLink link;
 		
 		// Issue 237
-	    link =  new AjaxLink(id)
+		// issue 39
+	    link =  new AjaxLink <Void>(id)
 			{
 			@Override
 			public void onClick(AjaxRequestTarget target) 
@@ -680,12 +666,6 @@ public class ExperimentDetail extends Panel
 					}
 				catch (Exception e) {  }
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			@Override
 			protected void onComponentTag(ComponentTag tag)
 	    		{

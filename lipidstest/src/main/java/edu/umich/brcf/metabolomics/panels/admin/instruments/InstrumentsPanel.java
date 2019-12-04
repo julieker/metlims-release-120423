@@ -101,7 +101,7 @@ public class InstrumentsPanel extends Panel
 	
 	private AjaxLink buildLinkToModal(final String linkID, final Instrument instrument,  final METWorksPctSizableModal modal1, final InstrumentsPanel panel) 
 		{
-		return new AjaxLink(linkID)
+		return new AjaxLink <Void> (linkID)
         	{
             @Override
             public void onClick(AjaxRequestTarget target)
@@ -125,13 +125,6 @@ public class InstrumentsPanel extends Panel
             		});
             	 modal1.show(target);
             	}
-            
-            @Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
         	};
 		}
 	
@@ -155,15 +148,9 @@ public class InstrumentsPanel extends Panel
 		
 	private AjaxLink showModalButton(String id, InstrumentRegistry registryEntry, boolean showButton, final METWorksPctSizableModal modal) 
 		{
-		AjaxLink link = new AjaxLink(id) 
+		AjaxLink link = new AjaxLink <Void>(id) 
 			{
 			public void onClick(AjaxRequestTarget target) { modal.show(target); }
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 
 		if (registryEntry == null || !showButton)
@@ -200,22 +187,16 @@ public class InstrumentsPanel extends Panel
 		modal1.setInitialWidth(((int) Math.round(pageWidth * widthPct)));
 		}
 	
-
+// issue 39
 	private AjaxLink showNotifyModalButton(String id, boolean showButton, final ModalWindow modal, final UserListPanel panel) 
 		{
-		AjaxLink link = new AjaxLink(id) 
+		AjaxLink link = new AjaxLink <Void> (id) 
 			{
 			public void onClick(AjaxRequestTarget target) 
 				{
 				panel.updateUserList();
 				modal.show(target);
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		if (!showButton)
 			link.setVisible(false);

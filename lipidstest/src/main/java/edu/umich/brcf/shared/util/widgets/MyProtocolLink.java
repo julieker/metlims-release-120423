@@ -23,7 +23,8 @@ import org.apache.wicket.util.resource.IResourceStream;
 import edu.umich.brcf.shared.layers.domain.ProtocolReport;
 
 
-public class MyProtocolLink  extends Link
+public class MyProtocolLink  extends Link <Void>
+// issue 39
 	{
 	ProtocolReport cRep;
 	
@@ -32,12 +33,6 @@ public class MyProtocolLink  extends Link
 		super(id);
 		cRep=(ProtocolReport) model.getObject();
 		}
-	@Override // issue 464
-	public MarkupContainer setDefaultModel(IModel model) 
-	    {
-		// TODO Auto-generated method stub
-		return this;
-	    }
 	@Override
 	public void onClick() 
 		{

@@ -18,7 +18,8 @@ import org.apache.wicket.util.resource.IResourceStream;
 import edu.umich.brcf.shared.util.interfaces.IWriteableTextData;
 
 
-public class TextDownloadLink extends Link
+public class TextDownloadLink extends Link <Void>
+// issue 39
 	{
 	private boolean useTsv = false;
 	private IWriteableTextData data;
@@ -35,13 +36,6 @@ public class TextDownloadLink extends Link
 		{
 		doClick(data);
 		}
-	
-	@Override // issue 464
-	public MarkupContainer setDefaultModel(IModel model) 
-	    {
-		// TODO Auto-generated method stub
-		return this;
-	    }
 	
 	public void doClick(final IWriteableTextData data)
 		{

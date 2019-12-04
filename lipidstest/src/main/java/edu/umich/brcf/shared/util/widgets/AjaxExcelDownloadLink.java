@@ -21,7 +21,7 @@ import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheet;
 
 
 
-public abstract class AjaxExcelDownloadLink extends Link 
+public abstract class AjaxExcelDownloadLink extends Link <Void> // issue 39
 	{
 	IWriteableSpreadsheet report;
 	

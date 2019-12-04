@@ -172,22 +172,16 @@ public class SampleAssayTrackingPanel extends Panel
 			sample.setSelected(selection);
 		}
 
-	
+	// issue 39
 	private AjaxLink buildLinkToModal(final String linkID, final ModalWindow modal1, final String id)
 		{
-		return new AjaxLink(linkID)
+		return new AjaxLink <Void> (linkID)
 			{
 			@Override
 			public void onClick(final AjaxRequestTarget target)
 				{
 				doClick(linkID, target, modal1, id);
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		}
 

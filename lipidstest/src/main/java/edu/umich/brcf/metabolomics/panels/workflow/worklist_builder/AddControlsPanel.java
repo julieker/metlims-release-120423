@@ -233,7 +233,7 @@ public class AddControlsPanel extends Panel
 	    }
 	private AjaxLink buildDeleteButton(String id, final WorklistControlGroup item, final WebMarkupContainer container)
 		{
-		return new AjaxLink(id)
+		return new AjaxLink <Void> (id)
 			{
 			public boolean isEnabled() { return originalWorklist.getOpenForUpdates(); }
 
@@ -264,19 +264,13 @@ public class AddControlsPanel extends Panel
 				originalWorklist.updateSampleNamesArray();
 				refreshPage(target);
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		}
 
 	private AjaxLink buildAddButton(String id, final WorklistControlGroup item,
 			final WebMarkupContainer container)
 		{
-		return new AjaxLink(id)
+		return new AjaxLink <Void>(id)
 			{
 			public boolean isEnabled()
 				{
@@ -301,13 +295,6 @@ public class AddControlsPanel extends Panel
 				originalWorklist.addControlGroup();
 				target.add(container);
 				}
-			
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		}
 
@@ -329,10 +316,10 @@ public class AddControlsPanel extends Panel
 			};
 		}
 	
-	
+	// issue 39
 	private AjaxLink buildLinkToInfoModal(final String linkID, final WorklistControlGroup item, final ModalWindow modal1)
 		{
-		return new AjaxLink(linkID)
+		return new AjaxLink <Void> (linkID)
 			{
 			public boolean isEnabled() { return (originalWorklist.getOpenForUpdates()); }
 			
@@ -351,19 +338,14 @@ public class AddControlsPanel extends Panel
 
 				modal1.show(target);
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
+			
 			};
 		}
 
 	
 	private IndicatingAjaxLink buildBuildButton(String id, final WorklistControlGroup item, final WebMarkupContainer container)
 		{
-		return new IndicatingAjaxLink(id)
+		return new IndicatingAjaxLink <Void> (id)
 			{
 			public boolean isVisible()
 				{
@@ -395,12 +377,6 @@ public class AddControlsPanel extends Panel
 
 				return enabled;
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 
 			@Override
 			protected void onComponentTag(final ComponentTag tag)
@@ -449,10 +425,10 @@ public class AddControlsPanel extends Panel
 		sibContainers.add(c);
 		}
 
-	
+	// issue 39
 	private IndicatingAjaxLink buildClearButton(String id, final WorklistControlGroup item, final WebMarkupContainer container)
 		{
-		return new IndicatingAjaxLink(id)
+		return new IndicatingAjaxLink <Void>(id)
 			{
 			public boolean isVisible()
 				{
@@ -474,12 +450,6 @@ public class AddControlsPanel extends Panel
 				originalWorklist.updatePlatePositions(); // issue 417 issue 409
 				refreshPage(target);
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		}
 	

@@ -93,17 +93,12 @@ public class EditInventory extends WebPage
 			add(new RequiredTextField("purity").setType(BigDecimal.class));
 			add(buildStatusField("active"));
 			add(buildSaveButton("saveChanges", invDto, container));
-			add( new AjaxLink("close") 
+			// issue 39
+			add( new AjaxLink <Void>("close") 
 			   { 
 			   public void onClick(AjaxRequestTarget target)
 			       {  window.close(target); 
 			       } 
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 			   });
 			}
 		

@@ -170,7 +170,8 @@ public class NewEditPrepPlate extends WebPage
 		
 		private IndicatingAjaxLink buildPopulateButton(String id)
 			{
-			return new IndicatingAjaxLink(id)
+			// issue 39
+			return new IndicatingAjaxLink <Void> (id)
 				{
 				@Override
 				public void onClick(AjaxRequestTarget target) 
@@ -191,18 +192,13 @@ public class NewEditPrepPlate extends WebPage
 				
 					target.add(container);
 					}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 				};
 			}
 		
 		private IndicatingAjaxLink buildClearButton(String id)
 			{
-			return new IndicatingAjaxLink(id)
+			// issue 39
+			return new IndicatingAjaxLink <Void>(id)
 				{
 				@Override
 				public void onClick(AjaxRequestTarget target) 
@@ -217,12 +213,6 @@ public class NewEditPrepPlate extends WebPage
 				//	target.add(selectedExperimentDrop);
 				//	target.add(selectedAssayDrop);
 					}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 				};
 			}
 		}

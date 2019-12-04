@@ -136,7 +136,8 @@ public class SmallExperimentSearchPanel extends Panel
 		
 		private IndicatingAjaxLink buildLinkToModal(final String linkID, final ModalWindow modal1) 
 			{
-			return new IndicatingAjaxLink(linkID)
+			// issue 39
+			return new IndicatingAjaxLink <Void> (linkID)
 				{
 				@Override
 				public void onClick(final AjaxRequestTarget target)  
@@ -168,12 +169,6 @@ public class SmallExperimentSearchPanel extends Panel
 			    			}
 		    			}
 		    		}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 				};
 			}
 		

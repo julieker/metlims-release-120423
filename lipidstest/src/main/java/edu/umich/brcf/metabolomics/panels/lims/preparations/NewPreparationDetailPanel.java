@@ -188,19 +188,14 @@ public class NewPreparationDetailPanel  extends Panel{
 	
 	private AjaxLink buildWorklistBuilderLink(String id)
 		{
-		return new AjaxLink(id)
+		// issue 39
+		return new AjaxLink <Void>(id)
 			{
 			@Override
 			public void onClick(AjaxRequestTarget arg0) 
 				{
 			//	setResponsePage(new WorklistBuilderPage("worklist", (WebPage) getPage()));
 				}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 			};
 		}
 	
@@ -267,7 +262,7 @@ public class NewPreparationDetailPanel  extends Panel{
 
 	private AjaxLink buildPanelLinkToModal(String linkID, final ModalWindow modal1, final String sid)
 		{
-		return (new AjaxLink(linkID)
+		return (new AjaxLink <Void> (linkID)
 			{
 			@Override
 			public void onClick(AjaxRequestTarget target)
@@ -285,17 +280,11 @@ public class NewPreparationDetailPanel  extends Panel{
 				target.add(modal1);
 			modal1.show(target);
 			}
-			@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
 		});
 	}
 	
 	private AjaxLink buildLinkToModal(String linkID, final ModalWindow modal1, final WebPage page) {
-		return new AjaxLink(linkID)
+		return new AjaxLink <Void> (linkID)
         {
             @Override
             public void onClick(AjaxRequestTarget target)
@@ -319,12 +308,6 @@ public class NewPreparationDetailPanel  extends Panel{
                  });
             	 modal1.show(target);
             }
-        	@Override // issue 464
-			public MarkupContainer setDefaultModel(IModel model) 
-			    {
-				// TODO Auto-generated method stub
-				return this;
-			    }
         };
 	}
 	

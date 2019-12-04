@@ -129,12 +129,7 @@ public class PrintBarcodesOldPage extends WebPage
 					// Issue 212
 					arg0.add(PrintBarcodesOldPage.this.get("feedback"));
 					}
-					@Override // issue 464
-					public MarkupContainer setDefaultModel(IModel model) 
-					    {
-						// TODO Auto-generated method stub
-						return this;
-					    }
+				 // issue 39
 				};
 			add(printBtn);		   
 			}

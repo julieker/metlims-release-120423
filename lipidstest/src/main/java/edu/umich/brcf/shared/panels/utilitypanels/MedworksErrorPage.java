@@ -13,19 +13,14 @@ public abstract class MedworksErrorPage extends WebPage
 	public MedworksErrorPage(Page backPage, String error)
 		{
 		add(new Label("error", error));
-		add(new AjaxLink("ok")
+		// issue 39
+		add(new AjaxLink <Void>("ok")
 			{
 				@Override
 				public void onClick(AjaxRequestTarget target)
 					{
 					MedworksErrorPage.this.onOk(target);
 					}
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 			});
 		}
 

@@ -172,8 +172,8 @@ public class CompoundDetail  extends Panel{
 				@Override
 				protected void onError(AjaxRequestTarget target)  {  }
 				});
-			
-			add(new AjaxLink("saveChanges")
+			// issue 39
+			add(new AjaxLink <Void>("saveChanges")
 				{
 	            @Override
 	            public void onClick(AjaxRequestTarget target)
@@ -181,12 +181,6 @@ public class CompoundDetail  extends Panel{
 	            	String input = field.getValue().trim();
 	            	ValidateInput(input, target, label);
 	    			}
-
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) {
-					// TODO Auto-generated method stub
-					return (MarkupContainer) getDefaultModel();
-				}
 				});
 			
 			add(emptyPanel= new EmptyPanel("emptyPanel"));

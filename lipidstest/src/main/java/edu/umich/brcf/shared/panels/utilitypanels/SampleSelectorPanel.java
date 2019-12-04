@@ -132,7 +132,8 @@ public abstract class SampleSelectorPanel extends Panel
 		
 		public IndicatingAjaxLink buildSubmitLink(String id)
 			{
-			return new IndicatingAjaxLink(id)
+			// issue 39
+			return new IndicatingAjaxLink <Void>(id)
 				{
 				@Override
 				public boolean isEnabled()
@@ -153,12 +154,6 @@ public abstract class SampleSelectorPanel extends Panel
 					String label = getButtonLabel();
 					tag.put("value", label);
 					}	
-				@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 				 };
 			}
 		

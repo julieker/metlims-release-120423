@@ -210,7 +210,8 @@ public class DataSetListPanel extends Panel
 		        	}
 		    	});
 			
-			AjaxLink link =  new AjaxLink(linkID)
+			// issue 39
+			AjaxLink link =  new AjaxLink <Void>(linkID)
 		    	{
 				public boolean isEnabled()
 					{
@@ -238,12 +239,6 @@ public class DataSetListPanel extends Panel
 		        	
 		        	modal1.show(target);
 		        	}
-		    	@Override // issue 464
-				public MarkupContainer setDefaultModel(IModel model) 
-				    {
-					// TODO Auto-generated method stub
-					return this;
-				    }
 		    	};
 		    	
 		    link.setOutputMarkupId(true);

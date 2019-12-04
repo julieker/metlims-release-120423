@@ -20,7 +20,7 @@ import org.apache.wicket.util.resource.IResourceStream;
 import edu.umich.brcf.shared.layers.domain.Document;
 
 
-public class MyFileLink extends Link
+public class MyFileLink extends Link <Void> // issue 39
 	{
 	Document doc;
 	
@@ -29,12 +29,6 @@ public class MyFileLink extends Link
 		super(id);
 		doc=(Document) model.getObject();
 		}
-	@Override // issue 464
-	public MarkupContainer setDefaultModel(IModel model) 
-	    {
-		// TODO Auto-generated method stub
-		return this;
-	    }
 	@Override
 	public void onClick() 
 		{
