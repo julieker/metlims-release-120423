@@ -118,10 +118,9 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		String fileName = "";
 		// issue 32
 		if (worklist.getIsCustomDirectoryStructure())
-		    return (StringUtils.isEmptyOrNull(worklist.getCustomDirectoryStructureName()) ? " " : worklist.getCustomDirectoryStructureName()) +   "\\IDDA\\" + iddaString; 	// issue 32
-			
+		    return (StringUtils.isEmptyOrNull(worklist.getCustomDirectoryStructureName()) ? " " : worklist.getCustomDirectoryStructureName()) +   "\\IDDA\\" + iddaString; 	// issue 32			
 		if (vOutputFileName.indexOf("\\") < 0 )
-		    return "IDDA\\" + vOutputFileName; // issue 32
+		    return "IDDA\\" + iddaString; // issue 32 issue 48
 		String [] fileNameArray = StringUtils.splitAndTrim(vOutputFileName, "\\\\");
 		if (fileNameArray.length >= 7)
 			{
