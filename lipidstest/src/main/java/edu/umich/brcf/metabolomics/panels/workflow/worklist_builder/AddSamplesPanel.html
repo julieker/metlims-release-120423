@@ -1,3 +1,4 @@
+<!--  
 <wicket:head>
 		<link rel="stylesheet" type="text/css" href="worklist.css"/>
 		<link rel="stylesheet" type="text/css" href="tabstyles5.css"/>
@@ -13,15 +14,51 @@
 			padding-top : 2px; 
 			padding-bottom : 2px;
 			}
-		</style>
-</wicket:head>
+		   .ui-dialog-content {
+    			border-color:#6d1b81;
+    			border: 1;
+    			zoom: 1;
+    			background: #F8F8F8;
+    			padding: 0;
+           }
+          
 
+.ui-dialog-buttonset button:SUBMIT {
+   right:30px; 
+   position: absolute;
+   top: 1px;
+}
+</style>
+</wicket:head>
+-->
 <wicket:panel>
-	<div wicket:id="modal1"></div> 	
+	
+	 
 	<body class = "dialog_background" style = "margin-top : 0px; padding-top : 0px">
 		<span wicket:id = "container">	
-		<table style = "width : 100%">			
+		<form wicket:id="addSamplesRandomizationForm" >
+		<div wicket:id="modal1"></div> 
 			
+		</form>
+		<table style = "width : 100%">			
+			         <!--  
+					 <button wicket:id="open">Open jquery dialog</button>
+					 <button wicket:id="openinput">Open input jquery dialog</button>
+					 
+					  <button wicket:id="openrandom">Open Randomization dialog</button> 
+					    <button wicket:id="opendropdown">Open drop down</button>
+					    -->
+					 <!--  
+					  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					    <button  class = "worklistLargeButton" wicket:id="openUpload">Customize</button>
+					
+					
+					 -->
+			          <br/><br/>
+			         <div wicket:id="feedback" style="width: 360px;"></div>		
+			   <!--  
+				<span wicket:id = "randDoneAddSamples">Randomization Not Done: </span>
+			   -->
 			<tr wicket:id = "sampleGroupsListView" style= "vertical-align : top" >
 				<td class = "worklistOptionFieldCell" style = "width : 30%;" nowrap>
 					&nbsp;&nbsp;Experiment :<br>
@@ -62,9 +99,12 @@
 						<option>Simple</option>
 						<option>Custom</option>
 					</select>
-				
+					 <button wicket:id="openUpload">Customize</button>
+				   <!--  
 					<input  wicket:id = "runOrderButton" class = "worklistLargeButton" title = "Customize run order for this experiment"  
 				 	 style = "width : 50%; "  type = "button"   value = "&nbsp;&nbsp;Customize...&nbsp;&nbsp;"/>
+				   -->
+				   
 				</td>  
 				
 				<td nowrap class = "worklistOptionFieldCell"   style = "text-align : left; padding-left : 10px; width : 25%">
@@ -74,10 +114,27 @@
 					  type = "button" value = "Build worklist"/> 
 					
 					<input wicket:id = "clearButton" class = "worklistLargeButton" style = "width : 40%;"  title = "Clear all samples and controls." 
-					  type = "button" value = "Clear worklist"/>		
+					  type = "button" value = "Clear worklist"/>
+					
 				</td>
 			</tr>
 		</table>
+		 <!--   
+		<div wicket:id="dialog2">[dialog]</div>
+				<div wicket:id="dialog">[dialog]</div>
+				
+				<div wicket:id="dialog3">[dialog]</div>
+				-->
+	
+			<div wicket:id="dialogUpload" >[dialog]</div>
+	        <div id="dialogId" wicket:id="dialogUserDefinedControls">[dialog]</div>
+	        <div wicket:id="modalRandoms"></div>
+	  <!--  
+			<div wicket:id="dialogDropDown">[dialog]</div>
+			<div wicket:id="dialogUserDefinedControls">[dialog]</div>
+			<div wicket:id="modalRandoms"></div>
+			-->
+	
 	</span>
 </body>
 

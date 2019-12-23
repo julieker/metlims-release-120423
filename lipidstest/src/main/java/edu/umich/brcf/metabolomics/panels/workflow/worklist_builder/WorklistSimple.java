@@ -609,8 +609,12 @@ public class WorklistSimple implements Serializable
 		        		String outname = grabOutputFileName(item.getSampleName(), item);
 						item.setOutputFileName(outname);
 						// issue 29
-						if (item.getSampleName().contains(this.getPoolTypeA()) && item.getRelatedSample().equals(this.lastSample) && item.getDirection() == Constants.AFTER)
-                            this.setStartingPoint(Integer.parseInt(iSuffixStr));
+						// issue 46
+						if (this.getPoolTypeA() != null)
+							{
+							if (item.getSampleName().contains(this.getPoolTypeA()) && item.getRelatedSample().equals(this.lastSample) && item.getDirection() == Constants.AFTER)
+	                            this.setStartingPoint(Integer.parseInt(iSuffixStr));
+							}
 		    	    	}
 		        	}
 	            }
