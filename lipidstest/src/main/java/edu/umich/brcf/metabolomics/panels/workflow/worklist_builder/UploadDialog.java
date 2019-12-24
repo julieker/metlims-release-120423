@@ -76,10 +76,6 @@ public abstract class UploadDialog extends AbstractFormDialog<FileUpload>
 			public void onClose(AjaxRequestTarget target)  {    }
 		    });
 	    this.setOutputMarkupId(true);
-			
-		/////////////
-	
-		//////////////
 	    }
 
 	@Override
@@ -149,14 +145,14 @@ public abstract class UploadDialog extends AbstractFormDialog<FileUpload>
 				   gEr = null;
 				   ////
 				   if (gOriginalWorklist.getSampleGroup(0) !=null)
-					    gOriginalWorklist.getSampleGroup(0).setRandomizationType("None");
+					   gOriginalWorklist.getSampleGroup(0).setRandomizationType("None");
 				   if (e != null && e.getMessage() != null && e.getMessage() != "")
-				        {					
-				    	String sampleFormatErrMsg = e.getMessage().toString().replace("'", "\\'");
-				    	target.appendJavaScript(StringUtils.makeAlertMessage(sampleFormatErrMsg));
-				        }
+				       {					
+				       String sampleFormatErrMsg = e.getMessage().toString().replace("'", "\\'");
+				       target.appendJavaScript(StringUtils.makeAlertMessage(sampleFormatErrMsg));
+				       }
 				   else 
-				        target.appendJavaScript(StringUtils.makeAlertMessage("Error while loading randomization for experiment " + gEr.getExpId() + "."));
+				       target.appendJavaScript(StringUtils.makeAlertMessage("Error while loading randomization for experiment " + gEr.getExpId() + "."));
 				   ////
 					// TODO Auto-generated catch block
 				   e.printStackTrace();

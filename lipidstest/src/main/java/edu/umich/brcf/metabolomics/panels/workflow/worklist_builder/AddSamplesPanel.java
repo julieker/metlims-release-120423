@@ -84,11 +84,7 @@ public class AddSamplesPanel extends Panel
 	final Form<Void> form = new Form<Void>("form");
 	final FeedbackPanel feedback = new JQueryFeedbackPanel("feedback");
 	String buttonString = "";
-	
-	
-	
-	
-	
+
 	public final class AddSamplesRandomizationLoaderForm extends Form
 	    {
 		public AddSamplesRandomizationLoaderForm (String id)
@@ -140,8 +136,7 @@ public class AddSamplesPanel extends Panel
 			
 			@Override
 			public void onClick(AjaxRequestTarget target, DialogButton button)
-			    {
-				buttonString = "";			
+			    {		
 				if (button.toString().equals("Cancel"))
 					{	
 					buttonString = button.toString();
@@ -167,14 +162,12 @@ public class AddSamplesPanel extends Panel
 			public boolean isDefaultCloseEventEnabled()
 				{
 				return true;
-				}
-			
+				}			
 			@Override
 			public boolean isEscapeCloseEventEnabled()
 				{
 				return true;
-				}
-			
+				}			
 			@Override
 			public void onClose(IPartialPageRequestHandler handler, DialogButton button) {
 				// TODO Auto-generated method stub
@@ -182,18 +175,21 @@ public class AddSamplesPanel extends Panel
 				if (buttonString.equals(""))
 					{
 					AjaxRequestTarget target = (AjaxRequestTarget) handler;
-					target.appendJavaScript("alert('Randomization upload was successful.');");
+					globalRand = null;
+					originalWorklist.getSampleGroup(0).setRandomizationType("None");
+					target.appendJavaScript("alert('Randomization upload was cancelled.   Setting Randomization Type to none.');");
+					target.add (container);
 					}
-				}
-			
+				}			
 			@Override
 			protected void onOpen(IPartialPageRequestHandler handler)
 				{ 
+				buttonString = "";	
 				this.multiInvalidSamplesLabel.add(AttributeModifier.replace("title",  sampleInvalidIds.toString()));
 				}
 			@Override
 			public void onConfigure(JQueryBehavior behavior)
-			   {
+			    {
 				// class options //
 				behavior.setOption("autoOpen", false);
 				behavior.setOption("modal", this.isModal());
@@ -201,11 +197,9 @@ public class AddSamplesPanel extends Panel
 				behavior.setOption("width", 850);
 				behavior.setOption("title", Options.asString(this.getTitle().getObject()));
 				//behavior.setOption("height", 900);
-			   behavior.setOption("autofocus", false);
-			   }		
+			    behavior.setOption("autofocus", false);
+			    }		
 			};
-		
-
 			
 		// issue 46
 		final UploadDialog dialogUpload = new UploadDialog("dialogUpload", "Upload file", originalWorklist) 
@@ -232,18 +226,22 @@ public class AddSamplesPanel extends Panel
 						    originalWorklist.getSampleGroup(0).setRandomizationType("None");
 						    super.close(target, button);
 					        }
-			            }
+			            }			            
 			        else
 				        {			        	
 			        	userDefinedSamplesShortModel.setObject("Are you sure that you want to do this randomization?.  The following samples are not in the correct format:" + System.getProperty("line.separator") + ListUtils.prettyPrint(getSampleInvalidIdsShort(sampleInvalidIds)));
 			        	target.add(dialogUserDefinedControls);
-			        	dialogUserDefinedControls.open(target);
+			        	dialogUserDefinedControls.open(target);			        	
 				        }
 			        target.add(getParent());
-			       // modal1.show(target);
 			        }
 		        else 
-		        	super.close(target, button);	 
+		            {
+		        	target.appendJavaScript("alert('Randomization upload was not successful!  Setting Randomization Type to none');");				        
+					originalWorklist.getSampleGroup(0).setRandomizationType("None");
+					target.add(container);
+					super.close(target, button);
+		            }
 				}
 		    @Override
 			public Form<?> getForm() {
@@ -538,15 +536,9 @@ public class AddSamplesPanel extends Panel
 					case "updateForRandomDrop":                        
 						item.setIsRandomized(false);
 						// issue 387
-						//((MedWorksSession) Session.get()).setExpRand(null);						
+						// issue 46
 						globalRand = null;
 						if (originalWorklist != null) originalWorklist.clearAllItems();	
-						//issue 268
-						//if (originalWorklist.getSelectedPlatform().equalsIgnoreCase("agilent") && item.getRandomizationType().equals("Custom"))
-							//{
-							//target.appendJavaScript("alert('Custom randomization has been disabled for Agilent platform.  If you would like to use this feature, please contact wiggie@umich.edu for an introduction.')");
-							//item.setRandomizationType("None");
-							//}	
 						if (item.getRandomizationType().equals("Simple"))
 							{
 							String expDescript = originalWorklist != null && !originalWorklist.getDefaultExperimentId().equals("") ? "for experiment "
@@ -568,7 +560,6 @@ public class AddSamplesPanel extends Panel
 						item.setRandomizationType("None"); //issue 384
 						// issue 387			
 						// issue 46
-						//((MedWorksSession) Session.get()).setExpRand(null);
 						globalRand = null;
 						if (originalWorklist != null) originalWorklist.clearAllItems();// issue 268
 				        originalWorklist.clearControlGroups();// issue 268
@@ -591,7 +582,6 @@ public class AddSamplesPanel extends Panel
 							return;
 						// issue 387
 						// issue 46
-						//((MedWorksSession) Session.get()).setExpRand(null);
 						globalRand = null;
 						clearOutMotorPacControls();// issue 422
 						originalWorklist.clearOutPoolIDDAControls();// issue 432

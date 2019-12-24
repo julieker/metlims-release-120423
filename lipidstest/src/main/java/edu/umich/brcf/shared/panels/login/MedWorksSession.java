@@ -120,8 +120,6 @@ public final class MedWorksSession extends WaspSession {
 		nCE40Reps = nnCE40Reps;
 		}
 	
-	private ExperimentRandomization expRand; // issue 386
-	
 	public Viewpoint getLevel() {
 		return level;
 	}
@@ -555,17 +553,6 @@ public final class MedWorksSession extends WaspSession {
 	public void setNRatA(int nRatA) 
 		{
 		this.nRatA = nRatA;
-		}
-		
-	// issue 387
-	public ExperimentRandomization getExpRand()
-		{
-		return expRand;
-		}
-
-	public void setExpRand(ExperimentRandomization expRand) 
-		{
-		this.expRand = expRand;
 		}
 	}
 
