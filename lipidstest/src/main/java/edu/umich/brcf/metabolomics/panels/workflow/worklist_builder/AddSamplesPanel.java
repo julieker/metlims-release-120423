@@ -130,7 +130,7 @@ public class AddSamplesPanel extends Panel
 		container.add(arlf);
 		originalWorklist = worklist;		
 		// issue 46
-		final SimpleDialog dialogUserDefinedControls = new SimpleDialog("dialogUserDefinedControls", "Please cofirm", userDefinedSamplesShortModel) 
+		final UserDefinedControlsDialog dialogUserDefinedControls = new UserDefinedControlsDialog("dialogUserDefinedControls", "Please cofirm", userDefinedSamplesShortModel) 
 			{
 			private static final long serialVersionUID = 1L;
 			
