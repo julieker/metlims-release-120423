@@ -115,7 +115,7 @@ public class AddSamplesPanel extends Panel
 	List<String> sampleInvalidIds = new ArrayList<String> ();
 	boolean excludedSamplesWarningGiven = false, secondBuild = false, buildWarningGiven = false;
     String userDefinedSamplesLongStr = "";
-    Model<String> userDefinedSamplesShortModel = Model.of("");
+    Model<String> userDefinedSamplesModel = Model.of("");
     
 	public AddSamplesPanel(String id)
 		{		
@@ -130,7 +130,7 @@ public class AddSamplesPanel extends Panel
 		container.add(arlf);
 		originalWorklist = worklist;		
 		// issue 46
-		final UserDefinedControlsDialog dialogUserDefinedControls = new UserDefinedControlsDialog("dialogUserDefinedControls", "Please cofirm", userDefinedSamplesShortModel) 
+		final UserDefinedControlsDialog dialogUserDefinedControls = new UserDefinedControlsDialog("dialogUserDefinedControls", "Please cofirm", userDefinedSamplesModel) 
 			{
 			private static final long serialVersionUID = 1L;
 			
@@ -185,7 +185,6 @@ public class AddSamplesPanel extends Panel
 			protected void onOpen(IPartialPageRequestHandler handler)
 				{ 
 				buttonString = "";	
-				this.multiInvalidSamplesLabel.add(AttributeModifier.replace("title",  sampleInvalidIds.toString()));
 				}
 			@Override
 			public void onConfigure(JQueryBehavior behavior)
@@ -229,7 +228,7 @@ public class AddSamplesPanel extends Panel
 			            }			            
 			        else
 				        {			        	
-			        	userDefinedSamplesShortModel.setObject("Are you sure that you want to do this randomization?.  The following samples are not in the correct format:" + System.getProperty("line.separator") + ListUtils.prettyPrint(getSampleInvalidIdsShort(sampleInvalidIds)));
+			        	userDefinedSamplesModel.setObject("Are you sure that you want to do this randomization?.  The following samples are not in the correct format:" + System.getProperty("line.separator") + ListUtils.prettyPrint(sampleInvalidIds));
 			        	target.add(dialogUserDefinedControls);
 			        	dialogUserDefinedControls.open(target);			        	
 				        }
@@ -316,25 +315,6 @@ public class AddSamplesPanel extends Panel
 		setOutputMarkupId(true);		
 		}
 
-	// issue 46
-	public List<String> getSampleInvalidIdsShort (List<String> sampleInvalidIds)
-	    {
-		List<String> sampleInvalidIdsShort = new ArrayList<String> ();
-		int sizeToDo = sampleInvalidIds.size() >17 ? 17 : sampleInvalidIds.size()-1;
-		if (sampleInvalidIds != null)
-		    {
-			if (sampleInvalidIds.size() > 0)
-			    {   	   
-		        for (int i = 0; i <= sizeToDo; i++)
-			        sampleInvalidIdsShort.add(sampleInvalidIds.get(i));
-			    }
-		    }
-		if (sampleInvalidIdsShort.size() < sampleInvalidIds.size())
-			sampleInvalidIdsShort.add("...");
-		return sampleInvalidIdsShort;
-	    }
-	
-	
 	private Label buildRandomizationLabel(String id)
 		{
 		return new Label(id, "Plate Order") // issue 388
