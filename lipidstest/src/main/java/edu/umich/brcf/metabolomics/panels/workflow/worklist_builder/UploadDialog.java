@@ -22,7 +22,6 @@ import com.googlecode.wicket.jquery.ui.panel.JQueryFeedbackPanel;
 import com.googlecode.wicket.jquery.ui.widget.dialog.AbstractDialog;
 import com.googlecode.wicket.jquery.ui.widget.dialog.AbstractFormDialog;
 import com.googlecode.wicket.jquery.ui.widget.dialog.DialogButton;
-import com.googlecode.wicket.kendo.ui.form.dropdown.DropDownList;
 
 import edu.umich.brcf.shared.layers.domain.Sample;
 import edu.umich.brcf.shared.layers.service.SampleService;

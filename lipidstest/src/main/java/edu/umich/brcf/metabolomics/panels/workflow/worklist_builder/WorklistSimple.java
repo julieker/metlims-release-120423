@@ -77,6 +77,41 @@ public class WorklistSimple implements Serializable
 	private int limitNumberControls = 99;
 	private String lastSample ; // issue 29
 	private int startingPoint ; // issue 29
+	private int nCE10Reps, nCE20Reps, nCE40Reps;
+	
+	// issue 56
+	public int getNCE10Reps()
+		{
+		return 	nCE10Reps;
+		}
+	
+	public int getNCE20Reps()
+		{
+		return 	nCE20Reps;
+		}
+	
+	public int getNCE40Reps()
+		{
+		return 	nCE40Reps;
+		}
+	
+	public void setNCE10Reps(int vnce10reps)
+		{
+		this.nCE10Reps = vnce10reps;
+		}
+
+	public void setNCE20Reps(int vnce20reps)
+		{
+		this.nCE20Reps = vnce20reps;
+		}
+
+	public void setNCE40Reps(int vnce40reps)
+		{
+		this.nCE40Reps = vnce40reps;
+		}
+	
+	// issue 56
+	
 	// issue 29
 	public String getLastSample()
 		{
@@ -143,15 +178,16 @@ public class WorklistSimple implements Serializable
 		}
 	
     // issue 11
+    // issue 56
     public void clearOutPoolIDDAControls ()
 		{
-		((MedWorksSession) Session.get()).setNBatchPoolsAfter(0);
-		((MedWorksSession) Session.get()).setNBatchPoolsBefore(0);
-		((MedWorksSession) Session.get()).setNMasterPoolsBefore(0);
-		((MedWorksSession) Session.get()).setNMasterPoolsAfter(0);
-		((MedWorksSession) Session.get()).setNCE10Reps(0);
-		((MedWorksSession) Session.get()).setNCE20Reps(0);
-		((MedWorksSession) Session.get()).setNCE40Reps(0);	
+    	setMasterPoolsBefore(0);
+    	setMasterPoolsAfter(0);
+    	setBatchPoolsBefore(0);
+    	setBatchPoolsAfter(0);
+    	setNCE10Reps(0);
+    	setNCE20Reps(0);
+    	setNCE40Reps(0);	
 		}	
     
     
@@ -1496,12 +1532,15 @@ public class WorklistSimple implements Serializable
 		this.batchPoolsAfter = batchPoolsAfter;
 		}
 	
-	public void updatePoolReplicates(int nMasterBefore, int nMasterAfter, int nBatchBefore, int nBatchAfter) 
+	public void updatePoolReplicates(int nMasterBefore, int nMasterAfter, int nBatchBefore, int nBatchAfter, int ne10, int ne20, int ne40) 
 		{
 		this.masterPoolsBefore = nMasterBefore;
 		this.masterPoolsAfter = nMasterAfter;
 		this.batchPoolsBefore = nBatchBefore;
 		this.batchPoolsAfter = nBatchAfter;
+		this.nCE10Reps = ne10;
+		this.nCE20Reps = ne20;
+		this.nCE40Reps = ne40;
 		}
 	}
 	

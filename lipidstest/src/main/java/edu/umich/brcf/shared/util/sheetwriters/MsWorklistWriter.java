@@ -192,6 +192,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		}
 	
 	// issue 432
+// issue 56
 	public void printOutIDDA(Workbook workBook, Sheet sheet, int rowCt, String strMode, String outputFileBase)
 		{
 		Font font = workBook.createFont();
@@ -221,9 +222,9 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		// issue 29
 		if (startPoint == 1)
 		    return;
-		for (int j = 0; j <= ((MedWorksSession) Session.get()).getNCE10Reps();j++)
+		for (int j = 0; j <= worklist.getNCE10Reps();j++)
 		    {
-			if (((MedWorksSession) Session.get()).getNCE10Reps() == 0)
+			if (worklist.getNCE10Reps() == 0)
 				continue;
 			PoiUtils.createBlankRow(rowCt,  sheet);
 			if (j==0) // issue 453
@@ -236,12 +237,12 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		    rowCt ++;
 		    }
 		// issue 38
-		if (((MedWorksSession) Session.get()).getNCE10Reps() > 0)
+		if (worklist.getNCE10Reps() > 0)
 			startPoint++;
         iddaStr = 	worklist.getPoolTypeA() + "-" + String.format("%0" + worklist.getAmountToPad() +"d",startPoint);
-		for (int j = 0; j <= ((MedWorksSession) Session.get()).getNCE20Reps();j++)
+		for (int j = 0; j <= worklist.getNCE20Reps();j++)
 		    {
-			if (((MedWorksSession) Session.get()).getNCE20Reps() == 0)
+			if (worklist.getNCE20Reps() == 0)
 				continue;
 			PoiUtils.createBlankRow(rowCt,  sheet);
 			if (j==0) // issue 453
@@ -254,12 +255,12 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		    rowCt ++;
 		    }
 		// issue 38
-		if (((MedWorksSession) Session.get()).getNCE20Reps() > 0)
+		if (worklist.getNCE20Reps() > 0)
 			startPoint++;
         iddaStr = 	worklist.getPoolTypeA() + "-" + String.format("%0" + worklist.getAmountToPad() +"d",startPoint);
-		for (int j = 0; j <= ((MedWorksSession) Session.get()).getNCE40Reps();j++)
+		for (int j = 0; j <= worklist.getNCE40Reps();j++)
 		    { 
-			if (((MedWorksSession) Session.get()).getNCE40Reps() == 0)
+			if (worklist.getNCE40Reps() == 0)
 				continue;
 			PoiUtils.createBlankRow(rowCt,  sheet);
 		    if (j==0) // issue 453

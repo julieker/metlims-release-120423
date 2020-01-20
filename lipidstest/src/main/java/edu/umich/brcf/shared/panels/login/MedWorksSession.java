@@ -49,12 +49,6 @@ public final class MedWorksSession extends WaspSession {
 	private String saveValue;
 	private List<String> saveValues; 
 	
-	// issue 391
-	private int nMasterPoolsBefore;
-	private int nMasterPoolsAfter;
-	private int nBatchPoolsBefore;
-	private int nBatchPoolsAfter;	
-	
 	// Issue 422
 	private int nGastroExercise;
 	private int nGastroSedentary;
@@ -82,43 +76,11 @@ public final class MedWorksSession extends WaspSession {
 	private int nRatG;
 	private int nRatL;
 	private int nRatA;
-	private int nCE10Reps;
-	private int nCE20Reps;
-	private int nCE40Reps;
+
 	
 	// issue 432
 	// issue 432
-	public Integer getNCE10Reps() 
-		{
-		return nCE10Reps;
-		}
-
-	public void setNCE10Reps(Integer nnCE10Reps) 
-		{
-		nCE10Reps = nnCE10Reps;
-		}
-	
-	// issue 432
-	public Integer getNCE20Reps() 
-		{
-		return nCE20Reps;
-		}
-
-	public void setNCE20Reps(Integer nnCE20Reps) 
-		{
-		nCE20Reps = nnCE20Reps;
-		}
-	
-	// issue 432
-	public Integer getNCE40Reps() 
-		{
-		return nCE40Reps;
-		}
-
-	public void setNCE40Reps(Integer nnCE40Reps) 
-		{
-		nCE40Reps = nnCE40Reps;
-		}
+	// issue 56 get rid of getNCE session variables and get rid of pools after and before session variables 
 	
 	public Viewpoint getLevel() {
 		return level;
@@ -278,49 +240,7 @@ public final class MedWorksSession extends WaspSession {
 		// TODO Auto-generated method stub
 		return false;
 		}
-	
-	
-	// Issue 391 	
-	public int getNMasterPoolsBefore() 
-	    {
-	    return nMasterPoolsBefore;
-	    }
-
-	public void setNMasterPoolsBefore(int nMasterPoolsBefore) 
-		{
-		this.nMasterPoolsBefore = nMasterPoolsBefore;
-		}
-	
-	public int getNMasterPoolsAfter() 
-		{
-		return nMasterPoolsAfter;
-		}
-	
-	public void setNMasterPoolsAfter(int nMasterPoolsAfter) 
-		{
-		this.nMasterPoolsAfter = nMasterPoolsAfter;
-		}
-	
-	public int getNBatchPoolsBefore() 
-		{
-		return nBatchPoolsBefore;
-		}
-	
-	public void setNBatchPoolsBefore(int nBatchPoolsBefore) 
-		{
-		this.nBatchPoolsBefore = nBatchPoolsBefore;
-		}
-	
-	public int getNBatchPoolsAfter() 
-		{
-		return nBatchPoolsAfter;
-		}
-	
-	public void setNBatchPoolsAfter(int nBatchPoolsAfter) 
-		{
-		this.nBatchPoolsAfter = nBatchPoolsAfter;
-		}
-	
+	// issue 56 get rid of before and after pool session variables
 	// issue 22
 	public int getNLungExercise() 
 		{
