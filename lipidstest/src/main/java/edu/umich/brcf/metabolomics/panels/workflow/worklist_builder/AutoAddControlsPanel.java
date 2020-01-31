@@ -4,6 +4,7 @@
 ////////////////////////////////////////////////////
 package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 
+import java.awt.Event;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +15,7 @@ import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -29,6 +31,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import edu.umich.brcf.shared.layers.domain.Sample;
@@ -60,9 +64,7 @@ public class AutoAddControlsPanel extends Panel
 	List<String> availableChearBlankTypes = Arrays.asList(new String[] {"Urine", "Plasma"});
 	List<String> poolTypes = Arrays.asList(new String[] {"Master Pool   (CS00000MP)", "Batch Pool.M1 (CS000BPM1)",  "Batch Pool.M2 (CS000BPM2)", "Batch Pool.M3 (CS000BPM3)", "Batch Pool.M4 (CS000BPM4)", "Batch Pool.M5 (CS000BPM5)"});
 	List<String> poolTypesB = Arrays.asList(new String[] {"Master Pool.QCMP (CS000QCMP)", "Batch Pool.M1 (CS000BPM1)", "Batch Pool.M2 (CS000BPM2)", "Batch Pool.M3 (CS000BPM3)", "Batch Pool.M4 (CS000BPM4)", "Batch Pool.M5 (CS000BPM5)"});
-	IndicatingAjaxLink buildButton,clearButton;
-	int gNMasterPoolsAfter, gNMasterPoolsBefore , gNBatchPoolsAfter, gNBatchPoolsBefore, gNCE10Reps, gNCE20Reps,gNCE40Reps;
-	
+	IndicatingAjaxLink buildButton,clearButton;			   
 	AjaxLink customizeButton;
     AjaxLink motrpacButton;
 	// Issue 302
@@ -75,7 +77,6 @@ public class AutoAddControlsPanel extends Panel
 	Integer nStandards = 1, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
     public Integer poolSpacingA = 0, poolSpacingB = 0;
 	private Boolean needsRebuild = false;
-    String buttonString = "";
 	WebMarkupContainer container = new WebMarkupContainer("container");
 	List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
 	String example = "";
@@ -106,20 +107,156 @@ public class AutoAddControlsPanel extends Panel
 		// issue 13
 		container.add(poolTypeADrop = buildPoolTypeDropdownA("poolTypeADrop","poolTypeA"));
 		container.add(poolTypeBDrop = buildPoolTypeDropdownB("poolTypeBDrop","poolTypeB"));
-		container.add (motrpacButton = buildLinkToMotrPacModal("motrpacButton", modal1, worklist ));
 		container.add(buildButton = buildBuildButton("buildButton",container, worklist));
-		
-	
 		container.add(clearButton = buildClearButton("clearButton",container));
 		// issue 56
-		final CustomizeControlGroupPageDialog customizeControlGroupPageDialog = new CustomizeControlGroupPageDialog("customizeControlGroupPageDialog", "Customize pool settings") 
+		
+		final MotrpacOptionsDialog motrpacOptionsDialog = new MotrpacOptionsDialog ("motrpacOptionsDialog",  "MoTrPAC Controls", originalWorklist)		
+		    { // NOSONAR
+			private static final long serialVersionUID = 1L;
+		    @Override
+			public void onClick(AjaxRequestTarget target, DialogButton button)
+				{	
+		    	super.close(target, button);
+				}    		    
+			    @Override
+				public Form<?> getForm() 
+					{
+					// TODO Auto-generated method stub
+				//// put back	form.setMultiPart(true);
+					return this.form;
+					}
+			    @Override
+				public DialogButton getSubmitButton() 
+			    	{
+					// TODO Auto-generated method stub
+					return this.submitButton;
+			    	}	 
+			    
+				@Override
+				protected void onOpen(IPartialPageRequestHandler handler)
+					{ 					
+					AjaxRequestTarget target = (AjaxRequestTarget) handler;
+				    target.add(this);
+				    target.add(this.getParent());
+				    handler.add(form); 
+				    target.add(feedback);
+				    target.add(form);
+				    // issue 6
+				    if (originalWorklist.getChosenOtherSampleMotrPAC())
+				        {
+				    	target.appendJavaScript(buildHTMLClearString(1,22));
+				    	this.clearPrevValues();
+				        }
+					}
+			    
+				@Override
+				public void onClose(IPartialPageRequestHandler handler, DialogButton button) 
+				    {
+					// TODO Auto-generated method stub
+					//AjaxRequestTarget target = (AjaxRequestTarget) handler;
+					this.nGastroExercisePrev=originalWorklist.getNGastroExercise();
+					this.nGastroSedentaryPrev=originalWorklist.getNGastroSedentary();
+					this.nLiverExercisePrev=originalWorklist.getNLiverExercise();
+					this.nLiverSedentaryPrev=originalWorklist.getNLiverSedentary();
+					this.nAdiposeExercisePrev=originalWorklist.getNAdiposeExercise();
+					this.nAdiposeSedentaryPrev=originalWorklist.getNAdiposeSedentary();					
+					this.nPlasmaExercisePrev=originalWorklist.getNPlasmaExercise();
+					this.nPlasmaSedentaryPrev=originalWorklist.getNPlasmaSedentary();
+					this.nRatPlasmaPrev=originalWorklist.getNRatPlasma();
+					this.nRatGPrev=originalWorklist.getNRatG();
+					this.nRatLPrev=originalWorklist.getNRatL();
+					this.nRatAPrev=originalWorklist.getNRatA();	
+					this.nLungExercisePrev=originalWorklist.getNLungExercise();
+					this.nLungSedentaryPrev=originalWorklist.getNLungSedentary();
+					this.nKidneyExercisePrev=originalWorklist.getNKidneyExercise();
+					this.nKidneySedentaryPrev=originalWorklist.getNKidneySedentary();
+					this.nHeartExercisePrev=originalWorklist.getNHeartExercise();
+					this.nHeartSedentaryPrev=originalWorklist.getNHeartSedentary();
+					this.nBrownAdiposeExercisePrev=originalWorklist.getNBrownAdiposeExercise();
+					this.nBrownAdiposeSedentaryPrev=originalWorklist.getNBrownAdiposeSedentary();
+					this.nHippoCampusExercisePrev=originalWorklist.getNHippoCampusExercise();
+					this.nHippoCampusSedentaryPrev=originalWorklist.getNHippoCampusSedentary();
+					handler.add(form);
+					
+				    }
+				
+				@Override
+				public void onConfigure(JQueryBehavior behavior)
+				    {
+					// class options //
+					behavior.setOption("autoOpen", false);
+					behavior.setOption("modal", this.isModal());
+					behavior.setOption("resizable", this.isResizable());
+					behavior.setOption("width", 2000);
+					behavior.setOption("title", Options.asString(this.getTitle().getObject()));
+					behavior.setOption("height", 600);
+				    behavior.setOption("autofocus", false);
+				    }	
+			    @Override
+				protected void onSubmit(AjaxRequestTarget target, DialogButton button) 
+				    {
+			    	// TODO Auto-generated method stub	
+			    	target.add(feedback);
+			    	target.add(this);
+			    	target.add(container);
+			    	target.add(form);
+			    	if (originalWorklist.getChosenOtherSampleMotrPAC())
+			    	   originalWorklist.setChosenOtherSampleMotrPAC(false);
+				    }
+				@Override
+				protected void onError(AjaxRequestTarget target, DialogButton button) 
+				    {
+					// TODO Auto-generated method stub				
+				    }			
+				@Override
+				protected List<DialogButton> getButtons()
+				    {
+					List <DialogButton> dialogButtonList = new ArrayList <DialogButton> ();
+					dialogButtonList.add(new DialogButton("submit", "Done")) ;
+					return dialogButtonList;
+				    }			
+			    };
+				
+			    motrpacOptionsDialog.add(new AjaxEventBehavior("keydown")
+				    {        
+					@Override
+					protected void onEvent(AjaxRequestTarget target) 
+					    {
+						// TODO Auto-generated method stub
+					    originalWorklist.setNGastroExercise(motrpacOptionsDialog.nGastroExercisePrev);
+				        originalWorklist.setNGastroSedentary(motrpacOptionsDialog.nGastroSedentaryPrev);
+				        originalWorklist.setNLiverExercise(motrpacOptionsDialog.nLiverExercisePrev);
+				        originalWorklist.setNLiverSedentary(motrpacOptionsDialog.nLiverSedentaryPrev);
+				        originalWorklist.setNAdiposeExercise(motrpacOptionsDialog.nAdiposeExercisePrev);
+				        originalWorklist.setNAdiposeSedentary(motrpacOptionsDialog.nAdiposeSedentaryPrev);
+				        originalWorklist.setNPlasmaExercise(motrpacOptionsDialog.nPlasmaExercisePrev);
+				        originalWorklist.setNPlasmaSedentary(motrpacOptionsDialog.nPlasmaSedentaryPrev);
+				        originalWorklist.setNRatPlasma(motrpacOptionsDialog.nRatPlasmaPrev);
+				        originalWorklist.setNRatG(motrpacOptionsDialog.nRatGPrev);
+				        originalWorklist.setNRatL(motrpacOptionsDialog.nRatLPrev);
+				        originalWorklist.setNRatA(motrpacOptionsDialog.nRatAPrev);
+				        originalWorklist.setNLungExercise(motrpacOptionsDialog.nLungExercisePrev);
+				        originalWorklist.setNLungSedentary(motrpacOptionsDialog.nLungSedentaryPrev);
+				        originalWorklist.setNKidneyExercise(motrpacOptionsDialog.nKidneyExercisePrev);
+				        originalWorklist.setNKidneySedentary(motrpacOptionsDialog.nKidneySedentaryPrev);
+				        originalWorklist.setNHeartExercise(motrpacOptionsDialog.nHeartExercisePrev);
+				        originalWorklist.setNHeartSedentary(motrpacOptionsDialog.nHeartSedentaryPrev);
+				        originalWorklist.setNBrownAdiposeExercise(motrpacOptionsDialog.nBrownAdiposeExercisePrev);
+				        originalWorklist.setNBrownAdiposeSedentary(motrpacOptionsDialog.nBrownAdiposeSedentaryPrev);
+				        originalWorklist.setNHippoCampusExercise(motrpacOptionsDialog.nHippoCampusExercisePrev);
+				        originalWorklist.setNHippoCampusSedentary(motrpacOptionsDialog.nHippoCampusSedentaryPrev);
+					    }
+				    });
+			    
+	////////////////////////////////////////////////////			
+		final CustomizeControlGroupPageDialog customizeControlGroupPageDialog = new CustomizeControlGroupPageDialog("customizeControlGroupPageDialog", "Customize pool settings", originalWorklist) 
 		    { // NOSONAR
 			private static final long serialVersionUID = 1L;
 		   // @Override
 			public void onClick(AjaxRequestTarget target, DialogButton button)
 				{	
-				buttonString = button.toString();
-				if ( ( nCE10Reps > 0  || nCE20Reps > 0 || nCE40Reps > 0 ) &&  nMasterAfter == 0    )
+				if ( ( nCE10Reps > 0  || nCE20Reps > 0 || nCE40Reps > 0 ) &&  masterPoolsAfter == 0    )
 				    {
 	        		target.appendJavaScript(StringUtils.makeAlertMessage("There are NCE values for an IDDA run.  Please choose an after amount for Pool A "));
 		        	}
@@ -143,16 +280,17 @@ public class AutoAddControlsPanel extends Panel
 			@Override
 			protected void onOpen(IPartialPageRequestHandler handler)
 				{ 
-				buttonString = "";
-				this.nMasterAfter = originalWorklist.getMasterPoolsAfter();	
-				this.nMasterBefore = originalWorklist.getMasterPoolsBefore();
-				this.nBatchAfter = originalWorklist.getBatchPoolsAfter();	
-				this.nBatchBefore = originalWorklist.getBatchPoolsBefore();
-		    	this.nCE10Reps = originalWorklist.getNCE10Reps();
-		    	this.nCE20Reps = originalWorklist.getNCE20Reps();
-		    	this.nCE40Reps = originalWorklist.getNCE40Reps();
-				AjaxRequestTarget target = (AjaxRequestTarget) handler;
-				target.add(this);
+			    AjaxRequestTarget target = (AjaxRequestTarget) handler;
+		        target.add(this);
+		        target.add(this.getParent());
+		        handler.add(form); 
+		        target.add(feedback);
+		        target.add(form);
+		        if (originalWorklist.getChosenOtherSample())
+			        {
+			    	target.appendJavaScript(buildHTMLClearString(23,29));
+			    	this.clearPrevValues();
+			        }
 				}
 		    
 			@Override
@@ -160,24 +298,15 @@ public class AutoAddControlsPanel extends Panel
 			    {
 				// TODO Auto-generated method stub
 				//AjaxRequestTarget target = (AjaxRequestTarget) handler;	
-				if (!buttonString.equals(""))
-					{
-					gNMasterPoolsAfter = this.nMasterAfter;
-					gNMasterPoolsBefore = this.nMasterBefore;
-					gNBatchPoolsBefore = this.nBatchBefore;
-					gNBatchPoolsAfter = this.nBatchAfter;
-					gNCE10Reps = this.nCE10Reps;
-					gNCE20Reps = this.nCE20Reps;
-					gNCE40Reps = this.nCE40Reps;
-					originalWorklist.setMasterPoolsBefore(this.nMasterBefore);
-			    	originalWorklist.setMasterPoolsAfter(this.nMasterAfter);
-			    	originalWorklist.setBatchPoolsBefore(this.nBatchBefore);
-			    	originalWorklist.setBatchPoolsAfter(this.nBatchAfter);
-			    	originalWorklist.setNCE10Reps(this.nCE10Reps);
-			    	originalWorklist.setNCE20Reps(this.nCE20Reps);
-			    	originalWorklist.setNCE40Reps(this.nCE40Reps);
-				    }
-				handler.add(feedback); 			
+				this.masterPoolsAfterPrev= originalWorklist.getMasterPoolsAfter();	
+				this.masterPoolsBeforePrev= originalWorklist.getMasterPoolsBefore();
+				this.batchPoolsAfterPrev= originalWorklist.getBatchPoolsAfter();	
+				this.batchPoolsBeforePrev= originalWorklist.getBatchPoolsBefore();
+		    	this.nCE10RepsPrev= originalWorklist.getNCE10Reps();
+		    	this.nCE20RepsPrev= originalWorklist.getNCE20Reps();
+		    	this.nCE40RepsPrev= originalWorklist.getNCE40Reps();
+				handler.add(form); 
+				
 			    }
 			
 			@Override
@@ -195,7 +324,13 @@ public class AutoAddControlsPanel extends Panel
 		    @Override
 			protected void onSubmit(AjaxRequestTarget target, DialogButton button) 
 			    {
-		    	// TODO Auto-generated method stub				
+		    	// TODO Auto-generated method stub	
+		    	target.add(feedback);
+		    	target.add(this);
+		    	target.add(container);
+		    	target.add(form);
+		    	if (originalWorklist.getChosenOtherSample())
+			        originalWorklist.setChosenOtherSample(false);
 			    }
 			@Override
 			protected void onError(AjaxRequestTarget target, DialogButton button) 
@@ -221,7 +356,34 @@ public class AutoAddControlsPanel extends Panel
 					customizeControlGroupPageDialog.open(target);
 				    }
 			    });
-			container.add(customizeControlGroupPageDialog);
+		    container.add(customizeControlGroupPageDialog);
+		    
+		    // issue 53
+		    container.add(new IndicatingAjaxLink <Void>("openMotrpac") 
+		    {			
+			private static final long serialVersionUID = 1L;       
+			@Override
+			public void onClick(AjaxRequestTarget target) 			     
+			    {	
+				motrpacOptionsDialog.open(target);
+			    }
+		    });
+		    customizeControlGroupPageDialog.add(new AjaxEventBehavior("keydown")
+		    {        
+			@Override
+			protected void onEvent(AjaxRequestTarget target) 
+			    {
+				// TODO Auto-generated method stub
+				originalWorklist.setMasterPoolsBefore(customizeControlGroupPageDialog.masterPoolsBeforePrev);
+		    	originalWorklist.setMasterPoolsAfter(customizeControlGroupPageDialog.masterPoolsAfterPrev);
+		    	originalWorklist.setBatchPoolsBefore(customizeControlGroupPageDialog.batchPoolsBeforePrev);
+		    	originalWorklist.setBatchPoolsAfter(customizeControlGroupPageDialog.batchPoolsAfterPrev);
+		    	originalWorklist.setNCE10Reps(customizeControlGroupPageDialog.nCE10RepsPrev);
+		    	originalWorklist.setNCE20Reps(customizeControlGroupPageDialog.nCE20RepsPrev);
+		    	originalWorklist.setNCE40Reps(customizeControlGroupPageDialog.nCE40RepsPrev);		        
+			    }
+		    });
+			container.add(motrpacOptionsDialog);
 		}
 	
 	private DropDownChoice buildChearBlankTypeDropdown(final String id,  final String propertyName)
@@ -244,8 +406,7 @@ public class AutoAddControlsPanel extends Panel
 		drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForChearBlankTypeDrop", null));
 		return drp;
 		}
-	
-	
+		
 	// issue 13
 	private DropDownChoice buildPoolTypeDropdownA(final String id,  final String propertyName)
 		{
@@ -334,15 +495,15 @@ public class AutoAddControlsPanel extends Panel
 		        }
 	        @Override
 	        public void onClick(AjaxRequestTarget target)
-		        {
-	        	// issue 509
-	        	if (!(poolSpacingA > 0) &&  ( gNMasterPoolsAfter  > 0  ||  gNMasterPoolsBefore  > 0))	        		
+		        {	
+	    		// issue 509
+	        	if (!(poolSpacingA > 0) &&  ( worklist.getMasterPoolsAfter() > 0  ||  worklist.getMasterPoolsBefore()  > 0))	        		
 	        		{
 	        		target.appendJavaScript(StringUtils.makeAlertMessage("There is customization for Pool A.  Please choose a value for Pool Spacing A "));
 	        		return;
 	        		}
 	        	// issue 509
-	        	if (!(poolSpacingB > 0) &&  ( gNBatchPoolsAfter  > 0  ||  gNBatchPoolsBefore  > 0))	        		
+	        	if (!(poolSpacingB > 0) &&  ( worklist.getBatchPoolsAfter()  > 0  ||  worklist.getBatchPoolsBefore()  > 0))	        		
 	        		{
 	        		target.appendJavaScript(StringUtils.makeAlertMessage("There is customization for Pool B.  Please choose a value for Pool Spacing B "));
 	        		return;
@@ -382,12 +543,10 @@ public class AutoAddControlsPanel extends Panel
 			        	}	
 		        worklist.rebuildEverything();
 			    worklist.updateSampleNamesArray();
-			    refreshPage(target);
-	        	
+			    refreshPage(target);	        	
 		        }
 	        };
         }
-	
 	
 	private IndicatingAjaxLink buildClearButton(String id, final WebMarkupContainer container)
 		{
@@ -413,12 +572,6 @@ public class AutoAddControlsPanel extends Panel
     	originalWorklist.setPoolTypeA(StringParser.parseId(poolTypeA)); // issue 13
 		if (worklist.getItems().size() == 0)
 			return;			
-		worklist.updatePoolReplicates(gNMasterPoolsBefore, 
-			gNMasterPoolsAfter, 
-			gNBatchPoolsBefore,
-			gNBatchPoolsAfter, 
-			gNCE10Reps, gNCE20Reps,gNCE40Reps
-			);	
 		originalWorklist.getControlGroupsList().clear();	
 		int nItems = worklist.getItems().size();
 		String firstSample =  nItems <= 0 ? null : worklist.getItem(0).getSampleName();
@@ -472,9 +625,10 @@ public class AutoAddControlsPanel extends Panel
 			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
-			}		
+			}	
+		
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNGastroExercise(); i++)
+		for (int i = 0; i < worklist.getNGastroExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Gastrocnemius, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -484,7 +638,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNGastroSedentary(); i++)
+		for (int i = 0; i < worklist.getNGastroSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Gastrocnemius, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -494,7 +648,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNLiverExercise(); i++)
+		for (int i = 0; i < worklist.getNLiverExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Liver, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -504,7 +658,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNLiverSedentary(); i++)
+		for (int i = 0; i < worklist.getNLiverSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Liver, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -513,7 +667,7 @@ public class AutoAddControlsPanel extends Panel
 			originalWorklist.addControlGroup(group3);
 			}
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNAdiposeExercise(); i++)
+		for (int i = 0; i < worklist.getNAdiposeExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Adipose, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -523,7 +677,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 				
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNAdiposeSedentary(); i++)
+		for (int i = 0; i < worklist.getNAdiposeSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Adipose, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -533,7 +687,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNPlasmaExercise(); i++)
+		for (int i = 0; i < worklist.getNPlasmaExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Plasma, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -543,7 +697,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNPlasmaSedentary(); i++)
+		for (int i = 0; i < worklist.getNPlasmaSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Plasma, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -552,7 +706,7 @@ public class AutoAddControlsPanel extends Panel
 			originalWorklist.addControlGroup(group3);
 			}
          // issue 22
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNLungExercise(); i++)
+		for (int i = 0; i < worklist.getNLungExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Lung, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -560,7 +714,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}	
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNLungSedentary(); i++)
+		for (int i = 0; i < worklist.getNLungSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Lung, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -568,7 +722,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNKidneyExercise(); i++)
+		for (int i = 0; i < worklist.getNKidneyExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Kidney, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -576,7 +730,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}	
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNKidneySedentary(); i++)
+		for (int i = 0; i < worklist.getNKidneySedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Kidney, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -584,7 +738,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNHeartExercise(); i++)
+		for (int i = 0; i < worklist.getNHeartExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -592,7 +746,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}	
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNHeartSedentary(); i++)
+		for (int i = 0; i < worklist.getNHeartSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -600,7 +754,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNBrownAdiposeExercise(); i++)
+		for (int i = 0; i < worklist.getNBrownAdiposeExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Brown Adipose, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -608,7 +762,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}	
-	    for (int i = 0; i < ((MedWorksSession) Session.get()).getNBrownAdiposeSedentary(); i++)
+	    for (int i = 0; i < worklist.getNBrownAdiposeSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Brown Adipose, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -616,7 +770,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNHippoCampusExercise(); i++)
+		for (int i = 0; i < worklist.getNHippoCampusExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Hippocampus, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -624,7 +778,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}	
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNHippoCampusSedentary(); i++)
+		for (int i = 0; i < worklist.getNHippoCampusSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Hippocampus, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -635,7 +789,7 @@ public class AutoAddControlsPanel extends Panel
 		// Issue 422 		
 		// issue 427
 		
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNRatG(); i++)
+		for (int i = 0; i < worklist.getNRatG(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("UM rat   gastrocnemius control");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -645,7 +799,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		
 		// issue 427
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNRatL(); i++)
+		for (int i = 0; i < worklist.getNRatL(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("UM rat   liver control");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -655,7 +809,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		
 		// issue 427
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNRatA(); i++)
+		for (int i = 0; i < worklist.getNRatA(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("UM rat   adipose control");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -664,7 +818,7 @@ public class AutoAddControlsPanel extends Panel
 			originalWorklist.addControlGroup(group3);
 			}
 		
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNRatPlasma(); i++)
+		for (int i = 0; i < worklist.getNRatPlasma(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("UM rat   plasma control");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -702,7 +856,7 @@ public class AutoAddControlsPanel extends Panel
 		// issue 422 for MotrPac		
 		// Issue 422
 		// Issue 427		    
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNRatPlasma(); i++)
+		for (int i = 0; i < worklist.getNRatPlasma(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("UM rat   plasma control");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -711,7 +865,7 @@ public class AutoAddControlsPanel extends Panel
 			originalWorklist.addControlGroup(group3);
 			}
 		
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNRatA(); i++)
+		for (int i = 0; i < worklist.getNRatA(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("UM rat   adipose control");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -720,7 +874,7 @@ public class AutoAddControlsPanel extends Panel
 			originalWorklist.addControlGroup(group3);
 			}
 		
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNRatL(); i++)
+		for (int i = 0; i < worklist.getNRatL(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("UM rat   liver control");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -729,7 +883,7 @@ public class AutoAddControlsPanel extends Panel
 			originalWorklist.addControlGroup(group3);
 			}
 		
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNRatG(); i++)
+		for (int i = 0; i < worklist.getNRatG(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("UM rat   gastrocnemius control");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -738,7 +892,7 @@ public class AutoAddControlsPanel extends Panel
 			originalWorklist.addControlGroup(group3);
 			}		
         // issue 22		
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNHippoCampusSedentary(); i++)
+		for (int i = 0; i < worklist.getNHippoCampusSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Hippocampus, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -746,7 +900,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-        for (int i = 0; i < ((MedWorksSession) Session.get()).getNHippoCampusExercise(); i++)
+        for (int i = 0; i < worklist.getNHippoCampusExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Hippocampus, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -754,7 +908,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-        for (int i = 0; i < ((MedWorksSession) Session.get()).getNBrownAdiposeSedentary(); i++)
+        for (int i = 0; i < worklist.getNBrownAdiposeSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Brown Adipose, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -762,7 +916,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-        for (int i = 0; i < ((MedWorksSession) Session.get()).getNBrownAdiposeExercise(); i++)
+        for (int i = 0; i < worklist.getNBrownAdiposeExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Brown Adipose, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -770,7 +924,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}       
-        for (int i = 0; i < ((MedWorksSession) Session.get()).getNHeartSedentary(); i++)
+        for (int i = 0; i < worklist.getNHeartSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -778,7 +932,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-        for (int i = 0; i < ((MedWorksSession) Session.get()).getNHeartExercise(); i++)
+        for (int i = 0; i < worklist.getNHeartExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -786,7 +940,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-    	for (int i = 0; i < ((MedWorksSession) Session.get()).getNKidneySedentary(); i++)
+    	for (int i = 0; i < worklist.getNKidneySedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Kidney, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -794,7 +948,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-    	for (int i = 0; i < ((MedWorksSession) Session.get()).getNKidneyExercise(); i++)
+    	for (int i = 0; i < worklist.getNKidneyExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Kidney, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -802,7 +956,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}  
-        for (int i = 0; i < ((MedWorksSession) Session.get()).getNLungSedentary(); i++)
+        for (int i = 0; i < worklist.getNLungSedentary(); i++)
    			{
    			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Lung, Sedentary");
    			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -810,7 +964,7 @@ public class AutoAddControlsPanel extends Panel
    			group3.setStandardNotAddedControl(true);
    			originalWorklist.addControlGroup(group3);
             }
-        for (int i = 0; i < ((MedWorksSession) Session.get()).getNLungExercise(); i++)
+        for (int i = 0; i < worklist.getNLungExercise(); i++)
    			{
    			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Lung, Exercise");
    			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -820,7 +974,7 @@ public class AutoAddControlsPanel extends Panel
             } 
 		
 		// issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNPlasmaSedentary(); i++)
+		for (int i = 0; i < worklist.getNPlasmaSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Plasma, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -830,7 +984,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNPlasmaExercise(); i++)
+		for (int i = 0; i < worklist.getNPlasmaExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Plasma, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -840,7 +994,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNAdiposeSedentary(); i++)
+		for (int i = 0; i < worklist.getNAdiposeSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Adipose, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -850,7 +1004,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNAdiposeExercise(); i++)
+		for (int i = 0; i < worklist.getNAdiposeExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Adipose, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -860,7 +1014,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNLiverSedentary(); i++)
+		for (int i = 0; i < worklist.getNLiverSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Liver, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -870,7 +1024,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNLiverExercise(); i++)
+		for (int i = 0; i < worklist.getNLiverExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Liver, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -880,7 +1034,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNGastroSedentary(); i++)
+		for (int i = 0; i < worklist.getNGastroSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Gastrocnemius, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -890,7 +1044,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		
 		// Issue 422
-		for (int i = 0; i < ((MedWorksSession) Session.get()).getNGastroExercise(); i++)
+		for (int i = 0; i < worklist.getNGastroExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Gastrocnemius, Exercise");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -1006,86 +1160,9 @@ public class AutoAddControlsPanel extends Panel
 		    }		   
 		}
 
-     // issue 324 
-   
+     // issue 324    
      //Issue 422
     
-    private AjaxLink buildLinkToMotrPacModal(final String linkID,  final ModalWindow modal1, final WorklistSimple worklist)
-	    {		
-	    modal1.setWindowClosedCallback(new ModalWindow.WindowClosedCallback()
-		    {		
-		    @Override
-		    public void onClose(AjaxRequestTarget target)
-			    {	
-            // refresh worklist on callback ,  will need to update the page too..
-            // issue 22    worklist.rebuildEverything();
-			    }		
-		    });
-	    AjaxLink link = new AjaxLink<Void>(linkID) 
-		    {
-	    	@Override
-	    	 public boolean isEnabled()
-			    {
-	    		// issue 431
-	    		if (originalWorklist.getItems().size() == 0)
-	    		    return false;
-	    		return true;	    		 
-			    }
-		    @Override
-		    public void onClick(final AjaxRequestTarget target)
-			    {
-			    modal1.setInitialWidth(1100);
-			    modal1.setInitialHeight(550);// issue 427
-			    modal1.setPageCreator(new ModalWindow.PageCreator()			    
-					{
-					public Page createPage()
-						{
-						return new MotrpacOptionsPage(modal1)
-	       			        {
-							@Override
-							// issue 427
-							protected void onSave(Integer nGastroExercise, Integer nGastroSedentary, Integer nLiverExcercise, Integer nLiverSedentary, Integer nAdiposeExercise, Integer nAdiposeSedentary, Integer nPlasmaExercise, Integer nPlasmaSedentary, Integer nRatPlasma, Integer nRatG, Integer nRatL, Integer nRatA,
-									    Integer nLungExercise, Integer nLungSedentary,
-				                        Integer nKidneyExercise, Integer nKidneySedentary,
-				                        Integer nHeartExercise, Integer nHeartSedentary,
-				                        Integer nBrownAdiposeExercise, Integer nBrownAdiposeSedentary,
-				                        Integer nHippoCampusExercise, Integer nHippoCampusSedentary) 
-								{
-								((MedWorksSession) Session.get()).setNGastroExercise(nGastroExercise);	
-								((MedWorksSession) Session.get()).setNGastroSedentary(nGastroSedentary);	
-								((MedWorksSession) Session.get()).setNLiverExcercise(nLiverExcercise);	
-								((MedWorksSession) Session.get()).setNLiverSedentary(nLiverSedentary);	
-								((MedWorksSession) Session.get()).setNAdiposeExercise(nAdiposeExercise);	
-								((MedWorksSession) Session.get()).setNAdiposeSedentary(nAdiposeSedentary);	
-								((MedWorksSession) Session.get()).setNPlasmaExercise(nPlasmaExercise);	
-								((MedWorksSession) Session.get()).setNPlasmaSedentary(nPlasmaSedentary);
-								((MedWorksSession) Session.get()).setNRatPlasma(nRatPlasma);
-								((MedWorksSession) Session.get()).setNRatG(nRatG);
-								((MedWorksSession) Session.get()).setNRatL(nRatL);
-								((MedWorksSession) Session.get()).setNRatA(nRatA);
-								// issue 22
-								((MedWorksSession) Session.get()).setNLungExercise(nLungExercise);
-								((MedWorksSession) Session.get()).setNLungSedentary(nLungSedentary);
-								((MedWorksSession) Session.get()).setNKidneyExercise(nKidneyExercise);
-								((MedWorksSession) Session.get()).setNKidneySedentary(nKidneySedentary);
-								((MedWorksSession) Session.get()).setNHeartExercise(nHeartExercise);
-								((MedWorksSession) Session.get()).setNHeartSedentary(nHeartSedentary);
-								((MedWorksSession) Session.get()).setNBrownAdiposeExercise(nBrownAdiposeExercise);
-								((MedWorksSession) Session.get()).setNBrownAdiposeSedentary(nBrownAdiposeSedentary);
-								((MedWorksSession) Session.get()).setNHippoCampusExercise(nHippoCampusExercise);
-								((MedWorksSession) Session.get()).setNHippoCampusSedentary(nHippoCampusSedentary);								
-				  			    }
-	       			        };
-						}
-					});   		    
-		    modal1.show(target); 
-			}
-		};
-	    link.setOutputMarkupId(true);
-	    return link;
-	    }
-    
-  
 	//WorklistControlGroup(String eid, String type, String q, String dir, String rs, WorklistSimple w)
 	private void addStandardsToList(WorklistSimple worklist)
 		{
@@ -1349,13 +1426,10 @@ public class AutoAddControlsPanel extends Panel
 					    refreshPage(target);
 					    break;
 					}
-				
-
 			////	target.add(buildButton);
 				}
 			};
 		}
-
 	
 	private void refreshPage(AjaxRequestTarget target)
 		{
@@ -1462,5 +1536,19 @@ public class AutoAddControlsPanel extends Panel
 		{
 		this.chearBlankType = chearBlankType;
 		}
+	
+	// issue 6	
+	private String buildHTMLClearString(int start, int end)
+		{
+		//"document.getElementById(\"1\").selectedIndex = 0; alert('hi');"
+		int i;
+		String htmlStr = "";
+		for (i=start;i<=end;i++)
+			{
+			htmlStr = htmlStr + "document.getElementById(" + "\"" + Integer.toString(i) + "\""+ ").selectedIndex = 0;"	;
+			}
+		return htmlStr;
+		}
+	
 		
 	}

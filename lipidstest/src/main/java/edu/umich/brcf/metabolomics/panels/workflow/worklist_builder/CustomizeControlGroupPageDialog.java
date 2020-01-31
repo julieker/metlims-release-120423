@@ -30,26 +30,28 @@ import edu.umich.brcf.shared.util.METWorksException;
 
 public abstract class CustomizeControlGroupPageDialog extends AbstractFormDialog 
 {
-	protected Integer nMasterBefore = 0, nMasterAfter = 0, nBatchBefore = 0, nBatchAfter = 0, nCE10Reps = 0, nCE20Reps = 0, nCE40Reps = 0;
+	protected Integer masterPoolsBefore = 0, masterPoolsAfter = 0, batchPoolsBefore = 0, batchPoolsAfter = 0, nCE10Reps = 0, nCE20Reps = 0, nCE40Reps = 0;
 	private static final long serialVersionUID = 1L;
-	
+	protected int masterPoolsBeforePrev =  0, masterPoolsAfterPrev =  0, batchPoolsBeforePrev =  0, batchPoolsAfterPrev =  0, nCE10RepsPrev =  0, nCE20RepsPrev =  0, nCE40RepsPrev =  0;
 	final List<Integer> countOptions = Arrays.asList(new Integer [] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15} );
     ExperimentRandomization gEr = null;
 	protected Form<?> form;
-	final FeedbackPanel feedback = new JQueryFeedbackPanel("feedback");
+	final KendoFeedbackPanel feedback = new KendoFeedbackPanel("feedback");
     public DialogButton submitButton = new DialogButton("submit", "Done");
-	public CustomizeControlGroupPageDialog(String id, String title)
+    WorklistSimple originalWorklist;
+	public CustomizeControlGroupPageDialog(String id, String title, WorklistSimple workList)
 		{
 		super(id, title,  true);
 	      //  gOriginalWorklist = originalWorklist;
 			// Form //
+		originalWorklist = workList;
 		this.form = new Form<Integer>("form");
 		this.add(this.form);
 		form.setOutputMarkupId(true);
-		form.add(buildCountDropdown("nMasterBefore", "nMasterBefore")); 
-		form.add(buildCountDropdown("nMasterAfter", "nMasterAfter")); 
-		form.add(buildCountDropdown("nBatchBefore", "nBatchBefore")); 
-		form.add(buildCountDropdown("nBatchAfter", "nBatchAfter")); 
+		form.add(buildCountDropdown("masterPoolsBefore", "masterPoolsBefore")); 
+		form.add(buildCountDropdown("masterPoolsAfter", "masterPoolsAfter")); 
+		form.add(buildCountDropdown("batchPoolsBefore", "batchPoolsBefore")); 
+		form.add(buildCountDropdown("batchPoolsAfter", "batchPoolsAfter")); 
 		form.add(buildCountDropdown("nCE10Reps", "nCE10Reps")); 
 		form.add(buildCountDropdown("nCE20Reps", "nCE20Reps")); 
 		form.add(buildCountDropdown("nCE40Reps", "nCE40Reps"));
@@ -64,7 +66,7 @@ public abstract class CustomizeControlGroupPageDialog extends AbstractFormDialog
 				    {
 				    }			
 			    };					
-			form.setMultiPart(true);	
+		form.setMultiPart(true);
 		}
 	
 	protected void onOpen(IPartialPageRequestHandler handler)
@@ -75,7 +77,7 @@ public abstract class CustomizeControlGroupPageDialog extends AbstractFormDialog
 	
 	private DropDownChoice<Integer> buildCountDropdown(String id, String property)
 		{
-		DropDownChoice<Integer> drp = new DropDownChoice<Integer>(id, new PropertyModel<Integer>(this, property), countOptions);
+		DropDownChoice<Integer> drp = new DropDownChoice<Integer>(id, new PropertyModel<Integer>(originalWorklist, property), countOptions);
 		drp.add(new AjaxFormComponentUpdatingBehavior("change")
 			{
 			@Override
@@ -84,34 +86,44 @@ public abstract class CustomizeControlGroupPageDialog extends AbstractFormDialog
 		return drp;
 		}
 	
-	public Integer getNMasterBefore() 
+	public Integer getMasterPoolsBefore() 
 		{
-		return nMasterBefore;
+		return masterPoolsBefore;
 		}
 
-	public void setNMasterBefore(Integer nMasterB) 
+	public void setMasterPoolsBefore(Integer nMasterB) 
 		{
-		nMasterBefore = nMasterB;
+		masterPoolsBefore = nMasterB;
 		}
 
-	public Integer getNMasterAfter() 
+	public Integer getMasterPoolsAfter() 
 		{
-		return nMasterAfter;
+		return masterPoolsAfter;
 		}
 
-	public void setNMasterAfter(Integer nMAfter) 
+	public void setMasterPoolsAfter(Integer nMAfter) 
 		{
-		nMasterAfter = nMAfter;
+		masterPoolsAfter = nMAfter;
 		}
 
-	public Integer getNBatchBefore() 
+	public Integer getBatchPoolsBefore() 
 		{
-		return nBatchBefore;
+		return batchPoolsBefore;
 		}
 	
-	public void setNBatchBefore(Integer nBBefore) 
+	public void setBatchPoolsBefore(Integer nBBefore) 
 		{
-		nBatchBefore = nBBefore;
+		batchPoolsBefore = nBBefore;
+		}
+	
+	public Integer getBatchPoolsAfter() 
+		{
+		return batchPoolsAfter;
+		}
+
+	public void setBatchPoolsAfter(Integer nAfter) 
+		{
+		batchPoolsBefore = nAfter;
 		}
 	
 	// issue 432
@@ -146,5 +158,17 @@ public abstract class CustomizeControlGroupPageDialog extends AbstractFormDialog
 		{
 		nCE40Reps = nnCE40Reps;
 		}
-
-}
+	
+	// issue 6
+    public void clearPrevValues ()
+	    {
+    	masterPoolsBeforePrev =  0; 
+    	masterPoolsAfterPrev =  0; 
+    	batchPoolsBeforePrev =  0; 
+    	batchPoolsAfterPrev =  0; 
+    	nCE10RepsPrev =  0; 
+    	nCE20RepsPrev =  0; 
+    	nCE40RepsPrev =  0;
+	    }	
+    }
+    

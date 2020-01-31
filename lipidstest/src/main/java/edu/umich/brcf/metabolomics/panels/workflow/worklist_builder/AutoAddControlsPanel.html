@@ -63,11 +63,18 @@
 								<select wicket:id = "chearBlankTypeDrop" style = "width : 80px"><option>Urine</option><option>Plasma</option><option>3</option><option>4</option></select>	
 								
 							</td>
+							<!--  
 							<td nowrap style = "text-align : left; width : 0%"> 
 								<span style = "margin-left : 0px; width: 100%; text-align : left">MoTrPAC</span><br>
 								<input wicket:id = "motrpacButton"     style = "margin-left : 0px; width : 80%; margin-right : 0px; margin-top : 2%"  type="button"   value="Select..." />
 							</td>	
+							-->
 							
+							<td nowrap style = "text-align : left; width : 0%"> 
+							<span style = "margin-left : 0px; width: 100%; text-align : left">MoTrPAC</span><br>
+							<input wicket:id="openMotrpac"  style = "margin-left : 0px; width : 100%; margin-right : 0px; margin-top : 2%"  type="button"   value="Select..."/>	
+							 <div wicket:id="motrpacOptionsDialog">[dialog]</div>
+							</td>
 							
 							<td nowrap style = "text-align : left; width : 0%"> 
 								<span style = "padding-left : 0px; width: 100%; text-align : left">Pool A: </span><br>
@@ -94,6 +101,7 @@
 							<!--  
 							<input wicket:id = "customizeButton"     style = "width : 85px; margin-right : 0px; margin-top : 2%"  type="button"   value="&nbsp;&nbsp;Customize...&nbsp;&nbsp;"/>			    		
 							-->
+						    
 							<input wicket:id="opendropdown"  style = "width : 85px; margin-right : 0px; margin-top : 2%"  type="button"   value="&nbsp;&nbsp;Customize...&nbsp;&nbsp;"/>	
 		                    <div wicket:id="customizeControlGroupPageDialog">[dialog]</div>
 							</td>

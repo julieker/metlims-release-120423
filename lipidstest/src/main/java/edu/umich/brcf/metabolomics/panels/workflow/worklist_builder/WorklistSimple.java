@@ -77,7 +77,105 @@ public class WorklistSimple implements Serializable
 	private int limitNumberControls = 99;
 	private String lastSample ; // issue 29
 	private int startingPoint ; // issue 29
+	private int nGastroExercise = 0, nGastroSedentary = 0,nLiverExercise = 0,
+	    nLiverSedentary = 0,nAdiposeExercise = 0,nAdiposeSedentary = 0,
+		nPlasmaExercise = 0,
+		nPlasmaSedentary = 0,
+		nRatPlasma = 0,
+		nRatG = 0, 
+		nRatL = 0,
+		nRatA = 0;
 	private int nCE10Reps, nCE20Reps, nCE40Reps;
+	private int nLungExercise = 0;
+	private int nLungSedentary = 0;
+	private int nKidneyExercise = 0;
+	private int nKidneySedentary = 0;
+	private int nHeartExercise = 0;
+	private int nHeartSedentary = 0;
+	private int nBrownAdiposeExercise  = 0;
+	private int nBrownAdiposeSedentary = 0;
+	private int nHippoCampusExercise = 0;
+	private int nHippoCampusSedentary = 0;  
+	private boolean chosenOtherSample = false;
+	private boolean chosenOtherSampleMotrPAC = false;
+	// issue 6
+	public boolean getChosenOtherSample ()
+		{
+		return chosenOtherSample;
+		}
+	public void setChosenOtherSample (boolean vchosenOtherSample)
+		{
+		chosenOtherSample = vchosenOtherSample;
+		}
+	public boolean getChosenOtherSampleMotrPAC ()
+		{
+		return chosenOtherSampleMotrPAC;
+		}
+	public void setChosenOtherSampleMotrPAC (boolean vchosenOtherSampleMotrPAC)
+		{
+		chosenOtherSampleMotrPAC =vchosenOtherSampleMotrPAC;
+		}
+	
+	// issue 6
+	public int getNGastroExercise()
+		{
+		return 	nGastroExercise;
+		}
+	
+	public int getNGastroSedentary()
+		{
+		return 	nGastroSedentary;
+		}
+	
+	public int getNLiverExercise()
+		{
+		return 	nLiverExercise;
+		}
+	
+	public int getNLiverSedentary()
+		{
+		return 	nLiverSedentary;
+		}
+
+	public int getNAdiposeExercise()
+		{
+		return 	nAdiposeExercise;
+		}
+
+	public int getNAdiposeSedentary()
+		{
+		return 	nAdiposeSedentary;
+		}
+	
+	public int getNPlasmaExercise()
+		{
+		return 	nPlasmaExercise;
+		}
+
+	public int getNPlasmaSedentary()
+		{
+		return 	nPlasmaSedentary;
+		}
+
+	public int getNRatPlasma()
+		{
+		return 	nRatPlasma;
+		}
+	
+	public int getNRatG()
+		{
+		return 	nRatG;
+		}
+
+	public int getNRatL()
+		{
+		return 	nRatL;
+		}
+	
+	public int getNRatA()
+		{
+		return 	nRatA;
+		}
 	
 	// issue 56
 	public int getNCE10Reps()
@@ -110,7 +208,168 @@ public class WorklistSimple implements Serializable
 		this.nCE40Reps = vnce40reps;
 		}
 	
-	// issue 56
+	// issue 6
+	
+	public int getNLungExercise()
+		{
+		return 	nLungExercise;
+		}
+
+	public int getNLungSedentary()
+		{
+		return 	nLungSedentary;
+		}
+	
+	public int getNKidneyExercise()
+		{
+		return 	nKidneyExercise;
+		}
+	
+	public int getNKidneySedentary()
+		{
+		return 	nKidneySedentary;
+		}
+
+	public int getNHeartExercise()
+		{
+		return 	nHeartExercise;
+		}
+	
+	public int getNHeartSedentary()
+		{
+		return 	nHeartSedentary;
+		}
+	
+	public int getNBrownAdiposeExercise()
+		{
+		return 	nBrownAdiposeExercise;
+		}
+
+	public int getNBrownAdiposeSedentary ()
+		{
+		return 	nBrownAdiposeSedentary ;
+		}
+
+	public int getNHippoCampusExercise()
+		{
+		return 	nHippoCampusExercise;
+		}
+	
+	public int getNHippoCampusSedentary()
+		{
+		return 	nHippoCampusSedentary;
+		}
+	
+	// issue 6 
+	public void setNGastroExercise(int nGastroExercise)
+		{
+		this.nGastroExercise = nGastroExercise;
+		}
+	
+	public void setNGastroSedentary(int nGastroSedentary)
+		{
+		this.nGastroSedentary = nGastroSedentary;
+		}
+	
+	public void setNLiverExercise(int nLiverExercise)
+		{
+		this.nLiverExercise = nLiverExercise;
+		}
+	
+	public void setNLiverSedentary(int nLiverSedentary)
+		{
+		this.nLiverSedentary = nLiverSedentary;
+		}
+
+	public void setNAdiposeExercise(int nAdiposeExercise)
+		{
+		this.nAdiposeExercise = nAdiposeExercise;
+		}
+
+	public void setNAdiposeSedentary(int nAdiposeSedentary)
+		{
+		this.nAdiposeSedentary = nAdiposeSedentary;
+		}
+	
+	public void setNPlasmaExercise(int nPlasmaExercise)
+		{
+		this.nPlasmaExercise = nPlasmaExercise;
+		}
+
+	public void setNPlasmaSedentary(int nPlasmaSedentary)
+		{
+		this.nPlasmaSedentary = nPlasmaSedentary;
+		}
+
+	public void setNRatPlasma (int nRatPlasma)
+		{
+		this.nRatPlasma = nRatPlasma;
+		}
+	
+	public void setNRatG (int nRatG)
+		{
+		this.nRatG = nRatG;
+		}
+	
+	public void setNRatL (int nRatL)
+		{
+		this.nRatL = nRatL;
+		}
+		
+	public void setNRatA (int nRatA)
+		{
+		this.nRatA = nRatA;
+		}
+	
+	public void setNLungExercise (int nLungExercise)
+		{
+		this.nLungExercise = nLungExercise;
+		}
+
+	public void setNLungSedentary (int nLungSedentary)
+		{
+		this.nLungSedentary = nLungSedentary;
+		}
+	
+	public void setNKidneyExercise (int nKidneyExercise)
+		{
+		this.nKidneyExercise = nKidneyExercise;
+		}
+
+	public void setNKidneySedentary (int nKidneySedentary)
+		{
+		this.nKidneySedentary = nKidneySedentary;
+		}
+	
+	public void setNHeartExercise (int nHeartExercise)
+		{
+		this.nHeartExercise = nHeartExercise;
+		}
+	
+	public void setNHeartSedentary(int nHeartSedentary)
+		{
+		this.nHeartSedentary = nHeartSedentary;
+		}
+	
+	public void setNBrownAdiposeExercise (int nBrownAdiposeExercise)
+		{
+		this.nBrownAdiposeExercise = nBrownAdiposeExercise;
+		}
+	
+	public void setNBrownAdiposeSedentary (int nBrownAdiposeSedentary)
+		{
+		this.nBrownAdiposeSedentary = nBrownAdiposeSedentary;
+		}
+	
+	public void setNHippoCampusExercise (int nHippoCampusExercise)
+		{
+		this.nHippoCampusExercise = nHippoCampusExercise;
+		}
+	
+	public void setNHippoCampusSedentary (int nHippoCampusSedentary)
+		{
+		this.nHippoCampusSedentary = nHippoCampusSedentary;
+		}
 	
 	// issue 29
 	public String getLastSample()
@@ -1542,6 +1801,33 @@ public class WorklistSimple implements Serializable
 		this.nCE20Reps = ne20;
 		this.nCE40Reps = ne40;
 		}
+	
+	public void clearOutMotorPacControls ()
+		{
+		setNGastroExercise(0);	
+		setNGastroSedentary(0);	
+		setNLiverExercise(0);	
+		setNLiverSedentary(0);	
+		setNAdiposeExercise(0);	
+		setNAdiposeSedentary(0);	
+		setNPlasmaExercise(0);	
+		setNPlasmaSedentary(0);
+		setNRatPlasma(0);
+		setNRatA(0);
+		setNRatG(0);
+		setNRatL(0);		
+		// issue 22
+		setNLungExercise(0);
+		setNLungSedentary(0);
+		setNHeartExercise(0);
+		setNHeartSedentary(0);
+		setNKidneyExercise(0);
+		setNKidneySedentary(0);
+		setNBrownAdiposeExercise(0);
+		setNBrownAdiposeSedentary(0);
+		setNHippoCampusExercise(0);
+		setNHippoCampusSedentary(0);
+		}	
 	}
 	
 /*Pool

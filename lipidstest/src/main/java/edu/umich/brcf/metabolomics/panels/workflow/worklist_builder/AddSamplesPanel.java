@@ -519,6 +519,7 @@ public class AddSamplesPanel extends Panel
 						// issue 46
 						globalRand = null;
 						if (originalWorklist != null) originalWorklist.clearAllItems();	
+						originalWorklist.setChosenOtherSample(true);
 						if (item.getRandomizationType().equals("Simple"))
 							{
 							String expDescript = originalWorklist != null && !originalWorklist.getDefaultExperimentId().equals("") ? "for experiment "
@@ -532,11 +533,14 @@ public class AddSamplesPanel extends Panel
 
 					case "updateForAssayDrop":
 						String val = item.getAssayType();
-						clearOutMotorPacControls(); // issue 422
+						originalWorklist.clearOutMotorPacControls(); // issue 422
 						originalWorklist.clearOutPoolIDDAControls();// issue 432
+						originalWorklist.setChosenOtherSample(true);// issue 6
+						originalWorklist.setChosenOtherSampleMotrPAC(true); // issue 6
 						String[] tokens = val != null ? val.split("\\(") : null;
 						item.setIsRandomized(false);
 						originalWorklist.setOpenForUpdates(true); // issue 329
+						originalWorklist.setChosenOtherSample(true);
 						item.setRandomizationType("None"); //issue 384
 						// issue 387			
 						// issue 46
@@ -563,8 +567,10 @@ public class AddSamplesPanel extends Panel
 						// issue 387
 						// issue 46
 						globalRand = null;
-						clearOutMotorPacControls();// issue 422
+						originalWorklist.clearOutMotorPacControls();// issue 422
 						originalWorklist.clearOutPoolIDDAControls();// issue 432
+						originalWorklist.setChosenOtherSample(true); // issue 6
+						originalWorklist.setChosenOtherSampleMotrPAC(true); // issue 6
 						item.setRandomizationType("None"); //issue 384
 						String eid = item.getExperimentId();
 						try
@@ -643,34 +649,9 @@ public class AddSamplesPanel extends Panel
 		}
 	
 	// Issue 422 issue 427
-	public void clearOutMotorPacControls ()
-		{
-		((MedWorksSession) Session.get()).setNGastroExercise(0);	
-		((MedWorksSession) Session.get()).setNGastroSedentary(0);	
-		((MedWorksSession) Session.get()).setNLiverExcercise(0);	
-		((MedWorksSession) Session.get()).setNLiverSedentary(0);	
-		((MedWorksSession) Session.get()).setNAdiposeExercise(0);	
-		((MedWorksSession) Session.get()).setNAdiposeSedentary(0);	
-		((MedWorksSession) Session.get()).setNPlasmaExercise(0);	
-		((MedWorksSession) Session.get()).setNPlasmaSedentary(0);
-		((MedWorksSession) Session.get()).setNRatPlasma(0);
-		((MedWorksSession) Session.get()).setNRatA(0);
-		((MedWorksSession) Session.get()).setNRatG(0);
-		((MedWorksSession) Session.get()).setNRatL(0);
-		((MedWorksSession) Session.get()).setNRatA(0);
-		// issue 22
-		((MedWorksSession) Session.get()).setNLungExercise(0);
-		((MedWorksSession) Session.get()).setNLungSedentary(0);
-		((MedWorksSession) Session.get()).setNHeartExercise(0);
-		((MedWorksSession) Session.get()).setNHeartSedentary(0);
-		((MedWorksSession) Session.get()).setNKidneyExercise(0);
-		((MedWorksSession) Session.get()).setNKidneySedentary(0);
-		((MedWorksSession) Session.get()).setNBrownAdiposeExercise(0);
-		((MedWorksSession) Session.get()).setNBrownAdiposeSedentary(0);
-		((MedWorksSession) Session.get()).setNHippoCampusExercise(0);
-		((MedWorksSession) Session.get()).setNHippoCampusSedentary(0);
-		}
+	/////
 
+    //////////////////////////////////////////
 	// issue 432
 	// issue 11 in metlims.2019 move clearOutPoolIDDAControls () to WorklistSimple
 	

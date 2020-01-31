@@ -1,12 +1,49 @@
-<html xmlns:wicket="http://wicket.apache.org/">
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
 <head>
+</head>
+<wicket:head>
+  <link rel="stylesheet" type="text/css" href="wickets-jquery.css"/>
    <link rel="stylesheet" type="text/css" href="dialog.css"/>
-     <style> 
-     	legend { border: 1px solid transparent; background-color: white; color: black; padding: 4px;}
+ <style>
+ .select2 {
+   overflow-x:hidden;
+   overflow-y:auto;
+   max-height:300px;
+   background-color:#bd9fab;
+   legend { border: 1px solid transparent; background-color: white; color: black; padding: 4px;}
 	    fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
      	.dialogButton { width : 25%; padding-top : 2px; padding-bottom : 2px}
-     </style>
-</head>
+}
+
+.dropdown-content {
+   overflow-x:hidden;
+   overflow-y:auto;
+   max-height:300px;
+   background-color:#bd9fab;
+}
+.ui-dialog {
+
+	overflow-x: hidden;
+    overflow-y: auto;
+    autoFocus: false;
+	position: absolute;
+    max-height: 1000px;
+    max-width: 1000px;
+    height: 1000px;
+    width: 1000px;
+    scrollTop : 0;
+	top: 0;
+
+	left: 0;
+
+	padding: .2em;
+
+	outline: 0;
+
+}
+ </style>
+</wicket:head>
    
 <body class = "dialog_background">
 <!-- Issue 422 -->
@@ -17,9 +54,11 @@
 	   	</legend>
 		   	
 		<span wicket:id = "feedback" class = "feedbackMsg80" style = "text-align : center"></span>
-		   	
+		<wicket:panel>
+		<form wicket:id="form">
+		  	
 		<div style = "vertical-align : middle;">
-	  	 	<form wicket:id = "motrpacOptionsForm">  
+	  	 
 		
   		
   			<fieldset class = "dialog_fieldset" style = "text-align : left; border : #dddddd 1px solid;  border-radius : 1px; margin-bottom : .5%; margin-top : .5%; vertical-align: middle; width :90%; margin-left : 5%; margin-right : 5%">	
@@ -37,7 +76,7 @@
 						
 						<td style = "text-align : left; width : 75%">
 						    Exercise (80008) :
-							<select wicket:id = "nGastroExercise" style = "width : 80px">
+							<select id="1" wicket:id = "nGastroExercise" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -47,7 +86,7 @@
 								<option>6</option>
 							</select> 
 							<span style = "margin-left : 30px">Sedentary (80009) :</span>
-							<select wicket:id = "nGastroSedentary" style = "width : 80px">
+							<select id= "2" wicket:id = "nGastroSedentary" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -66,7 +105,7 @@
 						
 						<td style = "text-align : left; width : 75%">
 						    Exercise (80010) :
-							<select wicket:id = "nLiverExcercise" style = "width : 80px">
+							<select id = "3" wicket:id = "nLiverExercise" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -76,7 +115,7 @@
 								<option>6</option>
 							</select> 
 							<span style = "margin-left : 30px">Sedentary (80011) :</span>
-							<select wicket:id = "nLiverSedentary" style = "width : 80px">
+							<select id = "4" wicket:id = "nLiverSedentary" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -95,7 +134,7 @@
 						
 						<td style = "text-align : left; width : 75%">
 						    Exercise (80012) :
-							<select wicket:id = "nAdiposeExercise" style = "width : 80px">
+							<select id="5" wicket:id = "nAdiposeExercise" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -105,7 +144,7 @@
 								<option>6</option>
 							</select> 
 							<span style = "margin-left : 30px">Sedentary (80013) :</span>
-							<select wicket:id = "nAdiposeSedentary" style = "width : 80px">
+							<select id = "6" wicket:id = "nAdiposeSedentary" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -124,7 +163,7 @@
 						
 						<td style = "text-align : left; width : 75%">
 						    Exercise (80014) :
-							<select wicket:id = "nPlasmaExercise" style = "width : 80px">
+							<select id = "7" wicket:id = "nPlasmaExercise" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -134,7 +173,7 @@
 								<option>6</option>
 							</select> 
 							<span style = "margin-left : 30px">Sedentary (80015) :</span>
-							<select wicket:id = "nPlasmaSedentary" style = "width : 80px">
+							<select id= "8" wicket:id = "nPlasmaSedentary" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -153,7 +192,7 @@
 						
 						<td style = "text-align : left; width : 75%">
 						    Exercise (80016) :
-							<select wicket:id = "nLungExercise" style = "width : 80px">
+							<select id="9" wicket:id = "nLungExercise" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -163,7 +202,7 @@
 								<option>6</option>
 							</select> 
 							<span style = "margin-left : 30px">Sedentary (80017) :</span>
-							<select wicket:id = "nLungSedentary" style = "width : 80px">
+							<select id="10" wicket:id = "nLungSedentary" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -181,7 +220,7 @@
 						
 						<td style = "text-align : left; width : 75%">
 						    Exercise (80018) :
-							<select wicket:id = "nKidneyExercise" style = "width : 80px">
+							<select id="11" wicket:id = "nKidneyExercise" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -191,7 +230,7 @@
 								<option>6</option>
 							</select> 
 							<span style = "margin-left : 30px">Sedentary (80019) :</span>
-							<select wicket:id = "nKidneySedentary" style = "width : 80px">
+							<select id="12" wicket:id = "nKidneySedentary" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -209,7 +248,7 @@
 						
 						<td style = "text-align : left; width : 75%">
 						    Exercise (80020) :
-							<select wicket:id = "nHeartExercise" style = "width : 80px">
+							<select id = "13" wicket:id = "nHeartExercise" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -219,7 +258,7 @@
 								<option>6</option>
 							</select> 
 							<span style = "margin-left : 30px">Sedentary (80021) :</span>
-							<select wicket:id = "nHeartSedentary" style = "width : 80px">
+							<select id = "14" wicket:id = "nHeartSedentary" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -237,7 +276,7 @@
 						
 						<td style = "text-align : left; width : 75%">
 						    Exercise (80022) :
-							<select wicket:id = "nBrownAdiposeExercise" style = "width : 80px">
+							<select id = "15" wicket:id = "nBrownAdiposeExercise" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -247,7 +286,7 @@
 								<option>6</option>
 							</select> 
 							<span style = "margin-left : 30px">Sedentary (80023) :</span>
-							<select wicket:id = "nBrownAdiposeSedentary" style = "width : 80px">
+							<select id = "16"  wicket:id = "nBrownAdiposeSedentary" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -265,7 +304,7 @@
 						
 						<td style = "text-align : left; width : 75%">
 						    Exercise (80024) :
-							<select wicket:id = "nHippoCampusExercise" style = "width : 80px">
+							<select id = "17" wicket:id = "nHippoCampusExercise" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -275,7 +314,7 @@
 								<option>6</option>
 							</select> 
 							<span style = "margin-left : 30px">Sedentary (80025) :</span>
-							<select wicket:id = "nHippoCampusSedentary" style = "width : 80px">
+							<select  id = "18" wicket:id = "nHippoCampusSedentary" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -302,7 +341,7 @@
 						
 						<td style = "text-align : right; width : 98%">
 						    <span style = "text-align : right; font-weight : 700"> UM rat gastrocnemius control (CS0UMRG01) : </span> 
-							<select wicket:id = "nRatG" style = "width : 80px">
+							<select id = "19" wicket:id = "nRatG" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -323,7 +362,7 @@
 						
 						<td style = "text-align : right; width : 98%">
 						    <span style = "text-align : right; font-weight : 700"> UM rat liver control (CS0UMRL01) : </span> 
-							<select wicket:id = "nRatL" style = "width : 80px">
+							<select id = "20" wicket:id = "nRatL" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -343,7 +382,7 @@
 						</td>						
 						<td style = "text-align : right; width : 98%">
 						    <span style = "text-align : right; font-weight : 700">UM rat adipose control (CS0UMRA01) : </span> 
-							<select wicket:id = "nRatA" style = "width : 80px">
+							<select id = "21" wicket:id = "nRatA" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -362,7 +401,7 @@
 						
 						<td style = "text-align : right; width : 98%">
 						    <span style = "font-weight : 700">UM rat plasma control (CS0UMRP01) : </span> 
-							<select wicket:id = "nRatPlasma" style = "width : 80px">
+							<select id = "22" wicket:id = "nRatPlasma" style = "width : 80px">
 								<option>0</option>
 								<option>1</option>
 								<option>2</option>
@@ -376,14 +415,17 @@
 						</td>
 					</tr>
 				</table>
+				<div wicket:id="feedback"></div>
 				</fieldset>
 						
 				<table style = "width : 90%; margin-left : 5%; margin-right :5%; margin-top : 2%">	    		 		
 	    		 	<tr>
 	    		 	   <!-- Issue 464 -->
 						<td style = "width : 100%; text-align : center;">
+				    		<!--  
 				    		<input wicket:id = "cancelButton"  
-				    			style = "width: 15%; margin-right : 10px" type = "button"  value = "&nbsp;&nbsp;Done&nbsp;&nbsp;" />	
+				    			style = "width: 15%; margin-right : 10px" type = "button"  value = "&nbsp;&nbsp;Done&nbsp;&nbsp;" />
+				    			-->	
 			        	<!--  
 			        		<input wicket:id="save"  
 			        			style = "width : 15%; margin-left : 10px" type="submit" value="&nbsp;&nbsp;Save&nbsp;&nbsp;"/>
@@ -391,8 +433,11 @@
 			    		</td>
 		    		</tr>
 		    	</table>
+		    	</div>
 	    	</form>
-		</div>
+		
+		
+	</wicket:panel>
 	</fieldset>	
 </body>
 </html>
