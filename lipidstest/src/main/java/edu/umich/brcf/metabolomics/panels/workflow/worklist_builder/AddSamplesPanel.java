@@ -515,6 +515,10 @@ public class AddSamplesPanel extends Panel
 					{
 					case "updateForRandomDrop":                        
 						item.setIsRandomized(false);
+						originalWorklist.clearOutMotorPacControls(); // issue 422
+						originalWorklist.clearOutPoolIDDAControls();// issue 432
+						originalWorklist.setChosenOtherSample(true);// issue 6
+						originalWorklist.setChosenOtherSampleMotrPAC(true); // issue 6
 						// issue 387
 						// issue 46
 						globalRand = null;
@@ -540,7 +544,6 @@ public class AddSamplesPanel extends Panel
 						String[] tokens = val != null ? val.split("\\(") : null;
 						item.setIsRandomized(false);
 						originalWorklist.setOpenForUpdates(true); // issue 329
-						originalWorklist.setChosenOtherSample(true);
 						item.setRandomizationType("None"); //issue 384
 						// issue 387			
 						// issue 46

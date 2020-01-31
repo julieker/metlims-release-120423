@@ -119,145 +119,149 @@ public class AutoAddControlsPanel extends Panel
 				{	
 		    	super.close(target, button);
 				}    		    
-			    @Override
-				public Form<?> getForm() 
-					{
-					// TODO Auto-generated method stub
-				//// put back	form.setMultiPart(true);
-					return this.form;
-					}
-			    @Override
-				public DialogButton getSubmitButton() 
-			    	{
-					// TODO Auto-generated method stub
-					return this.submitButton;
-			    	}	 
+			@Override
+			public Form<?> getForm() 
+				{
+				// TODO Auto-generated method stub
+			//// put back	form.setMultiPart(true);
+				return this.form;
+				}
+		    @Override
+			public DialogButton getSubmitButton() 
+		    	{
+				// TODO Auto-generated method stub
+				return this.submitButton;
+		    	}	 
 			    
-				@Override
-				protected void onOpen(IPartialPageRequestHandler handler)
-					{ 					
-					AjaxRequestTarget target = (AjaxRequestTarget) handler;
-				    target.add(this);
-				    target.add(this.getParent());
-				    handler.add(form); 
-				    target.add(feedback);
-				    target.add(form);
-				    // issue 6
-				    if (originalWorklist.getChosenOtherSampleMotrPAC())
-				        {
-				    	target.appendJavaScript(buildHTMLClearString(1,22));
-				    	this.clearPrevValues();
-				        }
-					}
-			    
-				@Override
-				public void onClose(IPartialPageRequestHandler handler, DialogButton button) 
-				    {
-					// TODO Auto-generated method stub
-					//AjaxRequestTarget target = (AjaxRequestTarget) handler;
-					this.nGastroExercisePrev=originalWorklist.getNGastroExercise();
-					this.nGastroSedentaryPrev=originalWorklist.getNGastroSedentary();
-					this.nLiverExercisePrev=originalWorklist.getNLiverExercise();
-					this.nLiverSedentaryPrev=originalWorklist.getNLiverSedentary();
-					this.nAdiposeExercisePrev=originalWorklist.getNAdiposeExercise();
-					this.nAdiposeSedentaryPrev=originalWorklist.getNAdiposeSedentary();					
-					this.nPlasmaExercisePrev=originalWorklist.getNPlasmaExercise();
-					this.nPlasmaSedentaryPrev=originalWorklist.getNPlasmaSedentary();
-					this.nRatPlasmaPrev=originalWorklist.getNRatPlasma();
-					this.nRatGPrev=originalWorklist.getNRatG();
-					this.nRatLPrev=originalWorklist.getNRatL();
-					this.nRatAPrev=originalWorklist.getNRatA();	
-					this.nLungExercisePrev=originalWorklist.getNLungExercise();
-					this.nLungSedentaryPrev=originalWorklist.getNLungSedentary();
-					this.nKidneyExercisePrev=originalWorklist.getNKidneyExercise();
-					this.nKidneySedentaryPrev=originalWorklist.getNKidneySedentary();
-					this.nHeartExercisePrev=originalWorklist.getNHeartExercise();
-					this.nHeartSedentaryPrev=originalWorklist.getNHeartSedentary();
-					this.nBrownAdiposeExercisePrev=originalWorklist.getNBrownAdiposeExercise();
-					this.nBrownAdiposeSedentaryPrev=originalWorklist.getNBrownAdiposeSedentary();
-					this.nHippoCampusExercisePrev=originalWorklist.getNHippoCampusExercise();
-					this.nHippoCampusSedentaryPrev=originalWorklist.getNHippoCampusSedentary();
-					handler.add(form);
-					
-				    }
+			@Override
+			protected void onOpen(IPartialPageRequestHandler handler)
+				{ 					
+				AjaxRequestTarget target = (AjaxRequestTarget) handler;
+			    target.add(this);
+			    target.add(this.getParent());
+			    handler.add(form); 
+			    target.add(feedback);
+			    target.add(form);
+			    // issue 6
+			    if (originalWorklist.getChosenOtherSampleMotrPAC())
+			        {
+			    	target.appendJavaScript(buildHTMLClearString(1,22));
+			    	this.clearPrevValues();
+			        }
+				} 
+			@Override
+			public void onClose(IPartialPageRequestHandler handler, DialogButton button) 
+			    {
+				// TODO Auto-generated method stub
+				//AjaxRequestTarget target = (AjaxRequestTarget) handler;
+				this.nGastroExercisePrev=originalWorklist.getNGastroExercise();
+				this.nGastroSedentaryPrev=originalWorklist.getNGastroSedentary();
+				this.nLiverExercisePrev=originalWorklist.getNLiverExercise();
+				this.nLiverSedentaryPrev=originalWorklist.getNLiverSedentary();
+				this.nAdiposeExercisePrev=originalWorklist.getNAdiposeExercise();
+				this.nAdiposeSedentaryPrev=originalWorklist.getNAdiposeSedentary();					
+				this.nPlasmaExercisePrev=originalWorklist.getNPlasmaExercise();
+				this.nPlasmaSedentaryPrev=originalWorklist.getNPlasmaSedentary();
+				this.nRatPlasmaPrev=originalWorklist.getNRatPlasma();
+				this.nRatGPrev=originalWorklist.getNRatG();
+				this.nRatLPrev=originalWorklist.getNRatL();
+				this.nRatAPrev=originalWorklist.getNRatA();	
+				this.nLungExercisePrev=originalWorklist.getNLungExercise();
+				this.nLungSedentaryPrev=originalWorklist.getNLungSedentary();
+				this.nKidneyExercisePrev=originalWorklist.getNKidneyExercise();
+				this.nKidneySedentaryPrev=originalWorklist.getNKidneySedentary();
+				this.nHeartExercisePrev=originalWorklist.getNHeartExercise();
+				this.nHeartSedentaryPrev=originalWorklist.getNHeartSedentary();
+				this.nBrownAdiposeExercisePrev=originalWorklist.getNBrownAdiposeExercise();
+				this.nBrownAdiposeSedentaryPrev=originalWorklist.getNBrownAdiposeSedentary();
+				this.nHippoCampusExercisePrev=originalWorklist.getNHippoCampusExercise();
+				this.nHippoCampusSedentaryPrev=originalWorklist.getNHippoCampusSedentary();
+				handler.add(form);					
+			    }
 				
-				@Override
-				public void onConfigure(JQueryBehavior behavior)
-				    {
-					// class options //
-					behavior.setOption("autoOpen", false);
-					behavior.setOption("modal", this.isModal());
-					behavior.setOption("resizable", this.isResizable());
-					behavior.setOption("width", 2000);
-					behavior.setOption("title", Options.asString(this.getTitle().getObject()));
-					behavior.setOption("height", 600);
-				    behavior.setOption("autofocus", false);
-				    }	
-			    @Override
-				protected void onSubmit(AjaxRequestTarget target, DialogButton button) 
-				    {
-			    	// TODO Auto-generated method stub	
-			    	target.add(feedback);
-			    	target.add(this);
-			    	target.add(container);
-			    	target.add(form);
-			    	if (originalWorklist.getChosenOtherSampleMotrPAC())
-			    	   originalWorklist.setChosenOtherSampleMotrPAC(false);
-				    }
-				@Override
-				protected void onError(AjaxRequestTarget target, DialogButton button) 
-				    {
-					// TODO Auto-generated method stub				
-				    }			
-				@Override
-				protected List<DialogButton> getButtons()
-				    {
-					List <DialogButton> dialogButtonList = new ArrayList <DialogButton> ();
-					dialogButtonList.add(new DialogButton("submit", "Done")) ;
-					return dialogButtonList;
-				    }			
-			    };
+			@Override
+			public void onConfigure(JQueryBehavior behavior)
+			    {
+				// class options //
+				behavior.setOption("autoOpen", false);
+				behavior.setOption("modal", this.isModal());
+				behavior.setOption("resizable", this.isResizable());
+				behavior.setOption("width", 2000);
+				behavior.setOption("title", Options.asString(this.getTitle().getObject()));
+				behavior.setOption("height", 600);
+			    behavior.setOption("autofocus", false);
+			    }	
+		    @Override
+			protected void onSubmit(AjaxRequestTarget target, DialogButton button) 
+			    {
+		    	// TODO Auto-generated method stub	
+		    	target.add(feedback);
+		    	target.add(this);
+		    	target.add(container);
+		    	target.add(form);
+		    	if (originalWorklist.getChosenOtherSampleMotrPAC())
+		    	   originalWorklist.setChosenOtherSampleMotrPAC(false);
+			    }
+			@Override
+			protected void onError(AjaxRequestTarget target, DialogButton button) 
+			    {
+				// TODO Auto-generated method stub				
+			    }			
+			@Override
+			protected List<DialogButton> getButtons()
+			    {
+				List <DialogButton> dialogButtonList = new ArrayList <DialogButton> ();
+				dialogButtonList.add(new DialogButton("submit", "Done")) ;
+				return dialogButtonList;
+			    }			
+		    };
 				
-			    motrpacOptionsDialog.add(new AjaxEventBehavior("keydown")
-				    {        
-					@Override
-					protected void onEvent(AjaxRequestTarget target) 
-					    {
-						// TODO Auto-generated method stub
-					    originalWorklist.setNGastroExercise(motrpacOptionsDialog.nGastroExercisePrev);
-				        originalWorklist.setNGastroSedentary(motrpacOptionsDialog.nGastroSedentaryPrev);
-				        originalWorklist.setNLiverExercise(motrpacOptionsDialog.nLiverExercisePrev);
-				        originalWorklist.setNLiverSedentary(motrpacOptionsDialog.nLiverSedentaryPrev);
-				        originalWorklist.setNAdiposeExercise(motrpacOptionsDialog.nAdiposeExercisePrev);
-				        originalWorklist.setNAdiposeSedentary(motrpacOptionsDialog.nAdiposeSedentaryPrev);
-				        originalWorklist.setNPlasmaExercise(motrpacOptionsDialog.nPlasmaExercisePrev);
-				        originalWorklist.setNPlasmaSedentary(motrpacOptionsDialog.nPlasmaSedentaryPrev);
-				        originalWorklist.setNRatPlasma(motrpacOptionsDialog.nRatPlasmaPrev);
-				        originalWorklist.setNRatG(motrpacOptionsDialog.nRatGPrev);
-				        originalWorklist.setNRatL(motrpacOptionsDialog.nRatLPrev);
-				        originalWorklist.setNRatA(motrpacOptionsDialog.nRatAPrev);
-				        originalWorklist.setNLungExercise(motrpacOptionsDialog.nLungExercisePrev);
-				        originalWorklist.setNLungSedentary(motrpacOptionsDialog.nLungSedentaryPrev);
-				        originalWorklist.setNKidneyExercise(motrpacOptionsDialog.nKidneyExercisePrev);
-				        originalWorklist.setNKidneySedentary(motrpacOptionsDialog.nKidneySedentaryPrev);
-				        originalWorklist.setNHeartExercise(motrpacOptionsDialog.nHeartExercisePrev);
-				        originalWorklist.setNHeartSedentary(motrpacOptionsDialog.nHeartSedentaryPrev);
-				        originalWorklist.setNBrownAdiposeExercise(motrpacOptionsDialog.nBrownAdiposeExercisePrev);
-				        originalWorklist.setNBrownAdiposeSedentary(motrpacOptionsDialog.nBrownAdiposeSedentaryPrev);
-				        originalWorklist.setNHippoCampusExercise(motrpacOptionsDialog.nHippoCampusExercisePrev);
-				        originalWorklist.setNHippoCampusSedentary(motrpacOptionsDialog.nHippoCampusSedentaryPrev);
-					    }
-				    });
-			    
-	////////////////////////////////////////////////////			
+	    motrpacOptionsDialog.add(new AjaxEventBehavior("keydown")
+		    {        
+			@Override
+			protected void onEvent(AjaxRequestTarget target) 
+			    {
+				// TODO Auto-generated method stub
+			    originalWorklist.setNGastroExercise(motrpacOptionsDialog.nGastroExercisePrev);
+		        originalWorklist.setNGastroSedentary(motrpacOptionsDialog.nGastroSedentaryPrev);
+		        originalWorklist.setNLiverExercise(motrpacOptionsDialog.nLiverExercisePrev);
+		        originalWorklist.setNLiverSedentary(motrpacOptionsDialog.nLiverSedentaryPrev);
+		        originalWorklist.setNAdiposeExercise(motrpacOptionsDialog.nAdiposeExercisePrev);
+		        originalWorklist.setNAdiposeSedentary(motrpacOptionsDialog.nAdiposeSedentaryPrev);
+		        originalWorklist.setNPlasmaExercise(motrpacOptionsDialog.nPlasmaExercisePrev);
+		        originalWorklist.setNPlasmaSedentary(motrpacOptionsDialog.nPlasmaSedentaryPrev);
+		        originalWorklist.setNRatPlasma(motrpacOptionsDialog.nRatPlasmaPrev);
+		        originalWorklist.setNRatG(motrpacOptionsDialog.nRatGPrev);
+		        originalWorklist.setNRatL(motrpacOptionsDialog.nRatLPrev);
+		        originalWorklist.setNRatA(motrpacOptionsDialog.nRatAPrev);
+		        originalWorklist.setNLungExercise(motrpacOptionsDialog.nLungExercisePrev);
+		        originalWorklist.setNLungSedentary(motrpacOptionsDialog.nLungSedentaryPrev);
+		        originalWorklist.setNKidneyExercise(motrpacOptionsDialog.nKidneyExercisePrev);
+		        originalWorklist.setNKidneySedentary(motrpacOptionsDialog.nKidneySedentaryPrev);
+		        originalWorklist.setNHeartExercise(motrpacOptionsDialog.nHeartExercisePrev);
+		        originalWorklist.setNHeartSedentary(motrpacOptionsDialog.nHeartSedentaryPrev);
+		        originalWorklist.setNBrownAdiposeExercise(motrpacOptionsDialog.nBrownAdiposeExercisePrev);
+		        originalWorklist.setNBrownAdiposeSedentary(motrpacOptionsDialog.nBrownAdiposeSedentaryPrev);
+		        originalWorklist.setNHippoCampusExercise(motrpacOptionsDialog.nHippoCampusExercisePrev);
+		        originalWorklist.setNHippoCampusSedentary(motrpacOptionsDialog.nHippoCampusSedentaryPrev);
+			    }
+		    });			
+		
 		final CustomizeControlGroupPageDialog customizeControlGroupPageDialog = new CustomizeControlGroupPageDialog("customizeControlGroupPageDialog", "Customize pool settings", originalWorklist) 
 		    { // NOSONAR
 			private static final long serialVersionUID = 1L;
 		   // @Override
 			public void onClick(AjaxRequestTarget target, DialogButton button)
-				{	
-				if ( ( nCE10Reps > 0  || nCE20Reps > 0 || nCE40Reps > 0 ) &&  masterPoolsAfter == 0    )
+				{					
+				if ( ( worklist.getNCE10Reps() > 0  || worklist.getNCE20Reps() > 0 || worklist.getNCE40Reps() > 0 ) &&  worklist.getMasterPoolsAfter() == 0    )
 				    {
+					originalWorklist.setMasterPoolsBefore(this.masterPoolsBeforePrev);
+			    	originalWorklist.setMasterPoolsAfter(this.masterPoolsAfterPrev);
+			    	originalWorklist.setBatchPoolsBefore(this.batchPoolsBeforePrev);
+			    	originalWorklist.setBatchPoolsAfter(this.batchPoolsAfterPrev);
+			    	originalWorklist.setNCE10Reps(this.nCE10RepsPrev);
+			    	originalWorklist.setNCE20Reps(this.nCE20RepsPrev);
+			    	originalWorklist.setNCE40Reps(this.nCE40RepsPrev);		        
 	        		target.appendJavaScript(StringUtils.makeAlertMessage("There are NCE values for an IDDA run.  Please choose an after amount for Pool A "));
 		        	}
 				else 
@@ -280,24 +284,18 @@ public class AutoAddControlsPanel extends Panel
 			@Override
 			protected void onOpen(IPartialPageRequestHandler handler)
 				{ 
-			    AjaxRequestTarget target = (AjaxRequestTarget) handler;
-		        target.add(this);
-		        target.add(this.getParent());
-		        handler.add(form); 
-		        target.add(feedback);
-		        target.add(form);
-		        if (originalWorklist.getChosenOtherSample())
+				AjaxRequestTarget target = (AjaxRequestTarget) handler;
+				if (originalWorklist.getChosenOtherSample())
 			        {
 			    	target.appendJavaScript(buildHTMLClearString(23,29));
 			    	this.clearPrevValues();
 			        }
+				target.add(this);
 				}
 		    
 			@Override
 			public void onClose(IPartialPageRequestHandler handler, DialogButton button) 
 			    {
-				// TODO Auto-generated method stub
-				//AjaxRequestTarget target = (AjaxRequestTarget) handler;	
 				this.masterPoolsAfterPrev= originalWorklist.getMasterPoolsAfter();	
 				this.masterPoolsBeforePrev= originalWorklist.getMasterPoolsBefore();
 				this.batchPoolsAfterPrev= originalWorklist.getBatchPoolsAfter();	
@@ -305,8 +303,7 @@ public class AutoAddControlsPanel extends Panel
 		    	this.nCE10RepsPrev= originalWorklist.getNCE10Reps();
 		    	this.nCE20RepsPrev= originalWorklist.getNCE20Reps();
 		    	this.nCE40RepsPrev= originalWorklist.getNCE40Reps();
-				handler.add(form); 
-				
+				handler.add(feedback); 			
 			    }
 			
 			@Override
@@ -324,11 +321,7 @@ public class AutoAddControlsPanel extends Panel
 		    @Override
 			protected void onSubmit(AjaxRequestTarget target, DialogButton button) 
 			    {
-		    	// TODO Auto-generated method stub	
-		    	target.add(feedback);
-		    	target.add(this);
-		    	target.add(container);
-		    	target.add(form);
+		    	// TODO Auto-generated method stub
 		    	if (originalWorklist.getChosenOtherSample())
 			        originalWorklist.setChosenOtherSample(false);
 			    }
@@ -344,22 +337,21 @@ public class AutoAddControlsPanel extends Panel
 				dialogButtonList.add(new DialogButton("submit", "Done")) ;
 				return dialogButtonList;
 			    }			
-		    };			    
+		    };	
 		    // issue 46
-		//	container.add(new AjaxButton("opendropdown") 
-		    container.add(new IndicatingAjaxLink <Void>("opendropdown") 
-			    {			
-				private static final long serialVersionUID = 1L;       
-				@Override
-				public void onClick(AjaxRequestTarget target) 			     
-				    {	
-					customizeControlGroupPageDialog.open(target);
-				    }
-			    });
-		    container.add(customizeControlGroupPageDialog);
+	    container.add(new IndicatingAjaxLink <Void>("opendropdown") 
+		    {			
+			private static final long serialVersionUID = 1L;       
+			@Override
+			public void onClick(AjaxRequestTarget target) 			     
+			    {	
+				customizeControlGroupPageDialog.open(target);
+			    }
+		    });
+	    container.add(customizeControlGroupPageDialog);
 		    
 		    // issue 53
-		    container.add(new IndicatingAjaxLink <Void>("openMotrpac") 
+	    container.add(new IndicatingAjaxLink <Void>("openMotrpac") 
 		    {			
 			private static final long serialVersionUID = 1L;       
 			@Override
@@ -368,8 +360,9 @@ public class AutoAddControlsPanel extends Panel
 				motrpacOptionsDialog.open(target);
 			    }
 		    });
-		    customizeControlGroupPageDialog.add(new AjaxEventBehavior("keydown")
-		    {        
+		    /////////////////////////////////////////////////////
+	    customizeControlGroupPageDialog.add(new AjaxEventBehavior("keydown")
+	    	{        
 			@Override
 			protected void onEvent(AjaxRequestTarget target) 
 			    {
@@ -382,8 +375,8 @@ public class AutoAddControlsPanel extends Panel
 		    	originalWorklist.setNCE20Reps(customizeControlGroupPageDialog.nCE20RepsPrev);
 		    	originalWorklist.setNCE40Reps(customizeControlGroupPageDialog.nCE40RepsPrev);		        
 			    }
-		    });
-			container.add(motrpacOptionsDialog);
+	    	});
+		container.add(motrpacOptionsDialog);
 		}
 	
 	private DropDownChoice buildChearBlankTypeDropdown(final String id,  final String propertyName)
@@ -556,7 +549,6 @@ public class AutoAddControlsPanel extends Panel
 			public void onClick(AjaxRequestTarget target)
 				{
 				originalWorklist.clearControlGroups();
-				originalWorklist.clearOutPoolIDDAControls(); // issue 11 metlims 2019
 				originalWorklist.updateSampleNamesArray();
 				originalWorklist.setOpenForUpdates(true);
 				originalWorklist.updatePlatePositions(); // issue 417 and 409
