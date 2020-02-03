@@ -250,7 +250,7 @@ public class AutoAddControlsPanel extends Panel
 		final CustomizeControlGroupPageDialog customizeControlGroupPageDialog = new CustomizeControlGroupPageDialog("customizeControlGroupPageDialog", "Customize pool settings", originalWorklist) 
 		    { // NOSONAR
 			private static final long serialVersionUID = 1L;
-		   // @Override
+		    @Override
 			public void onClick(AjaxRequestTarget target, DialogButton button)
 				{					
 				if ( ( worklist.getNCE10Reps() > 0  || worklist.getNCE20Reps() > 0 || worklist.getNCE40Reps() > 0 ) &&  worklist.getMasterPoolsAfter() == 0    )
@@ -341,7 +341,15 @@ public class AutoAddControlsPanel extends Panel
 		    // issue 46
 	    container.add(new IndicatingAjaxLink <Void>("opendropdown") 
 		    {			
-			private static final long serialVersionUID = 1L;       
+			private static final long serialVersionUID = 1L;
+			@Override
+			public boolean isEnabled()
+				{
+				if (originalWorklist.getItems().size() == 0)
+					return false;
+				else
+					return true;
+				}
 			@Override
 			public void onClick(AjaxRequestTarget target) 			     
 			    {	
@@ -353,7 +361,15 @@ public class AutoAddControlsPanel extends Panel
 		    // issue 53
 	    container.add(new IndicatingAjaxLink <Void>("openMotrpac") 
 		    {			
-			private static final long serialVersionUID = 1L;       
+			private static final long serialVersionUID = 1L; 
+			@Override
+			public boolean isEnabled()
+				{
+				if (originalWorklist.getItems().size() == 0)
+					return false;
+				else
+					return true;
+				}
 			@Override
 			public void onClick(AjaxRequestTarget target) 			     
 			    {	
@@ -389,13 +405,10 @@ public class AutoAddControlsPanel extends Panel
 				{
 				public boolean isEnabled()
 					{
-					if (!originalWorklist.getOpenForUpdates()) return false;
-					
-					
-					return originalWorklist.getItems().size() > 0;
+					if (!originalWorklist.getOpenForUpdates()) return false;					
+					    return originalWorklist.getItems().size() > 0;
 					}
 				};
-
 		drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForChearBlankTypeDrop", null));
 		return drp;
 		}
