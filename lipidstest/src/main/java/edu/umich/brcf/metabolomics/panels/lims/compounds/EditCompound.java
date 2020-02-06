@@ -65,7 +65,11 @@ public class EditCompound extends WebPage
 
 			add(new Label("cid", cid));
 			add(newRequiredTextField("chem_abs_number", 30));
-			add(newRequiredTextField("smiles", 500));
+			//add(newRequiredTextField("smiles", 500));
+			// issue 8
+			TextField smilesFld;
+			add(smilesFld =new TextField("smiles"));
+			smilesFld.add(StringValidator.maximumLength(500));
 			
 			// issue 464
 			DropDownChoice humanRelDD=new DropDownChoice("human_rel", Compound.Human_Rel_Types, new ChoiceRenderer()

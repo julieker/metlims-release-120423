@@ -68,13 +68,15 @@ public class AutoAddControlsPanel extends Panel
 	AjaxLink customizeButton;
     AjaxLink motrpacButton;
 	// Issue 302
-	DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop, qcDrop1, qcDrop2, chearBlankTypeDrop, poolTypeADrop, poolTypeBDrop;  // issue 13
+	DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop, processBlanksDrop, qcDrop1, qcDrop2, chearBlankTypeDrop, poolTypeADrop, poolTypeBDrop;  // issue 13
 	String nStandardsStr = "1", poolSpacingStrA = "0 (NO POOLS)", poolSpacingStrB = "0 (NO POOLS)", nBlanksStr = "1", nMatrixBlanksStr = "0", nChearBlanksStr= "0";
-	String tNStandardsStr = "1", tPoolSpacingStrA = "0 (NO POOLS)", tPoolSpacingStrB = "0 (NO POOLS)", tNBlanksStr = "1", tNMatrixBlanksStr = "0", tNChearBlanksStr= "0";
+	// issue 13 2020 
+	String nProcessBlanksStr = "1";
 	String chearBlankType = "Urine";
 	String poolTypeA =  "Master Pool   (CS00000MP)"; // issue 13
 	String poolTypeB =  "Batch Pool.M1 (CS000QCMP)"; // issue 13
-	Integer nStandards = 1, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
+	// issue 13 2020
+	Integer nStandards = 1, nProcessBlanks = 0, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
     public Integer poolSpacingA = 0, poolSpacingB = 0;
 	private Boolean needsRebuild = false;
 	WebMarkupContainer container = new WebMarkupContainer("container");
@@ -100,6 +102,7 @@ public class AutoAddControlsPanel extends Panel
 		container.add(poolsDropB = buildQuantityDropdown("poolsDropB","poolSpacingStrB"));
 				
 		container.add(blanksDrop = buildQuantityDropdown("blanksDrop","nBlanksStr"));
+		container.add(processBlanksDrop = buildQuantityDropdown("processBlanksDrop","nProcessBlanksStr")); // issue 13 2020
 		container.add(qcDrop1 = buildQuantityDropdown("qcDrop1","nMatrixBlanksStr"));
 		container.add(qcDrop2 = buildQuantityDropdown("qcDrop2","nChearBlanksStr"));
 		container.add(chearBlankTypeDrop = buildChearBlankTypeDropdown("chearBlankTypeDrop","chearBlankType"));
@@ -591,7 +594,8 @@ public class AutoAddControlsPanel extends Panel
 			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
-			}	
+			}
+	
 		for (int i = 0; i < nStandards ; i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("Standard." + i);
@@ -609,7 +613,17 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-	
+		
+		// issue 13 2020
+		for (int i = 0; i < nProcessBlanks; i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("Process Blank");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
 		for (int i = 0; i < nMatrixBlanks; i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("Red Cross");
@@ -1058,6 +1072,15 @@ public class AutoAddControlsPanel extends Panel
 			originalWorklist.addControlGroup(group3);
 			}
 		
+		// issue 13 20202
+		for (int i = 0; i < nProcessBlanks; i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("Process Blank");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group4.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group4);
+			}	
 		for (int i = 0; i < nBlanks; i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
@@ -1417,7 +1440,10 @@ public class AutoAddControlsPanel extends Panel
 						if (!StringUtils.isEmptyOrNull(poolSpacingStrB))
 							poolSpacingB= Integer.parseInt(StringParser.parseName(poolSpacingStrB));
 						if (!StringUtils.isEmptyOrNull(nBlanksStr))
-							nBlanks = Integer.parseInt(nBlanksStr);						
+							nBlanks = Integer.parseInt(nBlanksStr);		
+						// issue 13 2020
+						if (!StringUtils.isEmptyOrNull(nProcessBlanksStr))
+							nProcessBlanks = Integer.parseInt(nProcessBlanksStr);		
 						if (!StringUtils.isEmptyOrNull(nMatrixBlanksStr))
 							nMatrixBlanks = Integer.parseInt(nMatrixBlanksStr);						
 						if (!StringUtils.isEmptyOrNull(nChearBlanksStr))

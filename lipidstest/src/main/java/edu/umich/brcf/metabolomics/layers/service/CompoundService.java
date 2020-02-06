@@ -78,13 +78,13 @@ public class CompoundService
 				if (!StringUtils.isEmptyOrNull(dto.getParentCid()))
 					compound.updateParent(getParent(compound, dto));
 				//msg = "Error while updating solvent";
-				compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));
+				// issue 8
+				if (!StringUtils.isEmptyOrNull(compound.getSmiles()))
+					compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));
 				//msg = "Error while creating compound";
 				compoundDao.createCompound(compound);
-				}
-		
-			catch (Exception e) { e.printStackTrace(); compound = null; throw new RuntimeException(msg); }
-		
+				}		
+			catch (Exception e) { e.printStackTrace(); compound = null; throw new RuntimeException(msg); }		
 		if (compound != null)
 			if (!StringUtils.isEmptyOrNull(dto.getName()))
 				{
