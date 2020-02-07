@@ -64,12 +64,13 @@ public class CompoundService
 			try 
 				{
 				compound = compoundDao.loadCompoundById(dto.getCid());
-				 if (!StringUtils.isEmptyOrNull(dto.getParentCid()))
-					 compound.update(dto, getParent(compound, dto));
-
-				 compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));
+				if (!StringUtils.isEmptyOrNull(dto.getParentCid()))
+			        compound.update(dto, getParent(compound, dto));
+				// issue 8 
+				if (!StringUtils.isEmptyOrNull(compound.getSmiles()))
+				    compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));
 				} 
-			catch (Exception e) { }
+			catch (Exception e) {e.printStackTrace(); }
 		else
 			try
 				{
