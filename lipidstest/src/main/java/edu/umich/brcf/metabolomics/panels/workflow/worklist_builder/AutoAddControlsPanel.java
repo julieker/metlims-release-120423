@@ -1,6 +1,8 @@
 ////////////////////////////////////////////////////
 // AutoAddControlsPanel.java
+
 // Written by Jan Wigginton, Mar 19, 2017
+// Updated by Julie Keros Feb 10, 2020
 ////////////////////////////////////////////////////
 package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 
@@ -51,48 +53,41 @@ import com.googlecode.wicket.jquery.ui.widget.dialog.DialogButton;
 public class AutoAddControlsPanel extends Panel
 	{
 	@SpringBean
-	ControlService controlService;
+	private ControlService controlService;
 	
-	WorklistSimple originalWorklist;
-	ModalWindow modal1;
-	String gMasterPoolBefore = "";
-	List<WorklistControlGroup> controlGroupsList;
-	ListView<WorklistControlGroup> controlGroupsListView;
-	List<String> availableStrQuantities = Arrays.asList(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" });
-	List availableSpacingQuantities = Arrays.asList(new String[] {"0 (NO POOLS)", "1", "2", "3", "4", "5", "6", "7",
+	private WorklistSimple originalWorklist;
+	private ModalWindow modal1;
+	private List<String> availableStrQuantities = Arrays.asList(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" });
+	private List availableSpacingQuantities = Arrays.asList(new String[] {"0 (NO POOLS)", "1", "2", "3", "4", "5", "6", "7",
 			"8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"}); // issue 315
-	List<String> availableChearBlankTypes = Arrays.asList(new String[] {"Urine", "Plasma"});
-	List<String> poolTypes = Arrays.asList(new String[] {"Master Pool   (CS00000MP)", "Batch Pool.M1 (CS000BPM1)",  "Batch Pool.M2 (CS000BPM2)", "Batch Pool.M3 (CS000BPM3)", "Batch Pool.M4 (CS000BPM4)", "Batch Pool.M5 (CS000BPM5)"});
-	List<String> poolTypesB = Arrays.asList(new String[] {"Master Pool.QCMP (CS000QCMP)", "Batch Pool.M1 (CS000BPM1)", "Batch Pool.M2 (CS000BPM2)", "Batch Pool.M3 (CS000BPM3)", "Batch Pool.M4 (CS000BPM4)", "Batch Pool.M5 (CS000BPM5)"});
-	IndicatingAjaxLink buildButton,clearButton;			   
-	AjaxLink customizeButton;
-    AjaxLink motrpacButton;
-	// Issue 302
-	DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop, processBlanksDrop, qcDrop1, qcDrop2, chearBlankTypeDrop, poolTypeADrop, poolTypeBDrop;  // issue 13
-	String nStandardsStr = "1", poolSpacingStrA = "0 (NO POOLS)", poolSpacingStrB = "0 (NO POOLS)", nBlanksStr = "1", nMatrixBlanksStr = "0", nChearBlanksStr= "0";
-	// issue 13 2020 
-	String nProcessBlanksStr = "1";
-	String chearBlankType = "Urine";
-	String poolTypeA =  "Master Pool   (CS00000MP)"; // issue 13
-	String poolTypeB =  "Batch Pool.M1 (CS000QCMP)"; // issue 13
+	private List<String> availableChearBlankTypes = Arrays.asList(new String[] {"Urine", "Plasma"});
+	private List<String> poolTypes = Arrays.asList(new String[] {"Master Pool   (CS00000MP)", "Batch Pool.M1 (CS000BPM1)",  "Batch Pool.M2 (CS000BPM2)", "Batch Pool.M3 (CS000BPM3)", "Batch Pool.M4 (CS000BPM4)", "Batch Pool.M5 (CS000BPM5)"});
+	private List<String> poolTypesB = Arrays.asList(new String[] {"Master Pool.QCMP (CS000QCMP)", "Batch Pool.M1 (CS000BPM1)", "Batch Pool.M2 (CS000BPM2)", "Batch Pool.M3 (CS000BPM3)", "Batch Pool.M4 (CS000BPM4)", "Batch Pool.M5 (CS000BPM5)"});
+	private String poolTypeA =  "Master Pool   (CS00000MP)"; // issue 13
+	private String poolTypeB =  "Batch Pool.M1 (CS000QCMP)"; // issue 13
 	// issue 13 2020
-	Integer nStandards = 1, nProcessBlanks = 0, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
-    public Integer poolSpacingA = 0, poolSpacingB = 0;
-	private Boolean needsRebuild = false;
-	WebMarkupContainer container = new WebMarkupContainer("container");
-	List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
-	String example = "";
+	private Integer nStandards = 1, nProcessBlanks = 1, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
+    private  Integer poolSpacingA = 0, poolSpacingB = 0;		   
+	// Issue 302
+	private DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop, processBlanksDrop, qcDrop1, qcDrop2, chearBlankTypeDrop, poolTypeADrop, poolTypeBDrop;  // issue 13
+	private String nStandardsStr = "1", poolSpacingStrA = "0 (NO POOLS)", poolSpacingStrB = "0 (NO POOLS)", nBlanksStr = "1", nMatrixBlanksStr = "0", nChearBlanksStr= "0";
+	// issue 13 2020 
+	private String nProcessBlanksStr = "1";
+	private String chearBlankType = "Urine";
+	private WebMarkupContainer container = new WebMarkupContainer("container");
+	private List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
+	private String example = "";
     
 	public AutoAddControlsPanel(String id, final WorklistSimple worklist)
 		{
 		super(id);
+		IndicatingAjaxLink buildButton,clearButton;	
 		modal1 = ModalCreator.createModalWindow("modal1", 800, 320);
 		add(modal1);
 		
 		originalWorklist = worklist;
 		//tOriginalWorklist = worklist;
 		originalWorklist.initializeControls();
-		controlGroupsList = originalWorklist.getControlGroupsList();
 		container.setOutputMarkupId(true);
 		container.setOutputMarkupPlaceholderTag(true);
 		add(container);
@@ -517,7 +512,6 @@ public class AutoAddControlsPanel extends Panel
 	        		target.appendJavaScript(StringUtils.makeAlertMessage("There is customization for Pool B.  Please choose a value for Pool Spacing B "));
 	        		return;
 	        		}
-	        	
 	        	// issue 17
 	        	worklist.setBothQCMPandMP (StringParser.parseId(poolTypeA).equals("CS00000MP") && StringParser.parseId(poolTypeB).equals("CS000QCMP") && poolSpacingA > 0 && poolSpacingB > 0);    		
 	        	if (StringParser.parseId(poolTypeA).equals(StringParser.parseId(poolTypeB)))
@@ -526,11 +520,7 @@ public class AutoAddControlsPanel extends Panel
 	        		return;
 	        		}	
 	        	originalWorklist.clearControlGroups(); // issue 431
-	        	
-	        	if (worklist.getSelectedPlatform() == null || "agilent".equals(worklist.getSelectedPlatform().toLowerCase()))
-			        addStandardsToAgilentList(worklist);
-		        else
-			        addStandardsToList(worklist);
+			    addStandardsToAgilentList(worklist);
 	        	// issue 22
 	        	Map<String, Integer> controlTypeMap = worklist.buildControlTypeMap();
 	        	int numberDistinctControls = controlTypeMap.size()  ;
@@ -1189,218 +1179,8 @@ public class AutoAddControlsPanel extends Panel
 		}
 
      // issue 324    
-     //Issue 422
-    
+     //Issue 422   
 	//WorklistControlGroup(String eid, String type, String q, String dir, String rs, WorklistSimple w)
-	private void addStandardsToList(WorklistSimple worklist)
-		{
-		// TO DO : Actually count standards, blanks and pools -- this is rough catch requireing clear between builds
-		// if a differnt combination strikes the same value as previous
-		//	if (worklist.getControlGroupsList().size() == 2 * (nStandards + nBlanks))
-		//		return; 
-		if (worklist.getItems().size() == 0)
-			return;		
-		originalWorklist.getControlGroupsList().clear();	
-		int nItems = worklist.getItems().size();
-		String firstSample =  nItems <= 0 ? null : worklist.getItem(0).getSampleName();
-		String lastSample =  nItems <= 0 ? null : worklist.getItem(nItems -1).getSampleName();
-		String id = "", finalLabel = "";
-		// issue 393
-		for (int i = 0; i < nBlanks; i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("Process Blank");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
-			group3.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group3);
-			}
-		
-		for (int i = 0; i < nStandards ; i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("Standard " + i);
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
-			group.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group);
-			}
-		
-		for (int i = 0; i < nBlanks; i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("Process Blank");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
-			group3.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group3);
-			}
-		
-		
-		// Figure out spacing here...
-		for (int i = 0; i < nMatrixBlanks; i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("Matrix Blank");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
-			group3.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group3);
-			}
-		
-		// Figure out spacing here...
-		for (int i = 0; i < nChearBlanks; i++)
-			{
-			if ("Urine".equals(chearBlankType))
-				id = controlService.controlIdForNameAndAgilent("Reference 1 - urine");
-			else if ("Plasma".equals(chearBlankType))
-				id = controlService.controlIdForNameAndAgilent("Reference 1 - plasma");
-			
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
-			group3.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group3);
-			}
-		
-		// issue 314
-		// issue 13
-		if (poolSpacingA > 0) 
-		    {
-		    for (int i = 0; i < 1; i++)
-			    {
-			    //id = controlService.controlIdForNameAndAgilent("Pool.1");
-		    	id = StringParser.parseId(poolTypeA);
-			    finalLabel = controlService.dropStringForIdAndAgilent(id);
-			    WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "3", "Before", firstSample, worklist);
-			    group3.setStandardNotAddedControl(true);
-			    originalWorklist.addControlGroup(group3);
-			    }
-		    }
-		  
-		// issue 13
-	    if (poolSpacingB > 0) 
-	        {
-		    for (int i = 0; i < 1; i++)
-			    {
-		    	//id = controlService.controlIdForNameAndAgilent("Pool.1");
-		    	id = StringParser.parseId(poolTypeB); // issue 13
-			    //id = controlService.controlIdForNameAndAgilent("Pool.1b");
-			    finalLabel = controlService.dropStringForIdAndAgilent(id);
-			    WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
-			    group3.setStandardNotAddedControl(true);
-			    originalWorklist.addControlGroup(group3);
-			    }
-		    }
-		
-		for (int i = 0; i < nBlanks; i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("Process Blank");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group4.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group4);
-			}
-		
-		for (int i = nStandards - 1; i >= 0; i--)
-			{
-			id = controlService.controlIdForNameAndAgilent("Standard " + i);
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group2 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group2.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group2);
-			}
-		
-		
-		for (int i = 0; i < nBlanks; i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("Process Blank");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group4.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group4);
-			}
-		
-		
-		// Figure out spacing here...
-		for (int i = 0; i < nChearBlanks; i++)
-			{
-			if ("Urine".equals(chearBlankType))
-				id = controlService.controlIdForNameAndAgilent("Reference 1 - urine");
-			if ("Plasma".equals(chearBlankType))
-				id = controlService.controlIdForNameAndAgilent("Reference 1 - plasma");
-			
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group3.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group3);
-			}
-	
-		
-		for (int i = 0; i < nMatrixBlanks; i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("Matrix Blank");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group3.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group3);
-			}
-		
-		// issue 302
-		if (poolSpacingA > 0) 
-		    {
-		    for (int i = 0; i < 1; i++)
-			    {
-			    //id = controlService.controlIdForNameAndAgilent("Pool.1");
-		    	id = StringParser.parseId(poolTypeA);
-			    finalLabel = controlService.dropStringForIdAndAgilent(id);
-			    WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			    group3.setStandardNotAddedControl(true);
-			    originalWorklist.addControlGroup(group3);
-			    }
-			}
-		
-		// issue 302
-		if (poolSpacingB > 0) 
-		    {
-		    for (int i = 0; i < 1; i++)
-			    {
-			    //id = controlService.controlIdForNameAndAgilent("Pool.1b");
-		    	id = StringParser.parseId(poolTypeB); // issue 13
-			    finalLabel = controlService.dropStringForIdAndAgilent(id);
-			    WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			    group3.setStandardNotAddedControl(true);
-			    originalWorklist.addControlGroup(group3);
-			    }
-		    }
-
-		// issue 302
-		// issue 13
-		if (poolSpacingA > 0) 
-			{
-			List<String> insertionPoints =  getPoolInsertionPoints(poolSpacingA);
-		
-			//id = controlService.controlIdForNameAndAgilent("Pool.1");
-			id = StringParser.parseId(poolTypeA);
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			for (String pt : insertionPoints)
-				{
-				WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "Before", pt, worklist);
-				group4.setStandardNotAddedControl(true);
-				originalWorklist.addControlGroup(group4);
-				}
-			}
-	
-		// issue 302
-		if (poolSpacingB > 0) 
-		    {
-		    List<String> insertionPoints =  getPoolInsertionPoints(poolSpacingB);
-		    //id = controlService.controlIdForNameAndAgilent("Pool.1b");
-		    id = StringParser.parseId(poolTypeB); // issue 13
-		    finalLabel = controlService.dropStringForIdAndAgilent(id);
-		    for (String pt : insertionPoints)
-			    {
-			    WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "Before", pt, worklist);
-			    group4.setStandardNotAddedControl(true);
-			    originalWorklist.addControlGroup(group4);
-			    }
-		    }
-		}
 		
 	// Issue 302
 	List<String> getPoolInsertionPoints(int spacing)
@@ -1448,7 +1228,6 @@ public class AutoAddControlsPanel extends Panel
 							nMatrixBlanks = Integer.parseInt(nMatrixBlanksStr);						
 						if (!StringUtils.isEmptyOrNull(nChearBlanksStr))
 							nChearBlanks = Integer.parseInt(nChearBlanksStr);						
-						needsRebuild = true;
 						break;	
 						// issue 13
 					case "updateForPoolTypeDropB" :
