@@ -51,14 +51,11 @@ public class CompoundService
 		return compoundDao.loadCompoundByCan(can);
 		}
 
-	
 	public Compound save(CompoundDTO dto) 
 		{
-		Assert.notNull(dto);
-		
+		Assert.notNull(dto);		
 		Compound compound = null;
 		CompoundName cname;
-
 		String msg = "";
 		if (dto.getCid() != null && !"to be assigned".equals(dto.getCid()))
 			try 
@@ -69,6 +66,12 @@ public class CompoundService
 				// issue 8 
 				if (!StringUtils.isEmptyOrNull(compound.getSmiles()))
 				    compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));
+				else
+					{
+					compound.updateSolvent(null);
+					compound.setMolecular_formula(null);
+					compound.setMolecular_weight(null);
+					}
 				} 
 			catch (Exception e) {e.printStackTrace(); }
 		else
@@ -81,7 +84,7 @@ public class CompoundService
 				//msg = "Error while updating solvent";
 				// issue 8
 				if (!StringUtils.isEmptyOrNull(compound.getSmiles()))
-					compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));
+					compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));				    
 				//msg = "Error while creating compound";
 				compoundDao.createCompound(compound);
 				}		
@@ -93,7 +96,6 @@ public class CompoundService
 				compoundNameDao.save(cname);
 				compound.addName(cname);
 				}
-
 		return compound;
 		}
 	

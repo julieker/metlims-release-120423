@@ -254,16 +254,30 @@ public class Compound implements IClusterable {
 	/**
 	 * @return the molecular_formula
 	 */
-	public String getMolecular_formula() {
+	public String getMolecular_formula() 
+	    {
 		return molecular_formula;
-	}
+	    }
+	// issue 8
+	public void setMolecular_formula(String vMolecular_formula) 
+		{
+		this.molecular_formula = vMolecular_formula;
+		}
 
 	/**
 	 * @return the molecular_weight
 	 */
-	public BigDecimal getMolecular_weight() {
+	public BigDecimal getMolecular_weight() 
+	    {
 		return molecular_weight;
-	}
+	    }
+	// issue 8 
+	public void setMolecular_weight(BigDecimal vMolecular_weight) 
+		{
+		this.molecular_weight = vMolecular_weight;
+		}
+	
+	
 	
 	public double getMolecularWeightAsDouble() {
 		return (molecular_weight == null ? Double.NaN : molecular_weight.doubleValue());
