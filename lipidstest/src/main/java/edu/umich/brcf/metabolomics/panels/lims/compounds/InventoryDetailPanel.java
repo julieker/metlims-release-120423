@@ -155,12 +155,19 @@ public class InventoryDetailPanel extends Panel
 		if (getCompound().getInventory().size()>0)
 			parentageList.add(getCompound());
 		Compound tempCompound=compoundService.loadCompoundById(getCompound().getCid());
-		while (tempCompound.getCid()!=tempCompound.getParent().getCid())
-			{
-			tempCompound=compoundService.loadCompoundById(tempCompound.getParent().getCid());
-			if (tempCompound.getInventory().size()>0)
-				parentageList.add(tempCompound);
-			}
+		// issue 15
+		if (tempCompound.getParent()!=null)
+		    {
+			while (tempCompound.getCid()!=tempCompound.getParent().getCid())
+				{
+				tempCompound=compoundService.loadCompoundById(tempCompound.getParent().getCid());			
+				if (tempCompound.getInventory().size()>0)
+					parentageList.add(tempCompound);
+				// issue 15
+				if (tempCompound.getParent()==null)
+					break;
+				}
+		    }
 		return parentageList;
 		}
 	

@@ -22,7 +22,12 @@ import edu.umich.brcf.shared.layers.domain.Client;
 public class SortableClientDataProvider extends SortableDataProvider<Client, String> 
 	{
 	IModel <List<Client>> clients;
-	
+	// JAK put there for successful mvn build issue 19
+	@Override
+	public void detach()
+		{
+		super.detach();	
+		}
 	
 	public SortableClientDataProvider(IModel<List<Client>> peaks)
 		{

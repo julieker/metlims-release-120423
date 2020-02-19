@@ -16,6 +16,12 @@ public class OddEvenAttributeModifier {
 // issue 464
 	private static AttributeModifier oddEvenAttributeModifier(final int index) {
 		return new AttributeModifier("class",  new AbstractReadOnlyModel() {
+			// JAK put there for successful mvn build issue 19
+			@Override
+			public void detach()
+				{
+				super.detach();	
+				}
 			public Object getObject() {
 				return (index % 2 == 1) ? "even" : "odd";
 			}

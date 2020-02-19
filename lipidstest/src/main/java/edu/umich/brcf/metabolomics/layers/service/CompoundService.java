@@ -63,6 +63,9 @@ public class CompoundService
 				compound = compoundDao.loadCompoundById(dto.getCid());
 				if (!StringUtils.isEmptyOrNull(dto.getParentCid()))
 			        compound.update(dto, getParent(compound, dto));
+				//issue 15
+				else 
+					compound.update(dto,null);
 				// issue 8 
 				if (!StringUtils.isEmptyOrNull(compound.getSmiles()))
 				    compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));

@@ -81,33 +81,7 @@ public class RollbackItemService
 		}
 	
 	// ignoreRollbacks (for epi) , just grab old sample ids.
-	public void updateDataFromRollBackIds(ISavableSampleData data, boolean ignoreSubjects) throws SampleSheetIOException
-		{
-		Map<String, RollbackItem> existingRollbacks = loadRetrievalMapForExpId(data.getExpId());
-		
-		if (existingRollbacks == null)
-			throw new SampleSheetIOException("Unable to restore previously rolled back sample ids -- researcher sample ids are not unique", null, 0);
-	
-		List<? extends ICheckinSampleItem> sampleItems = data.pullSampleDTOs();
-		
-		for (ICheckinSampleItem item : sampleItems)
-			{
-			RollbackItem rb = existingRollbacks.get(item.getResearcherSampleId());
-			if (ignoreSubjects)
-				{
-				item.setSampleId(rb.getSampleId());
-				continue;
-				}
-			
-			if (item.getResearcherSampleId() != null && (item.getResearcherSampleId().equals(rb.getResearcherSampleId())))
-				{
-				item.setSampleId(rb.getSampleId());
-				if (item.getResearcherSubjectId() != null && (item.getResearcherSubjectId().equals(rb.getResearcherSubjectId())))
-					item.setSubjectId(rb.getSubjectId());
-				}
-			}
-		}
-	
+    // JAK deleted UpdateDataFromRollbackIDs for successful mvn build issue 19
 	
 	public List<RollbackItemDTO> gatherInfoForLogging(String expId)
 		{

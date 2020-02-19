@@ -21,6 +21,12 @@ public class SortableOrganizationDataProvider extends SortableDataProvider<Organ
 	{
 	IModel <List<Organization>> organizations;
 	
+	// JAK put there for successful mvn build issue 19
+	@Override
+	public void detach()
+		{
+		super.detach();	
+		}
 	public SortableOrganizationDataProvider() { } 
 	
 	public SortableOrganizationDataProvider(IModel<List<Organization>> peaks)

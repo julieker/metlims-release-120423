@@ -51,7 +51,8 @@ public class CompoundNameService
 			try
 				{
 				cname = compoundNameDao.loadName(cnDto.getCid(), cnDto.getNewName());
-				cname.update(cnDto, cmpd);
+				//issue 16
+				compoundNameDao.updateName(cnDto.getCid(), cnDto.getNewName(), cnDto.getName(), cnDto.getType(), cnDto.getHtml());
 				}
 			catch(Exception e) { e.printStackTrace(); cname = null; }
 		else

@@ -87,6 +87,14 @@ public class CompoundNameDAO extends BaseDAO
 		return lst;
 		}
 	
+	// issue 16
+	public void updateName(String cid, String name, String oldName, String type, String html)
+		{
+		Query query = getEntityManager().createNativeQuery("update names set name= ?2 , type = ?4, html=?5 where cid= ?1 and name=?3 "  )
+				.setParameter(1, cid).setParameter(2, name).setParameter(3, oldName).setParameter(4, type).setParameter(5,  html);
+		int i = query.executeUpdate();
+		}
+	
 	
 	public CompoundName loadName(String cid, String name)
 		{

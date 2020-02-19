@@ -5,10 +5,13 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 
 public class SampleStatusAttributeModifier
 	{
+
 	public static AttributeModifier create(final Character status)
 		{
 		return SampleStatusAttributeModifier(status);
 		}
+	
+	
 
 	// public static AttributeModifier create(final String status) {
 	// return SampleStatusAttributeModifier(status));
@@ -19,34 +22,40 @@ public class SampleStatusAttributeModifier
 		{ // issue 464
 		return new AttributeModifier("class",  new AbstractReadOnlyModel()
 			{
-				public Object getObject()
+			// JAK put there for successful mvn build issue 19
+			@Override
+			public void detach()
+				{
+				super.detach();	
+				}			
+			public Object getObject()
+				{
+				String modfr = "";
+				switch (status)
 					{
-					String modfr = "";
-					switch (status)
-						{
-						case 'S':
-						modfr = "storage";
-							break;
-						case 'P':
-						modfr = "prepped";
-							break;
-						case 'I':
-						modfr = "injected";
-							break;
-						case 'R':
-						modfr = "processed";
-							break;
-						case 'C':
-						modfr = "complete";
-							break;
-						default:
-						modfr = "unknown";
-							break;
-						// throw new IllegalStateException(status +
-						// " is not mapped!");
-						}
-					return modfr;
+					case 'S':
+					modfr = "storage";
+						break;
+					case 'P':
+					modfr = "prepped";
+						break;
+					case 'I':
+					modfr = "injected";
+						break;
+					case 'R':
+					modfr = "processed";
+						break;
+					case 'C':
+					modfr = "complete";
+						break;
+					default:
+					modfr = "unknown";
+						break;
+					// throw new IllegalStateException(status +
+					// " is not mapped!");
 					}
+				return modfr;
+				}
 			});
 		}
 

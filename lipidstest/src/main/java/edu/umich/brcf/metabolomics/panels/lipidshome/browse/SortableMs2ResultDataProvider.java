@@ -26,6 +26,12 @@ public class SortableMs2ResultDataProvider extends SortableDataProvider<Ms2PeakS
 	{
 	List<Ms2PeakSet> peakSets;
 
+	// JAK put there for successful mvn build issue 19
+	@Override
+	public void detach()
+		{
+		super.detach();	
+		}
 	public SortableMs2ResultDataProvider(List<Ms2PeakSet> peaks)
 		{
 		peakSets = peaks;

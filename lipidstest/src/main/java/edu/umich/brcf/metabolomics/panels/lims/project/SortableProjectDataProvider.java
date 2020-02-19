@@ -20,11 +20,16 @@ import edu.umich.brcf.shared.layers.domain.Project;
 
 
 
-public class SortableProjectDataProvider extends SortableDataProvider<Project, String> 
+public class SortableProjectDataProvider <Void> extends SortableDataProvider<Project, String> 
 	{
 	IModel <List<Project>> projects;
 
-	
+	// JAK put there for successful mvn build issue 19
+	@Override
+	public void detach()
+		{
+		super.detach();	
+		}
 	public SortableProjectDataProvider(IModel<List<Project>> peaks)
 		{
 		projects = peaks;

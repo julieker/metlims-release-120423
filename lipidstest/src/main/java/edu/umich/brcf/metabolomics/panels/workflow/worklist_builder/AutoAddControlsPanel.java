@@ -186,7 +186,7 @@ public class AutoAddControlsPanel extends Panel
 				behavior.setOption("resizable", this.isResizable());
 				behavior.setOption("width", 2000);
 				behavior.setOption("title", Options.asString(this.getTitle().getObject()));
-				behavior.setOption("height", 600);
+				behavior.setOption("height", 550);
 			    behavior.setOption("autofocus", false);
 			    }	
 		    @Override

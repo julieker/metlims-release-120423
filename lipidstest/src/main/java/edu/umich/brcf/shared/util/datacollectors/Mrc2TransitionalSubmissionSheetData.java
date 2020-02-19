@@ -92,26 +92,22 @@ public class Mrc2TransitionalSubmissionSheetData implements Serializable, ISavab
 
 		return map;
 		}
-
 	
+	// deleted pullSampleDTOs for successful mvn build
+
+	/*
 	public List<? extends ICheckinSampleItem> pullSampleDTOs()
 		{
 		return (List<? extends ICheckinSampleItem>) this.getSamplesMetadata().getInfoFields();
 		}
+	*/
 	
-	/*public List<? extends ICheckinSampleItem> pullSampleDTOs()
+	//JAK put there for successful mvn build issue 19.. never used
+	
+	public List<? extends ICheckinSampleItem> pullSampleDTOs()
 		{
-		List<SampleDTO> list = new ArrayList<SampleDTO>();
-		for (int i = 0; i < this.samplesMetadata.infoFields.size(); i++)
-			{
-			SampleDTO dto = samplesMetadata.infoFields.get(i).toIncompleteSampleDTO();
-			dto.setExpID(this.clientInfo.getExperimentId());
-			list.add(dto);
-			}
-
-		return (List<? extends ICheckinSampleItem>) list;
+		return null;
 		}
- */
 	
 	public Map<String, List<String>> pullFactorMap()
 		{
