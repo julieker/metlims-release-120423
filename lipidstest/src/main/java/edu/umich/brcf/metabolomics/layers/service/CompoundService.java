@@ -51,7 +51,8 @@ public class CompoundService
 		return compoundDao.loadCompoundByCan(can);
 		}
 
-	public Compound save(CompoundDTO dto) 
+	// issue 27 2020
+	public Compound save(CompoundDTO dto, String smilesOrSmilesFromInchiKeyStr) 
 		{
 		Assert.notNull(dto);		
 		Compound compound = null;
@@ -62,14 +63,14 @@ public class CompoundService
 				{
 				compound = compoundDao.loadCompoundById(dto.getCid());
 				if (!StringUtils.isEmptyOrNull(dto.getParentCid()))
-			        compound.update(dto, getParent(compound, dto));
+			        compound.update(dto, getParent(compound, dto), smilesOrSmilesFromInchiKeyStr);
 				//issue 15
 				else 
-					compound.update(dto,null);
+					compound.update(dto,null, smilesOrSmilesFromInchiKeyStr);
 				// issue 8 
-				if (!StringUtils.isEmptyOrNull(compound.getSmiles()))
+				if (!StringUtils.isEmptyOrNull(compound.getSmiles()) || !StringUtils.isEmptyOrNull(smilesOrSmilesFromInchiKeyStr))
 				    compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));
-				else
+				else 
 					{
 					compound.updateSolvent(null);
 					compound.setMolecular_formula(null);
@@ -80,15 +81,12 @@ public class CompoundService
 		else
 			try
 				{
-				compound = Compound.instance(dto.getCid(),dto.getChem_abs_number(), dto.getSmiles(), dto.getHuman_rel().charAt(0), null, dto.getInchiKey());
-				//msg = "Error while updating parent compound";
+				compound = Compound.instance(dto.getCid(),dto.getChem_abs_number(), dto.getSmiles(), dto.getHuman_rel().charAt(0), null, dto.getInchiKey(), smilesOrSmilesFromInchiKeyStr);
 				if (!StringUtils.isEmptyOrNull(dto.getParentCid()))
 					compound.updateParent(getParent(compound, dto));
-				//msg = "Error while updating solvent";
 				// issue 8
-				if (!StringUtils.isEmptyOrNull(compound.getSmiles()))
+				if (!StringUtils.isEmptyOrNull(compound.getSmiles()) || !StringUtils.isEmptyOrNull(smilesOrSmilesFromInchiKeyStr)  )
 					compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));				    
-				//msg = "Error while creating compound";
 				compoundDao.createCompound(compound);
 				}		
 			catch (Exception e) { e.printStackTrace(); compound = null; throw new RuntimeException(msg); }		
@@ -101,48 +99,6 @@ public class CompoundService
 				}
 		return compound;
 		}
-	
-	
-	/* Original logic
-	 * public Compound save(CompoundDTO dto) {
-		Compound compound;
-//		Compound parent;
-		CompoundName cname;
-		try {
-			compound = compoundDao.loadCompoundById(dto.getCid());
-			compound.update(dto, getParent(compound, dto));
-			compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));
-		} catch (Exception e) {
-			compound = Compound.instance(dto.getCid(),dto.getChem_abs_number(), dto.getSmiles(), dto.getHuman_rel().charAt(0), null);
-			compound.updateParent(getParent(compound, dto));
-			compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));
-			compoundDao.createCompound(compound);
-		}
-		
-		if ((dto.getName()!=null)&&(dto.getName().trim().length()>0))
-		{
-			cname = CompoundName.instance(dto.getHtml(), compound, dto.getName(), dto.getType());
-			cnameDao.save(cname);
-			compound.addName(cname);
-		}
-		return compound;
-	}
-	
-	public Compound getParent(Compound compound, CompoundDTO dto) {
-		Compound parent;
-		try {
-			parent = compoundDao.loadCompoundById(dto.getParentCid());
-			}catch(Exception ex){
-				parent = compound;
-			}
-			return parent;
-	}
-
-	 * 
-	 * 
-	 * 
-	 * 
-	 * */
 	
 	public Compound getParent(Compound compound, CompoundDTO dto) 
 		{

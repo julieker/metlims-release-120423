@@ -54,18 +54,7 @@
 
         <!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-impl -->
 
-	<!-- issue 413 -->
-	<!--  
-		<dependency>
-		    <groupId>com.googlecode.wicket-jquery-ui</groupId>
-		    <artifactId>wicket-jquery-ui</artifactId>
-		    <version>8.3.0</version>
-		</dependency>
--->
 
-<!-- https://mvnrepository.com/artifact/com.googlecode.wicket-jquery-ui/wicket-jquery-ui -->
-
- 
 <dependency>
     <groupId>com.googlecode.wicket-jquery-ui</groupId>
     <artifactId>wicket-jquery-ui</artifactId>
@@ -256,9 +245,7 @@
             <artifactId>ojdbc6</artifactId>
             <version>11.2.0</version>
         </dependency>
-        
-        
-        
+             
         <!-- LOGGING DEPENDENCIES - LOG4J -->
         
         <dependency>
@@ -272,10 +259,7 @@
             <artifactId>log4j</artifactId>
             <version>1.2.14</version>
         </dependency>
-        
-        
-        
-        
+      
         <!-- JUNIT DEPENDENCY FOR TESTING -->
      
           <dependency>
@@ -435,31 +419,8 @@
             <artifactId>activemq-core</artifactId>
             <version>5.2.0</version>
         </dependency>
-        
-        
-        
-        <!--  POI DEPENDENCIES  -->
-          <!--  PUT back JAK 101617
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>${poi.version}</version>
-        </dependency>
-        
-      
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>${poi.version}</version>
-        </dependency>
-        
-        -->
-        
-        
-        <!-- https://mvnrepository.com/artifact/junit/junit -->
-      
-        
-        
+          
+        <!-- https://mvnrepository.com/artifact/junit/junit -->      
         <!--  MISC DEPENDENCIES -->
         
         <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
@@ -574,26 +535,12 @@
     
     
     <properties>
-     <!--  
-        <wicket.version>7.2.0</wicket.version>
-        <wicket.security.version>7.2.0</wicket.security.version>
-        <wicket.sec.version>7.2.0</wicket.sec.version>
-        -->
          <team.repository>https://umhs.umms.med.umich.edu/nexus</team.repository>
-       <!--  
-       
-       
-        
-        <wicket.version>6.20.0</wicket.version>
-        <wicket.security.version>6.24.0</wicket.security.version>
-        <wicket.sec.version>6.24.0</wicket.sec.version>
-        -->
         
          <wicket.version>8.5.0</wicket.version>
         <wicket.security.version>8.5.0</wicket.security.version>
         <wicket.sec.version>8.5.0</wicket.sec.version>
-        
-        
+          
         <spring.version>4.2.5.RELEASE</spring.version>
         <hibernate.version>4.3.5.Final</hibernate.version>
         <jetty.version>6.1.4</jetty.version>

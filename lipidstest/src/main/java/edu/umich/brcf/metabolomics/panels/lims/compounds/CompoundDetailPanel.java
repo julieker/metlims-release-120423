@@ -147,11 +147,6 @@ public class CompoundDetailPanel extends Panel
        		{	
            public void onClose(AjaxRequestTarget target) 
                { 
-        	   if (StringUtils.isNullOrEmpty(getCompound().getSmiles()) && !StringUtils.isNullOrEmpty(getCompound().getInchiKey()))
-        	       {
-        		   if (StringUtils.isNullOrEmpty(CompoundIdUtils.grabSmilesFromInchiKey(getCompound().getInchiKey())))
-        	           target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("The inchiKey : " + getCompound().getInchiKey() + " could not be found."));
-        	       }
         	   target.add(cdp);
                }
        		});

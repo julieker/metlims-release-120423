@@ -30,6 +30,7 @@ import edu.umich.brcf.shared.layers.domain.CompoundDocument;
 import edu.umich.brcf.shared.layers.domain.Inventory;
 import edu.umich.brcf.shared.layers.domain.Solvent;
 import edu.umich.brcf.shared.layers.dto.CompoundDTO;
+import edu.umich.brcf.shared.util.utilpackages.StringUtils;
 
 
 @Entity()
@@ -40,14 +41,14 @@ public class Compound implements IClusterable {
 	
 	// issue 27 2020
 	public static Compound instance(String cid, String absNumber, String smiles,
-			char rel, Compound parent, String inchiKey) {
-		return new Compound(cid,absNumber, smiles, rel, parent, inchiKey);
+			char rel, Compound parent, String inchiKey, String smilesOrsmilesOrSmilesFromInchiKeyString) {
+		return new Compound(cid,absNumber, smiles, rel, parent, inchiKey, smilesOrsmilesOrSmilesFromInchiKeyString);
 	}
 
 
 	public static Compound instance(String cid) 
 		{
-		return new Compound(cid, null, null, 'H', null, null);
+		return new Compound(cid, null, null, 'H', null, null,null);
 		}
 
 	@Id()
@@ -119,18 +120,18 @@ public class Compound implements IClusterable {
 	public Compound() {  }
 
 	// issue 27 2020
-	private Compound(String cid, String absNumber, String smiles, char rel, Compound parent, String inchiKey) 
+	private Compound(String cid, String absNumber, String smiles, char rel, Compound parent, String inchiKey, String smilesOrSmilesFromInchiKeyStr) 
 		{
 		this.cid = cid;
 		this.chem_abs_number = absNumber;
 		this.smiles = smiles;
 		this.inchiKey = inchiKey;
-		if ((smiles!=null)&& (smiles.trim().length()>0))
+		if ((smilesOrSmilesFromInchiKeyStr!=null)&& (smilesOrSmilesFromInchiKeyStr.trim().length()>0))
 			{
-			this.molecular_formula = getFormula(smiles);
-			this.logP = new BigDecimal(getLogp(smiles));
-			this.molecular_weight = new BigDecimal(getMass(smiles));
-			this.nominalMass = new BigDecimal(getExactMass(smiles));
+			this.molecular_formula = getFormula(smilesOrSmilesFromInchiKeyStr);
+			this.logP = new BigDecimal(getLogp(smilesOrSmilesFromInchiKeyStr));
+			this.molecular_weight = new BigDecimal(getMass(smilesOrSmilesFromInchiKeyStr));
+			this.nominalMass = new BigDecimal(getExactMass(smilesOrSmilesFromInchiKeyStr));
 			}
 		this.humanRel = rel;
 		this.names = new ArrayList<CompoundName>();
@@ -151,20 +152,20 @@ public class Compound implements IClusterable {
 		this.names.clear();
 		}
 
-	
-	public void update(CompoundDTO dto, Compound parent) 
+	// issue 27 2020
+	public void update(CompoundDTO dto, Compound parent, String smilesOrSmilesFromInchiKeyStr) 
 		{
 		this.chem_abs_number = dto.getChem_abs_number();
 		this.smiles = dto.getSmiles();
 		this.inchiKey = dto.getInchiKey();
 		this.humanRel = new Character(dto.getHuman_rel().charAt(0));
 		this.parent = parent;
-		if ((smiles!=null)&& (smiles.trim().length()>0))
+		if ((smilesOrSmilesFromInchiKeyStr!=null)&& (smilesOrSmilesFromInchiKeyStr.trim().length()>0))
 			{
-			this.molecular_formula = getFormula(smiles);
-			this.logP = new BigDecimal(getLogp(smiles));
-			this.molecular_weight = new BigDecimal(getMass(smiles));
-			this.nominalMass = new BigDecimal(getExactMass(smiles));
+			this.molecular_formula = getFormula(smilesOrSmilesFromInchiKeyStr);
+			this.logP = new BigDecimal(getLogp(smilesOrSmilesFromInchiKeyStr));
+			this.molecular_weight = new BigDecimal(getMass(smilesOrSmilesFromInchiKeyStr));
+			this.nominalMass = new BigDecimal(getExactMass(smilesOrSmilesFromInchiKeyStr));
 			}
 		}
 	

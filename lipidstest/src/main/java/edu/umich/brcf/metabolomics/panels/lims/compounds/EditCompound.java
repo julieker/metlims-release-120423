@@ -9,7 +9,6 @@ package edu.umich.brcf.metabolomics.panels.lims.compounds;
 
 import java.util.Arrays;
 
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -20,13 +19,11 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.h2.util.StringUtils;
@@ -36,8 +33,7 @@ import edu.umich.brcf.metabolomics.layers.domain.CompoundName;
 import edu.umich.brcf.metabolomics.layers.service.CompoundNameService;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.shared.layers.dto.CompoundDTO;
-import edu.umich.brcf.shared.layers.dto.SampleDTO;
-import edu.umich.brcf.shared.panels.login.MedWorksSession;
+import edu.umich.brcf.shared.util.utilpackages.CompoundIdUtils;
 
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 
@@ -182,13 +178,16 @@ public class EditCompound extends WebPage
 				{
 				public void onSubmit() 
 					{
+					String smilesStr = "";
+					String smilesOrSmilesFromInchiKeyStr = "";
 					CompoundDTO cmpDto = (CompoundDTO) getForm().getModelObject();
-					boolean err = false;
+					boolean err = false;					
 					// issue 27 2020
 					if (cmpDto.getInchiKeyOrSmiles().equals("Smiles"))
                         cmpDto.setInchiKey(null);
 					else
 						cmpDto.setSmiles(null);  
+					// issue 27 2020 
 					if(cmpDto.getCid()!=null)
 						if (cmpDto.getName()!=null && cmpDto.getName().length()>0)
 							{
@@ -208,9 +207,19 @@ public class EditCompound extends WebPage
 							}				
 					if (!err)
 						{
-						try {
-							Compound cmp = cmpService.save(cmpDto);
-							EditCompound.this.info("Compound/Name detail saved.");
+						try 
+						    {	
+							// issue 27 2020
+							smilesOrSmilesFromInchiKeyStr = "";
+							if (cmpDto.getInchiKeyOrSmiles().equals("InchiKey"))
+							    smilesOrSmilesFromInchiKeyStr = CompoundIdUtils.grabSmilesFromInchiKey(cmpDto.getInchiKey());
+							else
+								smilesOrSmilesFromInchiKeyStr = cmpDto.getSmiles();
+							Compound cmp = cmpService.save(cmpDto, smilesOrSmilesFromInchiKeyStr);										
+							if (cmpDto.getInchiKeyOrSmiles().equals("InchiKey") && StringUtils.isNullOrEmpty(smilesOrSmilesFromInchiKeyStr) && !StringUtils.isNullOrEmpty(cmp.getInchiKey()) )
+								EditCompound.this.info("The InchiKey:" + cmp.getInchiKey() + " could not be found but the Compound/Name detail is saved")  ;  	
+							else
+							    EditCompound.this.info("Compound/Name detail saved.");
 							if (container!=null)
 								{
 								container.setCmpId(cmp.getCid());
