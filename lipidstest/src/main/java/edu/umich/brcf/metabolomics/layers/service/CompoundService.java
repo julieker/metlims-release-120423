@@ -80,7 +80,7 @@ public class CompoundService
 		else
 			try
 				{
-				compound = Compound.instance(dto.getCid(),dto.getChem_abs_number(), dto.getSmiles(), dto.getHuman_rel().charAt(0), null);
+				compound = Compound.instance(dto.getCid(),dto.getChem_abs_number(), dto.getSmiles(), dto.getHuman_rel().charAt(0), null, dto.getInchiKey());
 				//msg = "Error while updating parent compound";
 				if (!StringUtils.isEmptyOrNull(dto.getParentCid()))
 					compound.updateParent(getParent(compound, dto));

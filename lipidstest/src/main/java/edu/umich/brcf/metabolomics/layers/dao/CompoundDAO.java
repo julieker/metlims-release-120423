@@ -70,6 +70,7 @@ public class CompoundDAO extends BaseDAO
 	
 	public Compound loadCompoundById(String id) {
 		Compound c = getEntityManager().find(Compound.class, id);
+		// issue 27 2020
 		if(c!=null)
 			{
 			initializeTheKids(c, new String[] { "names", "inventory", "solvent" }); //, "docList"

@@ -38,15 +38,16 @@ public class Compound implements IClusterable {
 	
 	public static List<String> Human_Rel_Types = Arrays.asList(new String[] { "1", "2", "3", "4", "9", "0"});
 	
+	// issue 27 2020
 	public static Compound instance(String cid, String absNumber, String smiles,
-			char rel, Compound parent) {
-		return new Compound(cid,absNumber, smiles, rel, parent);
+			char rel, Compound parent, String inchiKey) {
+		return new Compound(cid,absNumber, smiles, rel, parent, inchiKey);
 	}
 
 
 	public static Compound instance(String cid) 
 		{
-		return new Compound(cid, null, null, 'H', null);
+		return new Compound(cid, null, null, 'H', null, null);
 		}
 
 	@Id()
@@ -77,6 +78,11 @@ public class Compound implements IClusterable {
 	@Basic()
 	@Column(name = "SMILES", nullable = true, length = 500)
 	private String smiles;
+	
+	// issue 27
+	@Basic()
+	@Column(name = "INCHIKEY", nullable = true, length = 500)
+	private String inchiKey;
 
 	@OneToMany(mappedBy = "compound", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
@@ -112,11 +118,13 @@ public class Compound implements IClusterable {
 
 	public Compound() {  }
 
-	private Compound(String cid, String absNumber, String smiles, char rel, Compound parent) 
+	// issue 27 2020
+	private Compound(String cid, String absNumber, String smiles, char rel, Compound parent, String inchiKey) 
 		{
 		this.cid = cid;
 		this.chem_abs_number = absNumber;
 		this.smiles = smiles;
+		this.inchiKey = inchiKey;
 		if ((smiles!=null)&& (smiles.trim().length()>0))
 			{
 			this.molecular_formula = getFormula(smiles);
@@ -139,6 +147,7 @@ public class Compound implements IClusterable {
 		this.molecular_weight = new BigDecimal(0.0);
 		this.smiles = "";
 		this.humanRel = '\0';
+		this.inchiKey = ""; // issue 27 2020
 		this.names.clear();
 		}
 
@@ -147,6 +156,7 @@ public class Compound implements IClusterable {
 		{
 		this.chem_abs_number = dto.getChem_abs_number();
 		this.smiles = dto.getSmiles();
+		this.inchiKey = dto.getInchiKey();
 		this.humanRel = new Character(dto.getHuman_rel().charAt(0));
 		this.parent = parent;
 		if ((smiles!=null)&& (smiles.trim().length()>0))
@@ -296,7 +306,19 @@ public class Compound implements IClusterable {
 	public String getSmiles() {
 		return smiles;
 	}
-
+	
+	// issue 27 2020
+	public String getInchiKey() 
+	    {
+		return inchiKey;
+	    }
+	
+	// issue 27 2020
+	public void setInchiKey (String vInchiKey)
+		{
+		this.inchiKey = vInchiKey;
+		}
+	
 	/**
 	 * @return the human_rel
 	 */
