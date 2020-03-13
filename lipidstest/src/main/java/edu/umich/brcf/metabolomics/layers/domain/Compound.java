@@ -30,8 +30,6 @@ import edu.umich.brcf.shared.layers.domain.CompoundDocument;
 import edu.umich.brcf.shared.layers.domain.Inventory;
 import edu.umich.brcf.shared.layers.domain.Solvent;
 import edu.umich.brcf.shared.layers.dto.CompoundDTO;
-import edu.umich.brcf.shared.util.utilpackages.StringUtils;
-
 
 @Entity()
 @Table(name = "COMPOUND")
@@ -373,17 +371,6 @@ public class Compound implements IClusterable {
 		
 		 logPPlugin lplugin = new logPPlugin();
 		  double logp=0;
-		/*  try{
-		  lplugin.setUserTypes("logPTrue,logPMicro,increments");
-		  Molecule target = MolImporter.importMol(smiles);
-		  lplugin.setMolecule(target);
-		//  lplugin.run(); 
-		  logp = lplugin.getlogPTrue();
-		  }catch(IOException ioe){
-				ioe.printStackTrace();
-		  }catch(PluginException pe){
-				pe.printStackTrace();
-		  }*/
 		  return logp;
 	  }
 	  
@@ -406,64 +393,30 @@ public class Compound implements IClusterable {
 	  public double getExactMass(String smiles){
 	  
 	 
-		  double exactMass=0;
-		/*  try{	
-		  ElementalAnalyserPlugin  elemanal  = new ElementalAnalyserPlugin (); 
-		  Molecule target = MolImporter.importMol(smiles);
-		  elemanal .setMolecule(target);
-		  elemanal.run();
-		  exactMass = elemanal.getExactMass();
-		  }catch(Exception e){
-				
-		  }*/
-		  
+		  double exactMass=0;		  
 		  return exactMass; 
 	  }
 	  
 	  public String getFormula(String smiles)
-		  {
-		
-	 
+		  {	 
 		  String formula="";
-		  try{	
-		  ElementalAnalyserPlugin  elemanal  = new ElementalAnalyserPlugin (); 
-		  Molecule target = MolImporter.importMol(smiles);
-		  elemanal .setMolecule(target);
-		  elemanal.run();
-		  formula = elemanal.getFormula();
-		  }catch(Exception e){
-				
-		  }
+		  try
+			  {	
+			  ElementalAnalyserPlugin  elemanal  = new ElementalAnalyserPlugin (); 
+			  Molecule target = MolImporter.importMol(smiles);
+			  elemanal .setMolecule(target);
+			  elemanal.run();
+			  formula = elemanal.getIsotopeFormula(); // issue 27 2020
+		      }
+		  catch(Exception e)
+			  {
+					
+			  }
 		  return formula; 
 	  } 
 	  
 	  public String getPka()
 		  {
 		  return "";
-		  /*
-			String pka="{";
-			try{
-				pKaPlugin pkaplugin = new pKaPlugin();
-				Molecule target = MolImporter.importMol(smiles);
-				pkaplugin.setMolecule(target);
-				pkaplugin.run();
-				double thisPka=0;
-				int count = target.getAtomCount(); 
-				for (int i=0; i < count; ++i) {
-					thisPka=pkaplugin.getpKa(i);
-					if (!((thisPka+"").equals("NaN")))
-					{
-						thisPka=Math.floor(thisPka * 100)/100;
-						pka=pka+thisPka+", ";
-					}
-				}
-				if (pka.indexOf(",")>0)
-					pka=pka.substring(0, pka.lastIndexOf(","))+"}";
-				else
-					pka="";
-			  }catch(Exception e){
-				  pka="";
-			  }
-			  return pka; */
 		  }
 }

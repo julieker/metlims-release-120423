@@ -181,28 +181,3 @@ public class CompoundService
 	}
 
 
-/*
-public Compound save(CompoundDTO dto) 
-	{
-	Compound compound = null;
-	CompoundName cname;
-
-	try {
-		compound = compoundDao.loadCompoundById(dto.getCid());
-		compound.update(dto, getParent(compound, dto));
-		compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));
-	} catch (Exception e) {
-		compound = Compound.instance(dto.getCid(),dto.getChem_abs_number(), dto.getSmiles(), dto.getHuman_rel().charAt(0), null);
-		compound.updateParent(getParent(compound, dto));
-		compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));
-		compoundDao.createCompound(compound);
-	}
-	
-	if ((dto.getName()!=null)&&(dto.getName().trim().length()>0))
-	{
-		cname = CompoundName.instance(dto.getHtml(), compound, dto.getName(), dto.getType());
-		compoundNameDao.save(cname);
-		compound.addName(cname);
-	}
-	return compound;
-} */

@@ -15,21 +15,21 @@ public class CompoundIdUtils
 	// issue 27 
 	public static String grabSmilesFromInchiKey(String inchiKey)
 	    {
-		   StringBuilder sb = new StringBuilder();
-		   URL url = null;
-		   BufferedReader br = null;
-		   if (StringUtils.isNullOrEmpty(inchiKey))
-		       return null;	   
-		   try 
-		       {
-		       url = new URL("https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/" + inchiKey + "/xml");
-		       } 
-		   catch (MalformedURLException e2) 
-		       {
-			// TODO Auto-generated catch block
-			    e2.printStackTrace();
-			    return null;
-		       }
+	    StringBuilder sb = new StringBuilder();
+	    URL url = null;
+	    BufferedReader br = null;
+		if (StringUtils.isNullOrEmpty(inchiKey))
+		    return null;	   
+		try 
+	        {
+	        url = new URL("https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/" + inchiKey + "/xml");
+	        } 
+	    catch (MalformedURLException e2) 
+	        {
+		// TODO Auto-generated catch block
+		    e2.printStackTrace();
+		    return null;
+	        }
 	    try 
 	        {
 	 	   br = new BufferedReader(new InputStreamReader(url.openStream())) ;
@@ -46,21 +46,21 @@ public class CompoundIdUtils
 	 	   sT.printStackTrace();
 	        }
 	    catch (IOException e1) 
+	       {
+		// TODO Auto-generated catch block
+		   e1.printStackTrace();
+		   try 
 		       {
-			// TODO Auto-generated catch block
-			   e1.printStackTrace();
-			   try 
-			       {
-			       if (br!=null)
-				       br.close();
-				   } 
-			   catch (IOException e) 
-			       {
-					// TODO Auto-generated catch block
-				   e.printStackTrace();
-				   }
-			    return null;		    
-		       }  
+		       if (br!=null)
+			       br.close();
+			   } 
+		   catch (IOException e) 
+		       {
+				// TODO Auto-generated catch block
+			   e.printStackTrace();
+			   }
+		   return null;		    
+	       }  
 	     // Now parse the text....
 	    if (sb.toString().indexOf("SMILES") < 0)
 	        return null;	
