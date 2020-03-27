@@ -747,22 +747,8 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-		for (int i = 0; i < worklist.getNHeartExercise(); i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Exercise");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
-			group3.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group3);
-			}	
-		for (int i = 0; i < worklist.getNHeartSedentary(); i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Sedentary");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
-			group3.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group3);
-			}
+	
+		//issue 33
 		for (int i = 0; i < worklist.getNBrownAdiposeExercise(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Brown Adipose, Exercise");
@@ -774,6 +760,23 @@ public class AutoAddControlsPanel extends Panel
 	    for (int i = 0; i < worklist.getNBrownAdiposeSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Brown Adipose, Sedentary");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+	    
+		for (int i = 0; i < worklist.getNHeartExercise(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Exercise");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}	
+		for (int i = 0; i < worklist.getNHeartSedentary(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Sedentary");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
 			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
 			group3.setStandardNotAddedControl(true);
@@ -917,6 +920,26 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
+        
+        // issue 33
+        for (int i = 0; i < worklist.getNHeartSedentary(); i++)
+  			{
+  			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Sedentary");
+  			finalLabel = controlService.dropStringForIdAndAgilent(id);
+  			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+  			group3.setStandardNotAddedControl(true);
+  			originalWorklist.addControlGroup(group3);
+  			}
+        
+        for (int i = 0; i < worklist.getNHeartExercise(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Exercise");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+          
         for (int i = 0; i < worklist.getNBrownAdiposeSedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Brown Adipose, Sedentary");
@@ -933,22 +956,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}       
-        for (int i = 0; i < worklist.getNHeartSedentary(); i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Sedentary");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group3.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group3);
-			}
-        for (int i = 0; i < worklist.getNHeartExercise(); i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Heart, Exercise");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group3.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group3);
-			}
+  
     	for (int i = 0; i < worklist.getNKidneySedentary(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Kidney, Sedentary");
