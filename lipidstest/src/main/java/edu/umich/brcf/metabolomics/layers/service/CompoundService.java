@@ -52,7 +52,7 @@ public class CompoundService
 		}
 
 	// issue 27 2020
-	public Compound save(CompoundDTO dto, String smilesOrSmilesFromInchiKeyStr) 
+	public Compound save(CompoundDTO dto, String smilesOrSmilesFromCompoundIdStr) 
 		{
 		Assert.notNull(dto);		
 		Compound compound = null;
@@ -63,12 +63,12 @@ public class CompoundService
 				{
 				compound = compoundDao.loadCompoundById(dto.getCid());
 				if (!StringUtils.isEmptyOrNull(dto.getParentCid()))
-			        compound.update(dto, getParent(compound, dto), smilesOrSmilesFromInchiKeyStr);
+			        compound.update(dto, getParent(compound, dto), smilesOrSmilesFromCompoundIdStr);
 				//issue 15
 				else 
-					compound.update(dto,null, smilesOrSmilesFromInchiKeyStr);
+					compound.update(dto,null, smilesOrSmilesFromCompoundIdStr);
 				// issue 8 
-				if (!StringUtils.isEmptyOrNull(compound.getSmiles()) || !StringUtils.isEmptyOrNull(smilesOrSmilesFromInchiKeyStr))
+				if (!StringUtils.isEmptyOrNull(compound.getSmiles()) || !StringUtils.isEmptyOrNull(smilesOrSmilesFromCompoundIdStr))
 				    compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));
 				else 
 					{
@@ -81,11 +81,11 @@ public class CompoundService
 		else
 			try
 				{
-				compound = Compound.instance(dto.getCid(),dto.getChem_abs_number(), dto.getSmiles(), dto.getHuman_rel().charAt(0), null, dto.getInchiKey(), smilesOrSmilesFromInchiKeyStr);
+				compound = Compound.instance(dto.getCid(),dto.getChem_abs_number(), dto.getSmiles(), dto.getHuman_rel().charAt(0), null, dto.getInchiKey(), smilesOrSmilesFromCompoundIdStr);
 				if (!StringUtils.isEmptyOrNull(dto.getParentCid()))
 					compound.updateParent(getParent(compound, dto));
 				// issue 8
-				if (!StringUtils.isEmptyOrNull(compound.getSmiles()) || !StringUtils.isEmptyOrNull(smilesOrSmilesFromInchiKeyStr)  )
+				if (!StringUtils.isEmptyOrNull(compound.getSmiles()) || !StringUtils.isEmptyOrNull(smilesOrSmilesFromCompoundIdStr)  )
 					compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));				    
 				compoundDao.createCompound(compound);
 				}		

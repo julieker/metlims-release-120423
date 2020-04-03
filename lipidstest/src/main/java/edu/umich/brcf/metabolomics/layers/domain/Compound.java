@@ -33,20 +33,20 @@ import edu.umich.brcf.shared.layers.dto.CompoundDTO;
 
 @Entity()
 @Table(name = "COMPOUND")
-public class Compound implements IClusterable {
-	
+public class Compound implements IClusterable 
+    {	
 	public static List<String> Human_Rel_Types = Arrays.asList(new String[] { "1", "2", "3", "4", "9", "0"});
 	
 	// issue 27 2020
 	public static Compound instance(String cid, String absNumber, String smiles,
-			char rel, Compound parent, String inchiKey, String smilesOrsmilesOrSmilesFromInchiKeyString) {
-		return new Compound(cid,absNumber, smiles, rel, parent, inchiKey, smilesOrsmilesOrSmilesFromInchiKeyString);
-	}
-
+			char rel, Compound parent, String inchiKey,  String smilesOrsmilesOrSmilesFromCompoundIdString) 
+	    {
+		return new Compound(cid,absNumber, smiles, rel, parent, inchiKey, smilesOrsmilesOrSmilesFromCompoundIdString);
+	    }
 
 	public static Compound instance(String cid) 
 		{
-		return new Compound(cid, null, null, 'H', null, null,null);
+		return new Compound(cid, null, null, 'H', null, null, null);
 		}
 
 	@Id()
@@ -82,7 +82,7 @@ public class Compound implements IClusterable {
 	@Basic()
 	@Column(name = "INCHIKEY", nullable = true, length = 500)
 	private String inchiKey;
-
+	
 	@OneToMany(mappedBy = "compound", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	List<CompoundName> names;
@@ -118,25 +118,24 @@ public class Compound implements IClusterable {
 	public Compound() {  }
 
 	// issue 27 2020
-	private Compound(String cid, String absNumber, String smiles, char rel, Compound parent, String inchiKey, String smilesOrSmilesFromInchiKeyStr) 
+	private Compound(String cid, String absNumber, String smiles, char rel, Compound parent, String inchiKey,  String smilesOrSmilesFromCompoundIdStr) 
 		{
 		this.cid = cid;
 		this.chem_abs_number = absNumber;
 		this.smiles = smiles;
 		this.inchiKey = inchiKey;
-		if ((smilesOrSmilesFromInchiKeyStr!=null)&& (smilesOrSmilesFromInchiKeyStr.trim().length()>0))
+		if ((smilesOrSmilesFromCompoundIdStr!=null)&& (smilesOrSmilesFromCompoundIdStr.trim().length()>0))
 			{
-			this.molecular_formula = getFormula(smilesOrSmilesFromInchiKeyStr);
-			this.logP = new BigDecimal(getLogp(smilesOrSmilesFromInchiKeyStr));
-			this.molecular_weight = new BigDecimal(getMass(smilesOrSmilesFromInchiKeyStr));
-			this.nominalMass = new BigDecimal(getExactMass(smilesOrSmilesFromInchiKeyStr));
+			this.molecular_formula = getFormula(smilesOrSmilesFromCompoundIdStr);
+			this.logP = new BigDecimal(getLogp(smilesOrSmilesFromCompoundIdStr));
+			this.molecular_weight = new BigDecimal(getMass(smilesOrSmilesFromCompoundIdStr));
+			this.nominalMass = new BigDecimal(getExactMass(smilesOrSmilesFromCompoundIdStr));
 			}
 		this.humanRel = rel;
 		this.names = new ArrayList<CompoundName>();
 		this.inventory = new ArrayList<Inventory>();
 		this.parent = parent;
 		}
-
 
 	public void clear() 
 		{
@@ -151,74 +150,75 @@ public class Compound implements IClusterable {
 		}
 
 	// issue 27 2020
-	public void update(CompoundDTO dto, Compound parent, String smilesOrSmilesFromInchiKeyStr) 
+	public void update(CompoundDTO dto, Compound parent, String smilesOrSmilesFromCompoundIdStr) 
 		{
 		this.chem_abs_number = dto.getChem_abs_number();
 		this.smiles = dto.getSmiles();
 		this.inchiKey = dto.getInchiKey();
 		this.humanRel = new Character(dto.getHuman_rel().charAt(0));
 		this.parent = parent;
-		if ((smilesOrSmilesFromInchiKeyStr!=null)&& (smilesOrSmilesFromInchiKeyStr.trim().length()>0))
+		if ((smilesOrSmilesFromCompoundIdStr!=null)&& (smilesOrSmilesFromCompoundIdStr.trim().length()>0))
 			{
-			this.molecular_formula = getFormula(smilesOrSmilesFromInchiKeyStr);
-			this.logP = new BigDecimal(getLogp(smilesOrSmilesFromInchiKeyStr));
-			this.molecular_weight = new BigDecimal(getMass(smilesOrSmilesFromInchiKeyStr));
-			this.nominalMass = new BigDecimal(getExactMass(smilesOrSmilesFromInchiKeyStr));
+			this.molecular_formula = getFormula(smilesOrSmilesFromCompoundIdStr);
+			this.logP = new BigDecimal(getLogp(smilesOrSmilesFromCompoundIdStr));
+			this.molecular_weight = new BigDecimal(getMass(smilesOrSmilesFromCompoundIdStr));
+			this.nominalMass = new BigDecimal(getExactMass(smilesOrSmilesFromCompoundIdStr));
 			}
 		}
-	
-	
+		
 	public void updateParent(Compound parent) 
 		{
 		this.parent = parent;
 		}
-	
 	
 	public void updateSolvent(Solvent solvent) 
 		{
 		this.solvent = solvent;
 		}
 
-	
 	public void addName(CompoundName name) 
 		{
 		Assert.notNull(name);
 		this.names.add(name);
 		}
-
 	
-	public void addInventory(Inventory inv) {
+	public void addInventory(Inventory inv) 
+	    {
 		Assert.notNull(inv);
 		this.inventory.add(inv);
-	}
+	    }
 
-	public String getPrimaryName() {
+	public String getPrimaryName() 
+	    {
 		for (CompoundName cn : names)
 			if (cn.getNameType().equals(CompoundName.PRIMARY_NAME_TYPE))
 				return cn.getName();
 		return null;
-	}
+	    }
 
-	public List<String> getNameSynonyms() {
+	public List<String> getNameSynonyms() 
+	    {
 		List<String> lst = new ArrayList<String>();
 		for (CompoundName cn : names)
 			if (cn.getNameType().equals(CompoundName.SYNONYM_NAME_TYPE))
 				lst.add(cn.getName());
 		return lst;
-	}
+	    }
 
-	public boolean nameContains(String str) {
+	public boolean nameContains(String str) 
+	    {
 		if (str == null)
 			return false;
-
-		for (CompoundName cn : names) {
+		for (CompoundName cn : names) 
+		    {
 			if (cn.getName().contains(str))
 				return true;
-		}
+		    }
 		return false;
-	}
+	    }
 
-	public boolean contains(String str) {
+	public boolean contains(String str) 
+	    {
 		if (str == null)
 			return false;
 
@@ -226,39 +226,40 @@ public class Compound implements IClusterable {
 			return true;
 		else
 			return false;
-	}
+	    }
 
-//	public void update(CompoundDTO dto, List<CompoundName> names) {
-//		this.update(dto);
-//		this.names = names;
-//	}
-
-	public List<CompoundName> getNames() {
+	public List<CompoundName> getNames() 
+	    {
 		return names;
-	}
+	    }
 
-	public void setNames(List<CompoundName> names) {
+	public void setNames(List<CompoundName> names) 
+	    {
 		this.names = names;
-	}
+	    }
 
-	public String getName() {
+	public String getName() 
+	    {
 		return getPrimaryName();
-	}
+	    }
 
-	public String getParentName() {
+	public String getParentName() 
+	    {		
 		return "";
-	}
+	    }
 
 	/**
 	 * @return the cid
 	 */
-	public String getCid() {
+	public String getCid() 
+	    {
 		return cid;
-	}
+	    }
 
-	public String getId() {
+	public String getId() 
+	    {
 		return getCid();
-	}
+	    }
 
 	/**
 	 * @return the molecular_formula
@@ -285,19 +286,19 @@ public class Compound implements IClusterable {
 		{
 		this.molecular_weight = vMolecular_weight;
 		}
-	
-	
-	
-	public double getMolecularWeightAsDouble() {
+		
+	public double getMolecularWeightAsDouble() 
+	    {
 		return (molecular_weight == null ? Double.NaN : molecular_weight.doubleValue());
-	}
+	    }
 
 	/**
 	 * @return the chem_abs_number
 	 */
-	public String getChem_abs_number() {
+	public String getChem_abs_number() 
+	    {
 		return chem_abs_number;
-	}
+	    }
 
 	/**
 	 * @return the smiles
@@ -318,105 +319,113 @@ public class Compound implements IClusterable {
 		this.inchiKey = vInchiKey;
 		}
 	
+	
 	/**
 	 * @return the human_rel
 	 */
-	public char getHumanRel() {
+	public char getHumanRel() 
+	    {
 		return (humanRel==null)? ' ':humanRel;
-	}
+	    }
 
-	public List<Inventory> getInventory() {
+	public List<Inventory> getInventory() 
+	    {
 		List<Inventory> lst = new ArrayList<Inventory>();
 		for (Inventory inv : inventory)
 			if (inv.getActive()!=('I'))
 				lst.add(inv);
 		return lst;
-	}
+	    }
 
-	public BigDecimal getLogP() {
+	public BigDecimal getLogP() 
+	    {
 		return logP;
-	}
+	    }
 	
-	public double getLogpAsDouble() {
+	public double getLogpAsDouble() 
+	    {
 		return (logP == null ? Double.NaN : logP.doubleValue());
-	}
+	    }
 
-	public BigDecimal getFormulaWeight() {
+	public BigDecimal getFormulaWeight() 
+	    {
 		return formulaWeight;
-	}
+	    }
 
-	public BigDecimal getNominalMass() {
+	public BigDecimal getNominalMass() 
+	    {
 		return nominalMass;
-	}
+	    }
 	
-	public double getNominalMassAsDouble() {
+	public double getNominalMassAsDouble() 
+	    {
 		return (nominalMass == null ? Double.NaN : nominalMass.doubleValue());
-	}
+	    }
 
-	public Compound getParent() {
+	public Compound getParent() 
+	    {
 		return parent;
-	}
+	    }
 	
-	public Solvent getSolvent() {
+	public Solvent getSolvent() 
+	    {
 		return solvent;
-	}
+	    }
 	
-	public List<CompoundDocument> getDocList() {
+	public List<CompoundDocument> getDocList() 
+	    {
 		return docList;
-	}
+	    }
 
-
-	public double getLogp(String smiles){
-		
-		
-		 logPPlugin lplugin = new logPPlugin();
-		  double logp=0;
-		  return logp;
-	  }
+	public double getLogp(String smiles)
+	    {	
+		logPPlugin lplugin = new logPPlugin();
+		double logp=0;
+		return logp;
+	    }
 	  
-	  public double getMass(String smiles){
-	  	
-	  	
-		  double mass=0;
-		  try{	
-		  ElementalAnalyserPlugin  elemanal  = new ElementalAnalyserPlugin (); 
-		  Molecule target = MolImporter.importMol(smiles);
-		  elemanal .setMolecule(target);
-		  elemanal.run();
-		  mass = elemanal.getMass();
-		  }catch(Exception e){
-				
-		  }
-		  return mass;
-	  }
+    public double getMass(String smiles)
+        {	  	
+	    double mass=0;
+	    try
+	        {	
+			ElementalAnalyserPlugin  elemanal  = new ElementalAnalyserPlugin (); 
+			Molecule target = MolImporter.importMol(smiles);
+			elemanal .setMolecule(target);
+			elemanal.run();
+			mass = elemanal.getMass();
+	        }
+	    catch(Exception e)
+	        {				
+	        }
+	    return mass;
+        }
 	  
-	  public double getExactMass(String smiles){
+	public double getExactMass(String smiles)
+	    {	 
+	    double exactMass=0;		  
+	    return exactMass; 
+	    }
 	  
-	 
-		  double exactMass=0;		  
-		  return exactMass; 
-	  }
+    public String getFormula(String smiles)
+	    {	 
+		String formula="";
+		try
+		    {	
+			ElementalAnalyserPlugin  elemanal  = new ElementalAnalyserPlugin (); 
+			Molecule target = MolImporter.importMol(smiles);
+			elemanal .setMolecule(target);
+			elemanal.run();
+			formula = elemanal.getIsotopeFormula(); // issue 27 2020
+	        }
+	    catch(Exception e)
+		    {					
+		    }
+	    return formula; 
+        } 
 	  
-	  public String getFormula(String smiles)
-		  {	 
-		  String formula="";
-		  try
-			  {	
-			  ElementalAnalyserPlugin  elemanal  = new ElementalAnalyserPlugin (); 
-			  Molecule target = MolImporter.importMol(smiles);
-			  elemanal .setMolecule(target);
-			  elemanal.run();
-			  formula = elemanal.getIsotopeFormula(); // issue 27 2020
-		      }
-		  catch(Exception e)
-			  {
-					
-			  }
-		  return formula; 
-	  } 
-	  
-	  public String getPka()
-		  {
-		  return "";
-		  }
-}
+	public String getPka()
+	    {
+	    return "";
+	    }
+    }

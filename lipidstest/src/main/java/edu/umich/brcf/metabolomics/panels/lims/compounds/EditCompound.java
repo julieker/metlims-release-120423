@@ -47,6 +47,7 @@ public class EditCompound extends WebPage
 	String impCompound;
 	TextField smilesFld;
 	TextField inchiKeyFld;
+	//TextField casFld;
 	EditCompound editCompound = this;// issue 27 2020
 	public EditCompound(Page backPage, final CompoundDetailPanel container, final ModalWindow window) 
 		{
@@ -69,20 +70,20 @@ public class EditCompound extends WebPage
 		public EditCompoundForm(final String id, final String cid, final CompoundDTO cmpDto, final Page backPage, final CompoundDetailPanel container, final ModalWindow window, EditCompound editCompound) // issue 27 2020
 			{
 			super(id, new CompoundPropertyModel(cmpDto));
-			if ( ((StringUtils.isNullOrEmpty(cmpDto.getInchiKey())) && (!StringUtils.isNullOrEmpty(cmpDto.getSmiles ()))) || ( ((!StringUtils.isNullOrEmpty(cmpDto.getInchiKey())) && (StringUtils.isNullOrEmpty(cmpDto.getSmiles ())))))
-			    cmpDto.setInchiKeyOrSmiles(!StringUtils.isNullOrEmpty(cmpDto.getInchiKey()) ? "InchiKey" : "Smiles"); 	
+			// issue 31 2020
+			if (!StringUtils.isNullOrEmpty(cmpDto.getInchiKey()) ||  !StringUtils.isNullOrEmpty(cmpDto.getSmiles())  ||   !StringUtils.isNullOrEmpty(cmpDto.getChem_abs_number()))
+			    cmpDto.setCompoundIdentifier(!StringUtils.isNullOrEmpty(cmpDto.getSmiles()) ? "Smiles" : (!StringUtils.isNullOrEmpty(cmpDto.getInchiKey()) ? "InchiKey" : "CAS")); 	
 			add(new Label("cid", cid));
 			add(newRequiredTextField("chem_abs_number", 30));
-			//add(newRequiredTextField("smiles", 500));
 			// issue 8
 			add(smilesFld =new TextField("smiles")
 			    {
 				@Override
 				public boolean isEnabled()
 					{ 
-					if (StringUtils.isNullOrEmpty(cmpDto.getInchiKeyOrSmiles()))
+					if (StringUtils.isNullOrEmpty(cmpDto.getCompoundIdentifier()))
 						return false;
-					return cmpDto.getInchiKeyOrSmiles().equals("Smiles");
+					return cmpDto.getCompoundIdentifier().equals("Smiles");
 					}	
 				}				
 		        );
@@ -94,17 +95,16 @@ public class EditCompound extends WebPage
 				{
 				public boolean isEnabled()
 					{ 
-					if (StringUtils.isNullOrEmpty(cmpDto.getInchiKeyOrSmiles()))
+					if (StringUtils.isNullOrEmpty(cmpDto.getCompoundIdentifier()))
 						return false;
-					return cmpDto.getInchiKeyOrSmiles().equals("InchiKey");
+					return cmpDto.getCompoundIdentifier().equals("InchiKey");
 					}	
 				}				
 			    );
 			inchiKeyFld.add(StringValidator.maximumLength(500));
 			inchiKeyFld.setOutputMarkupId(true);
-		    // issue 27 2020
-			DropDownChoice inchiKeyOrSmilesDD = new DropDownChoice("inchiKeyOrSmiles",  Arrays.asList(new String[] { "InchiKey", "Smiles"}));
-			inchiKeyOrSmilesDD.add(buildStandardFormComponentUpdateBehavior("change", "updateForInchiKeyOrSmiles", cmpDto, container, editCompound )); // issue 27 2020
+			DropDownChoice compoundIdentifierDD = new DropDownChoice("compoundIdentifier",  Arrays.asList(new String[] { "InchiKey", "Smiles", "CAS"}));
+			compoundIdentifierDD.add(buildStandardFormComponentUpdateBehavior("change", "updateForcompoundIdentifier", cmpDto, container, editCompound )); // issue 27 2020
 			// issue 464
 			DropDownChoice humanRelDD=new DropDownChoice("human_rel", Compound.Human_Rel_Types, new ChoiceRenderer()
 				{
@@ -134,7 +134,7 @@ public class EditCompound extends WebPage
 				});
 			humanRelDD.setRequired(true);
 			add(humanRelDD);
-			add (inchiKeyOrSmilesDD); // issue 27 2020
+			add (compoundIdentifierDD); // issue 27 2020
 			TextField parentCid;
 			add(parentCid = new TextField("parentCid")
 				{
@@ -179,14 +179,21 @@ public class EditCompound extends WebPage
 				public void onSubmit() 
 					{
 					String smilesStr = "";
-					String smilesOrSmilesFromInchiKeyStr = "";
+					String smilesOrSmilesFromCompoundIdStr = "";
 					CompoundDTO cmpDto = (CompoundDTO) getForm().getModelObject();
-					boolean err = false;					
+					boolean err = false;
+					
 					// issue 27 2020
-					if (cmpDto.getInchiKeyOrSmiles().equals("Smiles"))
-                        cmpDto.setInchiKey(null);
-					else
-						cmpDto.setSmiles(null);  
+					// issue 31 2020
+					if (cmpDto.getCompoundIdentifier().equals("InchiKey"))
+						cmpDto.setSmiles(null);
+					else if (cmpDto.getCompoundIdentifier().equals("CAS"))
+						{
+						cmpDto.setSmiles(null);
+						cmpDto.setInchiKey(null);
+						}
+					else if (cmpDto.getCompoundIdentifier().equals("Smiles"))
+						cmpDto.setInchiKey(null);
 					// issue 27 2020 
 					if(cmpDto.getCid()!=null)
 						if (cmpDto.getName()!=null && cmpDto.getName().length()>0)
@@ -210,14 +217,22 @@ public class EditCompound extends WebPage
 						try 
 						    {	
 							// issue 27 2020
-							smilesOrSmilesFromInchiKeyStr = "";
-							if (cmpDto.getInchiKeyOrSmiles().equals("InchiKey"))
-							    smilesOrSmilesFromInchiKeyStr = CompoundIdUtils.grabSmilesFromInchiKey(cmpDto.getInchiKey());
+							// issue 31 2020
+							smilesOrSmilesFromCompoundIdStr = "";
+							if (StringUtils.isNullOrEmpty(cmpDto.getSmiles()) && cmpDto.getCompoundIdentifier().equals("Smiles") )
+								cmpDto.setCompoundIdentifier("CAS");
+							if (cmpDto.getCompoundIdentifier().equals("InchiKey") && !StringUtils.isNullOrEmpty(cmpDto.getInchiKey()))
+							    smilesOrSmilesFromCompoundIdStr = CompoundIdUtils.grabSmilesFromCompoundId(cmpDto.getInchiKey(), "inchiKey").get(0);
+							else if (cmpDto.getCompoundIdentifier().equals("Smiles") && !StringUtils.isNullOrEmpty(cmpDto.getSmiles()))
+								smilesOrSmilesFromCompoundIdStr = cmpDto.getSmiles();
 							else
-								smilesOrSmilesFromInchiKeyStr = cmpDto.getSmiles();
-							Compound cmp = cmpService.save(cmpDto, smilesOrSmilesFromInchiKeyStr);										
-							if (cmpDto.getInchiKeyOrSmiles().equals("InchiKey") && StringUtils.isNullOrEmpty(smilesOrSmilesFromInchiKeyStr) && !StringUtils.isNullOrEmpty(cmp.getInchiKey()) )
+								smilesOrSmilesFromCompoundIdStr = CompoundIdUtils.grabSmilesFromCompoundId(cmpDto.getChem_abs_number(), "cas").get(0);							
+							// issue 31 2020
+							Compound cmp = cmpService.save(cmpDto, smilesOrSmilesFromCompoundIdStr);										
+							if (cmpDto.getCompoundIdentifier().equals("InchiKey") && StringUtils.isNullOrEmpty(smilesOrSmilesFromCompoundIdStr) && !StringUtils.isNullOrEmpty(cmp.getInchiKey()) )
 								EditCompound.this.info("The InchiKey:" + cmp.getInchiKey() + " could not be found but the Compound/Name detail is saved")  ;  	
+							else if (cmpDto.getCompoundIdentifier().equals("CAS") && StringUtils.isNullOrEmpty(smilesOrSmilesFromCompoundIdStr) && !StringUtils.isNullOrEmpty(cmp.getChem_abs_number()) )
+								EditCompound.this.info("The CAS:" + cmp.getChem_abs_number() + " could not be found but the Compound/Name detail is saved")  ;	
 							else
 							    EditCompound.this.info("Compound/Name detail saved.");
 							if (container!=null)
@@ -226,7 +241,7 @@ public class EditCompound extends WebPage
 								impCompound=cmp.getCid();
 								}
 							}
-						catch(Exception e){  EditCompound.this.error("Save unsuccessful. Please make sure that smiles is valid."); }
+						catch(Exception e){ e.printStackTrace(); EditCompound.this.error("Save unsuccessful. Please make sure that smiles is valid."); }
 						}					
 					setResponsePage(getPage());
 					}
@@ -239,6 +254,7 @@ public class EditCompound extends WebPage
 			}
 	
 		// Issue 27 2020
+		// issue 31 2020
 		private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior(String event, final String response, final CompoundDTO cmpDTO, CompoundDetailPanel container , final EditCompound editCompound)
 			{
 			return new AjaxFormComponentUpdatingBehavior(event)
@@ -248,7 +264,7 @@ public class EditCompound extends WebPage
 			    	{
 			    	switch (response)
 			        	{
-			        	case "updateForInchiKeyOrSmiles":
+			        	case "updateForcompoundIdentifier":
 			                target.add(editCompound.smilesFld);
 			                target.add(editCompound.inchiKeyFld);
 			        	break;		        	

@@ -12,6 +12,7 @@ import edu.umich.brcf.metabolomics.layers.domain.Compound;
 import edu.umich.brcf.metabolomics.layers.domain.CompoundName;
 
 // issue 27 2020
+// issue 31 2020
 public class CompoundDTO implements Serializable
 	{
 	public static CompoundDTO instance(String cid, String chem_abs_number, 
@@ -31,7 +32,7 @@ public class CompoundDTO implements Serializable
 	public static CompoundDTO instance(Compound cmpd, CompoundName cn)
 		{
 		return new CompoundDTO(cmpd.getCid(), cmpd.getChem_abs_number(), 
-		cmpd.getSmiles(), cmpd.getHumanRel(), cmpd.getParent().getCid(), cn.getName(), cn.getNameType(), cn.getHtml(), cmpd.getInchiKey());
+		cmpd.getSmiles(), cmpd.getHumanRel(), cmpd.getParent().getCid(), cn.getName(), cn.getNameType(), cn.getHtml(), cmpd.getInchiKey()); // issue 31 2020
 		}
 	
 	private String cid;
@@ -47,9 +48,10 @@ public class CompoundDTO implements Serializable
 	private String type;
 	private String html;
 	private String inchiKey;// issue 27 2020
-	private String inchiKeyOrSmiles="Smiles";// issue 27 2020
+	private String compoundIdentifier="Smiles";// issue 27 2020
 	
 	// issue 27 2020
+	// issue 31 2020
 	private CompoundDTO(String cid, String chem_abs_number, String smiles, char human_rel, String parentCid, String name, String type, String html, String inchiKey)
 		{
 		this.cid = cid;
@@ -61,13 +63,6 @@ public class CompoundDTO implements Serializable
 		this.type = type;
 		this.html = html;
 		this.inchiKey = inchiKey;
-//		if ((smiles!=null)&& (smiles.trim().length()>0))
-//			{
-//			this.molecular_formula = getFormula(smiles);
-//			this.logP = new BigDecimal(getLogp(smiles));
-//			this.molecular_weight = new BigDecimal(getMass(smiles));
-//			this.nominalMass = new BigDecimal(getExactMass(smiles));
-//			}
 		}
  
 	public CompoundDTO() { }
@@ -111,14 +106,14 @@ public class CompoundDTO implements Serializable
 		this.inchiKey = inchiKey;
 	    }
 	// issue 27 2020
-	public String getInchiKeyOrSmiles() 
+	public String getCompoundIdentifier() 
 	    {
-		return inchiKeyOrSmiles;
+		return compoundIdentifier;
 	    }
 	// issue 27 2020
-	public void setInchiKeyOrSmiles(String inchiKeyOrSmiles) 
+	public void setCompoundIdentifier(String compoundIdentifier) 
 	    {
-		this.inchiKeyOrSmiles = inchiKeyOrSmiles;
+		this.compoundIdentifier = compoundIdentifier;
 	    }
 	public String getHuman_rel() 
 	    {
