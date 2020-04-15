@@ -8,7 +8,7 @@
 package edu.umich.brcf.metabolomics.panels.lims.compounds;
 
 import java.util.Arrays;
-
+import java.util.List;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -34,7 +34,6 @@ import edu.umich.brcf.metabolomics.layers.service.CompoundNameService;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.shared.layers.dto.CompoundDTO;
 import edu.umich.brcf.shared.util.utilpackages.CompoundIdUtils;
-
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 
 public class EditCompound extends WebPage
@@ -172,8 +171,7 @@ public class EditCompound extends WebPage
 						}
 					window.close(target);
 					}
-				});
-			
+				});			
 			add(new Button("saveChanges")
 				{
 				public void onSubmit() 
@@ -182,19 +180,6 @@ public class EditCompound extends WebPage
 					String smilesOrSmilesFromCompoundIdStr = "";
 					CompoundDTO cmpDto = (CompoundDTO) getForm().getModelObject();
 					boolean err = false;
-					
-					// issue 27 2020
-					// issue 31 2020
-					if (cmpDto.getCompoundIdentifier().equals("InchiKey"))
-						cmpDto.setSmiles(null);
-					else if (cmpDto.getCompoundIdentifier().equals("CAS"))
-						{
-						cmpDto.setSmiles(null);
-						cmpDto.setInchiKey(null);
-						}
-					else if (cmpDto.getCompoundIdentifier().equals("Smiles"))
-						cmpDto.setInchiKey(null);
-					// issue 27 2020 
 					if(cmpDto.getCid()!=null)
 						if (cmpDto.getName()!=null && cmpDto.getName().length()>0)
 							{
@@ -222,11 +207,36 @@ public class EditCompound extends WebPage
 							if (StringUtils.isNullOrEmpty(cmpDto.getSmiles()) && cmpDto.getCompoundIdentifier().equals("Smiles") )
 								cmpDto.setCompoundIdentifier("CAS");
 							if (cmpDto.getCompoundIdentifier().equals("InchiKey") && !StringUtils.isNullOrEmpty(cmpDto.getInchiKey()))
-							    smilesOrSmilesFromCompoundIdStr = CompoundIdUtils.grabSmilesFromCompoundId(cmpDto.getInchiKey(), "inchiKey").get(0);
+								{
+								List <String> smilesInchiKeyList = CompoundIdUtils.grabSmilesFromCompoundId(cmpDto.getInchiKey(), "inchiKey");
+								smilesOrSmilesFromCompoundIdStr = smilesInchiKeyList.get(0);
+								
+							    // issue 36
+								if (StringUtils.isNullOrEmpty(smilesInchiKeyList.get(1)) && StringUtils.isNullOrEmpty(cmpDto.getSmiles()))
+									cmpDto.setSmiles(smilesOrSmilesFromCompoundIdStr);
+								}
 							else if (cmpDto.getCompoundIdentifier().equals("Smiles") && !StringUtils.isNullOrEmpty(cmpDto.getSmiles()))
+								{
+								// issue 36
+								List <String> smilesInchiKeyList = CompoundIdUtils.grabSmilesFromCompoundId(cmpDto.getSmiles(), "smiles");
 								smilesOrSmilesFromCompoundIdStr = cmpDto.getSmiles();
+								if (StringUtils.isNullOrEmpty(cmpDto.getInchiKey()))
+								    cmpDto.setInchiKey(smilesInchiKeyList.get(2));
+								}
 							else
-								smilesOrSmilesFromCompoundIdStr = CompoundIdUtils.grabSmilesFromCompoundId(cmpDto.getChem_abs_number(), "cas").get(0);							
+								// issue 33
+								// issue 36
+							    {
+								List <String> smilesInchiKeyList = CompoundIdUtils.grabSmilesFromCompoundId(cmpDto.getChem_abs_number(), "cas");
+								smilesOrSmilesFromCompoundIdStr = smilesInchiKeyList.get(0);
+								if (StringUtils.isNullOrEmpty(smilesInchiKeyList.get(1)) )
+								    {		
+									if (StringUtils.isNullOrEmpty(cmpDto.getSmiles()))
+								        cmpDto.setSmiles(smilesOrSmilesFromCompoundIdStr);
+									if (StringUtils.isNullOrEmpty(cmpDto.getInchiKey()))
+									    cmpDto.setInchiKey(smilesInchiKeyList.get(2));
+									}    																
+							    }
 							// issue 31 2020
 							Compound cmp = cmpService.save(cmpDto, smilesOrSmilesFromCompoundIdStr);										
 							if (cmpDto.getCompoundIdentifier().equals("InchiKey") && StringUtils.isNullOrEmpty(smilesOrSmilesFromCompoundIdStr) && !StringUtils.isNullOrEmpty(cmp.getInchiKey()) )
@@ -244,8 +254,7 @@ public class EditCompound extends WebPage
 						catch(Exception e){ e.printStackTrace(); EditCompound.this.error("Save unsuccessful. Please make sure that smiles is valid."); }
 						}					
 					setResponsePage(getPage());
-					}
-				
+					}				
 				public void onError(AjaxRequestTarget target, Form form)
 					{
 					target.add(EditCompound.this.get("feedback")); 

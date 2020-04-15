@@ -9,7 +9,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.h2.util.StringUtils;
 
 public class CompoundIdUtils
@@ -19,19 +18,17 @@ public class CompoundIdUtils
 	public static List<String> grabSmilesFromCompoundId(String compoundId, String idIndicator)
 	    {
 	    StringBuilder sb = new StringBuilder();
-	    List<String> smilesAndmultipleTagList = new ArrayList <String> ();
-	    smilesAndmultipleTagList.add("");
-	    smilesAndmultipleTagList.add("");
+	    List<String> smilesInchiKeyAndmultipleTagList = new ArrayList <String> ();
+	    smilesInchiKeyAndmultipleTagList.add("");
+	    smilesInchiKeyAndmultipleTagList.add("");
+	    smilesInchiKeyAndmultipleTagList.add(""); // issue 36
 	    URL url = null;
 	    String urlString = "";
 	    BufferedReader br = null;
 		if (StringUtils.isNullOrEmpty(compoundId))
-			return smilesAndmultipleTagList;
-		// issue 31 2020		
-		if (idIndicator.toLowerCase().equals("inchikey"))
-			urlString = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/" + compoundId + "/xml";
-		else 
-			urlString = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/"  + compoundId + "/xml";
+		    return smilesInchiKeyAndmultipleTagList;
+		// issue 31 2020
+		urlString = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/" + (idIndicator.toLowerCase().equals("cas") ? "name" : idIndicator.toLowerCase()) + "/" +  compoundId + "/xml";
 		try 
 	        {
 	        url = new URL(urlString);
@@ -40,11 +37,11 @@ public class CompoundIdUtils
 	        {
 		// TODO Auto-generated catch block
 		    e2.printStackTrace();
-		    return smilesAndmultipleTagList;
+		    return smilesInchiKeyAndmultipleTagList;
 	        }
 	    try 
 	        {
-	 	   br = new BufferedReader(new InputStreamReader(url.openStream())) ;
+	 	    br = new BufferedReader(new InputStreamReader(url.openStream())) ;
 	        String line;
 	        while ((line = br.readLine()) != null) 
 	            {
@@ -56,7 +53,7 @@ public class CompoundIdUtils
 	    catch (SocketTimeoutException sT)
 	        {
 	 	    sT.printStackTrace();
-	 	    return smilesAndmultipleTagList;
+	 	    return smilesInchiKeyAndmultipleTagList;
 	        }
 	    catch (IOException e1) 
 	       {
@@ -71,18 +68,36 @@ public class CompoundIdUtils
 		       {
 				// TODO Auto-generated catch block
 			   e.printStackTrace();
-			   return smilesAndmultipleTagList;
+			   return smilesInchiKeyAndmultipleTagList;
 			   }
-		   return smilesAndmultipleTagList;		    
+		   return smilesInchiKeyAndmultipleTagList;		    
 	       }  
-	     // Now parse the text....
-	    if (sb.toString().indexOf("SMILES") < 0)
-	        return smilesAndmultipleTagList;	
+	     // Now parse the text....	    
+	    return createsmilesInchiKeyAndmultipleTagList(sb);     	    
+	    }
+	
+	// issue 36
+	private static List<String> createsmilesInchiKeyAndmultipleTagList (StringBuilder sb)
+		{
+		List<String> smilesInchiKeyAndmultipleTagList = new ArrayList <String> ();
+	    smilesInchiKeyAndmultipleTagList.add("");
+	    smilesInchiKeyAndmultipleTagList.add("");
+	    smilesInchiKeyAndmultipleTagList.add("");
+		if (sb.toString().indexOf("SMILES") < 0)
+		    return smilesInchiKeyAndmultipleTagList;	
 	    String cSmiles = sb.toString().substring(sb.toString().indexOf("SMILES"));	    
 	    int numSmileTags =  ( sb.toString().length() - sb.toString().replace("SMILES", "").length())/"SMILES".length();
-	    smilesAndmultipleTagList.clear();
-	    smilesAndmultipleTagList.add(cSmiles.toString().substring(cSmiles.toString().lastIndexOf("<PC-InfoData_value_sval>")+"<PC-InfoData_value_sval>".length(),cSmiles.toString().lastIndexOf("</PC-InfoData_value_sval>")));
-	    smilesAndmultipleTagList.add(numSmileTags > 2 ? "* There are multiple Smiles": "");
-	    return  smilesAndmultipleTagList;     	    
-	    }
+	    smilesInchiKeyAndmultipleTagList.clear();
+	    smilesInchiKeyAndmultipleTagList.add(cSmiles.toString().substring(cSmiles.toString().lastIndexOf("<PC-InfoData_value_sval>")+"<PC-InfoData_value_sval>".length(),cSmiles.toString().lastIndexOf("</PC-InfoData_value_sval>")));
+	    smilesInchiKeyAndmultipleTagList.add(numSmileTags > 2 ? "* There are multiple Smiles": "");
+	    // issue 33
+		if (numSmileTags <= 2)
+	    	{   	
+	    	String cInchiKey = sb.toString().substring(sb.toString().indexOf("InChIKey"));
+	    	smilesInchiKeyAndmultipleTagList.add(cInchiKey.toString().substring(cInchiKey.toString().indexOf("<PC-InfoData_value_sval>")+"<PC-InfoData_value_sval>".length(),cInchiKey.toString().indexOf("</PC-InfoData_value_sval>")));
+	    	}
+		else 
+		    smilesInchiKeyAndmultipleTagList.add("");
+		return smilesInchiKeyAndmultipleTagList;
+		}	
 	}

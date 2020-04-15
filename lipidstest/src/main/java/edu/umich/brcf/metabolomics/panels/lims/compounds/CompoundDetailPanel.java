@@ -10,10 +10,8 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
@@ -60,7 +58,7 @@ public class CompoundDetailPanel extends Panel
 	Model<String> strMdlMultipleSmilesForInchi = Model.of("");
 	Label msgMultipleSmiles = null;
 	Label msgMultipleSmilesForInchi = null;
-	List <String> smilesMultipleSmilesList = new ArrayList <String> (); // issue 31
+	List <String> smilesInchiKeyMultipleSmilesList = new ArrayList <String> (); // issue 31
 	Label chem_abs_number_label = null;
 	private LoadableDetachableModel getCompoundModel(final String id) 
 		{
@@ -84,8 +82,8 @@ public class CompoundDetailPanel extends Panel
 		add(new Label("molecularWeightAsDouble",new PropertyModel(this, "compound.molecularWeightAsDouble")));
 		chem_abs_number_label = new Label("chem_abs_number",new PropertyModel(this, "compound.chem_abs_number"));
 		add (chem_abs_number_label);
-	    smilesMultipleSmilesList = new ArrayList <String> ();  
-	    smilesMultipleSmilesList = getSmilesFromCompoundIdandSetTag();	    		
+	    smilesInchiKeyMultipleSmilesList = new ArrayList <String> ();  
+	    smilesInchiKeyMultipleSmilesList = getSmilesFromCompoundIdandSetTag();	    		
 	    add(new Label("smiles",new PropertyModel(this, "compound.smiles")));
 		add(new Label("inchiKey",new PropertyModel(this, "compound.inchiKey")));// issue 27 2020
 		add(new Label("parent.cid",new PropertyModel(this, "compound.parent.cid")));
@@ -150,14 +148,14 @@ public class CompoundDetailPanel extends Panel
        		{	
            public void onClose(AjaxRequestTarget target) 
                { 
-        	   smilesMultipleSmilesList = new ArrayList <String> ();  
-        	   smilesMultipleSmilesList = getSmilesFromCompoundIdandSetTag(); 
+        	   smilesInchiKeyMultipleSmilesList = new ArrayList <String> ();  
+        	   smilesInchiKeyMultipleSmilesList = getSmilesFromCompoundIdandSetTag(); 
         	   strMdlMultipleSmiles.setObject("");
         	   strMdlMultipleSmilesForInchi.setObject("");
         	   if (!StringUtils.isNullOrEmpty(getCompound().getInchiKey()))
-        		   strMdlMultipleSmilesForInchi.setObject(smilesMultipleSmilesList.get(1));
+        		   strMdlMultipleSmilesForInchi.setObject(smilesInchiKeyMultipleSmilesList.get(1));
         	   else if (!StringUtils.isNullOrEmpty(getCompound().getChem_abs_number()) && StringUtils.isNullOrEmpty(getCompound().getSmiles()))    		   
-        	       strMdlMultipleSmiles.setObject(smilesMultipleSmilesList.get(1));
+        	       strMdlMultipleSmiles.setObject(smilesInchiKeyMultipleSmilesList.get(1));
         	   target.add(msgMultipleSmiles);
         	   target.add(msgMultipleSmilesForInchi);
         	   target.add(cdp);
@@ -180,8 +178,8 @@ public class CompoundDetailPanel extends Panel
    // issue 31 2020
    private void drawImage(Graphics2D graphics, String indicator) throws IOException 
 	   {
-	   Molecule mol;
-	   mol = MolImporter.importMol(smilesMultipleSmilesList.get(0));
+	   Molecule mol;	   
+	   mol = MolImporter.importMol(smilesInchiKeyMultipleSmilesList.get(0));
        Graphics2D g = graphics;//im.createGraphics();
        g.setColor(Color.white);
        g.fillRect(0, 0, 350, 350);
@@ -191,11 +189,6 @@ public class CompoundDetailPanel extends Panel
        MolPrinter p = new MolPrinter(mol);
        p.setScale(p.maxScale(r)); // fit image in the rectangle
        p.paint(g, r);
-       // issue 31
-       if (indicator.equals("cas"))
-            strMdlMultipleSmiles.setObject(smilesMultipleSmilesList.get(1));
-       else if (indicator.equals("inchiKey"))
-            strMdlMultipleSmilesForInchi.setObject(smilesMultipleSmilesList.get(1));
 	   }
    
    // issue 27 2020
@@ -209,6 +202,7 @@ public class CompoundDetailPanel extends Panel
 			super(width, height);
 			this.compoundID = compoundID;
 			this.indicator = indicator;
+			// issue 36
 			}
 		
 		@Override
@@ -217,8 +211,7 @@ public class CompoundDetailPanel extends Panel
 			try {
 				drawImage(graphics, indicator); 
 				} 
-			catch (IOException e) { e.printStackTrace(); }
-		
+			catch (IOException e) { e.printStackTrace(); }		
 			return true;
 			}
 		}
@@ -319,11 +312,17 @@ public class CompoundDetailPanel extends Panel
 		// issue 39
 		AjaxLink link= new AjaxLink <Void> (linkName) 
 			{
-			public void onClick(AjaxRequestTarget target) {
+			public void onClick(AjaxRequestTarget target) 
+			    {
+				// issue 36
 				setCmpId(cid);
+				getCompound();
+				smilesInchiKeyMultipleSmilesList = getSmilesFromCompoundIdandSetTag();
+				target.add(msgMultipleSmiles);
+	        	target.add(msgMultipleSmilesForInchi);
 				target.add(cdp);
-			}			
-		};
+			    }			
+		    };
 		link.add(new Label(labelName, cid));
 		return link;
 		}
@@ -412,23 +411,28 @@ public class CompoundDetailPanel extends Panel
 	// issue 31
 	private List <String> getSmilesFromCompoundIdandSetTag()
 	    {
+		smilesInchiKeyMultipleSmilesList.clear();
+		strMdlMultipleSmilesForInchi.setObject("");
+		strMdlMultipleSmiles.setObject("");
 		chem_abs_number_label.add(AttributeModifier.replace("style", "color: black;"));
   	    if (!StringUtils.isNullOrEmpty(getCompound().getInchiKey()) )
   	        {
-  		    smilesMultipleSmilesList = CompoundIdUtils.grabSmilesFromCompoundId(getCompound().getInchiKey(), "inchiKey"); 
-  		    strMdlMultipleSmilesForInchi.setObject(smilesMultipleSmilesList.get(1));
+  		    smilesInchiKeyMultipleSmilesList = CompoundIdUtils.grabSmilesFromCompoundId(getCompound().getInchiKey(), "inchiKey"); 
+  		    strMdlMultipleSmilesForInchi.setObject(smilesInchiKeyMultipleSmilesList.get(1));
   	        }
   	    else if (!StringUtils.isNullOrEmpty(getCompound().getSmiles()) )
       	    {
-  		    smilesMultipleSmilesList.add(getCompound().getSmiles());
-  		    smilesMultipleSmilesList.add("");
+  	    	// issue 36
+  	    	smilesInchiKeyMultipleSmilesList.clear();
+  		    smilesInchiKeyMultipleSmilesList.add(getCompound().getSmiles());
+  		    smilesInchiKeyMultipleSmilesList.add("");
       	    }
   	    else 
   	        {
-  		    smilesMultipleSmilesList = CompoundIdUtils.grabSmilesFromCompoundId(getCompound().getChem_abs_number(), "cas");	
-  		    strMdlMultipleSmiles.setObject(smilesMultipleSmilesList.get(1));
+  		    smilesInchiKeyMultipleSmilesList = CompoundIdUtils.grabSmilesFromCompoundId(getCompound().getChem_abs_number(), "cas");	
+  		    strMdlMultipleSmiles.setObject(smilesInchiKeyMultipleSmilesList.get(1));
   	        }
-  	    return smilesMultipleSmilesList;
+  	    return smilesInchiKeyMultipleSmilesList;
 		}
 	}
 	
