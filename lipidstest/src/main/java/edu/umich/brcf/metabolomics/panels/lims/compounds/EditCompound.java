@@ -66,6 +66,8 @@ public class EditCompound extends WebPage
 	
 	public final class EditCompoundForm extends Form 
 		{
+		boolean isNewCompound = false;
+		String cidAssigned = "";
 		public EditCompoundForm(final String id, final String cid, final CompoundDTO cmpDto, final Page backPage, final CompoundDetailPanel container, final ModalWindow window, EditCompound editCompound) // issue 27 2020
 			{
 			super(id, new CompoundPropertyModel(cmpDto));
@@ -180,7 +182,8 @@ public class EditCompound extends WebPage
 					String smilesOrSmilesFromCompoundIdStr = "";
 					CompoundDTO cmpDto = (CompoundDTO) getForm().getModelObject();
 					boolean err = false;
-					if(cmpDto.getCid()!=null)
+					// issue 41
+					if(cmpDto.getCid()!=null && !isNewCompound)
 						if (cmpDto.getName()!=null && cmpDto.getName().length()>0)
 							{
 							for (CompoundName cmpName : cnameService.loadByCid(cmpDto.getCid())) 
@@ -229,6 +232,10 @@ public class EditCompound extends WebPage
 							    {
 								List <String> smilesInchiKeyList = CompoundIdUtils.grabSmilesFromCompoundId(cmpDto.getChem_abs_number(), "cas");
 								smilesOrSmilesFromCompoundIdStr = smilesInchiKeyList.get(0);
+								// issue 45 weird case where CAS is invalid and there is a smiles string
+								if (StringUtils.isNullOrEmpty(smilesOrSmilesFromCompoundIdStr))
+									if (!StringUtils.isNullOrEmpty(cmpDto.getSmiles()))
+										smilesOrSmilesFromCompoundIdStr = cmpDto.getSmiles();
 								if (StringUtils.isNullOrEmpty(smilesInchiKeyList.get(1)) )
 								    {		
 									if (StringUtils.isNullOrEmpty(cmpDto.getSmiles()))
@@ -237,12 +244,23 @@ public class EditCompound extends WebPage
 									    cmpDto.setInchiKey(smilesInchiKeyList.get(2));
 									}    																
 							    }
+							// issue 43
+							if (cmpDto.getCompoundIdentifier().equals("InchiKey") && StringUtils.isNullOrEmpty(smilesOrSmilesFromCompoundIdStr) && !StringUtils.isNullOrEmpty(cmpDto.getInchiKey()) )
+							    {	
+								EditCompound.this.info("The InchiKey:" + cmpDto.getInchiKey() + " could not be found.  The Compound/Name detail is not saved.  Please choose another inchiKey.")  ; 
+								setResponsePage(getPage());
+								return;
+							    }	
 							// issue 31 2020
-							Compound cmp = cmpService.save(cmpDto, smilesOrSmilesFromCompoundIdStr);										
-							if (cmpDto.getCompoundIdentifier().equals("InchiKey") && StringUtils.isNullOrEmpty(smilesOrSmilesFromCompoundIdStr) && !StringUtils.isNullOrEmpty(cmp.getInchiKey()) )
-								EditCompound.this.info("The InchiKey:" + cmp.getInchiKey() + " could not be found but the Compound/Name detail is saved")  ;  	
-							else if (cmpDto.getCompoundIdentifier().equals("CAS") && StringUtils.isNullOrEmpty(smilesOrSmilesFromCompoundIdStr) && !StringUtils.isNullOrEmpty(cmp.getChem_abs_number()) )
-								EditCompound.this.info("The CAS:" + cmp.getChem_abs_number() + " could not be found but the Compound/Name detail is saved")  ;	
+							// issue 41 2020
+							Compound cmp = cmpService.save(cmpDto, smilesOrSmilesFromCompoundIdStr, cidAssigned);										
+							if (cmp.getCid() != null && (cmpDto.getCid()== null || cmpDto.getCid().equals("to be assigned")))
+							    {
+								isNewCompound = true;
+								cidAssigned = cmp.getCid();
+							    }
+							if (cmpDto.getCompoundIdentifier().equals("CAS") && StringUtils.isNullOrEmpty(smilesOrSmilesFromCompoundIdStr) && !StringUtils.isNullOrEmpty(cmpDto.getChem_abs_number()) )
+								EditCompound.this.info("The CAS:" + cmpDto.getChem_abs_number() + " could not be found.  The Compound/Name detail is saved.")  ;
 							else
 							    EditCompound.this.info("Compound/Name detail saved.");
 							if (container!=null)

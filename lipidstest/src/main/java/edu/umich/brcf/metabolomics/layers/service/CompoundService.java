@@ -52,12 +52,15 @@ public class CompoundService
 		}
 
 	// issue 27 2020
-	public Compound save(CompoundDTO dto, String smilesOrSmilesFromCompoundIdStr) 
+	public Compound save(CompoundDTO dto, String smilesOrSmilesFromCompoundIdStr, String cidAssigned) 
 		{
 		Assert.notNull(dto);		
 		Compound compound = null;
 		CompoundName cname;
 		String msg = "";
+		// issue 41
+		if (!StringUtils.isEmptyOrNull(cidAssigned))
+			dto.setCid(cidAssigned);
 		if (dto.getCid() != null && !"to be assigned".equals(dto.getCid()))
 			try 
 				{
@@ -75,7 +78,11 @@ public class CompoundService
 					compound.updateSolvent(null);
 					compound.setMolecular_formula(null);
 					compound.setMolecular_weight(null);
+					// issue 45
+					compound.setNominalMass(null);					
+					compound.setLogP(null);
 					}
+				return compound;
 				} 
 			catch (Exception e) {e.printStackTrace(); }
 		else

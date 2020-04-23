@@ -92,8 +92,14 @@ public class CompoundIdUtils
 	    smilesInchiKeyAndmultipleTagList.add(numSmileTags > 2 ? "* There are multiple Smiles": "");
 	    // issue 33
 		if (numSmileTags <= 2)
-	    	{   	
-	    	String cInchiKey = sb.toString().substring(sb.toString().indexOf("InChIKey"));
+	    	{  
+			// issue 45
+			if (sb.toString().indexOf("InChIKey") < 0)
+			    {
+				smilesInchiKeyAndmultipleTagList.add("");
+				return smilesInchiKeyAndmultipleTagList;
+			    }
+	    	String cInchiKey = sb.toString().substring(sb.toString().indexOf("InChIKey"));			
 	    	smilesInchiKeyAndmultipleTagList.add(cInchiKey.toString().substring(cInchiKey.toString().indexOf("<PC-InfoData_value_sval>")+"<PC-InfoData_value_sval>".length(),cInchiKey.toString().indexOf("</PC-InfoData_value_sval>")));
 	    	}
 		else 

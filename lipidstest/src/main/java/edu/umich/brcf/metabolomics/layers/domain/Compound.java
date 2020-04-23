@@ -1,5 +1,6 @@
 package edu.umich.brcf.metabolomics.layers.domain;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +26,7 @@ import org.springframework.util.Assert;
 import chemaxon.formats.MolImporter;
 import chemaxon.marvin.calculations.ElementalAnalyserPlugin;
 import chemaxon.marvin.calculations.logPPlugin;
+import chemaxon.marvin.plugin.PluginException;
 import chemaxon.struc.Molecule;
 import edu.umich.brcf.shared.layers.domain.CompoundDocument;
 import edu.umich.brcf.shared.layers.domain.Inventory;
@@ -152,6 +154,7 @@ public class Compound implements IClusterable
 	// issue 27 2020
 	public void update(CompoundDTO dto, Compound parent, String smilesOrSmilesFromCompoundIdStr) 
 		{
+		int intZero = 0;
 		this.chem_abs_number = dto.getChem_abs_number();
 		this.smiles = dto.getSmiles();
 		this.inchiKey = dto.getInchiKey();
@@ -160,9 +163,10 @@ public class Compound implements IClusterable
 		if ((smilesOrSmilesFromCompoundIdStr!=null)&& (smilesOrSmilesFromCompoundIdStr.trim().length()>0))
 			{
 			this.molecular_formula = getFormula(smilesOrSmilesFromCompoundIdStr);
-			this.logP = new BigDecimal(getLogp(smilesOrSmilesFromCompoundIdStr));
+	        // issue 45			
+			this.logP = this.logP = new BigDecimal(getLogp(smilesOrSmilesFromCompoundIdStr));
 			this.molecular_weight = new BigDecimal(getMass(smilesOrSmilesFromCompoundIdStr));
-			this.nominalMass = new BigDecimal(getExactMass(smilesOrSmilesFromCompoundIdStr));
+			this.nominalMass = new BigDecimal(getExactMass(smilesOrSmilesFromCompoundIdStr));			
 			}
 		}
 		
@@ -377,12 +381,35 @@ public class Compound implements IClusterable
 		return docList;
 	    }
 
+	// issue 45
+	public void setLogP(BigDecimal vLogP)
+		{
+		this.logP = vLogP;
+		}
+	
+	// issue 45 
 	public double getLogp(String smiles)
-	    {	
+	    {		   	
 		logPPlugin lplugin = new logPPlugin();
 		double logp=0;
+		try
+		    {
+	   	    lplugin.setUserTypes("logPTrue,logPMicro,increments");
+	   	    Molecule target = MolImporter.importMol(smiles);
+	   	    lplugin.setMolecule(target);
+	   	    lplugin.run(); 
+	   	    logp = lplugin.getlogPTrue();
+		   	}
+		catch(IOException ioe)
+	        {
+		    ioe.printStackTrace();
+	        }
+		catch(PluginException pe)
+		    {
+		    pe.printStackTrace();
+		    }
 		return logp;
-	    }
+		}
 	  
     public double getMass(String smiles)
         {	  	
@@ -400,12 +427,31 @@ public class Compound implements IClusterable
 	        }
 	    return mass;
         }
+    
+    // issue 45
+	public void setNominalMass(BigDecimal vMass) 
+		{
+		this.nominalMass = vMass;
+		}
 	  
-	public double getExactMass(String smiles)
-	    {	 
-	    double exactMass=0;		  
-	    return exactMass; 
-	    }
+    // issue 45
+    public double getExactMass(String smiles)
+        {       
+        double exactMass=0;
+     	try
+     	    {	
+     	    ElementalAnalyserPlugin  elemanal  = new ElementalAnalyserPlugin (); 
+     	    Molecule target = MolImporter.importMol(smiles);
+     	    elemanal .setMolecule(target);
+     	    elemanal.run();
+     	    exactMass = elemanal.getExactMass();
+     	    }
+     	catch(Exception e)
+     	    {  
+     		e.printStackTrace();
+     	    }    	  
+     	return exactMass; 
+        }
 	  
     public String getFormula(String smiles)
 	    {	 
