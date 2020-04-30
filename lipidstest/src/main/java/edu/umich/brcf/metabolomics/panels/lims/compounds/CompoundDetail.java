@@ -199,7 +199,6 @@ public class CompoundDetail  extends Panel{
 			else if (verifyFormat(iFormat,input.toUpperCase()))
 				{
 				Inventory inv=null;
-				System.out.println("going into the i format....");
 				try { inv=invService.loadById(input.toUpperCase()); }
 				catch (EmptyResultDataAccessException e)
 					{
