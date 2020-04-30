@@ -29,6 +29,13 @@ public class CompoundNameService
 		return compoundNameDao.loadByName(name);
 		}
 	
+	
+	public CompoundName loadByNameCompoundId(String name)
+		{
+		Assert.notNull(name);
+		return compoundNameDao.loadByNameCompoundId(name);
+		}
+	
 	public List<CompoundName> loadByCid(String cid)
 		{
 		Assert.notNull(cid);
@@ -40,6 +47,11 @@ public class CompoundNameService
 		return compoundNameDao.getMatchingNames(str);
 		}
 	
+	// issue 48
+	public List<String> getMatchingNamesCompoundId(String str)
+		{
+		return compoundNameDao.getMatchingNamesCompoundId(str);
+		}	
 	
 	public CompoundName save(CompoundNameDTO cnDto, boolean newFlag)
 		{

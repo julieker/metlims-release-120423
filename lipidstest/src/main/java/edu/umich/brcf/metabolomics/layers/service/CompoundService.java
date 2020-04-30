@@ -30,6 +30,12 @@ public class CompoundService
 		return compoundDao.getMatchingCids(input);
 		}
 	
+	//issue 48
+	public List<String> getMatchingCASIds(String input)
+		{
+		return compoundDao.getMatchingCASIds(input);
+		}
+	
 	public List<Compound> getChildren(Compound compound)
 		{
 		List<Compound> children=compoundDao.getChildren(compound);

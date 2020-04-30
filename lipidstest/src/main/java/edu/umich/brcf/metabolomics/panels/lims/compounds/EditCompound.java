@@ -212,8 +212,7 @@ public class EditCompound extends WebPage
 							if (cmpDto.getCompoundIdentifier().equals("InchiKey") && !StringUtils.isNullOrEmpty(cmpDto.getInchiKey()))
 								{
 								List <String> smilesInchiKeyList = CompoundIdUtils.grabSmilesFromCompoundId(cmpDto.getInchiKey(), "inchiKey");
-								smilesOrSmilesFromCompoundIdStr = smilesInchiKeyList.get(0);
-								
+								smilesOrSmilesFromCompoundIdStr = smilesInchiKeyList.get(0);			
 							    // issue 36
 								if (StringUtils.isNullOrEmpty(smilesInchiKeyList.get(1)) && StringUtils.isNullOrEmpty(cmpDto.getSmiles()))
 									cmpDto.setSmiles(smilesOrSmilesFromCompoundIdStr);
@@ -236,13 +235,14 @@ public class EditCompound extends WebPage
 								if (StringUtils.isNullOrEmpty(smilesOrSmilesFromCompoundIdStr))
 									if (!StringUtils.isNullOrEmpty(cmpDto.getSmiles()))
 										smilesOrSmilesFromCompoundIdStr = cmpDto.getSmiles();
+								//// signal that the cas is invalid
 								if (StringUtils.isNullOrEmpty(smilesInchiKeyList.get(1)) )
 								    {		
 									if (StringUtils.isNullOrEmpty(cmpDto.getSmiles()))
 								        cmpDto.setSmiles(smilesOrSmilesFromCompoundIdStr);
 									if (StringUtils.isNullOrEmpty(cmpDto.getInchiKey()))
 									    cmpDto.setInchiKey(smilesInchiKeyList.get(2));
-									}    																
+									}
 							    }
 							// issue 43
 							if (cmpDto.getCompoundIdentifier().equals("InchiKey") && StringUtils.isNullOrEmpty(smilesOrSmilesFromCompoundIdStr) && !StringUtils.isNullOrEmpty(cmpDto.getInchiKey()) )
@@ -259,10 +259,11 @@ public class EditCompound extends WebPage
 								isNewCompound = true;
 								cidAssigned = cmp.getCid();
 							    }
+							// issue 21
 							if (cmpDto.getCompoundIdentifier().equals("CAS") && StringUtils.isNullOrEmpty(smilesOrSmilesFromCompoundIdStr) && !StringUtils.isNullOrEmpty(cmpDto.getChem_abs_number()) )
-								EditCompound.this.info("The CAS:" + cmpDto.getChem_abs_number() + " could not be found.  The Compound/Name detail is saved.")  ;
+								EditCompound.this.info("The CAS:" + cmpDto.getChem_abs_number() + " could not be found.  The Compound/Name detail is saved for compound:" + cmp.getCid() + ".")  ;
 							else
-							    EditCompound.this.info("Compound/Name detail saved.");
+							    EditCompound.this.info("Compound/Name detail saved for compound:" + cmp.getCid() + ".");
 							if (container!=null)
 								{
 								container.setCmpId(cmp.getCid());

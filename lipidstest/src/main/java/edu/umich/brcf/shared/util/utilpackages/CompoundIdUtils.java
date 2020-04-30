@@ -4,9 +4,11 @@ package edu.umich.brcf.shared.util.utilpackages;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import org.h2.util.StringUtils;
@@ -28,9 +30,11 @@ public class CompoundIdUtils
 		if (StringUtils.isNullOrEmpty(compoundId))
 		    return smilesInchiKeyAndmultipleTagList;
 		// issue 31 2020
-		urlString = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/" + (idIndicator.toLowerCase().equals("cas") ? "name" : idIndicator.toLowerCase()) + "/" +  compoundId + "/xml";
 		try 
 	        {
+			// issue 47
+			compoundId = idIndicator.toLowerCase().equals("smiles") ? compoundId.replace("/", ".").replace("&", "%26"): compoundId;
+			urlString = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/" + (idIndicator.toLowerCase().equals("cas") ? "name" : idIndicator.toLowerCase()) + "/" +  compoundId + "/xml";
 	        url = new URL(urlString);
 	        } 
 	    catch (MalformedURLException e2) 

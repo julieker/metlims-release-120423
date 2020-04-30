@@ -39,13 +39,11 @@ public class CompoundDAO extends BaseDAO
 		Map<String, Object> parms = new HashMap<String, Object>();
 		parms.put("can", can.toUpperCase());
 		String qry = "from Compound c where c.chem_abs_number = :can";
-		List<Compound> lst = getEntityManager().createQuery(qry).setParameter("can", can.toUpperCase()).getResultList();
-		
+		List<Compound> lst = getEntityManager().createQuery(qry).setParameter("can", can.toUpperCase()).getResultList();	
 		Compound cmpd = (Compound) DataAccessUtils.requiredSingleResult(lst);
 		return cmpd;
 		}
-	
-	
+		
 	public List<Compound> getCompoundsAllInfoWithinMass(double lowerLimit, double upperLimit) 
 		{
 		List<Compound> lst = getEntityManager().createQuery("from Compound c where c.cid like 'C%' and c.cid not like 'CE%' and c.nominalMass between :lowerLimit and :upperLimit")
@@ -88,7 +86,13 @@ public class CompoundDAO extends BaseDAO
 		return query.getResultList();
 		}
 	
-	
+	// issue 48
+	public List<String> getMatchingCASIds(String input)
+		{
+		Query query = getEntityManager().createQuery("select 'CAS:' || chem_abs_number || ' CID:' || cid from Compound where lower(chem_abs_number) like lower('"+input+"%')");
+		return query.getResultList();
+		}
+		
 	public List<Compound> getChildren(Compound compound)
 		{
 		String qry = "from Compound c where c.cid <> '"+ compound.getCid()+"' and c.parent= :compound";

@@ -130,18 +130,6 @@
         	<version>1.0</version>
     	</dependency>
     	
-    	<dependency>
-           <groupId>jchem-sss.</groupId>
-           <artifactId>jchem-sss</artifactId>
-           <version>1.0</version>
-        </dependency>
-        
-       <dependency>
-	    <groupId>marvinbeans-license</groupId>
-	    <artifactId>license</artifactId>
-	    <version>1.0</version>
-      </dependency>
-    	
         <!-- WICKET DEPENDENCIES -->
         <dependency>
             <groupId>org.apache.wicket</groupId>

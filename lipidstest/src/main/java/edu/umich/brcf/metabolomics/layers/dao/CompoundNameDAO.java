@@ -49,14 +49,23 @@ public class CompoundNameDAO extends BaseDAO
 		{
 		Query query = getEntityManager().createQuery("from CompoundName cn where cn.compound.cid like 'C%' and lower(cn.name) like '%"+str.toLowerCase()+"%' order by length(cn.name)");
 		query.setMaxResults(50);
-		List<CompoundName> nameList = query.getResultList();
-		
+		List<CompoundName> nameList = query.getResultList();		
 		for( CompoundName name : nameList)
-			initializeTheKids(name, new String[]{"compound"});
-		
+			initializeTheKids(name, new String[]{"compound"});		
 		return nameList;
 		}
 	
+	// issue 48
+	public List<String> getMatchingNamesCompoundId(String str)
+		{
+		Query query = getEntityManager().createNativeQuery("select name || ' CID:' || cid from names where cid like 'C%' and lower(name) like '%"+str.toLowerCase()+"%' order by length(name)");
+		query.setMaxResults(50);
+		
+		List<String> nameList = query.getResultList();		
+		/*for( CompoundName name : nameList)
+			initializeTheKids(name, new String[]{"compound"});	*/	
+		return nameList;
+		}
 	
 	public CompoundName loadByName(String name)
 		{
@@ -71,10 +80,29 @@ public class CompoundNameDAO extends BaseDAO
 			Hibernate.initialize(cmpdName.getCompound().getParent());
 			}
 		catch(Exception e){ cmpdName=null; }
-
+	
 		return cmpdName;
 		}
-
+	
+	// issue 48
+	public CompoundName loadByNameCompoundId(String name)
+	    {
+		if (name.indexOf("CID:") < 0)
+			return null;
+		String parsedName = name.substring(0,name.lastIndexOf("CID:"));
+		String parsedCid = name.substring(name.lastIndexOf("CID:")+4);
+		List<CompoundName> lst =  getEntityManager().createQuery("from CompoundName cn where cn.compound.cid like 'C%' and trim(cn.name) = trim(?1) and trim(cn.compound.cid) = trim(?2)")
+			    .setParameter(1, parsedName).setParameter(2, parsedCid).getResultList();		
+		CompoundName cmpdName;
+		try
+			{
+			cmpdName = (CompoundName)DataAccessUtils.requiredSingleResult(lst);
+			initializeTheKids(cmpdName, new String[]{"compound"});
+			Hibernate.initialize(cmpdName.getCompound().getParent());
+			}
+		catch(Exception e){ cmpdName=null; }
+		return cmpdName;
+		}
 	
 	public List<CompoundName> loadByCid(String cid)
 		{
