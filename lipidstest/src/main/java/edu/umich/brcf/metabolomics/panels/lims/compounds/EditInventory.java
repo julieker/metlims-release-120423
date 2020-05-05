@@ -1,12 +1,11 @@
 // Revisited : September 2016 (JW)
+// Updated by Julie Keros May 1, 2020
 
 package edu.umich.brcf.metabolomics.panels.lims.compounds;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -17,7 +16,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -25,7 +23,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.validation.validator.StringValidator;
-
 import edu.umich.brcf.metabolomics.layers.domain.Compound;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.metabolomics.layers.service.InventoryService;
@@ -49,43 +46,37 @@ public class EditInventory extends WebPage
 	@SpringBean
 	BarcodePrintingService barcodePrintingService;
 	
-	
+	String assignedInvId = "";
 	public EditInventory(Page backPage, String cid, ModalWindow modal1) 
 		{
 		InventoryDTO invDto = new InventoryDTO();
 		invDto.setCid(cid);
 		invDto.setInventoryId("to be assigned");
 		InventoryDetailPanel container=null;
-		add(new Label("titleLabel", "Add Inventory"));
-		
+		add(new Label("titleLabel", "Add Inventory"));		
 		add(new FeedbackPanel("feedback").setOutputMarkupId(true));
 		add(new EditInventoryForm("editInventoryForm", invDto, container, modal1));
 		}
-	
 	
 	public EditInventory(Page backPage, IModel invModel, InventoryDetailPanel container, final ModalWindow window)
 		{
 		Inventory inv = (Inventory) invModel.getObject();
 		add(new FeedbackPanel("feedback").setOutputMarkupId(true));
-		add(new Label("titleLabel", "Edit Inventory"));
-		
+		add(new Label("titleLabel", "Edit Inventory"));		
 		add(new EditInventoryForm("editInventoryForm", InventoryDTO.instance(inv), container, window));
 		}
-	
-	
+		
 	public final class EditInventoryForm extends Form 
 		{
 		public EditInventoryForm(final String id, final InventoryDTO invDto, final InventoryDetailPanel container, final ModalWindow window) 
 			{
 			super(id, new CompoundPropertyModel(invDto));
-
+			assignedInvId = "";
 			add(new Label("cid", invDto.getCid()));
-			add(new Label("inventoryId", invDto.getInventoryId()));
-			
+			add(new Label("inventoryId", invDto.getInventoryId()));			
 			DropDownChoice supplierDD=new DropDownChoice("supplier", invService.allSuppliers());
 			supplierDD.setRequired(true);
-			add(supplierDD);
-		
+			add(supplierDD);		
 			add(newRequiredTextField("catNum", 50));
 			add(newRequiredTextField("botSize", 50));
 			add(newRequiredTextField("locId", 6));
@@ -101,8 +92,7 @@ public class EditInventory extends WebPage
 			       } 
 			   });
 			}
-		
-		
+				
 		private IndicatingAjaxButton buildSaveButton(String id, final InventoryDTO invDto, final InventoryDetailPanel container)
 			{
 			return new IndicatingAjaxButton(id)
@@ -113,23 +103,25 @@ public class EditInventory extends WebPage
 					try
 						{
 						// Bad design, but if save OK, cid is OK
-						Inventory inv = invService.save(invDto);
-				
+						// issue 53
+						Inventory inv = invService.save(invDto, assignedInvId);	
+						if (inv.getInventoryId() != null && (invDto.getInventoryId()== null || invDto.getInventoryId().equals("to be assigned")))
+							assignedInvId = inv.getInventoryId();
 						EditInventory.this.info("Inventory item "+inv.getInventoryId()+" saved.");
 						if (container!=null)
-							{
 							updateDetailsForCid(container, invDto.getCid());
-							}
 						else
-							printBarcodes(inv.getInventoryId());
-						
+							printBarcodes(inv.getInventoryId());						
 						setResponsePage(getPage());
 						}
 					catch (RuntimeException e) { doError(e.getMessage(), target); } 
 					catch (Exception e) { doError("Error while saving inventory", target); }
 					}
 				@Override
-				protected void onError(AjaxRequestTarget target) { target.add(EditInventory.this.get("feedback")); }
+				protected void onError(AjaxRequestTarget target) 
+				    { 
+					target.add(EditInventory.this.get("feedback")); 
+				    }
 				};
 			}
 		
@@ -145,15 +137,13 @@ public class EditInventory extends WebPage
 			{
 			List<ValueLabelBean> barcodesList = new ArrayList<ValueLabelBean>();
 			barcodesList.add(new ValueLabelBean(cid, null));
-		//	String errMsg=new PrintableBarcode(barcodePrintingService, "Compound Inventory Barcode Printer",barcodesList).print();
-			
+		//	String errMsg=new PrintableBarcode(barcodePrintingService, "Compound Inventory Barcode Printer",barcodesList).print();			
 			// JAK print on compound zebra printer 
 			String errMsg=new PrintableBarcode(barcodePrintingService, "Compound Zebra",barcodesList).print();
 			if (errMsg.length()>0)
 				throw new RuntimeException(errMsg);
 			}
-		
-		
+				
 		private void updateDetailsForCid(final InventoryDetailPanel container, final String cid)
 			{
 			if(!(cid.equals("to be assigned")))

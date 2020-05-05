@@ -403,8 +403,9 @@ public class CompoundDetailPanel extends Panel
 				setResponsePage(new InventorySearch(getPage(), invList, getCompound()));
 				}
 			};
+			// issue 52
 			link.setPopupSettings(new PopupSettings(PopupSettings.RESIZABLE
-			| PopupSettings.STATUS_BAR | PopupSettings.SCROLLBARS).setHeight(300).setWidth(800));
+			| PopupSettings.STATUS_BAR | PopupSettings.SCROLLBARS).setHeight(650).setWidth(800));
 		return 	link;
 		}
 	

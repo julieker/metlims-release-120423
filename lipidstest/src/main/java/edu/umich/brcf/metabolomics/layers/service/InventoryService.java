@@ -17,6 +17,7 @@ import edu.umich.brcf.shared.layers.dao.InventoryDAO;
 import edu.umich.brcf.shared.layers.domain.Inventory;
 import edu.umich.brcf.shared.layers.domain.Location;
 import edu.umich.brcf.shared.layers.dto.InventoryDTO;
+import edu.umich.brcf.shared.util.io.StringUtils;
 import edu.umich.brcf.shared.util.utilpackages.NumberUtils;
 
 
@@ -28,10 +29,13 @@ public class InventoryService
 	CompoundDAO compoundDao;
 	
 	
-	public Inventory save(InventoryDTO invDto)
+	public Inventory save(InventoryDTO invDto, String assignedInvId)
 		{
 		Assert.notNull(invDto);
 		Compound cmpd = null;
+		// issue 53
+		if (!StringUtils.isEmptyOrNull(assignedInvId))
+			invDto.setInventoryId(assignedInvId);
 		try
 			{
 			cmpd=compoundDao.loadCompoundById(invDto.getCid());
@@ -53,20 +57,17 @@ public class InventoryService
 			throw new RuntimeException("Location id " + invDto.getLocId() + " isn't a valid location id");
 			}
 		
-		 String sPur = invDto.getPurity().toString();
-		  
-		 if (!NumberUtils.verifyDecimalRange(sPur, 5, 2))
+		String sPur = invDto.getPurity().toString();
+		 // issue 56
+		if (!NumberUtils.verifyDecimalRange(sPur, 3, 2)) 
 	    	{
 		    throw new RuntimeException("The purity: "  + sPur +
     	            " must have a whole number of no more than 3 digits and a decimal of no more than 2 digits");
-	    	}
-		
-		
+	    	}		
 		Inventory inv = null;
-		
 		if (invDto.getInventoryId() != null && !"to be assigned".equals(invDto.getInventoryId()))
-			try	
-				{
+		    try	
+			    {
 				inv = inventoryDao.loadById(invDto.getInventoryId());
 				inv.update(invDto, cmpd,loc);
 				}
