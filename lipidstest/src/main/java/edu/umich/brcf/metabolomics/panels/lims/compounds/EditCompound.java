@@ -34,7 +34,7 @@ import edu.umich.brcf.metabolomics.layers.service.CompoundNameService;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.shared.layers.dto.CompoundDTO;
 import edu.umich.brcf.shared.util.utilpackages.CompoundIdUtils;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
+
 
 public class EditCompound extends WebPage
 	{
@@ -46,6 +46,8 @@ public class EditCompound extends WebPage
 	String impCompound;
 	TextField smilesFld;
 	TextField inchiKeyFld;
+	TextField htmlFld;
+	TextField nameFld;
 	//TextField casFld;
 	EditCompound editCompound = this;// issue 27 2020
 	public EditCompound(Page backPage, final CompoundDetailPanel container, final ModalWindow window) 
@@ -66,9 +68,9 @@ public class EditCompound extends WebPage
 	
 	public final class EditCompoundForm extends Form 
 		{
-		boolean isNewCompound = false;
 		String cidAssigned = "";
-		public EditCompoundForm(final String id, final String cid, final CompoundDTO cmpDto, final Page backPage, final CompoundDetailPanel container, final ModalWindow window, EditCompound editCompound) // issue 27 2020
+		
+		public EditCompoundForm(final String id, final String cid, final CompoundDTO cmpDto, final Page backPage, final CompoundDetailPanel container, final ModalWindow window, final EditCompound editCompound) // issue 27 2020
 			{
 			super(id, new CompoundPropertyModel(cmpDto));
 			// issue 31 2020
@@ -107,34 +109,7 @@ public class EditCompound extends WebPage
 			DropDownChoice compoundIdentifierDD = new DropDownChoice("compoundIdentifier",  Arrays.asList(new String[] { "InchiKey", "Smiles", "CAS"}));
 			compoundIdentifierDD.add(buildStandardFormComponentUpdateBehavior("change", "updateForcompoundIdentifier", cmpDto, container, editCompound )); // issue 27 2020
 			// issue 464
-			DropDownChoice humanRelDD=new DropDownChoice("human_rel", Compound.Human_Rel_Types, new ChoiceRenderer()
-				{
-				public Object getDisplayValue(Object object)
-					{
-	                String stringrep=null;
-	                String temp = (String) object;
-	                Character value = temp.charAt(0);
-	                switch (value)
-	                	{
-	                    case '1' :  stringrep = "Human"; break;
-	                    case '2' : stringrep = "Inorganic"; break;
-	                    case '3' : stringrep = "Generic"; break;
-	                    case '4' : stringrep = "Standard"; break;
-	                    case '9' : stringrep = "Xenobiotic"; break;
-	                    case '0' : stringrep = "Unknown"; break;
-	                    default :
-	                        throw new IllegalStateException(value + " is not mapped!");
-	                	}
-	                return stringrep;
-					}
-				
-				public String getIdValue(Object object, int index)
-					{
-					return (Compound.Human_Rel_Types.get(index));
-					}
-				});
-			humanRelDD.setRequired(true);
-			add(humanRelDD);
+			// issue 58
 			add (compoundIdentifierDD); // issue 27 2020
 			TextField parentCid;
 			add(parentCid = new TextField("parentCid")
@@ -143,23 +118,46 @@ public class EditCompound extends WebPage
 				public boolean isRequired() {	return false; }
 				});
 			parentCid.add(StringValidator.maximumLength(6));
-					
-			TextField nameFld;
+			// issue 57
 			add(nameFld = new TextField("name")
 				{
 				@Override
-				public boolean isRequired() { return ( cid!=null && cid.equals("to be assigned")); }
-				}) ;
-			nameFld.add(StringValidator.maximumLength(500));
-					
+				public boolean isRequired() 
+				    { 
+					return ( cid!=null && cid.equals("to be assigned")); 
+				    }
+				@Override
+				public boolean isEnabled() 
+				    { 
+					return ( StringUtils.isNullOrEmpty(cidAssigned)); 
+				    }				
+				}
+			    ) ;
+			nameFld.add(StringValidator.maximumLength(500));				
 			add(new DropDownChoice("type", CompoundName.TYPES)
 				{
 				@Override
-				public boolean isRequired() { return (cid!=null && cid.equals("to be assigned")); }
-				});
+				public boolean isRequired() 
+					{ 
+					return (cid!=null && cid.equals("to be assigned")); 
+					}
+				public boolean isEnabled() 
+			    	{ 
+					return ( StringUtils.isNullOrEmpty(cidAssigned)); 
+			    	}	
+				}
+			    );
 			
-			TextField htmlFld;
-			add(htmlFld =new TextField("html"));
+			add(htmlFld =new TextField("html")
+			    {
+				@Override
+				// issue 57
+				public boolean isEnabled() 
+				    { 
+					return false; 
+				    }	
+				}
+			    );
 			htmlFld.add(StringValidator.maximumLength(500));
 			// issue 39
 			add( new AjaxLink<Void>("close")
@@ -174,33 +172,38 @@ public class EditCompound extends WebPage
 					window.close(target);
 					}
 				});			
+			// issue 57
 			add(new Button("saveChanges")
 				{
 				public void onSubmit() 
 					{
+					// issue 57
+					editCompound.htmlFld.setDefaultModelObject(editCompound.nameFld.getDefaultModelObjectAsString());				
 					String smilesStr = "";
 					String smilesOrSmilesFromCompoundIdStr = "";
 					CompoundDTO cmpDto = (CompoundDTO) getForm().getModelObject();
 					boolean err = false;
 					// issue 41
-					if(cmpDto.getCid()!=null && !isNewCompound)
+					if(cmpDto.getCid()!=null )
 						if (cmpDto.getName()!=null && cmpDto.getName().length()>0)
 							{
 							for (CompoundName cmpName : cnameService.loadByCid(cmpDto.getCid())) 
 								{
-								if ((cmpName.getNameType().equals("pri"))&&(cmpDto.getType().equals("pri")))
+								if ((cmpName.getNameType().equals("pri"))&&(cmpDto.getType().equals("pri"))  )
 									{
-									EditCompound.this.error("Compound cannot have more than one primary name.");
+									if (StringUtils.isNullOrEmpty(cidAssigned))
+									    EditCompound.this.error("Compound cannot have more than one primary name.");
 									err=true;
 									}
-								if (cmpName.getName().equalsIgnoreCase(cmpDto.getName()))
+								if (cmpName.getName().equalsIgnoreCase(cmpDto.getName()) )
 									{
-									EditCompound.this.error("Compound cannot have duplicate names.");
+									if (StringUtils.isNullOrEmpty(cidAssigned))
+									    EditCompound.this.error("Compound cannot have duplicate names.");
 									err=true;
 									}
 								}
-							}				
-					if (!err)
+							}
+					if (!err || (!StringUtils.isNullOrEmpty(cidAssigned)))
 						{
 						try 
 						    {	
@@ -253,11 +256,11 @@ public class EditCompound extends WebPage
 							    }	
 							// issue 31 2020
 							// issue 41 2020
-							Compound cmp = cmpService.save(cmpDto, smilesOrSmilesFromCompoundIdStr, cidAssigned);										
+							Compound cmp = cmpService.save(cmpDto, smilesOrSmilesFromCompoundIdStr, cidAssigned, err);										
 							if (cmp.getCid() != null && (cmpDto.getCid()== null || cmpDto.getCid().equals("to be assigned")))
 							    {
-								isNewCompound = true;
 								cidAssigned = cmp.getCid();
+								cmpDto.setCid(cidAssigned);
 							    }
 							// issue 21
 							if (cmpDto.getCompoundIdentifier().equals("CAS") && StringUtils.isNullOrEmpty(smilesOrSmilesFromCompoundIdStr) && !StringUtils.isNullOrEmpty(cmpDto.getChem_abs_number()) )
@@ -271,7 +274,8 @@ public class EditCompound extends WebPage
 								}
 							}
 						catch(Exception e){ e.printStackTrace(); EditCompound.this.error("Save unsuccessful. Please make sure that smiles is valid."); }
-						}					
+						}	
+					
 					setResponsePage(getPage());
 					}				
 				public void onError(AjaxRequestTarget target, Form form)

@@ -90,7 +90,7 @@ public class CompoundDetailPanel extends Panel
 		add(new Label("logpAsDouble",new PropertyModel(this, "compound.logpAsDouble")));
 		add(new Label("nominalMassAsDouble",new PropertyModel(this, "compound.nominalMassAsDouble")));
 		add(new Label("pka",new PropertyModel(this, "compound.pka")));
-		add(new Label("humanRel",new PropertyModel(this, "compound.humanRel")));
+		// issue 58 get rid of human rel
 		add(new Label("solvent.name",new PropertyModel(this, "compound.solvent.name")));
 		msgMultipleSmiles = new Label("multipleSmiles", strMdlMultipleSmiles );
 		msgMultipleSmilesForInchi = new Label("multipleSmilesForInchi", strMdlMultipleSmilesForInchi );

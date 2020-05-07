@@ -16,23 +16,23 @@ import edu.umich.brcf.metabolomics.layers.domain.CompoundName;
 public class CompoundDTO implements Serializable
 	{
 	public static CompoundDTO instance(String cid, String chem_abs_number, 
-	String smiles, char human_rel, String parentCid, String name, String type, String html, String inchiKey) 
+	String smiles, String parentCid, String name, String type, String html, String inchiKey) 
 		{
-		return new CompoundDTO(cid, chem_abs_number, smiles, human_rel, parentCid, name, type, html, inchiKey);
+		return new CompoundDTO(cid, chem_abs_number, smiles, parentCid, name, type, html, inchiKey);
 		}
 	
 	// issue 27 2020
 	public static CompoundDTO instance(Compound cmpd)
 		{
 		return new CompoundDTO(cmpd.getCid(), cmpd.getChem_abs_number(), 
-		cmpd.getSmiles(), cmpd.getHumanRel(), cmpd.getParent() != null ? cmpd.getParent().getCid() : "", "", "", "",cmpd.getInchiKey());
+		cmpd.getSmiles(),  cmpd.getParent() != null ? cmpd.getParent().getCid() : "", "", "", "",cmpd.getInchiKey());
 		}
 	
 	// issue 27 2020
 	public static CompoundDTO instance(Compound cmpd, CompoundName cn)
 		{
 		return new CompoundDTO(cmpd.getCid(), cmpd.getChem_abs_number(), 
-		cmpd.getSmiles(), cmpd.getHumanRel(), cmpd.getParent().getCid(), cn.getName(), cn.getNameType(), cn.getHtml(), cmpd.getInchiKey()); // issue 31 2020
+		cmpd.getSmiles(),  cmpd.getParent().getCid(), cn.getName(), cn.getNameType(), cn.getHtml(), cmpd.getInchiKey()); // issue 31 2020
 		}
 	
 	private String cid;
@@ -41,7 +41,6 @@ public class CompoundDTO implements Serializable
 	//private String molecular_formula;
 	private String smiles;
 	//private BigDecimal logP;
-	private String human_rel;
 	//private BigDecimal nominalMass;
 	private String parentCid;
 	private String name;
@@ -52,12 +51,11 @@ public class CompoundDTO implements Serializable
 	
 	// issue 27 2020
 	// issue 31 2020
-	private CompoundDTO(String cid, String chem_abs_number, String smiles, char human_rel, String parentCid, String name, String type, String html, String inchiKey)
+	private CompoundDTO(String cid, String chem_abs_number, String smiles, String parentCid, String name, String type, String html, String inchiKey)
 		{
 		this.cid = cid;
 		this.chem_abs_number = chem_abs_number;
 		this.smiles = smiles;
-		this.human_rel = human_rel+"";
 		this.parentCid = parentCid;
 		this.name = name;
 		this.type = type;
@@ -115,14 +113,7 @@ public class CompoundDTO implements Serializable
 	    {
 		this.compoundIdentifier = compoundIdentifier;
 	    }
-	public String getHuman_rel() 
-	    {
-		return human_rel;
-	    }
-	public void setHuman_rel(String human_rel) 
-	    {
-		this.human_rel = human_rel;
-	    }
+// issue 58 get rid of human_rel
 	public String getParentCid() 
 	    {
 		return parentCid;

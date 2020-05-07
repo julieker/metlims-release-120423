@@ -37,18 +37,19 @@ import edu.umich.brcf.shared.layers.dto.CompoundDTO;
 @Table(name = "COMPOUND")
 public class Compound implements IClusterable 
     {	
-	public static List<String> Human_Rel_Types = Arrays.asList(new String[] { "1", "2", "3", "4", "9", "0"});
-	
+	// issue 58 get rid of human_rel
 	// issue 27 2020
+	// issue 58 get rid of human_rel
 	public static Compound instance(String cid, String absNumber, String smiles,
-			char rel, Compound parent, String inchiKey,  String smilesOrsmilesOrSmilesFromCompoundIdString) 
+			 Compound parent, String inchiKey,  String smilesOrsmilesOrSmilesFromCompoundIdString) 
 	    {
-		return new Compound(cid,absNumber, smiles, rel, parent, inchiKey, smilesOrsmilesOrSmilesFromCompoundIdString);
+		// issue 58
+		return new Compound(cid,absNumber, smiles,  parent, inchiKey, smilesOrsmilesOrSmilesFromCompoundIdString);
 	    }
 
 	public static Compound instance(String cid) 
 		{
-		return new Compound(cid, null, null, 'H', null, null, null);
+		return new Compound(cid, null, null, null, null, null);
 		}
 
 	@Id()
@@ -61,12 +62,7 @@ public class Compound implements IClusterable
 	@Basic()
 	@Column(name = "CHEM_ABS_NUMBER", nullable = true, length = 30)
 	private String chem_abs_number;
-
-	// Integer
-	@Basic()
-	@Column(name = "HUMAN_REL", nullable = true)
-	private Character humanRel;
-
+    // issue 58
 	// Boolean
 	@Basic()
 	@Column(name = "MOLECULAR_WEIGHT", nullable = true)
@@ -120,7 +116,8 @@ public class Compound implements IClusterable
 	public Compound() {  }
 
 	// issue 27 2020
-	private Compound(String cid, String absNumber, String smiles, char rel, Compound parent, String inchiKey,  String smilesOrSmilesFromCompoundIdStr) 
+	// issue 58
+	private Compound(String cid, String absNumber, String smiles,  Compound parent, String inchiKey,  String smilesOrSmilesFromCompoundIdStr) 
 		{
 		this.cid = cid;
 		this.chem_abs_number = absNumber;
@@ -133,7 +130,7 @@ public class Compound implements IClusterable
 			this.molecular_weight = new BigDecimal(getMass(smilesOrSmilesFromCompoundIdStr));
 			this.nominalMass = new BigDecimal(getExactMass(smilesOrSmilesFromCompoundIdStr));
 			}
-		this.humanRel = rel;
+		// issue 58
 		this.names = new ArrayList<CompoundName>();
 		this.inventory = new ArrayList<Inventory>();
 		this.parent = parent;
@@ -146,7 +143,6 @@ public class Compound implements IClusterable
 		this.molecular_formula = "";
 		this.molecular_weight = new BigDecimal(0.0);
 		this.smiles = "";
-		this.humanRel = '\0';
 		this.inchiKey = ""; // issue 27 2020
 		this.names.clear();
 		}
@@ -158,7 +154,7 @@ public class Compound implements IClusterable
 		this.chem_abs_number = dto.getChem_abs_number();
 		this.smiles = dto.getSmiles();
 		this.inchiKey = dto.getInchiKey();
-		this.humanRel = new Character(dto.getHuman_rel().charAt(0));
+		// issue 58
 		this.parent = parent;
 		if ((smilesOrSmilesFromCompoundIdStr!=null)&& (smilesOrSmilesFromCompoundIdStr.trim().length()>0))
 			{
@@ -323,15 +319,7 @@ public class Compound implements IClusterable
 		this.inchiKey = vInchiKey;
 		}
 	
-	
-	/**
-	 * @return the human_rel
-	 */
-	public char getHumanRel() 
-	    {
-		return (humanRel==null)? ' ':humanRel;
-	    }
-
+    // issue 58
 	public List<Inventory> getInventory() 
 	    {
 		List<Inventory> lst = new ArrayList<Inventory>();

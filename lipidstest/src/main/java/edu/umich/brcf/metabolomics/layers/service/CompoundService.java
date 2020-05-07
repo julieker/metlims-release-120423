@@ -58,7 +58,7 @@ public class CompoundService
 		}
 
 	// issue 27 2020
-	public Compound save(CompoundDTO dto, String smilesOrSmilesFromCompoundIdStr, String cidAssigned) 
+	public Compound save(CompoundDTO dto, String smilesOrSmilesFromCompoundIdStr, String cidAssigned, boolean err) 
 		{
 		Assert.notNull(dto);		
 		Compound compound = null;
@@ -88,13 +88,12 @@ public class CompoundService
 					compound.setNominalMass(null);					
 					compound.setLogP(null);
 					}
-				return compound;
 				} 
 			catch (Exception e) {e.printStackTrace(); }
 		else
 			try
 				{
-				compound = Compound.instance(dto.getCid(),dto.getChem_abs_number(), dto.getSmiles(), dto.getHuman_rel().charAt(0), null, dto.getInchiKey(), smilesOrSmilesFromCompoundIdStr);
+				compound = Compound.instance(dto.getCid(),dto.getChem_abs_number(), dto.getSmiles(),  null, dto.getInchiKey(), smilesOrSmilesFromCompoundIdStr);
 				if (!StringUtils.isEmptyOrNull(dto.getParentCid()))
 					compound.updateParent(getParent(compound, dto));
 				// issue 8
@@ -103,7 +102,7 @@ public class CompoundService
 				compoundDao.createCompound(compound);
 				}		
 			catch (Exception e) { e.printStackTrace(); compound = null; throw new RuntimeException(msg); }		
-		if (compound != null)
+		if (compound != null && !err)		
 			if (!StringUtils.isEmptyOrNull(dto.getName()))
 				{
 				cname = CompoundName.instance(dto.getHtml(), compound, dto.getName(), dto.getType());
