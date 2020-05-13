@@ -123,6 +123,12 @@
 					</td>
 				</tr>
 				
+				<!-- issue 62 -->
+				<tr>
+					<td><b>Additional Solubility: </b></td>
+					<td><span wicket:id = "addlSolubility">Moes ID</span></td>
+				</tr>
+				
 			</table>
 		</td>
 		</tr>
@@ -173,172 +179,9 @@
 
 
 
-<!-- <?xml version="1.0" encoding="UTF-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml" >
-<body>
-<wicket:head>
-	<style>
-	div.tab-panel 
-		{
-		clear: left;
-		padding-top:0px;
-		}
 	
-	div.tabpanel1 div.tab-row
-		{
-		float:left;
-		width:100%;
-		background: transparent; 
-		line-height: 10%s;
-		text-align : center;
-		vertical-align : top;
-		margin : 0px; 
-		padding : 0px;
-	 	border : 1px transparent solid;
-		height : 22px;
-		}
-	  
-	  
-	tabpanel1 div.tab-row ul 
-		{
-		margin:0;
-		padding:  0;
-		list-style:none;
-		background : red;
-		float : left;
-		text-align : center;
-		}
-	  
-	  
-	tabpanel1 div.tab-row li 
-		{
-	  	float:left;
-	 	 /*background:url("tabs1/left.gif") no-repeat left top;  */
-	  	background : red; 
-	 	 margin:0px;
-	  	padding: 0px;
-	  	text-align : center; 
-	  	vertical-align : middle;
-	  	}
-	</style>
-</wicket:head>
-
-<wicket:panel>
-	<div><br><br></div>
-	<table style = "width : 90%;  margin-right : 8%; margin-left : 2%; text-align : left; border : thin solid black">
-		<tr>
-			<td>
-				<img class = "structure"/> 
-			</td>
-			<td>
-				<table style = "text-align : left">
-				<tr>
-					<td><b>CID: </b></td>
-					<td><span wicket:id = "cid">Moes ID</span></td>
-				</tr>
-				<tr>
-					<td><b>Molecular Formula: </b></td>
-					<td><span wicket:id = "molecular_formula">Moes ID</span></td>
-				</tr>
-				<tr>
-					<td><b>Molecular Weight: </b></td>
-					<td><span wicket:id = "molecularWeightAsDouble">Moes ID</span></td>
-				</tr>
-				<tr>
-					<td><b>Chem_Abs_Number: </b></td>
-					<td><span wicket:id = "chem_abs_number">Moes ID</span></td>
-				</tr>
-				<tr>
-					<td style = "vertical-align : top"><b>Smiles: </b></td>
-					<td width="500" style="WORD-WRAP: break-word"> <span wicket:id = "smiles" class ="smiles" >Moes ID</span></td>
-				</tr>
-				<tr>
-					<td><b>Parent CID: </b></td>
-					<td><span wicket:id = "parent.cid">Moes ID</span></td>
-				</tr>
-				<tr>
-					<td><b>LogP: </b></td>
-					<td><span wicket:id = "logpAsDouble">Moes ID</span></td>
-				</tr>
-				<tr>
-					<td><b>Nominal Mass: </b></td>
-					<td><span wicket:id = "nominalMassAsDouble">Moes ID</span></td>
-				</tr>
-				<tr>
-					<td><b>Pka: </b></td>
-					<td><span wicket:id = "pka">Moes ID</span></td>
-				</tr>
-				<tr>
-					<td><b>Human Relevance: </b></td>
-					<td><span wicket:id = "humanRel">Moes ID</span></td>
-				</tr>
-				<tr>
-					<td><b>Solvent: </b></td>
-					<td><span wicket:id = "solvent.name">Moes ID</span></td>
-				</tr>
-				<tr>
-					<td style = "vertical-align : top"><b>Parent Compounds: </b></td>
-					<td><table><tr wicket:id = "parentsList">
-						<td><a wicket:id = "parentLink"><span wicket:id = "parentId"></span></a>: </td>
-						<td><span wicket:id = "parentName"></span></td>
-						</tr>
-						</table>
-					</td>
-				</tr>
-				<tr>
-					<td style = "vertical-align : top"><b>Child Compounds: </b></td>
-					<td><table><tr wicket:id = "childrenList">
-						<td><a wicket:id = "childLink"><span wicket:id = "childId"></span></a>: </td>
-						<td><span wicket:id = "childName"></span></td>
-						</tr>
-						</table>
-					</td>
-				</tr>
-				
-			</table>
-		</td>
-		</tr>
-		</table>
-
-		<div wicket:id="modal1"></div>	
-		<table style = "margin-top : 40px; margin-bottom : 40px; width : 80%; margin-right : 10%; margin-left : 10%">
-			<tr>
-				<td style = "text-align : center"> <input wicket:id = "edit" style = "width : 120px" type = "button"  value = "Edit Compound"/></td>
-				<td style = "text-align : center"> <input wicket:id = "add" type = "button"   style = "width : 120px"  value = "Add Compound"/></td>
-				<td style = "text-align : center"> <input wicket:id = "goToInv" type = "button"   style = "width : 120px"  value = "Inventory Detail"/></td>
-				<td style = "text-align : center"> <input wicket:id = "addInv" type = "button"   style = "width : 120px"  value = "Add Inventory"/></td>
-				<td style = "text-align : center"> <input wicket:id = "addName" type = "button"  style = "width : 120px"  value = "Add New Name"/></td>
-			</tr>
-		</table>
-		
-		<br/>
-		
-		
-		<table style = "width :100%"  border="1">
-			<tr>
-			  <th>Name</th>
-			  <th>Type</th>
-			  <th>HTML</th>
-			  <th></th>
-			</tr>
+	
 			
-		    <tr wicket:id = "names">
-			      <td style = "width :35%">
-			        	<span wicket:id = "name">Huckleberry Finn</span>
-			      </td>
-			      <td style = "width :10%">
-			        <span wicket:id = "type">Mark Twain</span>
-			     </td>
-			     
-			     <td>
-			      	<span wicket:id = "html">(123) 456-7890</span>
-			      </td>
-			     
-			      <td style = "width :10%; text-align : center">
-			      	<a wicket:id = "editName" href="#">Edit</a>
-			      </td>
-		    </tr>
-	  	</table>	
-	</wicket:panel>
-</body>
-</html> -->
+				
+			
+		  

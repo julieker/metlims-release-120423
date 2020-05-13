@@ -96,6 +96,7 @@ public class CompoundDetailPanel extends Panel
 		msgMultipleSmilesForInchi = new Label("multipleSmilesForInchi", strMdlMultipleSmilesForInchi );
 		add (msgMultipleSmiles);
 		add (msgMultipleSmilesForInchi);
+		add(new Label("addlSolubility",new PropertyModel(this, "compound.additionalSolubility"))); // issue 62
 		msgMultipleSmiles.setOutputMarkupId(true);	
 		msgMultipleSmilesForInchi.setOutputMarkupId(true);	
 		final CompoundDetailPanel cdp = this;

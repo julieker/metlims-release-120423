@@ -1,3 +1,4 @@
+// Updated by Julie Keros May 11, 2020
 package edu.umich.brcf.metabolomics.layers.domain;
 
 import java.io.IOException;
@@ -40,16 +41,17 @@ public class Compound implements IClusterable
 	// issue 58 get rid of human_rel
 	// issue 27 2020
 	// issue 58 get rid of human_rel
+	// issue 62 add additional solubility
 	public static Compound instance(String cid, String absNumber, String smiles,
-			 Compound parent, String inchiKey,  String smilesOrsmilesOrSmilesFromCompoundIdString) 
+			 Compound parent, String inchiKey,  String smilesOrsmilesOrSmilesFromCompoundIdString, String additionalSolubility) 
 	    {
 		// issue 58
-		return new Compound(cid,absNumber, smiles,  parent, inchiKey, smilesOrsmilesOrSmilesFromCompoundIdString);
+		return new Compound(cid,absNumber, smiles,  parent, inchiKey, smilesOrsmilesOrSmilesFromCompoundIdString,additionalSolubility );
 	    }
 
 	public static Compound instance(String cid) 
 		{
-		return new Compound(cid, null, null, null, null, null);
+		return new Compound(cid, null, null, null, null, null, null);
 		}
 
 	@Id()
@@ -100,6 +102,11 @@ public class Compound implements IClusterable
 	@Basic()
 	@Column(name = "NOMINAL_MASS", nullable = true, precision = 10, scale = 5, columnDefinition = "NUMBER(10,5)")
 	private BigDecimal nominalMass;
+	
+	// issue 62
+	@Basic()
+	@Column(name = "ADDITIONAL_SOLUBILITY", nullable = true, length = 500)
+	private String additionalSolubility;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PARENT_CID", referencedColumnName = "CID", nullable = true)
@@ -117,7 +124,7 @@ public class Compound implements IClusterable
 
 	// issue 27 2020
 	// issue 58
-	private Compound(String cid, String absNumber, String smiles,  Compound parent, String inchiKey,  String smilesOrSmilesFromCompoundIdStr) 
+	private Compound(String cid, String absNumber, String smiles,  Compound parent, String inchiKey,  String smilesOrSmilesFromCompoundIdStr, String additionalSolubility) 
 		{
 		this.cid = cid;
 		this.chem_abs_number = absNumber;
@@ -134,6 +141,7 @@ public class Compound implements IClusterable
 		this.names = new ArrayList<CompoundName>();
 		this.inventory = new ArrayList<Inventory>();
 		this.parent = parent;
+		this.additionalSolubility = additionalSolubility;
 		}
 
 	public void clear() 
@@ -145,6 +153,7 @@ public class Compound implements IClusterable
 		this.smiles = "";
 		this.inchiKey = ""; // issue 27 2020
 		this.names.clear();
+		this.additionalSolubility = ""; // issue 62
 		}
 
 	// issue 27 2020
@@ -156,6 +165,7 @@ public class Compound implements IClusterable
 		this.inchiKey = dto.getInchiKey();
 		// issue 58
 		this.parent = parent;
+		this.additionalSolubility = dto.getAdditionalSolubility(); // issue 62
 		if ((smilesOrSmilesFromCompoundIdStr!=null)&& (smilesOrSmilesFromCompoundIdStr.trim().length()>0))
 			{
 			this.molecular_formula = getFormula(smilesOrSmilesFromCompoundIdStr);
@@ -462,4 +472,17 @@ public class Compound implements IClusterable
 	    {
 	    return "";
 	    }
+	
+	// issue 62
+	public void setAdditionalSolubility (String vAdditionalSolubility)
+		{
+		this.additionalSolubility = vAdditionalSolubility;
+		}
+	
+	// issue 62
+	public String getAdditionalSolubility() 
+	    {
+		return additionalSolubility;
+	    }
+	
     }

@@ -4,6 +4,7 @@
 
 // Updated by Julie Keros Mar 4, 2020
 ////////////////////////////////////////////////////
+// Updated by Julie Keros May 11, 2020
 
 package edu.umich.brcf.shared.layers.dto;
 
@@ -16,23 +17,23 @@ import edu.umich.brcf.metabolomics.layers.domain.CompoundName;
 public class CompoundDTO implements Serializable
 	{
 	public static CompoundDTO instance(String cid, String chem_abs_number, 
-	String smiles, String parentCid, String name, String type, String html, String inchiKey) 
+	String smiles, String parentCid, String name, String type, String html, String inchiKey, String additionalSolubility) 
 		{
-		return new CompoundDTO(cid, chem_abs_number, smiles, parentCid, name, type, html, inchiKey);
+		return new CompoundDTO(cid, chem_abs_number, smiles, parentCid, name, type, html, inchiKey, additionalSolubility);
 		}
 	
 	// issue 27 2020
 	public static CompoundDTO instance(Compound cmpd)
 		{
 		return new CompoundDTO(cmpd.getCid(), cmpd.getChem_abs_number(), 
-		cmpd.getSmiles(),  cmpd.getParent() != null ? cmpd.getParent().getCid() : "", "", "", "",cmpd.getInchiKey());
+		cmpd.getSmiles(),  cmpd.getParent() != null ? cmpd.getParent().getCid() : "", "", "", "",cmpd.getInchiKey(), cmpd.getAdditionalSolubility());
 		}
 	
 	// issue 27 2020
 	public static CompoundDTO instance(Compound cmpd, CompoundName cn)
 		{
 		return new CompoundDTO(cmpd.getCid(), cmpd.getChem_abs_number(), 
-		cmpd.getSmiles(),  cmpd.getParent().getCid(), cn.getName(), cn.getNameType(), cn.getHtml(), cmpd.getInchiKey()); // issue 31 2020
+		cmpd.getSmiles(),  cmpd.getParent().getCid(), cn.getName(), cn.getNameType(), cn.getHtml(), cmpd.getInchiKey(), cmpd.getAdditionalSolubility()); // issue 31 2020
 		}
 	
 	private String cid;
@@ -48,10 +49,12 @@ public class CompoundDTO implements Serializable
 	private String html;
 	private String inchiKey;// issue 27 2020
 	private String compoundIdentifier="Smiles";// issue 27 2020
+	private String additionalSolubility;
+	
 	
 	// issue 27 2020
 	// issue 31 2020
-	private CompoundDTO(String cid, String chem_abs_number, String smiles, String parentCid, String name, String type, String html, String inchiKey)
+	private CompoundDTO(String cid, String chem_abs_number, String smiles, String parentCid, String name, String type, String html, String inchiKey, String additionalSolubility)
 		{
 		this.cid = cid;
 		this.chem_abs_number = chem_abs_number;
@@ -61,6 +64,7 @@ public class CompoundDTO implements Serializable
 		this.type = type;
 		this.html = html;
 		this.inchiKey = inchiKey;
+		this.additionalSolubility = additionalSolubility;
 		}
  
 	public CompoundDTO() { }
@@ -152,4 +156,15 @@ public class CompoundDTO implements Serializable
 		{
 		this.html = html;
 		}	
+	
+	// issue 62
+	public String getAdditionalSolubility() 
+	    {
+		return additionalSolubility;
+	    }
+	// issue 62
+	public void setAdditionalSolubility(String additionalSolubility) 
+	    {
+		this.additionalSolubility = additionalSolubility;
+	    }
 	}

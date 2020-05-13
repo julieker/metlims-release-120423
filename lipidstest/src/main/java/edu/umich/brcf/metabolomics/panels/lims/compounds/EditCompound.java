@@ -1,4 +1,5 @@
 // Revisited : October 2016 (JW)
+// Updated by Julie Keros May 11, 2020
 
 ////////////////////////////////////////////////////
 // EditCompound.java
@@ -48,6 +49,7 @@ public class EditCompound extends WebPage
 	TextField inchiKeyFld;
 	TextField htmlFld;
 	TextField nameFld;
+	TextField additionalSolubilityFld ; // issue 62
 	//TextField casFld;
 	EditCompound editCompound = this;// issue 27 2020
 	public EditCompound(Page backPage, final CompoundDetailPanel container, final ModalWindow window) 
@@ -68,8 +70,7 @@ public class EditCompound extends WebPage
 	
 	public final class EditCompoundForm extends Form 
 		{
-		String cidAssigned = "";
-		
+		String cidAssigned = "";		
 		public EditCompoundForm(final String id, final String cid, final CompoundDTO cmpDto, final Page backPage, final CompoundDetailPanel container, final ModalWindow window, final EditCompound editCompound) // issue 27 2020
 			{
 			super(id, new CompoundPropertyModel(cmpDto));
@@ -146,8 +147,7 @@ public class EditCompound extends WebPage
 					return ( StringUtils.isNullOrEmpty(cidAssigned)); 
 			    	}	
 				}
-			    );
-			
+			    );			
 			add(htmlFld =new TextField("html")
 			    {
 				@Override
@@ -158,7 +158,10 @@ public class EditCompound extends WebPage
 				    }	
 				}
 			    );
-			htmlFld.add(StringValidator.maximumLength(500));
+			htmlFld.add(StringValidator.maximumLength(500));			
+			// issue 62
+			add(additionalSolubilityFld =new TextField("additionalSolubility"));
+			additionalSolubilityFld.add(StringValidator.maximumLength(500));
 			// issue 39
 			add( new AjaxLink<Void>("close")
 				{

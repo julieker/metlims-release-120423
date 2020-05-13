@@ -92,8 +92,9 @@ public class CompoundService
 			catch (Exception e) {e.printStackTrace(); }
 		else
 			try
-				{
-				compound = Compound.instance(dto.getCid(),dto.getChem_abs_number(), dto.getSmiles(),  null, dto.getInchiKey(), smilesOrSmilesFromCompoundIdStr);
+				{ 
+				// issue 62
+				compound = Compound.instance(dto.getCid(),dto.getChem_abs_number(), dto.getSmiles(),  null, dto.getInchiKey(), smilesOrSmilesFromCompoundIdStr, dto.getAdditionalSolubility());
 				if (!StringUtils.isEmptyOrNull(dto.getParentCid()))
 					compound.updateParent(getParent(compound, dto));
 				// issue 8
