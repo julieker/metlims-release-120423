@@ -1,0 +1,165 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<wicket:head>
+    <title></title>
+   <link rel="stylesheet" type="text/css" href="css/style.css"/>
+   <link rel="stylesheet" type="text/css" href="dialog.css"/>
+   <style>
+       .feedbackMsg { color : red; font-weight : 600; text-align : left }    
+   </style>
+</wicket:head>
+
+<script language="JavaScript">
+function refreshParent() {
+	window.opener.location.href = window.opener.location.href;
+
+	  if (window.opener.progressWindow)
+			
+	 {
+	    window.opener.progressWindow.close()
+	  }
+	  window.close();
+}
+</script>
+<body onUnload="opener.location.reload()" class = "dialog_background">
+  
+  <p>
+	
+	<div>
+		<fieldset class = "dialog_fieldset" style = "height : 80%; margin-top : .5%; margin-bottom : .5%; width :90%; margin-left : 5%; margin-right : 5%">	
+			<legend class = "dialog_legend">
+		   		<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">Edit Aliquot</span>
+		   </legend>
+  <center>
+   
+  <span wicket:id = "feedback" class = "feedbackMsg"/>  
+  <form wicket:id = "editAliquotForm" >        
+ 	    <table style = "width : 100%; margin-left : 0%; margin-right : 15%">
+ 	        <tr>
+		  		<td style = "text-align :right">CID:</td>
+		  		<td><span wicket:id = "cid">Moes ID</span></td>
+		  	</tr>
+		  	<tr>
+		  		<td style = "text-align :right">Aliquot ID:</td>
+		  		<td><span wicket:id = "aliquotId">Moes ID</span></td>
+		  	</tr>
+		  	
+		  	<tr>
+			  <td style = "text-align :right">Created By:</td>	  
+			  <td><span wicket:id = "userName">Moes ID</span></td>
+			</tr> 
+			
+			<tr>
+			  <td style = "text-align :right">Parent Inventory ID:</td>
+			 <td><select wicket:id = "parentId"></select></td>
+			</tr>
+			<tr>
+			<td style = "text-align :right">
+			<span wicket:id="molecularWeightLabel"></span>	
+			</td>
+			<td>		
+			 <input wicket:id="molecularWeight" type="text" value="(123) 456-7890" size="5"/> 
+			</td>
+			</tr>
+			<tr>
+			  <td style = "text-align :right">Location:</td>
+			  <td><select wicket:id = "location"></select></td>
+			</tr>
+					
+			 <tr>
+			  <td style = "text-align :right">Create Date:</td>	  
+			  <td><input wicket:id="createDate" readonly type="text" value="date"  size="20"/>
+			  </td>
+			 </tr>
+			 
+			 <tr>
+			  <td style = "text-align :right">Solvent:</td>
+			  <td><select wicket:id = "solventText"></select></td>
+			</tr>
+			
+			<tr>
+			  <td wicket:id="otherSolventLabel" style = "text-align :right">Other Solvent:</td>
+			  <td><input wicket:id="otherSolvent" type="text" value="(123) 456-7890" size="20"/></td>
+			</tr>
+			</table>
+			<table>
+			<tr>
+			  <td style = "text-align :right">Neat (no solvent) or Dilution (solvent):</td>
+			  <td><select wicket:id = "neatOrDilutionText"></select> &nbsp;&nbsp;
+			 <span wicket:id="isDryLabel"></span>
+			 <input wicket:id = "isDry"  type = "checkbox" /> 
+			 <select wicket:id = "neatOrDilutionUnits"></select> &nbsp;&nbsp;
+			 </td>
+			 </tr>
+			  </table>	
+			 <div wicket:id="dilutionContainer">		
+			 <table>	
+			 <tr>
+			 <td>
+			 <span wicket:id="ivolLabel"></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			 <span wicket:id="iconLabel"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			 <span wicket:id="dilutionFormulaLabel"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			 <span wicket:id="dvolLabel"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			 <span wicket:id="dconLabel"></span>
+			 </td>
+			 </tr>
+			 <tr >
+			 <td>			 
+			 <input id = "ivol" wicket:id="ivol" type="text" value="(123) 456-7890" size="5"/> 
+			 <span wicket:id="ivolUnits"></span> &nbsp;&nbsp;			  			 			 
+			 <input id="icon" wicket:id="icon" type="text" value="(123) 456-7890" size="5"/> 
+			 <span wicket:id="iconUnits"></span> &nbsp;&nbsp;						 
+			 <input id = "dvol" wicket:id="dvol" type="text" value="(123) 456-7890" size="5"/> 
+			 <span wicket:id="dvolUnits"></span>	
+			 <input id= "dcon" wicket:id="dcon" type="text" value="(123) 456-7890" size="5"/>
+			 <span wicket:id="dconUnits"></span> &nbsp;&nbsp;
+			  <input wicket:id="calculateDilution" type="submit"  style = "margin-right : 15px; width : 100px;" value="Calculate"/>
+			</td>
+			</tr>	
+			</table>
+			</div>
+			<table>		
+			<tr>
+			 <td>			  
+			 <span wicket:id="weightedAmountLabel"></span>
+			 <input wicket:id="weightedAmount" type="text" value="(123) 456-7890" size="5"/>  
+			<select wicket:id = "weightedAmountUnits"></select> &nbsp;&nbsp;
+			
+			</td>
+			<td style = "text-align : left">
+			 <span wicket:id="dConcLabel"  style="text-align :left"></span>
+			 <input wicket:id="dConc" type="text" value="(123) 456-7890" size="5"/>
+			 <select wicket:id = "dConcentrationUnits"></select> &nbsp;&nbsp;				
+			 <input wicket:id="calculateNeat" type="submit"  style = "margin-right : 15px; width : 100px;" value="Calculate"/>&nbsp;&nbsp;
+			<span wicket:id="dVoluLabel"></span>
+			</td>
+			</tr>
+			</table>
+			<table>		
+			<tr style = "height : 20%">
+						<td class = "trow_label" style = "vertical-align : top; text-align: right" >Notes:</td>
+						<td><textarea wicket:id = "notes" style = "overflow: scroll; width : 100%;  height : 90px" cols = "40" rows = "7" ></textarea></td>
+			</tr>			
+			<tr>
+			 <td wicket:id="numAliquotsLabel" style = "text-align : right"> Number of Aliquots:</td>
+			 <td><input wicket:id="replicate" type="text" value="(123) 456-7890" size="3"/></td>
+			</tr>	
+		</table>
+	    <br/>
+	    <table style = "width : 80%; margin-left : 10%; margin-right : 10%">
+		    <tr>
+			    <td style = "width : 20%"></td>
+			    <td nowrap style = "width : 60%">
+			    	<input wicket:id="saveChanges" type="submit"  style = "margin-right : 15px; width : 100px;" value="Save"/>&nbsp;&nbsp;
+			    	<!-- issue 464 -->
+			    	<input wicket:id="close" type="button" style = "margin-left : 15px; width : 100px;"  value="Close"/>
+			    </td>
+			    <td style = "width : 20%"></td>
+		    </tr>
+	    </table>
+	    
+  </form>
+  </center>
+	</fieldset>
+	</div>
+</body>
+</html>

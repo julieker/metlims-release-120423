@@ -40,7 +40,7 @@ import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.metabolomics.layers.service.InventoryService;
 import edu.umich.brcf.shared.layers.domain.Inventory;
 import edu.umich.brcf.shared.util.utilpackages.CompoundIdUtils;
-
+// issue 61
 public class CompoundDetailPanel extends Panel 
 	{
 	WebMarkupContainer container;
@@ -57,9 +57,10 @@ public class CompoundDetailPanel extends Panel
 	Model<String> strMdlMultipleSmiles = Model.of("");
 	Model<String> strMdlMultipleSmilesForInchi = Model.of("");
 	Label msgMultipleSmiles = null;
-	Label msgMultipleSmilesForInchi = null;
+	Label msgMultipleSmilesForInchi = null;;
 	List <String> smilesInchiKeyMultipleSmilesList = new ArrayList <String> (); // issue 31
-	Label chem_abs_number_label = null;
+	Label chem_abs_number_label = null;	
+	private List<CompoundName> names;
 	private LoadableDetachableModel getCompoundModel(final String id) 
 		{
 		return new LoadableDetachableModel() 
@@ -75,6 +76,7 @@ public class CompoundDetailPanel extends Panel
 		{
 		super(id);
 		setOutputMarkupId(true);
+		final CompoundDetailPanel cdp = this;
 		setCmpId(cid);
 		setDefaultModel(new CompoundPropertyModel(getCompoundModel(getCmpId())));		
 		add(new Label("cid",new PropertyModel(this, "compound.cid")));
@@ -99,7 +101,7 @@ public class CompoundDetailPanel extends Panel
 		add(new Label("addlSolubility",new PropertyModel(this, "compound.additionalSolubility"))); // issue 62
 		msgMultipleSmiles.setOutputMarkupId(true);	
 		msgMultipleSmilesForInchi.setOutputMarkupId(true);	
-		final CompoundDetailPanel cdp = this;
+		
 		add(new ListView("parentsList", new PropertyModel(this, "parentsList")) 
 			{
 			public void populateItem(final ListItem listItem) 
@@ -125,6 +127,7 @@ public class CompoundDetailPanel extends Panel
         add(buildLinkToModal("addInv", modal1, cdp).setVisible(insider));
         add(buildLinkToModal("edit", modal1, cdp).setVisible(insider));
         add(buildLinkToModal("addName", modal1, cdp).setVisible(insider));
+       // issue 61
         add(buildInvLink().setVisible(insider));        
 		add(listView = new ListView("names", new PropertyModel(this, "names")) 
 			{
@@ -289,8 +292,6 @@ public class CompoundDetailPanel extends Panel
 		this.names=names;
 		}
 	
-	private List<CompoundName> names;
-	
 	public Compound getCompound()
 		{
 		return compoundService.loadCompoundById(getCmpId());
@@ -406,7 +407,7 @@ public class CompoundDetailPanel extends Panel
 			};
 			// issue 52
 			link.setPopupSettings(new PopupSettings(PopupSettings.RESIZABLE
-			| PopupSettings.STATUS_BAR | PopupSettings.SCROLLBARS).setHeight(650).setWidth(800));
+			| PopupSettings.STATUS_BAR | PopupSettings.SCROLLBARS).setHeight(650).setWidth(1500)); // issue 61
 		return 	link;
 		}
 	

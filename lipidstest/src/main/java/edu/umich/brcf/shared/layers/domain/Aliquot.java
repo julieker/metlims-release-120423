@@ -3,8 +3,8 @@ package edu.umich.brcf.shared.layers.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -12,68 +12,30 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
+import javax.persistence.Entity;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import edu.umich.brcf.metabolomics.layers.domain.Compound;
+import edu.umich.brcf.shared.layers.dto.AliquotDTO;
+import edu.umich.brcf.shared.util.utilpackages.CalendarUtils;
 
+import javax.persistence.Table;
 
-/*
-CREATE TABLE TEST_USER.LABS
-(
-LAB_ID CHAR(4),
-LAB_NAME VARCHAR2(50),
-CONSTRAINT LABS_PK PRIMARY KEY (LAB_ID)
-) */
+@Entity()
+@Table(name = "ALIQUOT")
 
-
-/*
-CREATE TABLE TEST_USER.ALIQUOT
-(
-ALIQUOT_ID CHAR(10), 
-SEQ NUMBER, 
-EXP_ID CHAR(7), 
-CHECKIN_ID CHAR(7), 
-DATE_TRANSFERRED DATE, 
-VOLUME NUMBER(15,7),
-VOL_UNITS VARCHAR2(26),
-LOCATION_ID CHAR(6), 
-STATUS CHAR(1),
-PARENT_ID CHAR(10),
-LAB_ID CHAR(4),
-PREP_COMMENTS VARCHAR2(1000),
-CONSTRAINT mc_aliquot_pk PRIMARY KEY (ALIQUOT_ID),
-CONSTRAINT mc_aliquot_fk_checkinid FOREIGN KEY (CHECKIN_ID) REFERENCES TEST_USER.SAMPLE_CHECKIN (CHECKIN_ID)
-)
-
-CREATE TABLE TEST_USER.ALIQUOT_STATUS
-(
-);
-
-* */
-/////////////////////////////////////////////
-
-//@Entity()
-//@Table(name = "TEST_USER.ALIQUOT")
-
+// issue 61
 public class Aliquot implements Serializable 
 	{
 	public static String fullIdFormat = "(AL)\\d{8}";
+	public static String ALIQUOT_DATE_FORMAT = "MM/dd/yy";
 
-	public static Aliquot instance( Integer sequence, Calendar dateTransferred, 
-		BigDecimal volume, BigDecimal minVolume, String volUnits, Location location, Character status, String labId, String parentId, 
-		String sampleId, String prepComments, String tubeType) 
+	public static Aliquot instance(Integer replicate, Location location, Inventory inventory, 
+		Character dry, Compound compound, String solvent, Calendar createDate, String aliquotLabel, String notes, String createdBy, Character neat, String neatSolVolUnits, BigDecimal ivol, BigDecimal dcon, BigDecimal icon, BigDecimal weightedAmount, BigDecimal dconc, BigDecimal dvol, String dConcentrationUnits, String weightedAmountUnits, BigDecimal molecularWeight) 
 		{
-		return new Aliquot(null, sequence, dateTransferred, volume,  minVolume, volUnits,  location, status, 
-		labId, parentId, sampleId, prepComments, tubeType, 1);
+		return new Aliquot(null,  location,  
+		 inventory,  replicate, dry, compound, solvent, createDate, aliquotLabel, notes, createdBy, neat, neatSolVolUnits, ivol, dcon, icon, weightedAmount, dconc, dvol, dConcentrationUnits, weightedAmountUnits, molecularWeight);
 		}
-
-	public static Aliquot instance( Integer sequence, Calendar dateTransferred, 
-			BigDecimal volume, BigDecimal minVolume, String volUnits, Location location, Character status, String labId, String parentId, 
-			String sampleId, String prepComments, String tubeType, Integer replicate) 
-			{
-			return new Aliquot(null, sequence,  dateTransferred, volume,  minVolume, volUnits,  location, status, 
-			labId, parentId, sampleId, prepComments, tubeType, replicate);
-			}
 
 	@Id()
 	@GeneratedValue(generator = "IdGeneratorDAO")
@@ -82,176 +44,151 @@ public class Aliquot implements Serializable
 	@Column(name = "ALIQUOT_ID", nullable = false, unique = true, length = 10, columnDefinition = "CHAR(10)")
 	private String aliquotId;
 	
-	@Basic()
-	@Column(name = "SEQ", nullable = false, columnDefinition = "NUMBER")
-	private Integer sequence;
-	
-	
-	//@ManyToOne(fetch = FetchType.LAZY)
-	//@JoinColumn(name = "CHECKIN_ID", referencedColumnName = "CHECKIN_ID", nullable = false)
-	//private SampleCheckin2 checkin;
-	
-	
-	@Basic()
-	@Column(name = "DATE_TRANSFERRED")
-	private Calendar dateTransferred;
-	
-	@Basic()
-	@Column(name = "MIN_VOLUME", columnDefinition = "NUMBER")
-	private BigDecimal minVolume;
-	
-	@Basic()
-	@Column(name = "VOLUME", nullable = true, columnDefinition = "NUMBER(8,3)")
-	private BigDecimal volume;
-	
-	
-	@Basic()
-	@Column(name = "VOL_UNITS", nullable = true, columnDefinition = "VARCHAR2(26)")
-	private String volUnits;
-	
-	
+	// issue 61 2020
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "LOCATION_ID", referencedColumnName = "LOCATION_ID", nullable = true)
+	@JoinColumn(name = "CID", referencedColumnName = "CID", nullable = false, columnDefinition = "CHAR(6)")
+	private Compound compound; 
+	
+	@Basic()
+	@Column(name = "DELETED", length = 1)
+	private Boolean deletedFlag;
+	
+	@Basic()
+	@Column(name = "CREATED_BY", nullable = false, columnDefinition = "CHAR(6)")
+	private String createdBy;
+		
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "LOCATION_ID", nullable = false, columnDefinition = "CHAR(6)")
 	private Location location;
 	
-	@Basic()
-	@Column(name = "STATUS", nullable = true, columnDefinition = "CHAR(1)")
-	private Character status;
-	
-	
-	@Basic()
-	@Column(name = "LAB_ID", columnDefinition = "CHAR(4)")
-	private String labId;
-	
-	// Spot for a parent aliquot id
-	@Basic()
-	@Column(name = "PARENT_ID", columnDefinition = "CHAR(10)")
-	private String parentId;
-	
-	
-	@Basic()
-	@Column(name = "PREP_COMMENTS", columnDefinition = "VARCHAR2(1000)")
-	private String prepComments;
-	
-	
-	@Basic()
-	@Column(name = "TUBE_TYPE", columnDefinition = "VARCHAR2(30)")
-	private String tubeType;
-	
-	
-	@Basic()
-	@Column(name = "SAMPLE_ID", columnDefinition = "CHAR(9)")
-	private String sampleId;
-	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "INVENTORYID", nullable = false, columnDefinition = "CHAR(7)")
+	private Inventory inventory;
 	
 	@Basic()
 	@Column(name = "REPLICATE", columnDefinition = "NUMBER")
-	Integer replicate;
+	private Integer replicate;
 	
-	//@OneToMany(mappedBy = "aliquot", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	//@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	//List<AliquotAssay> aliquotAssays;
+	@Basic()
+	@Column(name = "DRY", columnDefinition = "CHAR(1)")
+	private Character dry;
 	
+	@Basic()
+	@Column(name = "SOLVENT", columnDefinition = "VARCHAR2(100)")
+	private String solvent;
+	
+	@Basic()
+	@Column(name = "CREATE_DATE", nullable = true)
+	private Calendar createDate;
+	
+	@Basic()
+	@Column(name = "ALIQUOT_LABEL", columnDefinition = "VARCHAR2(100)")
+	private String aliquotLabel;
+	
+	@Basic()
+	@Column(name = "NOTES", columnDefinition = "VARCHAR2(2000)")
+	private String notes;
+	
+	@Basic()
+	@Column(name = "NEAT", columnDefinition = "CHAR(1)")
+	private Character neat;
+	
+	@Basic()
+	@Column(name = "NEAT_SOL_VOL_UNITS", columnDefinition = "VARCHAR2(26)")
+	private String neatSolVolUnits;
+	
+	@Basic()
+	@Column(name = "INITIAL_VOLUME", columnDefinition = "NUMBER(15,7)")
+	private BigDecimal ivol;
+	
+	@Basic()
+	@Column(name = "INITIAL_CONCENTRATION", columnDefinition = "NUMBER(15,7)")
+	private BigDecimal icon;
+	
+	@Basic()
+	@Column(name = "DESIRED_CONCENTRATION", columnDefinition = "NUMBER(15,7)")
+	private BigDecimal dcon;
+	
+	@Basic()
+	@Column(name = "WEIGHTED_AMOUNT", columnDefinition = "NUMBER(15,7)")
+	private BigDecimal weightedAmount;
+	
+	@Basic()
+	@Column(name = "DESIRED_CONCENTRATION_NEAT", columnDefinition = "NUMBER(15,7)")
+	private BigDecimal dconc;
+
+	@Basic()
+	@Column(name = "DESIRED_VOLUME", columnDefinition = "NUMBER(15,7)")
+	private BigDecimal dvol;
+	
+	@Basic()
+	@Column(name = " DESIRED_CONCENTRATION_UNITS", columnDefinition = "VARCHAR2(26)")
+	private String dConcentrationUnits;
+	
+	@Basic()
+	@Column(name = "WEIGHTED_AMOUNT_UNITS", columnDefinition = "VARCHAR2(26)")
+	private String weightedAmountUnits;
+	
+	@Basic()
+	@Column(name = "MOLECULAR_WEIGHT", columnDefinition = "NUMBER(10,5)")
+	private BigDecimal molecularWeight;
 	
 	
 	public Aliquot() {  }
 	
-	private Aliquot(String aliquotId, Integer sequence, Calendar dateTransferred, 
-			BigDecimal volume, BigDecimal minVolume, String volUnits, Location location, Character status,  String labId, String parentId, 
-			String sampleId, String prepComments, String tubeType, Integer replicate)
+	private Aliquot(String aliquotId, 
+			  Location location,  Inventory inventory, 
+			  Integer replicate, Character dry , Compound compound , String solvent, Calendar createDate, String aliquotLabel, String notes, String createdBy , Character neat, String neatSolVolUnits, BigDecimal ivol,BigDecimal dcon, BigDecimal icon, BigDecimal weightedAmount, BigDecimal dconc, BigDecimal dvol, String dConcentrationUnits, String weightedAmountUnits , BigDecimal molecularWeight )
 			{
 			this.aliquotId = aliquotId;
-			this.sequence = sequence;
-			this.dateTransferred = dateTransferred;
-			this.volume = volume;
-			this.minVolume = minVolume;
-			this.volUnits = volUnits;
 			this.location = location;
-			this.status = status; //new Character('A');
-			this.labId = labId;
-			this.parentId = parentId;
-			this.sampleId = sampleId;
-			this.prepComments = prepComments;
-			this.tubeType = tubeType;
+			this.inventory = inventory;
 			this.replicate = replicate;
-
-	//		aliquotAssays = new ArrayList<AliquotAssay>();
-			}
+		    this.dry = dry;
+			this.compound = compound;
+			this.solvent = solvent;
+			this.createDate = createDate;
+			this.aliquotLabel = aliquotLabel;
+			this.notes = notes;
+			this.createdBy = createdBy;
+            this.neat = neat;
+            this.neatSolVolUnits = neatSolVolUnits;
+            this.ivol = ivol;
+            this.dcon = dcon;
+            this.icon = icon;
+            this.dconc = dconc;
+            this.weightedAmount = weightedAmount;
+            this.dvol = dvol;
+            this.dConcentrationUnits = dConcentrationUnits;
+            this.weightedAmountUnits = weightedAmountUnits;
+            this .molecularWeight = molecularWeight;
+			}	
 	
-	
-	//private Aliquot(String aliquotId, Integer sequence, SampleCheckin2 checkin, Calendar dateTransferred, 
-	//BigDecimal volume, BigDecimal minVolume, String volUnits, Location location, Character status,  String labId, String parentId, 
-	//String sampleId, String prepComments, String tubeType)
-	//	{
-	//	this(aliquotId, sequence, checkin,dateTransferred, 
-	//			volume, minVolume, volUnits, location, status, labId,  parentId, 
-	//			sampleId, prepComments,  tubeType, 1);
-	//	}
-	
-	
-	
-	public void updateFromPrep(BigDecimal volume, String volUnits,  String comments, String tubeType,  Character status)
+	// issue 61
+	public void update (AliquotDTO dto)
 		{
-		this.volume = volume; 
-		this.volUnits = volUnits;
-		this.prepComments = comments;
-		this.tubeType = tubeType;
-		this.status = status;
-		}
-	
-	/*
-	public void update(AliquotDTO dto, SampleCheckin2 checkin, Location location)
-		{
-		if (dto.getSequence() != null)
-		if (!StringUtils.checkEmptyOrNull(dto.getSequence().toString()))
-		this.sequence = dto.getSequence();
-		
-
-		if (dto.getDateTransferred() != null)
-			this.dateTransferred = dto.getDateTransferred();
-		
-		if (dto.getVolume() != null)
-			if (!StringUtils.checkEmptyOrNull(dto.getVolume().toString()))
-				this.volume = dto.getVolume();
-		
-		if (dto.getMinVolume() != null)
-			if (!StringUtils.checkEmptyOrNull(dto.getMinVolume().toString()))
-				this.minVolume = dto.getMinVolume();
-		
-		
-		if (!StringUtils.checkEmptyOrNull(dto.getVolUnits()))
-			this.volUnits = dto.getVolUnits();
-		
-		if (location != null)
-			this.location = location;
-		
-		if (dto.getStatus() != null)
-			if (!StringUtils.checkEmptyOrNull(dto.getStatus().toString()))
-				this.status = dto.getStatus();
-		
-		if (!StringUtils.checkEmptyOrNull(dto.getLabId()))
-			this.labId = dto.getLabId();
-		
-		if (!StringUtils.checkEmptyOrNull(dto.getParentId()))
-			this.parentId = dto.getParentId();
-		
-		if (!StringUtils.checkEmptyOrNull(dto.getSampleId()))
-			this.sampleId = dto.getSampleId();
-		
-		if (!StringUtils.checkEmptyOrNull(dto.getPrepComments()))
-			this.prepComments = dto.getPrepComments();
-		//if (assay != null)
-		//	this.assay = assay;
-		
-		if (!StringUtils.checkEmptyOrNull(dto.getTubeType()))
-			this.tubeType = dto.getTubeType();
-		}
-	
-	*/
-	public void updateVolume(BigDecimal volume, String volUnits)
-		{
-		this.volume=volume;
-		this.volUnits=volUnits;
+		this.aliquotId = dto.getAliquotId();
+		this.compound = dto.getCompoundObj();
+		this.location = dto.getLocationObj();
+		this.inventory = dto.getInventoryObj();
+		this.replicate = dto.getReplicate();
+		this.dry = dto.getIsDry() ? '1' : '0';
+		this.solvent = dto.getSolvent();
+		this.createDate = CalendarUtils.calendarFromString(dto.getCreateDate(),Aliquot.ALIQUOT_DATE_FORMAT);
+		this.aliquotLabel = dto.getAliquotLabel();
+		this.notes = dto.getNotes();
+		this.createdBy = dto.getCreatedBy();
+		this.neat = dto.getNeatOrDilution();
+		this.neatSolVolUnits = dto.getNeatOrDilutionUnits();
+		this.ivol = new BigDecimal(dto.getIvol());
+		this.icon = new BigDecimal(dto.getIcon());
+		this.dcon = new BigDecimal(dto.getDcon());
+		this.weightedAmount = new BigDecimal(dto.getWeightedAmount());
+		this.dconc = new BigDecimal(dto.getDConc());
+		this.dvol = dto.getDvol() == null ? null : new BigDecimal(dto.getDvol());
+		this.dConcentrationUnits = dto.getDConcentrationUnits();
+		this.weightedAmountUnits = dto.getWeightedAmountUnits();
+		this.molecularWeight = dto.getMolecularWeight()== null ? null : new BigDecimal(dto.getMolecularWeight());
 		}
 	
 	public String getAliquotId()
@@ -264,49 +201,6 @@ public class Aliquot implements Serializable
 		this.aliquotId = aliquotId;
 		}
 	
-	public Integer getSequence()
-		{
-		return sequence;
-		}
-	
-	public void setSequence(Integer sequence)
-		{
-		this.sequence = sequence;
-		}
-	
-	
-	public BigDecimal getMinVolume()
-		{
-		return minVolume;
-		}
-
-
-	public void setMinVolume(BigDecimal minVolume)
-		{
-		this.minVolume = minVolume;
-		}
-
-
-	public BigDecimal getVolume()
-		{
-		return volume;
-		}
-	
-	public void setVolume(BigDecimal volume)
-		{
-		this.volume = volume;
-		}
-	
-	public String getVolUnits()
-		{
-		return volUnits;
-		}
-	
-	public void setVolUnits(String volUnits)
-		{
-		this.volUnits = volUnits;
-		}
-	
 	public Location getLocation()
 		{
 		return location;
@@ -317,85 +211,26 @@ public class Aliquot implements Serializable
 		this.location = location;
 		}
 	
-	public Character getStatus()
+	public Inventory getInventory()
 		{
-		return status;
+		return inventory;
 		}
 	
-	public void setStatus(Character status)
+	public void setInventory(Inventory inventory)
 		{
-		this.status = status;
+		this.inventory = inventory;
 		}
 	
-	public Calendar getDateTransferred()
+	public Compound getCompound()
 		{
-		return dateTransferred;
-		}
-	
-	public void setDateTransferred(Calendar dateTransferred)
-		{
-		this.dateTransferred = dateTransferred;
-		}
-	
-	public String getLabId()
-		{
-		return labId;
-		}
-	
-	public void setLabId(String labId)
-		{
-		this.labId = labId;
-		}
-	
-	public String getParentId()
-		{
-		return parentId;
-		}
-	
-	public void setParentId(String parentId)
-		{
-		this.parentId = parentId;
+		return compound;
 		}
 
-	
-
-	
-	public String getSampleId()
+	public void setCompound(Compound compound)
 		{
-		return sampleId;
+		this.compound = compound;
 		}
-	
-	
-	public void setSampleId(String sampleId)
-		{
-		this.sampleId = sampleId;
-		}
-	
-	
-	public String getPrepComments()
-		{
-		return prepComments;
-		}
-	
-	
-	public void setPrepComments(String prepComments)
-		{
-		this.prepComments = prepComments;
-		}
-	
-	
-	public String getTubeType()
-		{
-		return tubeType;
-		}
-
-
-	public void setTubeType(String tubeType)
-		{
-		this.tubeType = tubeType;
-		}
-
-
+		
 	public Integer getReplicate()
 		{
 		return replicate;
@@ -405,29 +240,199 @@ public class Aliquot implements Serializable
 		{
 		this.replicate = replicate;
 		}
-/*
-	public List<AliquotAssay> getAliquotAssays()
+	
+	// issue 61 2020
+	public Character getDry()
 		{
-		return aliquotAssays;
+		return dry;
+		}
+
+	public void setDry(Character vdry)
+		{
+		this.dry = vdry;
+		}
+	
+	// issue 61 2020
+	public Character getNeat()
+		{
+		return neat;
+		}
+
+	public void setNeat(Character neat)
+		{
+		this.neat = neat;
+		}
+	
+	// issue 61
+	public void setDeleted()
+		{
+		this.deletedFlag = true;
+		}
+	
+	// issue 61 2020
+	public String getSolvent()
+		{
+		return solvent;
+		}
+
+	public void setSolvent(String solvent)
+		{
+		this.solvent = solvent;
+		}
+	
+    // issue 61 2020
+	public Calendar getCreateDate()
+		{
+		return createDate;
+		}
+
+	public void setCreateDate(Calendar createDate)
+		{
+		this.createDate = createDate;
+		}
+	
+	public String getCreateDateString()
+		{
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+		return (createDate == null) ? "" : sdf.format(createDate.getTime());
+		}
+	
+	// issue 61 2020
+	public String getAliquotLabel()
+		{
+		return aliquotLabel;
+		}
+
+	public void setAliquotLabel(String aliquotLabel)
+		{
+		this.aliquotLabel = aliquotLabel;
+		}
+	
+	// issue 61 2020
+	public String getNotes()
+		{
+		return notes;
+		}
+
+	public void setNotes(String notes)
+		{
+		this.notes = notes;
+		}
+	
+	// issue 61 2020
+	public String getCreatedBy()
+		{
+		return createdBy;
+		}
+
+	public void setCreatedBy(String createdBy)
+		{
+		this.createdBy = createdBy;
+		}
+	
+	public void setNeatSolVolUnits(String neatSolVolUnits)
+		{
+		this.neatSolVolUnits = neatSolVolUnits;
+		}
+
+	public String getNeatSolVolUnits()
+		{
+		return neatSolVolUnits;
+		}
+	
+	public BigDecimal getIvol()
+		{
+		return ivol;
+		}
+	
+	public void setIvol(BigDecimal ivol)
+		{
+		this.ivol = ivol;
+		}
+	
+	public BigDecimal getDvol()
+		{
+		return dvol;
+		}
+
+	public void setDvol(BigDecimal dvol)
+		{
+		this.dvol = dvol;
+		}
+	
+	public BigDecimal getDcon()
+		{
+		return dcon;
 		}
 
 
-	public void setAliquotAssays(List<AliquotAssay> aliquotAssays)
+	public void setDcon(BigDecimal dcon)
 		{
-		this.aliquotAssays = aliquotAssays;
+		this.dcon = dcon;
 		}
-*/
-
-	public String toString()
+	
+	public BigDecimal getIcon()
 		{
-		StringBuilder sb = new StringBuilder();
+		return icon;
+		}
+
+	public void setIcon(BigDecimal icon)
+		{
+		this.icon = icon;
+		}
+	
+	public BigDecimal getWeightedAmount()
+		{
+		return weightedAmount;
+		}
+
+	public void setWeightedAmount(BigDecimal weightedAmount)
+		{
+		this.weightedAmount = weightedAmount;
+		}
+	
+	public BigDecimal getMolecularWeight()
+		{
+		return molecularWeight;
+		}
+
+	public void setMolecularWeight(BigDecimal weightedAmount)
+		{
+		this.weightedAmount = weightedAmount;
+		}
+	
+	public BigDecimal getDconc()
+		{
+		return dconc;
+		}
+
+	public void setDconc(BigDecimal dconc)
+		{
+		this.dconc = dconc;
+		}
+	
+	public void setDConcentrationUnits(String dConcentrationUnits)
+		{
+		this.dConcentrationUnits = dConcentrationUnits;
+		}
+
+	public String getDConcentrationUnits()
+		{
+		return dConcentrationUnits;
+		}
+	
+	// issue 61 2020
+    public String getWeightedAmountUnits() 
+	    {
+		return weightedAmountUnits;
+	    }
 		
-		sb.append("Aliquot Id " + getAliquotId() + System.getProperty("line.separator"));
-	//	sb.append("Checkin Id" + this.getCheckin().getCheckinId() + System.getProperty("line.separator"));
-		sb.append("Sample Id " + this.getSampleId() + System.getProperty("line.separator"));
-		
-		return sb.toString();
-		}
+		// issue 61 2020
+	public void setWeightedAmountUnits(String weightedAmountUnits) 
+	    {
+		this.weightedAmountUnits = weightedAmountUnits;
+	    }
+	
 	}
 	
 	

@@ -1,4 +1,5 @@
 // Revisited : October 2016 (JW)
+// Updated Jun 3rd 2020 (JK)
 package edu.umich.brcf.metabolomics.panels.lims.compounds;
 
 import java.util.ArrayList;
@@ -30,7 +31,9 @@ import edu.umich.brcf.metabolomics.layers.domain.CompoundName;
 import edu.umich.brcf.metabolomics.layers.service.CompoundNameService;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.metabolomics.layers.service.InventoryService;
+import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Inventory;
+import edu.umich.brcf.shared.layers.service.AliquotService;
 
 
 public class CompoundDetail  extends Panel{
@@ -43,6 +46,9 @@ public class CompoundDetail  extends Panel{
 	
 	@SpringBean
 	InventoryService invService;
+	
+	@SpringBean
+	AliquotService alqService;
 	
 	CompoundDetail prntPanel;
 	TabbedPanel tabbedPanel;                        
@@ -84,6 +90,7 @@ public class CompoundDetail  extends Panel{
 			 tabbedPanel.setOutputMarkupId(true);			 
 			 final String cidFormat =   "(C)\\d{1}|(C)\\d{2}|(C)\\d{3}|(C)\\d{4}|(C)\\d{5}|(CA)\\d{1}|(CA)\\d{2}|(CA)\\d{3}|(CA)\\d{4}";
 			 final String nvIdFormat =  "(NV)\\d{1}|(NV)\\d {2}|(NV)\\d{3}|(NV)\\d{4}|(NV)\\d{5}";
+			 final String aIdFormat = "(A)\\d{1}| (A)\\d{2}| (A)\\d{3}| (A)\\d{4}| (A)\\d{5}| (A)\\d{6}| (A)\\d{7}| (A)\\d{8}";
 			 final AutoCompleteSettings settings = new AutoCompleteSettings();
 			 settings.setUseSmartPositioning(true);
 			 settings.setPreselect(true);			
@@ -93,8 +100,7 @@ public class CompoundDetail  extends Panel{
 				protected Iterator getChoices(String input) 
 					{
 					if (Strings.isEmpty(input)) 
-						return Collections.EMPTY_LIST.iterator();
-					
+						return Collections.EMPTY_LIST.iterator();					
 					input=input.replaceAll("'", "''");
 					List<String> choices = new ArrayList<String>(); 
 					String name="";
@@ -107,7 +113,12 @@ public class CompoundDetail  extends Panel{
 							for (String invId : invService.getMatchingInvIds(input.toUpperCase())) 
 								choices.add(invId);
 						// issue 48 for CAS numbers
-						
+						// issue 61 for Aliquots
+						else if  (verifyFormat(aIdFormat,input.toUpperCase()))
+							{
+							for (String aId : alqService.getMatchingAliquotIds(input.toUpperCase()))
+								choices.add(aId);
+							}
 						else
 							{							   
 							// issue 48
@@ -125,8 +136,7 @@ public class CompoundDetail  extends Panel{
 							   } 
 							}
 						}
-					catch(IllegalStateException ie) { System.out.println("Name is "+name); }
-				
+					catch(IllegalStateException ie) { System.out.println("Name is "+name); }				
 					return choices.iterator(); 
 					}
 				};				
@@ -141,7 +151,7 @@ public class CompoundDetail  extends Panel{
 					{
 					String input = field.getInput();
 					ValidateInput(input, target, label);
-					String cFormat="(C)\\d{5}|(CA)\\d{4}", iFormat="(NV)\\d{5}";
+					String cFormat="(C)\\d{5}|(CA)\\d{4}", iFormat="(NV)\\d{5}", aIdFormat="(A)\\d{8}";
 					}
 
 				@Override
@@ -180,7 +190,7 @@ public class CompoundDetail  extends Panel{
 		
 		private void ValidateInput(String input, AjaxRequestTarget target, Label label)
 			{
-			String cFormat="(C)\\d{5}|(CA)\\d{4}", iFormat="(NV)\\d{5}";
+			String cFormat="(C)\\d{5}|(CA)\\d{4}", iFormat="(NV)\\d{5}", aIdFormat="(A)\\d{8}";
 			Compound c=null;
 			if (verifyFormat(cFormat,input.toUpperCase()) && !input.contains("CID:"))
 				{
@@ -192,13 +202,13 @@ public class CompoundDetail  extends Panel{
 					{
 					updatePanels(null);
 					CompoundDetail.this.error("Compound not found!");
-					}
-				
+					}				
 				if(c!=null) setCompound(c);
 				}
 			else if (verifyFormat(iFormat,input.toUpperCase()))
 				{
 				Inventory inv=null;
+				System.out.println("verifying inventory format");
 				try { inv=invService.loadById(input.toUpperCase()); }
 				catch (EmptyResultDataAccessException e)
 					{
@@ -208,6 +218,22 @@ public class CompoundDetail  extends Panel{
 				
 				if (inv != null)
 					setCompound(c=compoundService.loadCompoundById(inv.getCompound().getCid()));
+				}
+			//// issue 61 for aliquot
+			else if (verifyFormat(aIdFormat,input.toUpperCase()))
+				{
+				Aliquot alq=null;
+				try 
+				    { 
+					alq=alqService.loadById(input.toUpperCase());
+				    }				
+				catch (EmptyResultDataAccessException e)
+					{
+					updatePanels(null);
+					CompoundDetail.this.error("Aliquot not found!");
+					}				
+				if (alq != null)
+					setCompound(c=c=compoundService.loadCompoundById(alq.getCompound().getCid()));
 				}
 			//// issue 48 for CAS			 
 			else
@@ -219,14 +245,19 @@ public class CompoundDetail  extends Panel{
 					String vCid = input.substring(input.lastIndexOf("CID:")+4);
 					setCompound(c=compoundService.loadCompoundById(vCid));
 					}
+				// issue 61 aliquot name
+				else if (input.contains("ALIQUOT NAME:"))
+					{
+					String vCid = input.substring(input.lastIndexOf("CID:")+4);
+					setCompound(c=compoundService.loadCompoundById(vCid));
+					}
 				else   
 				    {
 					CompoundName compoundName = compoundNameService.loadByNameCompoundId(input);
 					if (compoundName != null)
 						setCompound(c=compoundService.loadCompoundById(compoundName.getCompound().getCid()));
 				    }
-				}
-			
+				}			
 			updatePanels(c);
 			if(c!=null)
 				{
@@ -235,7 +266,6 @@ public class CompoundDetail  extends Panel{
 				}
 			target.add(prntPanel);
 			}
-
 		
 	private Compound compound;
 	

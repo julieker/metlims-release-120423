@@ -8,9 +8,6 @@
 	                    http://www.springframework.org/schema/tx 
 	                    http://www.springframework.org/schema/tx/spring-tx-2.5.xsd" >
 	           
-
-	                   
- 	
  	<bean id="assayService" class="edu.umich.brcf.shared.layers.service.AssayService">
  		<property name="assayDao" ref="assayDAO" />
  	</bean>
@@ -19,7 +16,10 @@
  		<property name="aliquotDao" ref="aliquotDAO" />
  		<property name="sampleDao" ref="sampleDAO" />
  		<property name="userDao" ref="userDAO" />
+ 		<property name="compoundDao" ref="compoundDAO" />
+ 		<property name="locationDao" ref="locationDAO" />
  		<property name="inventoryDao" ref="inventoryDAO" />
+ 		<!-- issue 61 get rid of inventoryDAO -->
  	</bean>
  
  	<bean id="barcodePrintingService" class="edu.umich.brcf.shared.layers.service.BarcodePrintingService">

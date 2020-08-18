@@ -11,6 +11,9 @@
 		  	<tr>
 		  		<td><span wicket:id = "cid">Moes ID</span>:</td>
 		  		<td><span wicket:id = "priname">Moes ID</span></td>
+		  		<td>
+		  		    <td style = "text-align : center"> <input wicket:id = "addAliquot" type = "button" value = "Add Aliquot"/></td>
+		  	    </td>
 		  	</tr>
 		</table>
 		<table style = "width: 100%" class="dataview" >
@@ -57,6 +60,49 @@
 	  </table>
 	  </td></tr>	
 	</table>
+	<!-- issue 61 -->
+	<br>
+	<br>
+	<table style = "width :100%"  border="1">
+			<tr>
+			  <th>ID</th>
+			  <th>Label</th>
+			  <th>Desired Amt/Units</th>
+			  <th>Parent</th>
+			  <th>Date Created</th>
+			  <th></th>
+			</tr>
+			
+		    <tr wicket:id = "aliquots">
+			      <td>
+			        	<span wicket:id = "aliquotId">Huckleberry Finn</span>
+			      </td>
+			       <td>
+			        	<span wicket:id = "aliquotLabel">Huckleberry Finn</span>
+			      </td>
+			      <td>
+			        <span wicket:id = "aliquotNeatDilutionUnits">Mark Twain</span>
+			     </td>
+			     
+			    
+			     <td>
+			      	<span wicket:id = "parentInventory">(123) 456-7890</span>
+			      </td>
+			      
+			      <td>
+			      	<span wicket:id = "createDate">(123) 456-7890</span>
+			      </td>
+			
+			      <td style = "text-align : center">
+			      	<a wicket:id = "editAliquot" href="#">Edit</a>
+			      </td>
+			      
+			      <td style = "text-align : center">
+			       <a wicket:id = "deleteAliquot" href="#">Delete</a>
+			      </td>
+		    </tr>
+	  	</table>	
+	
 	</wicket:panel>
 </body>
 </html>

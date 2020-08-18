@@ -3,35 +3,46 @@ package edu.umich.brcf.metabolomics.panels.lims.compounds;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-
 import edu.umich.brcf.metabolomics.layers.domain.Compound;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
+import edu.umich.brcf.metabolomics.layers.service.InventoryService;
+import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Inventory;
+import edu.umich.brcf.shared.layers.service.AliquotService;
+import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.util.behavior.OddEvenAttributeModifier;
-
 
 public class InventoryDetailPanel extends Panel
 	{
 	@SpringBean
 	CompoundService compoundService;
-
+	
+	// issue 61
+	@SpringBean 
+	AliquotService aliquotService;
+	@SpringBean 
+	InventoryService inventoryService;
 	ListView listView;
 	WebMarkupContainer container;
+	WebMarkupContainer containerAliquot;
 	List<Compound> parentageList;
+	ListView listViewAliquots; // issue 61
+	private List<Aliquot> aliquots; // issue 61
 	
 	// itemList
 	public InventoryDetailPanel(String id,  final Compound cmpd) 
@@ -43,42 +54,40 @@ public class InventoryDetailPanel extends Panel
         modal2.setInitialHeight(450);
         modal2.setWidthUnit("em");
         modal2.setHeightUnit("em");
+        final InventoryDetailPanel detailPanel = this;
+        detailPanel.setOutputMarkupId(true);
         modal2.setWindowClosedCallback(new ModalWindow.WindowClosedCallback()
         	{
             public void onClose(AjaxRequestTarget target)
             	{
             	setCompound(compoundService.loadCompoundById(getCompound().getCid()));
             	target.add(container);
+            	target.add(detailPanel);// issue 61           	
             	}
         	});
-
-        add(modal2);
-       
-		final InventoryDetailPanel detailPanel = this;
-		
+        add(modal2);		
 		listView = new ListView("parentageList",new PropertyModel(this, "parentageList")) 
 			{
 			public void populateItem(final ListItem listItem) 
 				{
 				final Compound compound = (Compound) listItem.getModelObject();
 				listItem.add(new Label("cid", compound.getCid()));
+				listItem.add(buildLinkToModalAliquot("addAliquot", modal2, detailPanel, (compound.getCid().equals(getCompound().getCid())), null));				
 				listItem.add(new Label("priname",compound.getPrimaryName()));
 				ListView childListView = new ListView("invList",new PropertyModel(compound, "inventory")) 
 					{
 					public void populateItem(final ListItem childListItem)
 						{
+						//listItem.add(buildLinkToModalAliquot("addAliquot", modal2, detailPanel));
 						final Inventory inv = (Inventory) childListItem.getModelObject();
 						childListItem.add(new Label("invId", inv.getInventoryId()));
 						childListItem.add(new Label("sup", inv.getSupplier()));
 						childListItem.add(new Label("catnum",inv.getCatalogueNumber()));
-						childListItem.add(new Label("botsize", inv.getContainerSize()));
-						//childListItem.add(new Label("locid", "LC0000"));
-						//childListItem.add(new Label("locDesc", "Description"));					
+						childListItem.add(new Label("botsize", inv.getContainerSize()));				
 						childListItem.add(new Label("locid", inv.getLocation().getLocationId()));
 						childListItem.add(new Label("locDesc", inv.getLocation().getDescription()));
 						childListItem.add(new Label("invDate", inv.getInventoryDateStr()));
-						childListItem.add(new Label("purity", inv.getPurity().toString()));
-						
+						childListItem.add(new Label("purity", inv.getPurity().toString()));						
 						childListItem.add(buildEditLink(inv, detailPanel, modal2));
 						childListItem.add(OddEvenAttributeModifier.create(childListItem));
 						}
@@ -88,12 +97,105 @@ public class InventoryDetailPanel extends Panel
 				
 		listView.setOutputMarkupId(true);
 	
+		///// issue 61
+		// issue 61
+		add(listViewAliquots = new ListView("aliquots", new PropertyModel(this, "aliquots")) 
+			{
+			public void populateItem(final ListItem listItem) 
+				{
+				final Aliquot alq = (Aliquot) listItem.getModelObject();		
+				listItem.add(new Label("aliquotId", new Model(alq.getAliquotId())));
+				listItem.add(new Label("aliquotLabel", new Model(alq.getAliquotLabel())));
+				listItem.add(new Label("aliquotNeatDilutionUnits",  new Model(alq.getNeat().equals('1') && alq.getDry().equals('1') ? (alq.getWeightedAmount() + " " + alq.getWeightedAmountUnits()) : (alq.getNeat().equals('1') ? alq.getDconc() : alq.getDcon()) + " " + (alq.getNeat().equals('1') ? alq.getDConcentrationUnits() : alq.getNeatSolVolUnits() ))));
+				listItem.add(new Label("parentInventory", new Model(alq.getInventory().getInventoryId())));	
+				listItem.add(new Label("createDate", new Model(alq.getCreateDateString())));
+			    listItem.add(buildLinkToModalAliquot("editAliquot", modal2, detailPanel , true, alq)).setVisible(true);
+				listItem.add(buildLinkToModalDeleteAliquot("deleteAliquot",alq));
+				}
+			});			
 		container = new WebMarkupContainer("itemList");
 		container.setOutputMarkupId(true);
 		container.add(listView);
 		add(container);
         }
+		
+	// issue 61
+	private Link buildLinkToModalDeleteAliquot(String id, final Aliquot alq) 
+		{
+		// issue 39
+		Link lnk =  new Link<Void> (id)
+			{
+			@Override
+			public boolean isEnabled()
+				{
+				return alq.getCreatedBy().equals(((MedWorksSession) Session.get()).getCurrentUserId()) ;
+				}
+			@Override
+			public void onClick()
+				{
+				aliquotService.delete(alq.getAliquotId());
+				}
+			};
+		if (!alq.getCreatedBy().equals(((MedWorksSession) Session.get()).getCurrentUserId())) 
+		    return lnk;	
+		String confirmMsg = "Are you sure that you would like to delete aliquot " + alq.getAliquotId() + "?";
+		lnk.add(new AttributeModifier("onclick", "return confirm('" + confirmMsg + "');" ));
+		return lnk;
+		}
 	
+	// issue 61
+	private AjaxLink buildLinkToModalAliquot(final String linkID, final ModalWindow modal1, final InventoryDetailPanel idp, final boolean aliqutButtonVisible, final Aliquot alq) 
+		{
+		// issue 39
+		return new AjaxLink <Void>(linkID)
+			{
+			@Override
+			public boolean isEnabled()
+				{
+				return (getCompound().getInventory().size() > 0);	
+				}
+			@Override
+			public boolean isVisible()
+				{
+				return aliqutButtonVisible;	
+				}
+			@Override
+			public void onClick(AjaxRequestTarget target)
+				{	
+				setModalDimensions(linkID, modal1);
+				modal1.setPageCreator(new ModalWindow.PageCreator()
+					{
+					public Page createPage() {   return setPage(linkID, modal1, idp, alq);   }
+					});			
+				modal1.show(target);
+				}
+			};
+		}
+	
+	private void setModalDimensions(String linkID, ModalWindow modal1)
+		{
+		switch(linkID)
+			{
+			case "addAliquot" :
+				modal1.setInitialWidth(1000);
+				modal1.setInitialHeight(580); break;
+			default : 
+				modal1.setInitialWidth(1000);
+				modal1.setInitialHeight(580);
+			}
+		}
+
+	// issue 61
+	private Page setPage(String linkID, final ModalWindow modal1, final InventoryDetailPanel idp, Aliquot alq)
+		{
+		switch(linkID)
+			{
+			case "addAliquot" : return new EditAliquot(getPage(), idp, modal1);
+			case "editAliquot" : return new EditAliquot(getPage(), new Model <Aliquot> (alq),idp, modal1);
+			default :
+				return new EditAliquot(getPage(), idp, modal1);
+			}
+		}
 	
 	private AjaxLink buildEditLink(Inventory inv, final InventoryDetailPanel detailPanel, final ModalWindow modal2) 
 		{
@@ -126,9 +228,7 @@ public class InventoryDetailPanel extends Panel
 		{
 		this.invList=invList;
 		}
-	
-	
-	
+		
 	private Compound compound;
 	public Compound getCompound()
 		{
@@ -143,8 +243,7 @@ public class InventoryDetailPanel extends Panel
 		{
 		this.compound=compound;
 		}
-	
-	
+		
 	public List<Compound> getParentageList()
 		{
 		parentageList=new ArrayList<Compound>();
@@ -170,8 +269,7 @@ public class InventoryDetailPanel extends Panel
 		    }
 		return parentageList;
 		}
-	
-	
+		
 	public void getChildren(Compound c)
 		{
 		if (c == null)
@@ -185,4 +283,17 @@ public class InventoryDetailPanel extends Panel
 			getChildren(listItem);
 			}
 		}
+	
+	// issue 61
+	public List<Aliquot> getAliquots()
+		{
+		List<Aliquot> nList = aliquotService.loadByCid(getCompound().getCid());
+		return nList;
+		}
+
+	public void setAliquots(List<Aliquot> aliquots)
+		{
+		this.aliquots= aliquots;
+		}
+		
 	}
