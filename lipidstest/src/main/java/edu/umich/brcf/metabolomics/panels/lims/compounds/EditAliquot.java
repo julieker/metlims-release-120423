@@ -570,7 +570,6 @@ public class EditAliquot extends WebPage
 							{
 							errorProcessing = false;
 							aliquotDto.setDConc	("0");
-							aliquotDto.setMolecularWeight("0");
 							}
 						if (errorProcessing) return;
 						}
@@ -915,6 +914,11 @@ public class EditAliquot extends WebPage
 				EditAliquot.this.error("Please choose value for Desired Concentration Units"); 
 			    return errorProcessing;	
 				}	
+			if (StringUtils.isNullOrEmpty(aliquotDto.getDConc()))
+			    {
+				EditAliquot.this.error("Please choose value for Desired Concentration"); 
+		        return errorProcessing;
+			    }
 			if (!NumberUtils.verifyDecimalRange(aliquotDto.getDConc(), 8, 7))
 				{
 				EditAliquot.this.error("Please make sure that the desired concentration has no more than 8 digits for the whole number and 7 digits for the decimal place");
