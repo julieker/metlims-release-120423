@@ -122,9 +122,7 @@ public class AliquotDAO extends BaseDAO
 	// issue 79
 	public void createExperimentAliquot(ExperimentAliquot experimentAliquot)
 		{
-		System.out.println("in create experiment aliquot here is expaliquot stuff....:" + experimentAliquot.getExperiment().getExpID() + " " +  experimentAliquot.getAliquot().getAliquotId());
 		getEntityManager().persist(experimentAliquot);
-		System.out.println("done......");
 		}
 	
 	// issue 79

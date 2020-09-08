@@ -67,8 +67,6 @@ public class EditAliquot extends WebPage
 	@SpringBean
 	CompoundService compoundService;
 	// issue 79
-	@SpringBean 
-	ExperimentService experimentService;
 	FeedbackPanel aFeedback;
 	String location ;
 	TextField aliquotIdTxt;

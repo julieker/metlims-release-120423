@@ -239,14 +239,10 @@ public class AliquotService {
 		return experimentDao;
 		}
 	
-	
-	
 	// issue 79
 	public void saveExperimentAliquot(String aliquotId, Experiment exp)
 		{			
 		Aliquot aliquot = aliquotDao.loadById(aliquotId);
-		System.out.println("in saveEperimentAliquot.... here is aliquot id:" + aliquot.getAliquotId());
-		System.out.println("here is ep id:" + exp.getExpID());
 		aliquotDao.createExperimentAliquot(ExperimentAliquot.instance(exp, aliquot));
 		}
 }
