@@ -7,6 +7,11 @@
 // issue 61
 package edu.umich.brcf.metabolomics.panels.lims.compounds;
 
+/*****************
+ * Created by Julie Keros
+ * Aug 20 2020
+ * For Aliquot processing
+ ********************/
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -42,6 +47,7 @@ import edu.umich.brcf.metabolomics.layers.service.InventoryService;
 import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Inventory;
 import edu.umich.brcf.shared.layers.service.AliquotService;
+import edu.umich.brcf.shared.layers.service.ExperimentService;
 import edu.umich.brcf.shared.layers.service.LocationService;
 import edu.umich.brcf.shared.layers.service.UserService;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
@@ -60,6 +66,9 @@ public class EditAliquot extends WebPage
 	UserService userService;
 	@SpringBean
 	CompoundService compoundService;
+	// issue 79
+	@SpringBean 
+	ExperimentService experimentService;
 	FeedbackPanel aFeedback;
 	String location ;
 	TextField aliquotIdTxt;
@@ -97,6 +106,7 @@ public class EditAliquot extends WebPage
 	DropDownChoice<String> selectedParentInventroyDrop;	
 	DropDownChoice<String> aliquotUnitDD;
 	DropDownChoice<String> locationsDD;
+	//DropDownChoice<String> experimentsDD;
 	DropDownChoice<String> solventDD;
 	DropDownChoice<String> dConcentrationUnitsDD;
 	DropDownChoice<String> weightedAmountUnitsDD;
@@ -122,13 +132,18 @@ public class EditAliquot extends WebPage
 		
 	public EditAliquot(Page backPage, IModel cmpModel, InventoryDetailPanel detailPanel, final ModalWindow window) 
 		{
+		this (backPage,cmpModel,detailPanel,window, false);
+		}
+	
+	public EditAliquot(Page backPage, IModel cmpModel, InventoryDetailPanel detailPanel, final ModalWindow window, boolean isViewOnly) 
+		{
 		Aliquot alq = (Aliquot) cmpModel.getObject();	
 		aFeedback = new FeedbackPanel("feedback");
 		aFeedback.setEscapeModelStrings(false);		
 		add(aFeedback);	
 		add(new Label("titleLabel", "Edit Aliquot"));
 		setAliquotDto(AliquotDTO.instance(alq));
-		add(new EditAliquotForm("editAliquotForm", alq.getAliquotId(), aliquotDto, backPage, detailPanel, window, editAliquot, alq));
+		add(new EditAliquotForm("editAliquotForm", alq.getAliquotId(), aliquotDto, backPage, detailPanel, window, editAliquot, alq, isViewOnly));
 		}
 	
 	public final class EditAliquotForm extends Form 
@@ -137,7 +152,12 @@ public class EditAliquot extends WebPage
 		String unit= "";
 		public EditAliquotForm(final String id, final String aliquotId, final AliquotDTO aliquotDto, final Page backPage, final InventoryDetailPanel detailPanel, final ModalWindow window, final EditAliquot editAliquot, final Aliquot alq) // issue 27 2020
 			{
-			super(id, new CompoundPropertyModel(aliquotDto));	
+			this (id, aliquotId, aliquotDto,backPage, detailPanel, window, editAliquot, alq, false);
+			}
+		
+		public EditAliquotForm(final String id, final String aliquotId, final AliquotDTO aliquotDto, final Page backPage, final InventoryDetailPanel detailPanel, final ModalWindow window, final EditAliquot editAliquot, final Aliquot alq, final boolean isViewOnly) // issue 27 2020
+			{
+			super(id, new CompoundPropertyModel(aliquotDto));
 			dilutionContainer = new WebMarkupContainer("dilutionContainer")
 				{
 				public boolean isVisible()
@@ -182,7 +202,7 @@ public class EditAliquot extends WebPage
 			// issue 61 2020
 			add(new Label("aliquotId", aliquotId));			
 			add(new Label("cid", detailPanel.getCompound().getCid()));
-			add(new Label("userName", userService.getFullNameByUserId(((MedWorksSession) getSession()).getCurrentUserId())));
+			add(new Label("userName", alq == null ? userService.getFullNameByUserId(((MedWorksSession) getSession()).getCurrentUserId()) : userService.getFullNameByUserId(alq.getCreatedBy()) ));
 			TextArea textAreaNotes = new TextArea("notes");
 			textAreaNotes.add(StringValidator.maximumLength(4000));
 			add(textAreaNotes);
@@ -477,12 +497,12 @@ public class EditAliquot extends WebPage
 			List<String> locationChoices = new ArrayList<String>();	
 			locationsDD= new DropDownChoice("location",    locationChoices);			
 			locationsDD.setOutputMarkupId(true);
-			add(locationsDD);				
+			add(locationsDD);
 			if (alq != null)
 				setValuesForEdit(alq);
 			setUnit("-80 freezer");
 			locationsDD.setChoices(unit != null ? ((ArrayList <String>) locationService.getSampleLocationNamesByUnit(unit)) :  new ArrayList <String> ());
-			
+					
 			add( new AjaxLink<Void>("close")
 				{
 				public void onClick(AjaxRequestTarget target)
@@ -540,6 +560,11 @@ public class EditAliquot extends WebPage
 				@Override
 				public boolean isEnabled()
 					{
+					if (isViewOnly)
+						return false;
+					// issue 79
+					if (userService.isAliquotAdmin(((MedWorksSession) Session.get()).getCurrentUserId()))
+						return true;
 					return alq== null ? true : alq.getCreatedBy().equals(((MedWorksSession) Session.get()).getCurrentUserId()) ;
 					}
 				public void onSubmit() 
@@ -573,11 +598,10 @@ public class EditAliquot extends WebPage
 							}
 						if (errorProcessing) return;
 						}
-					aliquotDto.setLocationObj(locationService.loadById(aliquotDto.getLocation()));
-					aliquotDto.setInventoryObj(inventoryService.loadById(aliquotDto.getParentId()));
-					aliquotDto.setCompoundObj(compoundService.loadCompoundById(detailPanel.getCompound().getCid()));
-					aliquotDto.setCreatedBy(((MedWorksSession) Session.get()).getCurrentUserId());
-					if (aliquotDto.getNeatOrDilutionText().equals("Dilution"))
+					// issue 79
+					if (alq == null)
+						aliquotDto.setCreatedBy(((MedWorksSession) Session.get()).getCurrentUserId());
+						if (aliquotDto.getNeatOrDilutionText().equals("Dilution"))
 						aliquotDto.setIsDry(false);	
 					try 
 					    {	
@@ -970,8 +994,9 @@ public class EditAliquot extends WebPage
 			aliquotDto.setIcon(alq.getIcon().toString());
 			aliquotDto.setIsDry(alq.getDry() ==  null ? false : (alq.getDry().equals('1') ? true : false));
 			aliquotDto.setWeightedAmount(alq.getWeightedAmount().toString());
-			aliquotDto.setDConc(alq.getDconc().toString());			
-			aliquotDto.setUserName( userService.getFullNameByUserId(((MedWorksSession) getSession()).getCurrentUserId()));
+			aliquotDto.setDConc(alq.getDconc().toString());		
+			// issue 79
+			//aliquotDto.setUserName( userService.getFullNameByUserId(((MedWorksSession) getSession()).getCurrentUserId()));
 			String createDateStr = alq.getCreateDateString();
 		    aliquotDto.setCreateDate(createDateStr);
 		    aliquotDto.setNeatOrDilution(alq.getNeat());
@@ -1004,7 +1029,7 @@ public class EditAliquot extends WebPage
 			htmlStr = htmlStr + "if (ivol > 0 && dvol > 0 && dcon > 0 )";
 			htmlStr = htmlStr + "{document.getElementById(" + "\"" + "icon" + "\"" + ").value= Number(icon);}";
 			htmlStr = htmlStr + "}" ;
-			htmlStr =  htmlStr + "if (" + "Number(document.getElementById(" +  "\"" + "dcon" + "\"" + ")" + ".value) >" + "Number(document.getElementById(" +  "\"" + "icon" + "\"" + ")" + ".value) && dcon > 0 && icon > 0)";
+			htmlStr =  htmlStr + "if (" + "Number(document.getElementById(" +  "\"" + "dcon" + "\"" + ")" + ".value) >" + "Number(document.getElementById(" +  "\"" + "icon" + "\"" + ")" + ".value) && dcon > 0 && icon > 0 && isFinite(dcon) && isFinite(icon))";
 			htmlStr = htmlStr + "{" ;
 			String msg = "Warning c2 is greater than c1.  Do not use this unless you are concentrating the standard.  Are you sure you want to continue and save?";	
 			htmlStr = htmlStr + "return confirm('" + msg + "'); ";

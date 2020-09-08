@@ -76,6 +76,8 @@ public class AliquotDTO implements Serializable
 	private Boolean isDry;
 	private String dConcentrationUnits;
 	private String weightedAmountUnits;
+	private String deleteReason ;
+	private String otherReason ;// issue 79
 	// issue 61 2020
 	// issue 31 2020
 	// issue 61 2020
@@ -447,9 +449,32 @@ public class AliquotDTO implements Serializable
 		return isDry;
 	    }
 	
-//issue 61
+    //issue 61
 	public void setIsDry(Boolean isDry )
 	    {
 		this.isDry = isDry;
+	    }
+		
+	   // issue 79 2020
+    public String getDeleteReason() 
+	    {
+		return deleteReason;
+	    }
+		
+	// issue 79 2020
+	public void setDeleteReason(String deleteReason) 
+	    {
+		this.deleteReason = deleteReason;
+	    }
+	   // issue 79 2020
+	public String getOtherReason() 
+	    {
+		return otherReason;
+	    }
+		
+	// issue 79 2020
+	public void setOtherReason(String otherReason) 
+	    {
+		this.otherReason = otherReason;
 	    }
 	}

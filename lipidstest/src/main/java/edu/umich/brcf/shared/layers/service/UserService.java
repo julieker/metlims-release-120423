@@ -101,6 +101,13 @@ public class UserService
 		return (u.getViewpoint().getId() == 99L || u.getViewpoint().getId() == 98L);
 		}
 	
+	// Issue 79
+	public boolean isAliquotAdmin(String userId)
+		{
+		User u = loadById(userId);
+		return (u.isAliquotAdmin() != null && u.isAliquotAdmin() == true);
+		}
+	
 	
 	public boolean isAccountAdmin(String userId)
 		{

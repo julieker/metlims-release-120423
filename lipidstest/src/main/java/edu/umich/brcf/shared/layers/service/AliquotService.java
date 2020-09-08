@@ -11,11 +11,14 @@ import org.springframework.util.Assert;
 import edu.umich.brcf.metabolomics.layers.dao.CompoundDAO;
 import edu.umich.brcf.metabolomics.layers.domain.Compound;
 import edu.umich.brcf.shared.layers.dao.AliquotDAO;
+import edu.umich.brcf.shared.layers.dao.ExperimentDAO;
 import edu.umich.brcf.shared.layers.dao.InventoryDAO;
 import edu.umich.brcf.shared.layers.dao.LocationDAO;
 import edu.umich.brcf.shared.layers.dao.SampleDAO;
 import edu.umich.brcf.shared.layers.dao.UserDAO;
 import edu.umich.brcf.shared.layers.domain.Aliquot;
+import edu.umich.brcf.shared.layers.domain.Experiment;
+import edu.umich.brcf.shared.layers.domain.ExperimentAliquot;
 import edu.umich.brcf.shared.layers.domain.Inventory;
 import edu.umich.brcf.shared.layers.domain.Location;
 import edu.umich.brcf.shared.layers.dto.AliquotDTO;
@@ -33,7 +36,7 @@ public class AliquotService {
 	CompoundDAO compoundDao;
 	LocationDAO locationDao;
 	InventoryDAO inventoryDao;
-	
+	ExperimentDAO experimentDao;
 	// issue 61
 	public Aliquot loadById(String id) 
 		{
@@ -41,16 +44,33 @@ public class AliquotService {
 		return aliquotDao.loadById(id);
 		}
 	
-	// issue 61
-	public void delete(String aliquotId) 
+	// issue 79
+	public List<String> loadAllAliquotsNotChosen(String expId)
 		{
-		aliquotDao.delete(aliquotId);
+		return aliquotDao.loadAllAliquotsNotChosen(expId);
 		}
 	
 	// issue 61
+	/* public void delete(String aliquotId) 
+		{
+		aliquotDao.delete(aliquotId);
+		}*/
+	
+	public void deleteAndSetReason(String aliquotId, String deleteReason) 
+		{
+		aliquotDao.deleteAndSetReason(aliquotId, deleteReason);
+		}
+	
+	// issue 79
 	public List<String> getMatchingAliquotIds(String input)
 		{
 		return aliquotDao.getMatchingAliquotIds(input);
+		}
+	
+	// issue 79
+	public void deleteExperimentAliquot(String expId, String aliquotId)
+		{
+		aliquotDao.deleteExperimentAliquot(expId, aliquotId);
 		}
 	
 	public List<Aliquot> loadByCid(String cid)
@@ -59,6 +79,18 @@ public class AliquotService {
 		return aliquotDao.loadByCid(cid);
 		}
 	
+	public List<String> loadByEid(String eid)
+		{
+		Assert.notNull(eid);
+		return aliquotDao.loadByEid(eid);
+		}
+	
+	public List<Aliquot> loadByCidDeleted(String cid)
+		{
+		Assert.notNull(cid);
+		return aliquotDao.loadByCidDeleted(cid);
+		}
+		
 	// issue 61 2020
 	public List <Aliquot> save (AliquotDTO dto, String aliquotAssigned)
 	    {
@@ -67,6 +99,8 @@ public class AliquotService {
 		Compound cmpd=compoundDao.loadCompoundById(dto.getCid());
 		Location loc = locationDao.loadById(dto.getLocation());
 		Inventory inv = inventoryDao.loadById(dto.getParentId());
+	//	Experiment exp = dto.getExperiment() != null && dto.getExperiment() != "Choose One" && dto.getExperiment() != "None" ? experimentDao.loadById(dto.getExperiment()) : null;
+		Experiment exp = null;
 		if (!StringUtils.isEmptyOrNull(aliquotAssigned))
 			dto.setAliquotId(aliquotAssigned);
 		if (dto.getAliquotId() != null && !"to be assigned".equals(dto.getAliquotId()))
@@ -131,18 +165,11 @@ public class AliquotService {
 		return aliquotDao.getAllVolUnits();
 	    }
 	
-	public boolean wasInjected(Long wellId) 
-	    {
-		List<String> fileList = aliquotDao.getWellDataFile(wellId);
-		return fileList.size()>0? true:false;
-	    }
-	
 	//issue 61
 	public CompoundDAO getCompoundDao()
 		{
 		return compoundDao;
 		}
-
 
 	public void setCompoundDao(CompoundDAO compoundDao) 
 		{
@@ -202,5 +229,24 @@ public class AliquotService {
 		return inventoryDao;
 		}
 
+	public void setExperimentDao(ExperimentDAO experimentDao) 
+	    {
+		this.experimentDao = experimentDao;
+	    }
+
+	public ExperimentDAO getExperimentDao()
+	    {
+		return experimentDao;
+		}
 	
+	
+	
+	// issue 79
+	public void saveExperimentAliquot(String aliquotId, Experiment exp)
+		{			
+		Aliquot aliquot = aliquotDao.loadById(aliquotId);
+		System.out.println("in saveEperimentAliquot.... here is aliquot id:" + aliquot.getAliquotId());
+		System.out.println("here is ep id:" + exp.getExpID());
+		aliquotDao.createExperimentAliquot(ExperimentAliquot.instance(exp, aliquot));
+		}
 }

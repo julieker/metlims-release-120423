@@ -103,6 +103,21 @@
 				</td>
 			</tr>
 			
+		<!--  issue 79 -->
+			<tr>
+			<td style = "text-align : right : width : 20%; vertical-align : top">Standards / Internal Standards:</td>
+			 <td style = "text-align : left; width : 80%">
+			 <table>
+			 <tr wicket:id = "aliquots">
+			 <td><a wicket:id = "aliquotLink"><span wicket:id = "aliquotid">Test Name</span></a></td>
+			  <td>			
+			   <a wicket:id="deleteAliquotButton"  href = "#"> <input type = "button" style = "margin-left : 20px; color : red; font-size : 90%; font-weight : 800"  value = "&nbsp;X&nbsp;" title = "Delete this client report"/></a>&nbsp;&nbsp;&nbsp;&nbsp;
+			</td> 		
+			</tr>
+			</table>
+			</td>	      
+		    </tr>
+	 
 			 
 			<tr>
 				<td style = "text-align : right : width : 20%; vertical-align : top">View/Edit Protocol Sheets :</td>
@@ -130,7 +145,8 @@
     	<a wicket:id = "edit" href="#">Edit</a><br/>
     	<a wicket:id = "uploadDoc" href="#">Doc Upload</a><br/>
     	<a wicket:id = "clientReport" href="#">Upload ClientReport</a><br/>
-    	<a wicket:id = "protocolReport" href="#">Upload Protocol</a>
+    	<a wicket:id = "protocolReport" href="#">Upload Protocol</a><br/>
+    	<a wicket:id = "addAliquot" href="#">Add Aliquot</a>
     	
 		</td></tr></table>
 	</center>

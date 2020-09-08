@@ -13,8 +13,10 @@
 		  		<td><span wicket:id = "priname">Moes ID</span></td>
 		  		<td>
 		  		    <td style = "text-align : center"> <input wicket:id = "addAliquot" type = "button" value = "Add Aliquot"/></td>
+		  		     <td style = "text-align : center"> <input wicket:id = "viewDeletedAliquots" type = "button" value = "View Deleted Aliquots"/></td>
 		  	    </td>
 		  	</tr>
+		  	  	
 		</table>
 		<table style = "width: 100%" class="dataview" >
 		<tr>
@@ -70,6 +72,7 @@
 			  <th>Desired Amt/Units</th>
 			  <th>Parent</th>
 			  <th>Date Created</th>
+			  <th>Created By</th>
 			  <th></th>
 			</tr>
 			
@@ -91,6 +94,10 @@
 			      
 			      <td>
 			      	<span wicket:id = "createDate">(123) 456-7890</span>
+			      </td>
+			      
+			      <td>
+			      	<span wicket:id = "createdBy">(123) 456-7890</span>
 			      </td>
 			
 			      <td style = "text-align : center">

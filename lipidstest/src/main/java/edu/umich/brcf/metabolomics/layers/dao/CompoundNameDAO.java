@@ -17,7 +17,6 @@ import org.springframework.stereotype.Repository;
 import edu.umich.brcf.metabolomics.layers.domain.CompoundName;
 import edu.umich.brcf.shared.layers.dao.BaseDAO;
 
-
 @Repository
 public class CompoundNameDAO extends BaseDAO
 	{
@@ -25,25 +24,21 @@ public class CompoundNameDAO extends BaseDAO
 		{
 		getEntityManager().persist(cname);
 		}
-	
-	
+		
 	public void delete(CompoundName cname)
 		{
 		getEntityManager().remove(cname);
 		getEntityManager().getTransaction().commit();
 		}
 	
-	
 	public List<CompoundName> allCompoundNames()
 		{
 		List<CompoundName> nameList = getEntityManager().createQuery("from CompoundName cn where cn.compound.cid like 'C%'").getResultList();
 		
 		for( CompoundName name : nameList)
-			initializeTheKids(name, new String[]{"compound"});
-		
+			initializeTheKids(name, new String[]{"compound"});		
 		return nameList;
 		}
-
 	
 	public List<CompoundName> getMatchingNames(String str)
 		{
@@ -59,8 +54,7 @@ public class CompoundNameDAO extends BaseDAO
 	public List<String> getMatchingNamesCompoundId(String str)
 		{
 		Query query = getEntityManager().createNativeQuery("select name || ' CID:' || cid from names where cid like 'C%' and lower(name) like '%"+str.toLowerCase()+"%' order by length(name)");
-		query.setMaxResults(50);
-		
+		query.setMaxResults(50);		
 		List<String> nameList = query.getResultList();		
 		/*for( CompoundName name : nameList)
 			initializeTheKids(name, new String[]{"compound"});	*/	
@@ -127,8 +121,7 @@ public class CompoundNameDAO extends BaseDAO
 	public CompoundName loadName(String cid, String name)
 		{
 		List<CompoundName> lst =  getEntityManager().createQuery("from CompoundName cn where cn.compound.cid = :cid and cn.name = :name")
-				.setParameter("cid", cid).setParameter("name", name).getResultList();
-				
+				.setParameter("cid", cid).setParameter("name", name).getResultList();				
 		CompoundName cmpdName = (CompoundName)DataAccessUtils.requiredSingleResult(lst);
 		initializeTheKids(cmpdName, new String[]{"compound"});
 		return cmpdName;

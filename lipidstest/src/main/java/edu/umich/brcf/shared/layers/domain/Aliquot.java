@@ -133,6 +133,9 @@ public class Aliquot implements Serializable
 	@Column(name = "MOLECULAR_WEIGHT", columnDefinition = "NUMBER(10,5)")
 	private BigDecimal molecularWeight;
 	
+	@Basic()
+	@Column(name = "DELETE_REASON", columnDefinition = "VARCHAR2(100)")
+	private String deleteReason;
 	
 	public Aliquot() {  }
 	
@@ -230,7 +233,7 @@ public class Aliquot implements Serializable
 		{
 		this.compound = compound;
 		}
-		
+			
 	public Integer getReplicate()
 		{
 		return replicate;
@@ -365,7 +368,6 @@ public class Aliquot implements Serializable
 		return dcon;
 		}
 
-
 	public void setDcon(BigDecimal dcon)
 		{
 		this.dcon = dcon;
@@ -431,6 +433,18 @@ public class Aliquot implements Serializable
 	public void setWeightedAmountUnits(String weightedAmountUnits) 
 	    {
 		this.weightedAmountUnits = weightedAmountUnits;
+	    }
+	
+	// issue 79 2020
+    public String getDeleteReason() 
+	    {
+		return deleteReason;
+	    }
+		
+		// issue 79 2020
+	public void setDeleteReason(String deleteReason)
+	    {
+		this.deleteReason = deleteReason;
 	    }
 	
 	}

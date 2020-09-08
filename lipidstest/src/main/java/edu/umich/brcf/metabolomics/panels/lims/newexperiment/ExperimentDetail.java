@@ -2,49 +2,46 @@ package edu.umich.brcf.metabolomics.panels.lims.newexperiment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
-import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import edu.umich.brcf.metabolomics.layers.domain.GeneratedWorklistItem;
+import edu.umich.brcf.metabolomics.layers.domain.Compound;
+import edu.umich.brcf.metabolomics.panels.lims.compounds.AliquotListToAdd;
+import edu.umich.brcf.metabolomics.panels.lims.compounds.EditAliquot;
+import edu.umich.brcf.metabolomics.panels.lims.compounds.InventoryDetailPanel;
 import edu.umich.brcf.metabolomics.panels.lims.newestprep.protocol.EditProtocolSheet;
 import edu.umich.brcf.metabolomics.panels.lims.project.ProjectDetail2;
+import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Assay;
 import edu.umich.brcf.shared.layers.domain.ClientReport;
-import edu.umich.brcf.shared.layers.domain.Document;
 import edu.umich.brcf.shared.layers.domain.Experiment;
 import edu.umich.brcf.shared.layers.domain.ExperimentDocument;
 import edu.umich.brcf.shared.layers.domain.Project;
 import edu.umich.brcf.shared.layers.domain.ProtocolReport;
 import edu.umich.brcf.shared.layers.domain.ProtocolSheet;
 import edu.umich.brcf.shared.layers.dto.ProtocolSheetDTO;
-import edu.umich.brcf.shared.layers.dto.UserDTO;
+import edu.umich.brcf.shared.layers.service.AliquotService;
 import edu.umich.brcf.shared.layers.service.AssayService;
 import edu.umich.brcf.shared.layers.service.ClientReportService;
 import edu.umich.brcf.shared.layers.service.DocumentService;
@@ -57,17 +54,12 @@ import edu.umich.brcf.shared.panels.utilitypanels.ConfirmBox;
 import edu.umich.brcf.shared.panels.utilitypanels.DocumentDownloadPage;
 import edu.umich.brcf.shared.panels.utilitypanels.EditDocumentPage;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
-import edu.umich.brcf.shared.util.behavior.OddEvenAttributeModifier;
-import edu.umich.brcf.shared.util.io.StringUtils;
-import edu.umich.brcf.shared.util.utilpackages.DateUtils;
 import edu.umich.brcf.shared.util.utilpackages.ListUtils;
 import edu.umich.brcf.shared.util.widgets.METWorksPctSizableModal;
 import edu.umich.brcf.shared.util.widgets.MyFileLink;
 import edu.umich.brcf.shared.util.widgets.MyProtocolLink;
 import edu.umich.brcf.shared.util.widgets.MyReportLink;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
-
-
 
 @SuppressWarnings("serial")
 public class ExperimentDetail extends Panel
@@ -80,6 +72,9 @@ public class ExperimentDetail extends Panel
 	
 	@SpringBean
 	DocumentService documentService;
+	
+	@SpringBean
+	AliquotService aliquotService;
 	
 	@SpringBean 
 	AssayService assayService;
@@ -95,8 +90,10 @@ public class ExperimentDetail extends Panel
 	
 	@SpringBean
 	ProtocolSheetService protocolSheetService;
-	
+		
 	AjaxLink editLink;
+	ListView listViewAliquots;
+	
 	Experiment experiment;
 	final METWorksPctSizableModal modalEdit, modalDoc, modalProtocol;
 	private final ModalWindow modalwin;
@@ -106,6 +103,7 @@ public class ExperimentDetail extends Panel
 	LoadableDetachableModel<List <ProtocolSheet>> protocolSheetItems;
 	// issue 441
 	LoadableDetachableModel<List<String>> protocolReportItems;
+	LoadableDetachableModel<List<String>> aliquotItems;
 	private Map<String, ExperimentDocument> smallDocsByIdMap = new HashMap<String, ExperimentDocument>();
 	private Map<String, String> allDocNamesByIdMap = new HashMap<String, String>();
 	private Map<String, ClientReport> smallDocsClientReportByIdMap = new HashMap<String, ClientReport>();
@@ -177,6 +175,21 @@ public class ExperimentDetail extends Panel
 				}
 			}; 
 			
+		// issue 79
+		aliquotItems = new LoadableDetachableModel<List<String>>()
+		    {
+			// issue 441
+			@Override
+			protected List<String> load()   
+		        { 
+				if (getExperiment() != null)
+		        	{
+		            return aliquotService.loadByEid(getExperiment().getExpID());
+		        	}
+				return new ArrayList<String>();			
+				}
+			}; 		
+					
 		// Issue 245
 		protocolSheetItems = new LoadableDetachableModel<List<ProtocolSheet>>()
 		    {
@@ -241,6 +254,18 @@ public class ExperimentDetail extends Panel
 		add(new Label("notes"));
 		add(new Label("serviceRequest").setVisible(true));
 		
+		// issue 79
+		add(listViewAliquots = new ListView("aliquots", aliquotItems) 
+			{
+			public void populateItem(final ListItem listItem) 
+				{            
+	            final String aliquotIdStr = (String) listItem.getModelObject();	
+	            listItem.add(new Label("aliquotid", new Model(aliquotIdStr)));
+	            listItem.add(buildAliquotAjaxLink("aliquotLink", aliquotService.loadById(aliquotIdStr), modalwin ));
+	            listItem.add(buildDeleteAliquotButton("deleteAliquotButton", aliquotIdStr, getExperiment().getExpID(), ""));
+	            }
+	        });
+						
 		// Issue 245
 		add(new ListView("docList", allDocIdsModel ) 
 			{
@@ -266,21 +291,21 @@ public class ExperimentDetail extends Panel
 			{
 			@Override
 			protected void populateItem(ListItem item) 
-			{
-				// issue 441	
-				final String docId = (String) item.getModelObject();
-				if (smallDocsClientReportByIdMap.keySet().contains(docId))
-					item.add(buildReportLink(smallDocsClientReportByIdMap.get(docId)).setOutputMarkupId(true));
-				else 
-					{
-					String docName = allDocNamesClientReportByIdMap.get(docId);
-					item.add(buildLinkToFileDownloadModal("repLink", modalwin,  docId, null, docName));
-					}	
-				item.add(new Label("reportDescriptor",allRepDescriptorsByIdMap.get(docId)));				
-				String strLoadedBy = allLoadedByIdMap.get(docId);
-				item.add(buildDeleteClientButton("deleteReportButton", Long.parseLong(docId), strLoadedBy).setOutputMarkupId(true));
-				}
-			});
+				{
+					// issue 441	
+					final String docId = (String) item.getModelObject();
+					if (smallDocsClientReportByIdMap.keySet().contains(docId))
+						item.add(buildReportLink(smallDocsClientReportByIdMap.get(docId)).setOutputMarkupId(true));
+					else 
+						{
+						String docName = allDocNamesClientReportByIdMap.get(docId);
+						item.add(buildLinkToFileDownloadModal("repLink", modalwin,  docId, null, docName));
+						}	
+					item.add(new Label("reportDescriptor",allRepDescriptorsByIdMap.get(docId)));				
+					String strLoadedBy = allLoadedByIdMap.get(docId);
+					item.add(buildDeleteClientButton("deleteReportButton", Long.parseLong(docId), strLoadedBy).setOutputMarkupId(true));
+					}
+				});
 		
 		// Issue 245
 		add(new ListView("protocols",protocolReportItems ) 
@@ -316,16 +341,14 @@ public class ExperimentDetail extends Panel
 				listItem.add(buildDeleteSheetButton("deleteSheetButton", sheet).setOutputMarkupId(true));				
 				}
 			});
-	 
-			
-		boolean isClient=(((MedWorksSession) getSession()).getCurrentUserViewPoint().getName().equals("Client"));
-		
+	 			
+		boolean isClient=(((MedWorksSession) getSession()).getCurrentUserViewPoint().getName().equals("Client"));		
 		add(buildLinkToModal("edit", modalEdit).setVisible(!isClient));
 		add(buildLinkToModal("uploadDoc", modalDoc).setVisible(!isClient));
 		add(buildLinkToModal("clientReport", modalDoc).setVisible(!isClient));
 		add(buildLinkToModal("protocolReport", modalDoc).setVisible(!isClient));
+		add (buildLinkToAliquot("addAliquot"));
 		}
-
 	
 	private METWorksPctSizableModal buildModalWindow(String id, double widthPct, double heightPct)
 		{
@@ -338,11 +361,9 @@ public class ExperimentDetail extends Panel
 	        	target.add(modalwin.getParent());
 	        	target.add(modalwin.getParent().getParent());
 	        	}
-	        });
-		
+	        });		
 		return modalwin;
 		}
-	
 	
 	private IndicatingAjaxLink buildDeleteButton(String id, final String documentId, final Boolean forPrep, final ModalWindow modalwin)
 	{
@@ -402,6 +423,31 @@ public class ExperimentDetail extends Panel
 	    return lnk;	
 	    }
 	
+	
+	// issue 79
+	private Link<?> buildDeleteAliquotButton(String id, final String aliquotId, final String expId, final String strLoadedBy)
+	    {
+	    final Link lnk  = new Link<Object>(id)
+		    {
+		    @Override
+		    public void onClick()
+			    {
+	            aliquotService.deleteExperimentAliquot(expId, aliquotId);
+		        updateData(experimentService.loadById(getExperiment().getExpID()));
+			    }				    
+		    };
+		    
+		/*if (!strLoadedBy.equals(((MedWorksSession) getSession()).getCurrentUserId()))    
+		    {
+			lnk.add(new AttributeModifier("onclick", "return alert('Only the owner of the client report is allowed to delete the report.');" ));	
+			return lnk;	
+		    }*/
+		    
+	    String confirmMsg = "Are you sure that you would like to remove this aliquot from this experiment?";
+	    lnk.add(new AttributeModifier("onclick", "return confirm('" + confirmMsg + "');" ));	
+	    return lnk;	
+	    }
+		
 	// issue 245 
 	private Link<?> buildDeleteProtocolButton(String id, final long documentId, final String strLoadedBy)
 	    {
@@ -416,10 +462,8 @@ public class ExperimentDetail extends Panel
 		            protocolReportService.deleteProtocolReport(documentId);
 			        updateData(experimentService.loadById(getExperiment().getExpID()));
 		    	    }
-		    	}		
-		 		    
-		    };	
-		    
+		    	}				 		    
+		    };			    
 		    // issue 253
 	    if (!strLoadedBy.equals(((MedWorksSession) getSession()).getCurrentUserId()))    
 		    {
@@ -451,8 +495,7 @@ public class ExperimentDetail extends Panel
 		
 		return lnk;	
 		}
-	
-	
+		
 	private Link buildProtocolLink(final ProtocolReport rep) 
 		{
 		Assay assay = null;
@@ -506,23 +549,14 @@ public class ExperimentDetail extends Panel
 	    link.add(new Label("repName", documentService.getNiceReportName(rep)));
 		return link;
 		}
-	
-	
+		
 	private Link buildFileLink(final ExperimentDocument doc) 
 		{
-		Link link = new MyFileLink("fileLink", new Model<ExperimentDocument>(doc))
-			/*{
-			public boolean isVisible()
-				{
-				return !doc.isDeleted();
-				}
-			}*/;
+		Link link = new MyFileLink("fileLink", new Model<ExperimentDocument>(doc));
 		link.add(new Label("fileName", documentService.getNiceDocumentName(doc)));
-		
 		return link;
 		}
-	
-	
+		
 	private AjaxLink buildLinkToModal(final String linkID, final METWorksPctSizableModal modalwin) 
 		{
 		// issue 39
@@ -559,8 +593,35 @@ public class ExperimentDetail extends Panel
 		return editLink;
 		}
 	
-	
+	private AjaxLink buildLinkToAliquot(final String linkID) 
+		{
+		// issue 39
+		editLink = new AjaxLink <Void>(linkID)
+	    	{
+			@Override
+	        public void onClick(final AjaxRequestTarget target)
+	        	{	
+	        	//modalwin.show(target);
+				
+		    	modalwin.setPageCreator(new ModalWindow.PageCreator()
+	                {
+		    		public Page createPage() {   return setPage(linkID);   }
+	                });	
+		    	modalwin.show(target);
+	        	}			
+			@Override
+			public boolean isEnabled() { return  getExperiment()!= null; }
+	    	};
+		return editLink;
+		}
 
+	private Page setPage(String linkID)
+		{
+		return new AliquotListToAdd(linkID, getExperiment());
+		
+		}
+	
+	
 	// issue 441
 	private IndicatingAjaxLink<?> buildLinkToFileDownloadModal(final String linkID, final ModalWindow modalwin, 
 			final String docId, final BigDecimal longDocId,  final String docName) 
@@ -644,8 +705,7 @@ public class ExperimentDetail extends Panel
 						{
 						public Page createPage()
 							{
-							ProtocolSheetDTO dto = ProtocolSheetDTO.instance(sheet);
-							
+							ProtocolSheetDTO dto = ProtocolSheetDTO.instance(sheet);						
 							return new EditProtocolSheet("protocolSheet", dto, (WebPage) getPage(), modal2)
 								{
 								@Override
@@ -677,6 +737,57 @@ public class ExperimentDetail extends Panel
 		link.add(new Label("sheetName", protocolSheetService.getDescriptorString(sheet)));
 		return link;
 		}
+	
+	private AjaxLink buildAliquotAjaxLink(String id, final Aliquot aliquot, final ModalWindow modal2)
+		{
+		AjaxLink link;		
+		// Issue 237
+		// issue 39
+		Compound cmpd  = aliquot.getCompound();
+		final InventoryDetailPanel idp = new InventoryDetailPanel ("inventory", cmpd);
+	    link =  new AjaxLink <Void>(id)
+			{
+			@Override
+			public void onClick(AjaxRequestTarget target) 
+				{
+				try
+					{
+					modal2.setInitialHeight(900);
+					modal2.setInitialWidth(1100);
+					modal2.setPageCreator(new ModalWindow.PageCreator()
+						{
+						public Page createPage()
+							{
+													
+							return new EditAliquot(getPage(), new Model <Aliquot> (aliquot),idp, modal2, true);
+							}
+						});
+					//issue 239
+					modal2.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() 
+					    {
+					    @Override
+					    public void onClose(AjaxRequestTarget target)  
+					        {    
+					    	target.add(modal2.getParent());				    	
+					        }
+					    });
+					modal2.show(target);
+					}
+				catch (Exception e) {  }
+				}
+			@Override
+			protected void onComponentTag(ComponentTag tag)
+	    		{
+	    		super.onComponentTag(tag);
+	    		//tag.put("title", protocolSheetService.getDescriptorString(sheet));
+	    		}
+			};
+			
+		link.add(new Label("aliquotid", aliquot.getAliquotId()));
+		return link;
+		}
+	
+	
 	
 	public Experiment getExperiment() { return experiment; }
 	public void setExperiment(Experiment experiment) { this.experiment = experiment;

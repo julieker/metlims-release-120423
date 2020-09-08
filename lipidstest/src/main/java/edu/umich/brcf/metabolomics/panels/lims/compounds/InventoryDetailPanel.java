@@ -24,6 +24,7 @@ import edu.umich.brcf.metabolomics.layers.service.InventoryService;
 import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Inventory;
 import edu.umich.brcf.shared.layers.service.AliquotService;
+import edu.umich.brcf.shared.layers.service.UserService;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.util.behavior.OddEvenAttributeModifier;
 
@@ -37,13 +38,15 @@ public class InventoryDetailPanel extends Panel
 	AliquotService aliquotService;
 	@SpringBean 
 	InventoryService inventoryService;
+	@SpringBean 
+	UserService userService;
 	ListView listView;
 	WebMarkupContainer container;
 	WebMarkupContainer containerAliquot;
 	List<Compound> parentageList;
 	ListView listViewAliquots; // issue 61
 	private List<Aliquot> aliquots; // issue 61
-	
+	private List<Aliquot> deletedAliquots; // issue 61
 	// itemList
 	public InventoryDetailPanel(String id,  final Compound cmpd) 
 		{
@@ -62,7 +65,7 @@ public class InventoryDetailPanel extends Panel
             	{
             	setCompound(compoundService.loadCompoundById(getCompound().getCid()));
             	target.add(container);
-            	target.add(detailPanel);// issue 61           	
+            	target.add(detailPanel);// issue 61 
             	}
         	});
         add(modal2);		
@@ -73,12 +76,12 @@ public class InventoryDetailPanel extends Panel
 				final Compound compound = (Compound) listItem.getModelObject();
 				listItem.add(new Label("cid", compound.getCid()));
 				listItem.add(buildLinkToModalAliquot("addAliquot", modal2, detailPanel, (compound.getCid().equals(getCompound().getCid())), null));				
+				listItem.add(buildLinkToModalAliquot("viewDeletedAliquots", modal2, detailPanel, (compound.getCid().equals(getCompound().getCid())), null));				
 				listItem.add(new Label("priname",compound.getPrimaryName()));
 				ListView childListView = new ListView("invList",new PropertyModel(compound, "inventory")) 
 					{
 					public void populateItem(final ListItem childListItem)
 						{
-						//listItem.add(buildLinkToModalAliquot("addAliquot", modal2, detailPanel));
 						final Inventory inv = (Inventory) childListItem.getModelObject();
 						childListItem.add(new Label("invId", inv.getInventoryId()));
 						childListItem.add(new Label("sup", inv.getSupplier()));
@@ -92,11 +95,10 @@ public class InventoryDetailPanel extends Panel
 						childListItem.add(OddEvenAttributeModifier.create(childListItem));
 						}
 					};
-					listItem.add(childListView);
-				}};
-				
+				listItem.add(childListView);
+				}
+			};			
 		listView.setOutputMarkupId(true);
-	
 		///// issue 61
 		// issue 61
 		add(listViewAliquots = new ListView("aliquots", new PropertyModel(this, "aliquots")) 
@@ -109,8 +111,9 @@ public class InventoryDetailPanel extends Panel
 				listItem.add(new Label("aliquotNeatDilutionUnits",  new Model(alq.getNeat().equals('1') && alq.getDry().equals('1') ? (alq.getWeightedAmount() + " " + alq.getWeightedAmountUnits()) : (alq.getNeat().equals('1') ? alq.getDconc() : alq.getDcon()) + " " + (alq.getNeat().equals('1') ? alq.getDConcentrationUnits() : alq.getNeatSolVolUnits() ))));
 				listItem.add(new Label("parentInventory", new Model(alq.getInventory().getInventoryId())));	
 				listItem.add(new Label("createDate", new Model(alq.getCreateDateString())));
+				listItem.add(new Label("createdBy", new Model(userService.getFullNameByUserId(alq.getCreatedBy()))));
 			    listItem.add(buildLinkToModalAliquot("editAliquot", modal2, detailPanel , true, alq)).setVisible(true);
-				listItem.add(buildLinkToModalDeleteAliquot("deleteAliquot",alq));
+				listItem.add(buildLinkToModalDeleteAliquot("deleteAliquot",alq,modal2,  detailPanel));
 				}
 			});			
 		container = new WebMarkupContainer("itemList");
@@ -120,26 +123,24 @@ public class InventoryDetailPanel extends Panel
         }
 		
 	// issue 61
-	private Link buildLinkToModalDeleteAliquot(String id, final Aliquot alq) 
+	private AjaxLink buildLinkToModalDeleteAliquot(final String id, final Aliquot alq, final ModalWindow modal1, final InventoryDetailPanel idp ) 
 		{
 		// issue 39
-		Link lnk =  new Link<Void> (id)
+		 AjaxLink lnk =  new AjaxLink<Void> (id)
 			{
 			@Override
-			public boolean isEnabled()
+			public void onClick(AjaxRequestTarget target)
 				{
-				return alq.getCreatedBy().equals(((MedWorksSession) Session.get()).getCurrentUserId()) ;
-				}
-			@Override
-			public void onClick()
-				{
-				aliquotService.delete(alq.getAliquotId());
+				setModalDimensions(id, modal1);
+				modal1.setPageCreator(new ModalWindow.PageCreator()
+					{
+					public Page createPage() {   return setPage(id, modal1, idp, alq);   }
+					});			
+				    modal1.show(target);
 				}
 			};
 		if (!alq.getCreatedBy().equals(((MedWorksSession) Session.get()).getCurrentUserId())) 
 		    return lnk;	
-		String confirmMsg = "Are you sure that you would like to delete aliquot " + alq.getAliquotId() + "?";
-		lnk.add(new AttributeModifier("onclick", "return confirm('" + confirmMsg + "');" ));
 		return lnk;
 		}
 	
@@ -179,6 +180,9 @@ public class InventoryDetailPanel extends Panel
 			case "addAliquot" :
 				modal1.setInitialWidth(1000);
 				modal1.setInitialHeight(580); break;
+			case "deleteAliquot" :
+				modal1.setInitialWidth(650);
+				modal1.setInitialHeight(200); break;
 			default : 
 				modal1.setInitialWidth(1000);
 				modal1.setInitialHeight(580);
@@ -192,6 +196,8 @@ public class InventoryDetailPanel extends Panel
 			{
 			case "addAliquot" : return new EditAliquot(getPage(), idp, modal1);
 			case "editAliquot" : return new EditAliquot(getPage(), new Model <Aliquot> (alq),idp, modal1);
+			case "viewDeletedAliquots" : return new AliquotDeleteDetail("viewDeletedAliquots", compound, idp);
+			case "deleteAliquot" : return new DeleteReason("deleteAliquot",alq.getAliquotId(), modal1);
 			default :
 				return new EditAliquot(getPage(), idp, modal1);
 			}
@@ -234,8 +240,7 @@ public class InventoryDetailPanel extends Panel
 		{
 		Compound c = null;
 		try { c = compoundService.loadCompoundById(compound.getCid()); }
-		catch (Exception e){ c = null; }
-		
+		catch (Exception e){ c = null; }		
 		return c;
 		}
 	
@@ -290,10 +295,21 @@ public class InventoryDetailPanel extends Panel
 		List<Aliquot> nList = aliquotService.loadByCid(getCompound().getCid());
 		return nList;
 		}
+	
+	public List<Aliquot> getDeletedAliquots()
+		{
+		List<Aliquot> nList = aliquotService.loadByCidDeleted(getCompound().getCid());
+		return nList;
+		}
 
 	public void setAliquots(List<Aliquot> aliquots)
 		{
 		this.aliquots= aliquots;
+		}
+	
+	public void setDeletedAliquots(List<Aliquot> deletedAliquots)
+		{
+		this.deletedAliquots= deletedAliquots;
 		}
 		
 	}

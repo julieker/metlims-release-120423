@@ -105,6 +105,10 @@ public class User implements Serializable, IClusterable
 	@JoinColumn(name = "DEFAULT_VIEWPOINT", referencedColumnName = "VIEWPOINT_ID")
 	private Viewpoint viewpoint;
 	
+	@Basic()
+	@Column(name = "ALIQUOT_ADMIN", length = 1)
+	private Boolean aliquotAdminFlag;
+	
 	
 	public User() {     } 
 	
@@ -255,6 +259,23 @@ public class User implements Serializable, IClusterable
 		{
 		this.passwordNew = passwd;
 		}
+	
+	// issue 79
+	public Boolean isAliquotAdmin() 
+		{
+		if (aliquotAdminFlag ==null)
+			return false;
+		
+		if (aliquotAdminFlag)
+			return true;
+		
+		return false;
+		}
+
+	public void setAliquotAdmin()
+		{
+		this.aliquotAdminFlag = true;
+		}	
 	}
 
 

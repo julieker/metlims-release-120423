@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<body>
+        <form wicket:id = "deleteReasonForm" >  
+		<div>
+		<fieldset class = "dialog_fieldset" style = "height : 80%; margin-top : .5%; margin-bottom : .5%; width :90%; margin-left : 5%; margin-right : 5%">	
+			<legend class = "dialog_legend">
+		   		<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">Please choose the reason for the deletion</span>
+		   </legend>
+        <center>	
+	<table style = "width :100%"  border="0">
+		    <tr >
+		    <td>
+		<select wicket:id = "deleteReason"></select> &nbsp;&nbsp;	      
+			</td>
+			<td> <input wicket:id="saveReason" type="submit"  style = "margin-right : 15px; width : 100px;" value="Save"/>&nbsp;&nbsp;  </td>
+			<td> <input wicket:id="cancelReason" type="button"  style = "margin-right : 15px; width : 100px;" value="Add"/>&nbsp;&nbsp;  </td>			
+		    </tr>
+		    <tr>  
+		     <td wicket:id="otherReasonLabel" style = "text-align :right">Other Reason:</td>
+			 <td><input wicket:id="otherReason" type="text" value="(123) 456-7890" size="20"/></td>
+		    </tr>
+	  	</table>	
+	
+    </center>
+	</fieldset>
+	</div>	
+		</form>
+</body>
+</html>

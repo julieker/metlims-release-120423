@@ -2,6 +2,7 @@
 package edu.umich.brcf.shared.layers.dao;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -9,6 +10,8 @@ import javax.persistence.Query;
 //import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.stereotype.Repository;
 import edu.umich.brcf.shared.layers.domain.Aliquot;
+import edu.umich.brcf.shared.layers.domain.ExperimentAliquot;
+import edu.umich.brcf.shared.layers.domain.SampleAssay;
 import edu.umich.brcf.shared.layers.domain.VolumeUnits;
 
 
@@ -48,38 +51,19 @@ public class AliquotDAO extends BaseDAO
 		return unitsList;
 		}
 
-	
 	public List<String> getAllVolUnits() 
 		{
 		Query query = getEntityManager().createQuery("select distinct v.units from VolumeUnits v");
 		List<String> unitsList = query.getResultList();
 		return unitsList;
 		}
-
-	public int getMaxSequence(String sampleid) 
-		{
-		Query query = getEntityManager().createNativeQuery("select max(a.sequence) from aliquot a where a.sample_id=?1")
-			.setParameter(1,sampleid )	;
-		
-		java.math.BigDecimal seq = (java.math.BigDecimal) query.getSingleResult();
-		return seq.intValue();
-		}
 	
-	
-	public int getSequence(String sampleid)
-		{
-		Query query = getEntityManager().createNativeQuery(
-			"select min(a.sequence) from aliquot a where a.status = 'A' and  a.sample_id=  ?1 " ).setParameter(1, sampleid);
-	
-		java.math.BigDecimal seq = (java.math.BigDecimal) query.getSingleResult();
-		return seq.intValue();
-		}
-	
-	// issue 61
-	public void delete(String aliquotId)
+	// issue 79
+	public void deleteAndSetReason(String aliquotId, String deleteReason)
 		{
 		Aliquot a = getEntityManager().find(Aliquot.class, aliquotId);
 		a.setDeleted();
+		a.setDeleteReason(deleteReason);
 		}
 		
 	public List<String> getWellDataFile(Long wellId) 
@@ -106,5 +90,48 @@ public class AliquotDAO extends BaseDAO
 			}
 		return alqLst;
 		}
+	
+	// issue 79
+	public List<String> loadAllAliquotsNotChosen(String expId)
+		{
+		Query query = getEntityManager().createNativeQuery("select cast(aliquot_id as VARCHAR2(9)) from aliquot a where deleted is null and not exists (select * from experiment_aliquot ae where exp_id = ?1 and ae.aliquot_id = a.aliquot_id ) order by aliquot_id desc").setParameter(1, expId);	
+		List<String> orgList = query.getResultList();	
+		return (orgList == null ? new ArrayList<String>() : orgList);
+		}
+	
+	// issue 79
+	public List<String> loadByEid(String expid)
+		{
+		Query query = getEntityManager().createNativeQuery("select cast(aliquot_id as VARCHAR2(9)) from experiment_aliquot where exp_id = ?1  order by 1 desc").setParameter(1,expid);		
+		List<String> alqList = query.getResultList();	
+		return (alqList == null ? new ArrayList<String>() : alqList);
+		}
+		
+	// issue 61
+	public List<Aliquot> loadByCidDeleted(String cid)
+		{
+		List<Aliquot> alqLst =  getEntityManager().createQuery("from Aliquot where cid = ?1 and deletedFlag =true order by aliquot_id")
+				.setParameter(1, cid).getResultList();	
+	    for (Aliquot alq : alqLst)
+			{
+			initializeTheKids(alq, new String[] { "location", "inventory" , "compound"});
+			}
+		return alqLst;
+		}
+	
+	// issue 79
+	public void createExperimentAliquot(ExperimentAliquot experimentAliquot)
+		{
+		System.out.println("in create experiment aliquot here is expaliquot stuff....:" + experimentAliquot.getExperiment().getExpID() + " " +  experimentAliquot.getAliquot().getAliquotId());
+		getEntityManager().persist(experimentAliquot);
+		System.out.println("done......");
+		}
+	
+	// issue 79
+	public void deleteExperimentAliquot (String expId, String aliquotId)
+	    {	
+	    Query query = getEntityManager().createNativeQuery(" delete from experiment_aliquot where exp_id = ?1 and aliquot_id = ?2  " ).setParameter(1, expId).setParameter(2,aliquotId);
+	    query.executeUpdate();			
+	    }
 		
 	}
