@@ -46,11 +46,9 @@ public class ExperimentAliquot implements Serializable
 
 	private ExperimentAliquot(Experiment experiment, Aliquot aliquot)
 		{
-		System.out.println("in new experiment aliquot.......");
 		this.aliquot = aliquot;
 		this.experiment = experiment;
-		this.id = ExperimentAliquotPK.instance(experiment, aliquot);
-	
+		this.id = ExperimentAliquotPK.instance(experiment, aliquot);	
 		}
 
 	public ExperimentAliquotPK getId()

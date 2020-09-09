@@ -139,7 +139,7 @@ public class EditAliquot extends WebPage
 		aFeedback = new FeedbackPanel("feedback");
 		aFeedback.setEscapeModelStrings(false);		
 		add(aFeedback);	
-		add(new Label("titleLabel", "Edit Aliquot"));
+		add(new Label("titleLabel", isViewOnly || !(userService.isAliquotAdmin(((MedWorksSession) Session.get()).getCurrentUserId()) || alq.getCreatedBy().equals(((MedWorksSession) Session.get()).getCurrentUserId())) ? "View Aliquot" : "Edit Aliquot"));
 		setAliquotDto(AliquotDTO.instance(alq));
 		add(new EditAliquotForm("editAliquotForm", alq.getAliquotId(), aliquotDto, backPage, detailPanel, window, editAliquot, alq, isViewOnly));
 		}
@@ -777,7 +777,7 @@ public class EditAliquot extends WebPage
 			        		target.add(editAliquot.dconUnits);
 			        		break;
 			        	case "updateSolvent":
-			        		if (aliquotDto.getSolventText().equals("OTHER") )
+			        		if (aliquotDto.getSolventText() != null && aliquotDto.getSolventText().equals("OTHER") )
 			        		    aliquotDto.setSolvent("OTHER:" + aliquotDto.getOtherSolvent());
 			        		else
 			        			{

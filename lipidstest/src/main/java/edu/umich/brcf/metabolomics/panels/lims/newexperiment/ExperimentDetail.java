@@ -601,8 +601,8 @@ public class ExperimentDetail extends Panel
 			@Override
 	        public void onClick(final AjaxRequestTarget target)
 	        	{	
-	        	//modalwin.show(target);
-				
+				modalwin.setInitialWidth(800);
+				modalwin.setInitialHeight(100);			
 		    	modalwin.setPageCreator(new ModalWindow.PageCreator()
 	                {
 		    		public Page createPage() {   return setPage(linkID);   }
