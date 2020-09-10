@@ -47,7 +47,6 @@ import edu.umich.brcf.metabolomics.layers.service.InventoryService;
 import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Inventory;
 import edu.umich.brcf.shared.layers.service.AliquotService;
-import edu.umich.brcf.shared.layers.service.ExperimentService;
 import edu.umich.brcf.shared.layers.service.LocationService;
 import edu.umich.brcf.shared.layers.service.UserService;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
@@ -104,7 +103,6 @@ public class EditAliquot extends WebPage
 	DropDownChoice<String> selectedParentInventroyDrop;	
 	DropDownChoice<String> aliquotUnitDD;
 	DropDownChoice<String> locationsDD;
-	//DropDownChoice<String> experimentsDD;
 	DropDownChoice<String> solventDD;
 	DropDownChoice<String> dConcentrationUnitsDD;
 	DropDownChoice<String> weightedAmountUnitsDD;
