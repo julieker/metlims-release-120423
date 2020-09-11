@@ -69,6 +69,7 @@
 			<tr>
 			  <th>ID</th>
 			  <th>Label</th>
+			   <th>Location</th>
 			  <th>Desired Amt/Units</th>
 			  <th>Parent</th>
 			  <th>Date Created</th>
@@ -78,11 +79,17 @@
 			
 		    <tr wicket:id = "aliquots">
 			      <td>
-			        	<span wicket:id = "aliquotId">Huckleberry Finn</span>
+			        <a wicket:id = "aliquotLink"><span wicket:id = "aliquotId">Huckleberry Finn</span> </a>
 			      </td>
+			      
 			       <td>
-			        	<span wicket:id = "aliquotLabel">Huckleberry Finn</span>
+			        	<span wicket:id = "aliquotLabel">Huckleberry Finn</span> 
 			      </td>
+			      
+			        <td>
+			        	<span wicket:id = "location">Huckleberry Finn</span> 
+			      </td>
+			      
 			      <td>
 			        <span wicket:id = "aliquotNeatDilutionUnits">Mark Twain</span>
 			     </td>

@@ -94,6 +94,7 @@ public class EditAliquot extends WebPage
 	Label volUnitsLabel;
 	Label numAliquotsLabel;
 	Label otherSolventLabel;
+	Label solventLabel;
 	Label calcSectionLabel;
 	Label dilutionFormulaLabel;
 	Label dVoluLabel;
@@ -242,11 +243,26 @@ public class EditAliquot extends WebPage
 			        }
 				};		
 			dateFld.setDefaultStringFormat(Aliquot.ALIQUOT_DATE_FORMAT);
-			add(dateFld);				
+			add(dateFld);	
+			// issue 79
 			solventDD = new DropDownChoice("solventText",  Arrays.asList(new String[] {"WATER", "ETHANOL", 
-					                       "METHANOL", "CHLOROFORM", "ISOPROPANOL", "ACETONITRILE", "ETHYL ACETEATE", "OTHER"}));
+					                       "METHANOL", "CHLOROFORM", "ISOPROPANOL", "ACETONITRILE", "ETHYL ACETEATE", "OTHER"}))
+					{
+					@Override
+					public boolean isVisible()
+						{
+						if (aliquotDto.getNeatOrDilution() == null)
+							return false;
+						if (aliquotDto == null)
+							return false;
+						if (aliquotDto.getIsDry() == null)
+							return false;
+						return ( aliquotDto.getNeatOrDilutionText().equals("Dilution") || (aliquotDto.getNeatOrDilutionText().equals("Neat") && !aliquotDto.getIsDry())    );
+						} 
+					};
 			solventDD.add(buildStandardFormComponentUpdateBehavior("change", "updateSolvent", aliquotDto, detailPanel, editAliquot )); // issue 27 2020	
 			solventDD.setOutputMarkupId(true);
+			solventDD.setOutputMarkupPlaceholderTag(true) ;	
 			add (solventDD);			
 			otherSolvent = new TextField("otherSolvent")
 				{
@@ -273,7 +289,25 @@ public class EditAliquot extends WebPage
 				};			
 			add (otherSolventLabel);
 			otherSolventLabel.setOutputMarkupId(true);
-			otherSolventLabel.setOutputMarkupPlaceholderTag(true) ;				
+			otherSolventLabel.setOutputMarkupPlaceholderTag(true) ;	
+			// Issue 79
+			solventLabel = new Label("solventLabel", "Solvent:")
+				{
+				@Override
+					public boolean isVisible()
+						{
+						if (aliquotDto.getNeatOrDilution() == null)
+							return false;
+						if (aliquotDto == null)
+							return false;
+						if (aliquotDto.getIsDry() == null)
+							return false;
+						return ( aliquotDto.getNeatOrDilutionText().equals("Dilution") || (aliquotDto.getNeatOrDilutionText().equals("Neat") && !aliquotDto.getIsDry())    );
+						} 
+				};			
+			add (solventLabel);
+			solventLabel.setOutputMarkupId(true);
+			solventLabel.setOutputMarkupPlaceholderTag(true) ;			
 			DropDownChoice selectedParentInventoryDD = new DropDownChoice("parentId", getListOfInvIds(detailPanel.getCompound().getInventory()) );
 			add (selectedParentInventoryDD);           
 			weightedAmountLabel  = new Label("weightedAmountLabel", "Weighted Amt")	
@@ -660,8 +694,7 @@ public class EditAliquot extends WebPage
 			add(this.buildIsDryChkBox(alq == null ? true : false));
 			dryCheckBox.add(buildStandardFormComponentUpdateBehavior("change", "updateDry", aliquotDto, detailPanel, editAliquot )); // issue 27 2020
 			dryCheckBox.setOutputMarkupId(true);
-			dryCheckBox.setOutputMarkupPlaceholderTag(true) ;
-			
+			dryCheckBox.setOutputMarkupPlaceholderTag(true) ;			
 			isDryLabel = new Label("isDryLabel", "Dry?")
 				{
 				@Override
@@ -765,6 +798,8 @@ public class EditAliquot extends WebPage
 			        	    target.add(editAliquot.dConcentrationUnitsDD);
 			        		target.add(editAliquot.calculateNeatButton);
 			        		target.add(editAliquot.calculateDilutionButton);
+			        		target.add(editAliquot.solventDD);
+			        		target.add(editAliquot.solventLabel);
 			        		break;
 			        	case "updateNeatOrDilutionUnits" :
 			        		editAliquot.iconUnits.setDefaultModelObject(editAliquot.aliquotNeatOrDilutionUnitsDD.getModelObject().toString());
@@ -773,6 +808,7 @@ public class EditAliquot extends WebPage
 			        		target.add(editAliquot.dvolUnits);
 			        		target.add(editAliquot.iconUnits);
 			        		target.add(editAliquot.dconUnits);
+			        		
 			        		break;
 			        	case "updateSolvent":
 			        		if (aliquotDto.getSolventText() != null && aliquotDto.getSolventText().equals("OTHER") )
@@ -798,6 +834,8 @@ public class EditAliquot extends WebPage
 			        		target.add(editAliquot.weightedAmountUnitsDD);
 			        		target.add(editAliquot.dVoluLabel);
 			        		target.add(editAliquot.calculateNeatButton);
+			        		target.add(editAliquot.solventDD);
+			        		target.add(editAliquot.solventLabel);
 			        		break;
 			        	case "updateDConcentration":
 			        		target.add(editAliquot.dConcentrationUnitsDD);
@@ -978,7 +1016,7 @@ public class EditAliquot extends WebPage
 		
 		public void setValuesForEdit (Aliquot alq)
 			{
-			if  (alq.getSolvent().contains("OTHER:"))
+			if  (!StringUtils.isNullOrEmpty(alq.getSolvent()) && alq.getSolvent().contains("OTHER:"))
 				{
 			    aliquotDto.setSolventText("OTHER");
 			    aliquotDto.setOtherSolvent(alq.getSolvent().replace("OTHER:", ""));
@@ -1049,7 +1087,7 @@ public class EditAliquot extends WebPage
 				EditAliquot.this.error("Please enter value for Location ");
 				return false;	
 				}
-			if (StringUtils.isNullOrEmpty(aliquotDto.getSolventText()))
+			if ( editAliquot.solventDD.isVisible()  && StringUtils.isNullOrEmpty(aliquotDto.getSolventText())  )
 				{
 				EditAliquot.this.error("Please enter value for Solvent ");
 				return false;

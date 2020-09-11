@@ -775,12 +775,6 @@ public class ExperimentDetail extends Panel
 					}
 				catch (Exception e) {  }
 				}
-			@Override
-			protected void onComponentTag(ComponentTag tag)
-	    		{
-	    		super.onComponentTag(tag);
-	    		//tag.put("title", protocolSheetService.getDescriptorString(sheet));
-	    		}
 			};
 			
 		link.add(new Label("aliquotid", aliquot.getAliquotId()));

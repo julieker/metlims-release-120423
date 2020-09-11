@@ -84,6 +84,7 @@ public class DeleteReason extends WebPage
 						if (!StringUtils.isNullOrEmpty(aliquotDto.getOtherReason()))		
 						    aliquotDto.setDeleteReason("OTHER:" + aliquotDto.getOtherReason());
 						aliquotService.deleteAndSetReason(aliquotId, aliquotDto.getDeleteReason());
+						target.appendJavaScript("alert('Aliquot: " +   aliquotId + "  has been deleted.');");						
 						if (modal1 != null)
 						    modal1.close(target);
 					    }

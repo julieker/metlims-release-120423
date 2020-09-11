@@ -44,6 +44,7 @@ public class InventoryDetailPanel extends Panel
 	WebMarkupContainer container;
 	WebMarkupContainer containerAliquot;
 	List<Compound> parentageList;
+	
 	ListView listViewAliquots; // issue 61
 	private List<Aliquot> aliquots; // issue 61
 	private List<Aliquot> deletedAliquots; // issue 61
@@ -107,7 +108,9 @@ public class InventoryDetailPanel extends Panel
 				{
 				final Aliquot alq = (Aliquot) listItem.getModelObject();		
 				listItem.add(new Label("aliquotId", new Model(alq.getAliquotId())));
+				listItem.add(buildLinkToModalAliquot("aliquotLink", modal2, detailPanel , true, alq)).setVisible(true);
 				listItem.add(new Label("aliquotLabel", new Model(alq.getAliquotLabel())));
+				listItem.add(new Label("location", new Model(alq.getLocation().getLocationId())));	
 				listItem.add(new Label("aliquotNeatDilutionUnits",  new Model(alq.getNeat().equals('1') && alq.getDry().equals('1') ? (alq.getWeightedAmount() + " " + alq.getWeightedAmountUnits()) : (alq.getNeat().equals('1') ? alq.getDconc() : alq.getDcon()) + " " + (alq.getNeat().equals('1') ? alq.getDConcentrationUnits() : alq.getNeatSolVolUnits() ))));
 				listItem.add(new Label("parentInventory", new Model(alq.getInventory().getInventoryId())));	
 				listItem.add(new Label("createDate", new Model(alq.getCreateDateString())));
@@ -148,7 +151,9 @@ public class InventoryDetailPanel extends Panel
 	private AjaxLink buildLinkToModalAliquot(final String linkID, final ModalWindow modal1, final InventoryDetailPanel idp, final boolean aliqutButtonVisible, final Aliquot alq) 
 		{
 		// issue 39
-		return new AjaxLink <Void>(linkID)
+		AjaxLink alqLink;
+		// new AjaxLink <Void>(id)
+		alqLink =  new AjaxLink <Void>(linkID)
 			{
 			@Override
 			public boolean isEnabled()
@@ -171,6 +176,9 @@ public class InventoryDetailPanel extends Panel
 				modal1.show(target);
 				}
 			};
+			if (linkID.equals("aliquotLink"))
+				alqLink.add(new Label("aliquotId", alq.getAliquotId()));
+			return alqLink;
 		}
 	
 	private void setModalDimensions(String linkID, ModalWindow modal1)
@@ -194,7 +202,8 @@ public class InventoryDetailPanel extends Panel
 		{
 		switch(linkID)
 			{
-			case "addAliquot" : return new EditAliquot(getPage(), idp, modal1);
+			case"aliquotLink" : return new EditAliquot(getPage(), new Model <Aliquot> (alq),idp, modal1, true);
+			case"addAliquot" : return new EditAliquot(getPage(), idp, modal1);
 			case "editAliquot" : return new EditAliquot(getPage(), new Model <Aliquot> (alq),idp, modal1);
 			case "viewDeletedAliquots" : return new AliquotDeleteDetail("viewDeletedAliquots", compound, idp);
 			case "deleteAliquot" : return new DeleteReason("deleteAliquot",alq.getAliquotId(), modal1);
