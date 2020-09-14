@@ -12,19 +12,15 @@ import java.util.List;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import edu.umich.brcf.metabolomics.layers.domain.Compound;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.metabolomics.layers.service.InventoryService;
-import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Experiment;
 import edu.umich.brcf.shared.layers.dto.AliquotDTO;
 import edu.umich.brcf.shared.layers.service.AliquotService;
@@ -34,20 +30,11 @@ public class AliquotListToAdd extends WebPage
 	{
 	@SpringBean
 	CompoundService compoundService;
-	
-	// issue 61
 	@SpringBean 
 	AliquotService aliquotService;
 	@SpringBean 
 	InventoryService inventoryService;
 	FeedbackPanel aFeedback;
-	ListView listView;
-	WebMarkupContainer container;
-	WebMarkupContainer containerAliquot;
-	List<Compound> parentageList;
-	ListView listViewAliquots; // issue 61
-	private List<Aliquot> aliquots; // issue 61
-	private List<Aliquot> deletedAliquots;
 	AliquotListToAdd aliquotListToAdd = this;
 	DropDownChoice<String> aliquotsDD;
 	String aliquotId;
@@ -83,20 +70,29 @@ public class AliquotListToAdd extends WebPage
 				@Override
 				public void onClick(AjaxRequestTarget target) 
 					{		
-					if (StringUtils.isNullOrEmpty(aliquotDto.getAliquotId()))
-						{
-						String msg = "<span style=\"color:red;\">" +   "Please choose an Aliquot."  + "</span>";	;
+					try
+					    {
+						if (StringUtils.isNullOrEmpty(aliquotDto.getAliquotId()))
+							{
+							String msg = "<span style=\"color:red;\">" +   "Please choose an Aliquot."  + "</span>";	;
+							AliquotListToAdd.this.info(msg);
+							setResponsePage(getPage());
+							return;
+							}
+						aliquotService.saveExperimentAliquot(aliquotDto.getAliquotId(), exp);
+						aliquotChoices.clear();
+						aliquotChoices.addAll(aliquotService.loadAllAliquotsNotChosen(exp.getExpID()));
+						aliquotsDD.setChoices(aliquotChoices);
+						target.add(aliquotListToAdd.aliquotsDD);
+						String msg = "<span style=\"color:blue;\">" +   "Aliquot :" + aliquotDto.getAliquotId() +  " has been added to Experiment:" + exp.getExpID() + "</span>";	;
 						AliquotListToAdd.this.info(msg);
-						setResponsePage(getPage());
-						return;
+					    }
+					catch (Exception e)
+						{
+						String msg = "<span style=\"color:red;\">" +   e.getMessage() +   "</span>";	;
+						AliquotListToAdd.this.info(msg);
+						e.printStackTrace();
 						}
-					aliquotService.saveExperimentAliquot(aliquotDto.getAliquotId(), exp);
-					aliquotChoices.clear();
-					aliquotChoices.addAll(aliquotService.loadAllAliquotsNotChosen(exp.getExpID()));
-					aliquotsDD.setChoices(aliquotChoices);
-					target.add(aliquotListToAdd.aliquotsDD);
-					String msg = "<span style=\"color:blue;\">" +   "Aliquot :" + aliquotDto.getAliquotId() +  " has been added to Experiment:" + exp.getExpID() + "</span>";	;
-					AliquotListToAdd.this.info(msg);
 					}
 				};
 			add(saveChangesButton);	
