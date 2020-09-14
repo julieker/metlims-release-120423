@@ -5,7 +5,6 @@ package edu.umich.brcf.metabolomics.panels.lims.compounds;
  * Choose a delete Reason
  ********************/
 
-
 import java.util.Arrays;
 import java.util.List;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -26,7 +25,6 @@ import org.h2.util.StringUtils;
 import edu.umich.brcf.metabolomics.layers.domain.Compound;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.metabolomics.layers.service.InventoryService;
-import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.dto.AliquotDTO;
 import edu.umich.brcf.shared.layers.service.AliquotService;
 import edu.umich.brcf.shared.util.widgets.AjaxCancelLink;
@@ -45,8 +43,6 @@ public class DeleteReason extends WebPage
 	WebMarkupContainer containerAliquot;
 	List<Compound> parentageList;
 	ListView listViewAliquots; // issue 61
-	private List<Aliquot> aliquots; // issue 61
-	private List<Aliquot> deletedAliquots;
 	DropDownChoice<String> deleteReasonDD;
 	DeleteReason DeleteReason = this;
 	Button saveReasonButton;
@@ -145,8 +141,5 @@ public class DeleteReason extends WebPage
 	            }
 	        };
 	    }
-	
-	
-	// issue 61
-	
+
 	}

@@ -91,14 +91,12 @@ public class AliquotListToAdd extends WebPage
 						return;
 						}
 					aliquotService.saveExperimentAliquot(aliquotDto.getAliquotId(), exp);
-					aliquotChoices.addAll(aliquotService.loadAllAliquotsNotChosen(exp.getExpID()));
-					String msg = "<span style=\"color:blue;\">" +   "Aliquot :" + aliquotDto.getAliquotId() +  " has been added to Experiment:" + exp.getExpID() + "</span>";	;
-					AliquotListToAdd.this.info(msg);
 					aliquotChoices.clear();
 					aliquotChoices.addAll(aliquotService.loadAllAliquotsNotChosen(exp.getExpID()));
 					aliquotsDD.setChoices(aliquotChoices);
 					target.add(aliquotListToAdd.aliquotsDD);
-					setResponsePage(getPage());
+					String msg = "<span style=\"color:blue;\">" +   "Aliquot :" + aliquotDto.getAliquotId() +  " has been added to Experiment:" + exp.getExpID() + "</span>";	;
+					AliquotListToAdd.this.info(msg);
 					}
 				};
 			add(saveChangesButton);	
