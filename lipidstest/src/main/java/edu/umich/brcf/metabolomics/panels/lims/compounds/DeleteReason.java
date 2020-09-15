@@ -21,6 +21,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.validation.validator.StringValidator;
 import org.h2.util.StringUtils;
 import edu.umich.brcf.metabolomics.layers.domain.Compound;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
@@ -51,6 +52,7 @@ public class DeleteReason extends WebPage
 	DeleteReason deleteReason =  this;
 	TextField otherReason;
 	Label otherReasonLabel;
+	int maxReasonLength = 94;
 	
 	public DeleteReason(String id,  final String aliquotId, ModalWindow modal1) 
 		{
@@ -105,6 +107,7 @@ public class DeleteReason extends WebPage
 		    add (otherReason);
 		    otherReason.setOutputMarkupId(true);
 		    otherReason.setOutputMarkupPlaceholderTag(true) ;
+		    otherReason.add(StringValidator.maximumLength(maxReasonLength));
 		    otherReasonLabel = new Label("otherReasonLabel", "Other Reason")
 		    	{
 				@Override

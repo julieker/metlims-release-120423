@@ -114,6 +114,7 @@ public class EditAliquot extends WebPage
 	Button calculateDilutionButton;
 	Button saveChangesButton;
 	WebMarkupContainer dilutionContainer;
+	int maxSolventLength = 94; // issue 79 allow for OTHER:	
 	boolean calculateOnly = true;
 	public AliquotDTO getAliquotDto() { return aliquotDto; }
 	public void setAliquotDto(AliquotDTO aliquotDto)  { this.aliquotDto = aliquotDto; }
@@ -276,7 +277,9 @@ public class EditAliquot extends WebPage
 				};	
 		    add (otherSolvent);
 			otherSolvent.setOutputMarkupId(true);
-			otherSolvent.setOutputMarkupPlaceholderTag(true) ;			
+			otherSolvent.setOutputMarkupPlaceholderTag(true) ;	
+			// issue 79 set up max length
+			otherSolvent.add(StringValidator.maximumLength(maxSolventLength));
 			otherSolventLabel = new Label("otherSolventLabel", "Other Solvent")
 				{
 				@Override
@@ -603,8 +606,12 @@ public class EditAliquot extends WebPage
 					AliquotDTO aliquotDto = (AliquotDTO) getForm().getModelObject();															
 					if (!doEditChecks())
 						return;
-					if (!StringUtils.isNullOrEmpty(aliquotDto.getOtherSolvent()))		
-					    aliquotDto.setSolvent("OTHER:" + aliquotDto.getOtherSolvent());
+					// issue 79 solvent processing
+					if (aliquotDto.getIsDry())
+						aliquotDto.setSolvent("");
+					else
+						if (!StringUtils.isNullOrEmpty(aliquotDto.getOtherSolvent()))		
+						    aliquotDto.setSolvent("OTHER:" + aliquotDto.getOtherSolvent());
 					if (aliquotDto.getNeatOrDilutionText().equals("Dilution"))
 						{		
 						boolean errorProcessing = processUnknownForDilution();
@@ -764,6 +771,7 @@ public class EditAliquot extends WebPage
 			 		            {
 			 		        	aliquotNeatOrDilutionUnitsDD.setChoices(Arrays.asList(new String[] {"uM", "mM", "M" })); 
 			 		        	aliquotDto.setNeatOrDilutionUnits("uM");
+			 		        	aliquotDto.setIsDry(false); // issue 79 solvent processing
 			 		            }
 			        		if (editAliquot.aliquotNeatOrDilutionUnitsDD.getModelObject() != null)
 			        			{
@@ -1072,6 +1080,12 @@ public class EditAliquot extends WebPage
 			}	
 		private boolean doEditChecks()
 			{
+			if (aliquotDto.getIsDry() && aliquotDto.getNeatOrDilutionText().equals("Neat"))
+				if (!StringUtils.isNullOrEmpty(aliquotDto.getWeightedAmount()) && aliquotDto.getWeightedAmount().trim().equals("0"))
+					{
+					EditAliquot.this.error("Please enter non-zero value for weighted amount ");
+					return false;	
+					}
 			if (StringUtils.isNullOrEmpty(aliquotDto.getCreateDate()))
 				{
 				EditAliquot.this.error("Please enter value for Create Date ");
