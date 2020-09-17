@@ -56,7 +56,6 @@ public class DeleteReason extends WebPage
 	
 	public DeleteReason(String id,  final String aliquotId, ModalWindow modal1) 
 		{
-	//	super(id);
 		add(new deleteReasonForm("deleteReasonForm", aliquotId, modal1));
 		}
 	

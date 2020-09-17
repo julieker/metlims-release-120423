@@ -94,7 +94,7 @@ public class CompoundService
 			try
 				{ 
 				// issue 62
-				compound = Compound.instance(dto.getCid(),dto.getChem_abs_number(), dto.getSmiles(),  null, dto.getInchiKey(), smilesOrSmilesFromCompoundIdStr, dto.getAdditionalSolubility());
+				compound = Compound.instance(dto.getCid(),dto.getChem_abs_number(), dto.getSmiles(),  null, dto.getInchiKey(), smilesOrSmilesFromCompoundIdStr, dto.getAdditionalSolubility(), StringUtils.isEmptyOrNull(dto.getMolecular_weight()) ? null : new BigDecimal(dto.getMolecular_weight())   );
 				if (!StringUtils.isEmptyOrNull(dto.getParentCid()))
 					compound.updateParent(getParent(compound, dto));
 				// issue 8

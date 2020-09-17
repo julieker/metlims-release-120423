@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////
 package edu.umich.brcf.metabolomics.panels.lims.compounds;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.wicket.Page;
@@ -35,6 +36,7 @@ import edu.umich.brcf.metabolomics.layers.service.CompoundNameService;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.shared.layers.dto.CompoundDTO;
 import edu.umich.brcf.shared.util.utilpackages.CompoundIdUtils;
+import edu.umich.brcf.shared.util.utilpackages.NumberUtils;
 
 
 public class EditCompound extends WebPage
@@ -49,13 +51,14 @@ public class EditCompound extends WebPage
 	TextField inchiKeyFld;
 	TextField htmlFld;
 	TextField nameFld;
+	TextField molecularWeightFld;
 	TextField additionalSolubilityFld ; // issue 62
 	//TextField casFld;
 	EditCompound editCompound = this;// issue 27 2020
 	public EditCompound(Page backPage, final CompoundDetailPanel container, final ModalWindow window) 
 		{
 		CompoundDTO cmpDto = new CompoundDTO();
-		add(new FeedbackPanel("feedback"));
+		add(new FeedbackPanel("feedback").setEscapeModelStrings(false)); // issue 79
 		add(new Label("titleLabel", "Add Compound"));
 		add(new EditCompoundForm("editCompoundForm", "to be assigned", cmpDto, backPage, container, window,editCompound ));
 		}
@@ -63,7 +66,7 @@ public class EditCompound extends WebPage
 	public EditCompound(Page backPage, IModel cmpModel, CompoundDetailPanel container, final ModalWindow window) 
 		{
 		Compound cmp = (Compound) cmpModel.getObject();
-		add(new FeedbackPanel("feedback"));
+		add(new FeedbackPanel("feedback").setEscapeModelStrings(false));
 		add(new Label("titleLabel", "Edit Compound"));
 		add(new EditCompoundForm("editCompoundForm", cmp.getCid(), CompoundDTO.instance(cmp), backPage, container, window, editCompound));
 		}
@@ -79,6 +82,24 @@ public class EditCompound extends WebPage
 			    cmpDto.setCompoundIdentifier(!StringUtils.isNullOrEmpty(cmpDto.getSmiles()) ? "Smiles" : (!StringUtils.isNullOrEmpty(cmpDto.getInchiKey()) ? "InchiKey" : "CAS")); 	
 			add(new Label("cid", cid));
 			add(newRequiredTextField("chem_abs_number", 30));
+			// issue 79 			
+			add(new Label("molecularweightLabel", "Molecular Weight:")
+				{
+				public boolean isVisible()
+					{
+					return ( !(cid.equals("to be assigned") && StringUtils.isNullOrEmpty(cidAssigned)))	;
+					}
+				});					
+			add (molecularWeightFld = new TextField ("molecular_weight")
+				{
+				@Override
+				public boolean isVisible()
+					{
+					return ( !(cid.equals("to be assigned") && StringUtils.isNullOrEmpty(cidAssigned)))	;
+					}
+				});
+			 // issue 79 edit molecular weight
+			molecularWeightFld.setType(BigDecimal.class);  // issue 79
 			// issue 8
 			add(smilesFld =new TextField("smiles")
 			    {
@@ -89,8 +110,7 @@ public class EditCompound extends WebPage
 						return false;
 					return cmpDto.getCompoundIdentifier().equals("Smiles");
 					}	
-				}				
-		        );
+				});
 			// issue 27 2020
 			smilesFld.add(StringValidator.maximumLength(500));
 			smilesFld.setOutputMarkupId(true);
@@ -256,7 +276,16 @@ public class EditCompound extends WebPage
 								EditCompound.this.info("The InchiKey:" + cmpDto.getInchiKey() + " could not be found.  The Compound/Name detail is not saved.  Please choose another inchiKey.")  ; 
 								setResponsePage(getPage());
 								return;
-							    }	
+							    }
+							// issue 79
+							if (!StringUtils.isNullOrEmpty(cmpDto.getMolecular_weight()))
+								cmpDto.setMolecular_weight(cmpDto.getMolecular_weight().replace(",",  ""));
+							if (!StringUtils.isNullOrEmpty(cmpDto.getMolecular_weight()) && !NumberUtils.verifyDecimalRange(cmpDto.getMolecular_weight(), 5, 5))
+								{
+								EditCompound.this.info("Please make sure that the molecular weight has no more than 5 digits for the whole number and 5 digits for the decimal place");
+								setResponsePage(getPage());
+								return;
+								}
 							// issue 31 2020
 							// issue 41 2020
 							Compound cmp = cmpService.save(cmpDto, smilesOrSmilesFromCompoundIdStr, cidAssigned, err);										
@@ -264,17 +293,23 @@ public class EditCompound extends WebPage
 							    {
 								cidAssigned = cmp.getCid();
 								cmpDto.setCid(cidAssigned);
+								cmpDto.setMolecular_weight(Double.toString(cmp.getMass(smilesOrSmilesFromCompoundIdStr)));					
 							    }
 							// issue 21
 							if (cmpDto.getCompoundIdentifier().equals("CAS") && StringUtils.isNullOrEmpty(smilesOrSmilesFromCompoundIdStr) && !StringUtils.isNullOrEmpty(cmpDto.getChem_abs_number()) )
-								EditCompound.this.info("The CAS:" + cmpDto.getChem_abs_number() + " could not be found.  The Compound/Name detail is saved for compound:" + cmp.getCid() + ".")  ;
+								EditCompound.this.info(  "The CAS:" + cmpDto.getChem_abs_number() + " could not be found.  The Compound/Name detail is saved for compound:" + cmp.getCid() + "." )  ;
 							else
-							    EditCompound.this.info("Compound/Name detail saved for compound:" + cmp.getCid() + ".");
+							    EditCompound.this.info("<span style=\"color:blue;\">" + "Compound/Name detail saved for compound:" + cmp.getCid() + "." +  "</span>");
 							if (container!=null)
 								{
 								container.setCmpId(cmp.getCid());
 								impCompound=cmp.getCid();
 								}
+							String calcMolWeight = Double.toString(cmp.getMass(smilesOrSmilesFromCompoundIdStr));
+							if (StringUtils.isNullOrEmpty(cmpDto.getMolecular_weight()))
+							    cmpDto.setMolecular_weight(calcMolWeight);
+							if (!StringUtils.isNullOrEmpty(cmpDto.getMolecular_weight()) && !calcMolWeight.toString().equals(cmpDto.getMolecular_weight()))
+								EditCompound.this.info("The molecular weight of " + cmpDto.getMolecular_weight() + " is different from the calculated molecular weight of: " + calcMolWeight.toString() + ".  Please double check the molecular weight.");			
 							}
 						catch(Exception e){ e.printStackTrace(); EditCompound.this.error("Save unsuccessful. Please make sure that smiles is valid."); }
 						}	

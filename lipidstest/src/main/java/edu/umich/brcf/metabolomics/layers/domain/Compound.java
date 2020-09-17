@@ -33,6 +33,7 @@ import edu.umich.brcf.shared.layers.domain.CompoundDocument;
 import edu.umich.brcf.shared.layers.domain.Inventory;
 import edu.umich.brcf.shared.layers.domain.Solvent;
 import edu.umich.brcf.shared.layers.dto.CompoundDTO;
+import edu.umich.brcf.shared.util.io.StringUtils;
 
 @Entity()
 @Table(name = "COMPOUND")
@@ -43,15 +44,15 @@ public class Compound implements IClusterable
 	// issue 58 get rid of human_rel
 	// issue 62 add additional solubility
 	public static Compound instance(String cid, String absNumber, String smiles,
-			 Compound parent, String inchiKey,  String smilesOrsmilesOrSmilesFromCompoundIdString, String additionalSolubility) 
+			 Compound parent, String inchiKey,  String smilesOrsmilesOrSmilesFromCompoundIdString, String additionalSolubility, BigDecimal molecularWeight) 
 	    {
 		// issue 58
-		return new Compound(cid,absNumber, smiles,  parent, inchiKey, smilesOrsmilesOrSmilesFromCompoundIdString,additionalSolubility );
+		return new Compound(cid,absNumber, smiles,  parent, inchiKey, smilesOrsmilesOrSmilesFromCompoundIdString,additionalSolubility,  molecularWeight );
 	    }
 
 	public static Compound instance(String cid) 
 		{
-		return new Compound(cid, null, null, null, null, null, null);
+		return new Compound(cid, null, null, null, null, null, null, null);
 		}
 
 	@Id()
@@ -124,7 +125,7 @@ public class Compound implements IClusterable
 
 	// issue 27 2020
 	// issue 58
-	private Compound(String cid, String absNumber, String smiles,  Compound parent, String inchiKey,  String smilesOrSmilesFromCompoundIdStr, String additionalSolubility) 
+	private Compound(String cid, String absNumber, String smiles,  Compound parent, String inchiKey,  String smilesOrSmilesFromCompoundIdStr, String additionalSolubility, BigDecimal molecularWeight) 
 		{
 		this.cid = cid;
 		this.chem_abs_number = absNumber;
@@ -134,7 +135,7 @@ public class Compound implements IClusterable
 			{
 			this.molecular_formula = getFormula(smilesOrSmilesFromCompoundIdStr);
 			this.logP = new BigDecimal(getLogp(smilesOrSmilesFromCompoundIdStr));
-			this.molecular_weight = new BigDecimal(getMass(smilesOrSmilesFromCompoundIdStr));
+			this.molecular_weight = (molecularWeight == null) ? new BigDecimal(getMass(smilesOrSmilesFromCompoundIdStr)) : molecular_weight;
 			this.nominalMass = new BigDecimal(getExactMass(smilesOrSmilesFromCompoundIdStr));
 			}
 		// issue 58
@@ -171,7 +172,7 @@ public class Compound implements IClusterable
 			this.molecular_formula = getFormula(smilesOrSmilesFromCompoundIdStr);
 	        // issue 45			
 			this.logP = this.logP = new BigDecimal(getLogp(smilesOrSmilesFromCompoundIdStr));
-			this.molecular_weight = new BigDecimal(getMass(smilesOrSmilesFromCompoundIdStr));
+			this.molecular_weight = (StringUtils.isEmptyOrNull(dto.getMolecular_weight()) ? new BigDecimal(getMass(smilesOrSmilesFromCompoundIdStr)) : new BigDecimal(dto.getMolecular_weight()));
 			this.nominalMass = new BigDecimal(getExactMass(smilesOrSmilesFromCompoundIdStr));			
 			}
 		}
