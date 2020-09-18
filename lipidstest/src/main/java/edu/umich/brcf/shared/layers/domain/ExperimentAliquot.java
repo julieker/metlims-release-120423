@@ -26,15 +26,15 @@ public class ExperimentAliquot implements Serializable
 	@EmbeddedId
 	protected ExperimentAliquotPK id;
 
-	// Issue 250
+	// Issue 79
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SAMPLE_ID", insertable = false, updatable = false)
-	@org.hibernate.annotations.ForeignKey(name = "SAMPLE_ASSAYS_FK1")
+	@JoinColumn(name = "ALIQUOT_ID", insertable = false, updatable = false)
+	@org.hibernate.annotations.ForeignKey(name = "EXPERIMENT_ALIQUOT_FK1")
 	private Experiment experiment;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ASSAY_ID", insertable = false, updatable = false)
-	@org.hibernate.annotations.ForeignKey(name = "SAMPLE_ASSAYS_FK2")
+	@JoinColumn(name = "EXP_ID", insertable = false, updatable = false)
+	@org.hibernate.annotations.ForeignKey(name = "EXPERIMENT_ALIQUOT_FK2")
 	private Aliquot aliquot;
 
 
