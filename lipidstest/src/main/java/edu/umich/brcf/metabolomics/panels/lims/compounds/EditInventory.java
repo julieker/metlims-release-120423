@@ -111,7 +111,7 @@ public class EditInventory extends WebPage
 						if (container!=null)
 							updateDetailsForCid(container, invDto.getCid());
 						else
-							printBarcodes(inv.getInventoryId());						
+							container.printBarcodes(inv.getInventoryId());						
 						setResponsePage(getPage());
 						}
 					catch (RuntimeException e) { doError(e.getMessage(), target); } 
@@ -131,17 +131,6 @@ public class EditInventory extends WebPage
 			if (msg != null)
 				EditInventory.this.error(msg);
 			target.add(EditInventory.this.get("feedback"));
-			}
-		
-		private void printBarcodes(String cid)
-			{
-			List<ValueLabelBean> barcodesList = new ArrayList<ValueLabelBean>();
-			barcodesList.add(new ValueLabelBean(cid, null));
-		//	String errMsg=new PrintableBarcode(barcodePrintingService, "Compound Inventory Barcode Printer",barcodesList).print();			
-			// JAK print on compound zebra printer 
-			String errMsg=new PrintableBarcode(barcodePrintingService, "Compound Zebra",barcodesList).print();
-			if (errMsg.length()>0)
-				throw new RuntimeException(errMsg);
 			}
 				
 		private void updateDetailsForCid(final InventoryDetailPanel container, final String cid)

@@ -21,14 +21,21 @@ import edu.umich.brcf.metabolomics.layers.service.InventoryService;
 import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Inventory;
 import edu.umich.brcf.shared.layers.service.AliquotService;
+import edu.umich.brcf.shared.layers.service.BarcodePrintingService;
 import edu.umich.brcf.shared.layers.service.UserService;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.util.behavior.OddEvenAttributeModifier;
+import edu.umich.brcf.shared.util.io.StringUtils;
+import edu.umich.brcf.shared.util.structures.PrintableBarcode;
+import edu.umich.brcf.shared.util.structures.ValueLabelBean;
 
 public class InventoryDetailPanel extends Panel
 	{
 	@SpringBean
 	CompoundService compoundService;
+	
+	@SpringBean 
+	BarcodePrintingService barcodePrintingService;
 	
 	// issue 61
 	@SpringBean 
@@ -112,6 +119,7 @@ public class InventoryDetailPanel extends Panel
 				listItem.add(new Label("createdBy", new Model(userService.getFullNameByUserId(alq.getCreatedBy()))));
 			    listItem.add(buildLinkToModalAliquot("editAliquot", modal2, detailPanel , true, alq)).setVisible(true);
 				listItem.add(buildLinkToModalDeleteAliquot("deleteAliquot",alq,modal2,  detailPanel));
+				listItem.add(buildLinkPrintAliquot("printAliquot",alq));
 				}
 			});			
 		container = new WebMarkupContainer("itemList");
@@ -147,7 +155,6 @@ public class InventoryDetailPanel extends Panel
 		{
 		// issue 39
 		AjaxLink alqLink;
-		// new AjaxLink <Void>(id)
 		alqLink =  new AjaxLink <Void>(linkID)
 			{
 			@Override
@@ -171,10 +178,40 @@ public class InventoryDetailPanel extends Panel
 				modal1.show(target);
 				}
 			};
-			if (linkID.equals("aliquotLink"))
-				alqLink.add(new Label("aliquotId", alq.getAliquotId()));
+		if (linkID.equals("aliquotLink"))
+		    alqLink.add(new Label("aliquotId", alq.getAliquotId()));
 			return alqLink;
 		}
+	
+	private AjaxLink buildLinkPrintAliquot(final String linkID,  final Aliquot alq) 
+		{
+		// issue 39
+		AjaxLink priAliquotLink;
+		priAliquotLink =  new AjaxLink <Void>(linkID)
+			{
+			public void onClick(AjaxRequestTarget target)
+				{
+				try
+					{
+				    printBarcodes((StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" + alq.getInventory().getInventoryId() + "-" + alq.getCreateDateString());
+					target.appendJavaScript(StringUtils.makeAlertMessage("Printed Aliquot:" + alq.getAliquotId()));
+					}
+				catch (RuntimeException r)
+					{
+					target.appendJavaScript(StringUtils.makeAlertMessage("There was a problem printing :" + r.getMessage()));
+					r.printStackTrace();
+					}
+				catch (Exception e)
+					{
+					target.appendJavaScript(StringUtils.makeAlertMessage(e.getMessage()));
+					e.printStackTrace();
+					}
+				
+				}
+			};
+		return priAliquotLink;
+		}
+	
 	
 	private void setModalDimensions(String linkID, ModalWindow modal1)
 		{
@@ -303,6 +340,17 @@ public class InventoryDetailPanel extends Panel
 	public void setAliquots(List<Aliquot> aliquots)
 		{
 		this.aliquots= aliquots;
+		}
+	
+	// issue 84
+	public void printBarcodes(String id)
+		{
+		System.out.println("here is id:" + id);
+		List<ValueLabelBean> barcodesList = new ArrayList<ValueLabelBean>();
+		barcodesList.add(new ValueLabelBean(id, null));
+		String errMsg=new PrintableBarcode(barcodePrintingService, "Compound Zebra",barcodesList).print();
+		if (errMsg.length()>0)
+			throw new RuntimeException(errMsg);
 		}
 		
 	}
