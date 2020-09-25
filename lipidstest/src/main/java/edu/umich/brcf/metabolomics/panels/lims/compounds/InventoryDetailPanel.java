@@ -345,12 +345,10 @@ public class InventoryDetailPanel extends Panel
 	// issue 84
 	public void printBarcodes(String id)
 		{
-		System.out.println("here is id:" + id);
 		List<ValueLabelBean> barcodesList = new ArrayList<ValueLabelBean>();
 		barcodesList.add(new ValueLabelBean(id, null));
-		String errMsg=new PrintableBarcode(barcodePrintingService, "Compound Zebra",barcodesList).print();
+		String errMsg=new PrintableBarcode(barcodePrintingService, "Compound Zebra",barcodesList).print(true);
 		if (errMsg.length()>0)
 			throw new RuntimeException(errMsg);
-		}
-		
+		}	
 	}
