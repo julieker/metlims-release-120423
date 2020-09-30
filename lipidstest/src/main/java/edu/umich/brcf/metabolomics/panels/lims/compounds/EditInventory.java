@@ -4,8 +4,6 @@
 package edu.umich.brcf.metabolomics.panels.lims.compounds;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -111,7 +109,7 @@ public class EditInventory extends WebPage
 						if (container!=null)
 							updateDetailsForCid(container, invDto.getCid());
 						else
-							container.printBarcodes(inv.getInventoryId());						
+							new PrintableBarcode(barcodePrintingService, "Compound Zebra",null).printBarcodes(inv.getInventoryId(), false);	
 						setResponsePage(getPage());
 						}
 					catch (RuntimeException e) { doError(e.getMessage(), target); } 
@@ -125,7 +123,6 @@ public class EditInventory extends WebPage
 				};
 			}
 		
-
 		private void doError(String msg, AjaxRequestTarget target)
 			{
 			if (msg != null)

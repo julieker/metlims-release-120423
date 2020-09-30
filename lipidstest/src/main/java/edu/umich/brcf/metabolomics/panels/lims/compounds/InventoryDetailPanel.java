@@ -27,7 +27,6 @@ import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.util.behavior.OddEvenAttributeModifier;
 import edu.umich.brcf.shared.util.io.StringUtils;
 import edu.umich.brcf.shared.util.structures.PrintableBarcode;
-import edu.umich.brcf.shared.util.structures.ValueLabelBean;
 
 public class InventoryDetailPanel extends Panel
 	{
@@ -193,7 +192,7 @@ public class InventoryDetailPanel extends Panel
 				{
 				try
 					{
-				    printBarcodes((StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" + alq.getInventory().getInventoryId() + "-" + alq.getCreateDateString());
+					new PrintableBarcode(barcodePrintingService, "Compound Zebra",null).printBarcodes((StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" + alq.getInventory().getInventoryId() + "-" + alq.getCreateDateString(), true);	
 					target.appendJavaScript(StringUtils.makeAlertMessage("Printed Aliquot:" + alq.getAliquotId()));
 					}
 				catch (RuntimeException r)
@@ -205,13 +204,11 @@ public class InventoryDetailPanel extends Panel
 					{
 					target.appendJavaScript(StringUtils.makeAlertMessage(e.getMessage()));
 					e.printStackTrace();
-					}
-				
+					}				
 				}
 			};
 		return priAliquotLink;
 		}
-	
 	
 	private void setModalDimensions(String linkID, ModalWindow modal1)
 		{
@@ -342,13 +339,4 @@ public class InventoryDetailPanel extends Panel
 		this.aliquots= aliquots;
 		}
 	
-	// issue 84
-	public void printBarcodes(String id)
-		{
-		List<ValueLabelBean> barcodesList = new ArrayList<ValueLabelBean>();
-		barcodesList.add(new ValueLabelBean(id, null));
-		String errMsg=new PrintableBarcode(barcodePrintingService, "Compound Zebra",barcodesList).print(true);
-		if (errMsg.length()>0)
-			throw new RuntimeException(errMsg);
-		}	
 	}

@@ -4,6 +4,7 @@ package edu.umich.brcf.shared.util.structures;
 import java.io.DataOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import edu.umich.brcf.shared.layers.service.BarcodePrintingService;
@@ -48,10 +49,20 @@ public class PrintableBarcode implements Serializable
 	}
 
 	// issue 84
+	public void printBarcodes(String id, boolean isAliquot)
+		{
+		barcodesList = new ArrayList<ValueLabelBean>();
+		barcodesList.add(new ValueLabelBean(id, null));
+		String errMsg=print(isAliquot);
+		if (errMsg.length()>0)
+			throw new RuntimeException(errMsg);
+		}	
+	// issue 84
 	public String print ()
 		{
 		return print(false);
 		}
+		
 	public String print(boolean isAliquotPrinting )
 	    {
 		String errMsg="";
@@ -79,7 +90,7 @@ public class PrintableBarcode implements Serializable
 						   	   {
 							   s = "${^XA^LT5^LS-120^FO0,12^BY,1^BXN,2,200^FD" + barcodeBean.getValue().trim()  + "^FS" ;                                
 							   s = s + "^FO0,70^A0N,27,14^FD" +  barcodeBean.getValue().trim()  +  "^XZ}$";  
-						       } 
+						   	   } 
 						addString2=((barcodeBean.getLabel()==null)||(barcodeBean.getLabel().trim().length()==0))? "":"TEXT 0(0,0,1,2) 270 45 "+barcodeBean.getLabel()+'\n';
 						addString1=((barcodeBean.getLabel()==null)||(barcodeBean.getLabel().trim().length()==0))? "TEXT 0(0,0,1,2) 175 90 "+barcodeBean.getValue().trim()+'\n':"TEXT 0(0,0,1,2) 270 5 "+barcodeBean.getValue().trim()+'\n';
 					    if ((barcodeBean.getValue()!=null)&&(barcodeBean.getValue().trim().length()>0))
