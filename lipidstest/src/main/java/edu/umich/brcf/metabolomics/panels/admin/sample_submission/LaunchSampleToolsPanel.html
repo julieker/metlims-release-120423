@@ -169,9 +169,14 @@
 				        	<td style = "width : 50%" class = "sectionHeader">
 				        		<strong>Sample Inventory Report : <span class = "warningMsg"></span>	</strong>
 				        	</td>
+				        	<td style = "width : 50%" class = "sectionHeader">
+				        		<strong>Reprint Barcodes for Aliquots : </strong>
+				        	</td>
+				        	<!-- 
 				        	<td class = "sectionHeader" style = "width : 50%;">
 			   					<strong> <span  class = "warningMsg"></span></strong>
 				        	 </td>
+				        	  -->
 				        </tr>
 			    	</table>
 			    
@@ -201,14 +206,15 @@
 								<table style = "margin-left : 7%; margin-right : 4%;  text-align : left;">
 						       		<tr>
 				       					<td>
-				       						<span style = "font-style : italic"></span>
+				       						<span style = "font-style : italic">Select some or all Aliquot barcode ids for reprint or download to spreadsheet </span>
 				       					</td>
 									</tr>
-									<tr><td></td></tr>
+									<tr><td>
+									<span wicket:id = "printAliquotBarcodesByExperiment"></span>
+									</td></tr>
 									
 									<tr>
 										<td>
-											<span class = "editSamplePanel"></span>
 										</td>
 									</tr>
 								</table>

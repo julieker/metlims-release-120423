@@ -1,25 +1,33 @@
-
+/**********************
+ * Updated by Julie Keros Sept 2000
+ * Added aliquotIdsForExpId ,
+ * getMatchingAliquotIds,loadByCid and other routines for Aliquots.
+ **********************/
 package edu.umich.brcf.shared.layers.dao;
-
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.Query;
-
 //import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.stereotype.Repository;
 import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.ExperimentAliquot;
-import edu.umich.brcf.shared.layers.domain.SampleAssay;
 import edu.umich.brcf.shared.layers.domain.VolumeUnits;
-
 
 // issue 61
 
 @Repository
 public class AliquotDAO extends BaseDAO 
-	{
+	{	
+	// issue 86
+	public List<String> aliquotIdsForExpId(String eid)
+		{
+		Query query = getEntityManager().createNativeQuery("select cast(aliquot_id as char(9)) from experiment_aliquot where exp_id = ?1 "
+				+ " order by  1 desc").setParameter(1, eid);
+		List<String> aliquotList = query.getResultList();
+		return aliquotList;
+		}
+	
 	// issue 61 2020
 	public List<String> getMatchingAliquotIds(String input)
 		{

@@ -1,6 +1,7 @@
 ///////////////////////////////////////
 //ExperiementSelectorPanel.java
 //Written by Jan Wigginton June 2015
+//Updated by Julie Keros Oct 2020
 ///////////////////////////////////////
 
 //ExperimentOrDateSearchPanel
@@ -24,7 +25,6 @@ public abstract class ExperimentSelectorPanel extends AccessLimitedPanel
 	{
 	@SpringBean
 	private ExperimentService experimentService;
-
 	DropDownChoice<String> editExperimentDrop;
 	String selectedExperiment = null;
 	IndicatingAjaxButton editButton;
@@ -33,22 +33,17 @@ public abstract class ExperimentSelectorPanel extends AccessLimitedPanel
 	public ExperimentSelectorPanel(String id)
 		{
 		super(id);
-
-		add(new FeedbackPanel("feedback"));
-
+		add(new FeedbackPanel("feedback"));        
 		ExperimentSelectorForm lde = new ExperimentSelectorForm("experimentSelectorForm");
 		lde.setMultiPart(true);
 		add(lde);
 		}
 
-	
 	public class ExperimentSelectorForm extends Form
 		{
 		ExperimentSelectorForm(String id)
 			{
 			super(id);
-			String buttonLabel = "Edit Data";
-
 			add(editExperimentDrop = buildEditExperimentDropdown("editExperimentDropdown", "selectedExperiment"));
 			add(editButton = buildEditButton());
 			editButton.setOutputMarkupId(true);
@@ -87,12 +82,9 @@ public abstract class ExperimentSelectorPanel extends AccessLimitedPanel
 			{
 			editExperimentDrop = new DropDownChoice(id, new PropertyModel<String>(this, propertyName),
 					new ExperimentListModel("both", experimentService, false));
-
 			editExperimentDrop.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForEditExperimentDrop"));
-
 			return editExperimentDrop;
 			}
-
 		
 		private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior(final String event, final String response)
 			{
@@ -111,12 +103,10 @@ public abstract class ExperimentSelectorPanel extends AccessLimitedPanel
 				};
 			}
 
-
 		public String getSelectedExperiment()
 			{
 			return selectedExperiment;
 			}
-
 		
 		public void setSelectedExperiment(String ee)
 			{
@@ -134,6 +124,5 @@ public abstract class ExperimentSelectorPanel extends AccessLimitedPanel
 		buttonLabel = label;
 		}
 
-	
 	public abstract void doSubmit(String selectedExperiment, AjaxRequestTarget target);
 	}

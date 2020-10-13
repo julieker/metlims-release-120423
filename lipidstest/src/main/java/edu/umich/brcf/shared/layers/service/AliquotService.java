@@ -1,7 +1,6 @@
 // Updated by Julie Keros June 2 2020
 package edu.umich.brcf.shared.layers.service;
 
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +25,9 @@ import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.util.io.StringUtils;
 import edu.umich.brcf.shared.util.utilpackages.DateUtils;
 
-
 @Transactional
-public class AliquotService {
-	
+public class AliquotService 
+    {	
 	AliquotDAO aliquotDao;
 	SampleDAO sampleDao;
 	UserDAO userDao;
@@ -99,8 +97,6 @@ public class AliquotService {
 		Compound cmpd=compoundDao.loadCompoundById(dto.getCid());
 		Location loc = locationDao.loadById(dto.getLocation());
 		Inventory inv = inventoryDao.loadById(dto.getParentId());
-	//	Experiment exp = dto.getExperiment() != null && dto.getExperiment() != "Choose One" && dto.getExperiment() != "None" ? experimentDao.loadById(dto.getExperiment()) : null;
-		Experiment exp = null;
 		if (!StringUtils.isEmptyOrNull(aliquotAssigned))
 			dto.setAliquotId(aliquotAssigned);
 		if (dto.getAliquotId() != null && !"to be assigned".equals(dto.getAliquotId()))
@@ -176,8 +172,7 @@ public class AliquotService {
 		this.compoundDao = compoundDao;
 		}
 	
-	// issue 61
-	
+	// issue 61	
 	public AliquotDAO getAliquotDao()
 		{
 		return aliquotDao;
@@ -245,4 +240,10 @@ public class AliquotService {
 		Aliquot aliquot = aliquotDao.loadById(aliquotId);
 		aliquotDao.createExperimentAliquot(ExperimentAliquot.instance(exp, aliquot));
 		}
-}
+	
+	//issue 86
+	public List<String> aliquotIdsForExpId(String eid)
+		{
+		return aliquotDao.aliquotIdsForExpId(eid);
+		}
+    }
