@@ -250,7 +250,13 @@ public class LaunchSampleToolsPanel extends Panel
 					target.appendJavaScript("alert('" + msg + "')");
 					}
 				else
-					showBarcodeSelectorPage("print", selectedExperiment, modal, target, uniqueAliquotLabelsAndIds);
+					// issue 86
+					{
+					if (id.equals("printAliquotBarcodesByExperiment"))
+					    showBarcodeSelectorPage("print aliquots", selectedExperiment, modal, target, uniqueAliquotLabelsAndIds);
+					else
+						showBarcodeSelectorPage("print", selectedExperiment, modal, target, uniqueAliquotLabelsAndIds);
+					}	
 				}
 			};
 			
@@ -258,7 +264,7 @@ public class LaunchSampleToolsPanel extends Panel
 		return panel;
 		}
 			
-	public void showBarcodeSelectorPage	(String action, final String expId, final ModalWindow modal, AjaxRequestTarget target, 
+	public void showBarcodeSelectorPage	(final String action, final String expId, final ModalWindow modal, AjaxRequestTarget target, 
 			final List<String> barcodesForExperiment)
 		{
 		modal.setInitialWidth(700);
@@ -270,12 +276,22 @@ public class LaunchSampleToolsPanel extends Panel
 			{
 			public Page createPage()
 				{
-				OptimizedBarcodeSelectorPage page = new OptimizedBarcodeSelectorPage("barcodeSelector", modal, dummyPairLabels,  expId, 
-						"Select sample barcode ids");
-				
-				page.setHeader1Label("Sample ID");
-				page.setHeader2Label("");
-				return page;
+				if (action.equals("print aliquots"))
+					{
+					OptimizedBarcodeSelectorPage page = new OptimizedBarcodeSelectorPage("barcodeSelector", modal, dummyPairLabels,  expId, 
+							"Select aliquot ids/labels");					
+					page.setHeader1Label("Aliquot ID/Label");
+					page.setHeader2Label("");
+					return page;
+					}
+				else
+					{
+					OptimizedBarcodeSelectorPage page = new OptimizedBarcodeSelectorPage("barcodeSelector", modal, dummyPairLabels,  expId, 
+						"Select sample barcode ids");			
+					page.setHeader1Label("Sample ID");
+					page.setHeader2Label("");
+					return page;
+					}				
 				}
 			});		
 		modal.show(target);
