@@ -267,7 +267,7 @@ public class LaunchSampleToolsPanel extends Panel
 	public void showBarcodeSelectorPage	(final String action, final String expId, final ModalWindow modal, AjaxRequestTarget target, 
 			final List<String> barcodesForExperiment)
 		{
-		modal.setInitialWidth(700);
+		modal.setInitialWidth(800); // issue 86
 		modal.setInitialHeight(650);	
 		final List<Pair> dummyPairLabels = new ArrayList<Pair>();
 		for (String sampleId: barcodesForExperiment)

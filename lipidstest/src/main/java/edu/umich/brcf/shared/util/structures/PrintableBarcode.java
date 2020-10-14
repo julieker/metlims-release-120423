@@ -81,7 +81,8 @@ public class PrintableBarcode implements Serializable
 						// JAK adjust for smaller labels
 						// JAK issue 157 print correctly on both Zebra printers						
 						// issue 84
-						   if (!isAliquotPrinting)
+						// issue 86
+						   if (!isAliquotPrinting && barcodeBean.getValue().length() <= 9 )
 						       {
                                s = "${^XA^LT5^LS-120^FO0,12^BY,5^BXN,4,200^FD" + barcodeBean.getValue().trim()  + "^FS" ;                                
                                s = s + "^FO0,70^A0N,38,25^FD" +  barcodeBean.getValue().trim()  +  "^XZ}$";  

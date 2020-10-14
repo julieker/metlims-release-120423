@@ -22,7 +22,7 @@ public class AliquotDAO extends BaseDAO
 	// issue 86
 	public List<String> aliquotIdsForExpId(String eid)
 		{
-		Query query = getEntityManager().createNativeQuery("select rpad(nvl(aliquot_label, t2.aliquot_id),20) from experiment_aliquot t1, aliquot t2 where t1.aliquot_id = t2.aliquot_id and exp_id = ?1 "
+		Query query = getEntityManager().createNativeQuery("select cast(aliquot_id as char(9)) from experiment_aliquot where exp_id = ?1 "
 				+ " order by  1 desc").setParameter(1, eid);
 		List<String> aliquotList = query.getResultList();
 		return aliquotList;

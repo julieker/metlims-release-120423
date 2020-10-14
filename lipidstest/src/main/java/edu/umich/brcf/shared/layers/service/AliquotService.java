@@ -242,8 +242,23 @@ public class AliquotService
 		}
 	
 	//issue 86
+	// include inventory id and date
 	public List<String> aliquotIdsForExpId(String eid)
 		{
-		return aliquotDao.aliquotIdsForExpId(eid);
+		List<String> aliquotIdList =  aliquotDao.aliquotIdsForExpId(eid);
+		return  getInventoryDateList(aliquotIdList);
+		}
+	
+	// issue 86
+	public List<String> getInventoryDateList(List<String> aliquotIdList)
+		{
+		List<String> aliquotIdListInvDate = new ArrayList <String> ();
+		for (String aliquotId: aliquotIdList )
+			{
+			Aliquot alq = loadById(aliquotId);
+			String invDateStr = (StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" + alq.getInventory().getInventoryId() + "-" + alq.getCreateDateString();
+			aliquotIdListInvDate.add(invDateStr);
+			}
+		return aliquotIdListInvDate;
 		}
     }
