@@ -185,7 +185,7 @@ public class AssayAliquotDetailPanel extends Panel
 		this.aliquots= aliquots;
 		}
 	
-	private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior(String event, final String response, AliquotDTO aliquotDto)
+	private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior(String event, final String response, final AliquotDTO aliquotDto)
 		{
 		return new AjaxFormComponentUpdatingBehavior(event)
 	    	{
