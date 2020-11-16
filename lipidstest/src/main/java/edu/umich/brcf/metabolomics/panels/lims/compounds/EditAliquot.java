@@ -17,7 +17,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
@@ -26,12 +25,14 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
@@ -47,6 +48,7 @@ import edu.umich.brcf.metabolomics.layers.service.InventoryService;
 import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Inventory;
 import edu.umich.brcf.shared.layers.service.AliquotService;
+import edu.umich.brcf.shared.layers.service.AssayService;
 import edu.umich.brcf.shared.layers.service.LocationService;
 import edu.umich.brcf.shared.layers.service.UserService;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
@@ -57,6 +59,8 @@ public class EditAliquot extends WebPage
 	{
 	@SpringBean
 	AliquotService aliquotService;	
+	@SpringBean
+	AssayService assayService;	
 	@SpringBean
 	LocationService locationService;
 	@SpringBean
@@ -116,6 +120,8 @@ public class EditAliquot extends WebPage
 	WebMarkupContainer dilutionContainer;
 	int maxSolventLength = 94; // issue 79 allow for OTHER:	
 	boolean calculateOnly = true;
+	ListMultipleChoice<String> selectedAssays;
+	
 	public AliquotDTO getAliquotDto() { return aliquotDto; }
 	public void setAliquotDto(AliquotDTO aliquotDto)  { this.aliquotDto = aliquotDto; }
 		
@@ -311,8 +317,24 @@ public class EditAliquot extends WebPage
 			add (solventLabel);
 			solventLabel.setOutputMarkupId(true);
 			solventLabel.setOutputMarkupPlaceholderTag(true) ;			
-			DropDownChoice selectedParentInventoryDD = new DropDownChoice("parentId", getListOfInvIds(detailPanel.getCompound().getInventory()) );
-			add (selectedParentInventoryDD);           
+			DropDownChoice selectedParentInventoryDD = new DropDownChoice("parentId", getListOfInvIds(detailPanel.getCompound().getInventory()) );			
+			add (selectedParentInventoryDD); 
+			// issue 100
+			selectedAssays = new ListMultipleChoice ("assayIds",assayService.allAssayNames() )	
+			    {
+				@Override
+				protected void onComponentTag(ComponentTag tag)
+					{
+					super.onComponentTag(tag);
+					tag.put("onfocus", "this.size = 10;");
+					tag.put("onblur", "this.size = 1;");
+					tag.put("size", "1");
+					}				
+				};	
+			add (selectedAssays);
+			selectedAssays.setOutputMarkupId(true);
+			selectedAssays.setOutputMarkupPlaceholderTag(true) ;
+			selectedAssays.add(buildStandardFormComponentUpdateBehavior("change", "updateAssays", aliquotDto, detailPanel, editAliquot )); // issue 27 2020
 			weightedAmountLabel  = new Label("weightedAmountLabel", "Weighted Amt")	
 			    {
 				@Override
@@ -649,6 +671,7 @@ public class EditAliquot extends WebPage
 						if (aliquotDto.getReplicate() == null || aliquotDto.getReplicate() <= 0)
 							aliquotDto.setReplicate(1);	
 						List <Aliquot> aliquotList =  aliquotService.save(aliquotDto, aliquotIdAssigned);
+						/// issue 100 
 						if  (!StringUtils.isNullOrEmpty(aliquotIdAssigned))
 							{
 							String msg = "<span style=\"color:blue;\">" +   "Aliquot/Name detail saved for Aliquot:" + aliquotIdAssigned +  "." + "</span>";	;
@@ -744,7 +767,7 @@ public class EditAliquot extends WebPage
 				aliquotDto.setIsDry(true);
 		    return dryCheckBox;
 		    }
-		
+			
 		// issue 61 2020
 		private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior(String event, final String response, final AliquotDTO aliquotDto, InventoryDetailPanel detailPanel , final EditAliquot editAliquot)
 			{
@@ -755,6 +778,8 @@ public class EditAliquot extends WebPage
 			    	{
 			    	switch (response)
 			        	{
+			    	    case "updateAssays" :
+			    	    	break;
 			        	case "updateNeatOrDilution" :
 			        		aliquotDto.setNeatOrDilution (aliquotDto.getNeatOrDilutionText().equals("Neat") ? '1' : '0');
 			        		if (aliquotNeatOrDilutionDD.getChoices().contains("Choose One"))
@@ -1022,6 +1047,12 @@ public class EditAliquot extends WebPage
 			unit = u;
 			}
 		
+		// issue 100
+		public List <String> getValuesForAssayAliquot (Aliquot alq)
+			{
+			return aliquotService.retrieveAssayNames(alq.getAliquotId());
+			}
+			
 		public void setValuesForEdit (Aliquot alq)
 			{
 			if  (!StringUtils.isNullOrEmpty(alq.getSolvent()) && alq.getSolvent().contains("OTHER:"))
@@ -1032,6 +1063,7 @@ public class EditAliquot extends WebPage
 			else
 			    aliquotDto.setSolventText(alq.getSolvent());
 			aliquotDto.setIvol(alq.getIvol().toString());
+			aliquotDto.setAssayIds(getValuesForAssayAliquot(alq)); // issue 100
 			aliquotDto.setDcon(alq.getDcon().toString());
 			aliquotDto.setIcon(alq.getIcon().toString());
 			aliquotDto.setIsDry(alq.getDry() ==  null ? false : (alq.getDry().equals('1') ? true : false));

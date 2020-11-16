@@ -1,0 +1,110 @@
+<wicket:head>
+		<link rel="stylesheet" type="text/css" href="tabstyles.css"/>
+		<link rel="stylesheet" type="text/css" href="worklist.css"/>
+</wicket:head>
+<wicket:panel>
+<body>
+<br>
+<br>
+<br>
+	    <div wicket:id="modal2"></div>
+		<div>
+		<!--  
+		<fieldset class = "dialog_fieldset" style = "height : 80%; margin-top : .5%; margin-bottom : .5%; width :90%; margin-left : 5%; margin-right : 5%">	
+			<legend class = "dialog_legend">
+			-->
+		   		<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">View Aliquot</span>
+		  <!--  
+		   </legend>
+		   -->
+        <center>	
+        <br>
+        <br>
+	<table style = "width :100%"  border="0">
+			
+			<tr>
+			  <td style = "text-align :right">List of Assays:</td>
+			 <td><select wicket:id = "assayId"></select></td>
+			</tr>
+			
+			</table>
+	  <table wicket:id="itemAliquotList" style = "width :100%"  border="0">	
+	          
+	         <tr wicket:id = "aliquots">
+	           
+			      <td>
+			        <a wicket:id = "aliquotLink"><span wicket:id = "aliquotId">Huckleberry Finn</span> </a>
+			      </td>
+			          
+			       <td>
+			        	<span wicket:id = "aliquotLabel">Huckleberry Finn</span> 
+			      </td>
+			      
+			        <td>
+			        	<span wicket:id = "location">Huckleberry Finn</span> 
+			      </td>
+			      
+			      <td>
+			        <span wicket:id = "aliquotNeatDilutionUnits">Mark Twain</span>
+			     </td>
+			     
+			    
+			     <td>
+			      	<span wicket:id = "parentInventory">(123) 456-7890</span>
+			      </td>
+			      
+			      <td>
+			      	<span wicket:id = "createDate">(123) 456-7890</span>
+			      </td>
+			      
+			      <td>
+			      	<span wicket:id = "createdBy">(123) 456-7890</span>
+			      </td>
+	          </tr>
+	  	
+		</table>
+			
+			<!--  
+		    <tr wicket:id = "deletedAliquots">
+			      <td>
+			        	<span wicket:id = "aliquotId">Huckleberry Finn</span>
+			      </td>
+			       <td>
+			        	<span wicket:id = "aliquotLabel">Huckleberry Finn</span>
+			      </td>
+			      <td>
+			        <span wicket:id = "aliquotNeatDilutionUnits">Mark Twain</span>
+			     </td>
+			     
+			    
+			     <td>
+			      	<span wicket:id = "parentInventory">(123) 456-7890</span>
+			      </td>
+			      
+			      <td>
+			      	<span wicket:id = "createDate">(123) 456-7890</span>
+			      </td>
+			      
+			       <td>
+			      	<span wicket:id = "createdBy">(123) 456-7890</span>
+			      </td>
+			      
+			       <td>
+			      	<span wicket:id = "deleteReason">(123) 456-7890</span>
+			      </td>
+			      
+			      <td style = "text-align : center">
+			      	<a wicket:id = "viewAliquot" href="#">View</a>
+			      </td>
+			 			
+		    </tr>
+		    
+	  	</table>	
+	-->
+    </center>
+    <!--  
+	</fieldset>
+	-->
+	</div>	
+</body>
+</wicket:panel>

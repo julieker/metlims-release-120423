@@ -20,6 +20,8 @@
  		<property name="locationDao" ref="locationDAO" />
  		<property name="inventoryDao" ref="inventoryDAO" />
  		<property name="experimentDao" ref="experimentDAO" />
+ 		<!-- issue 100 -->
+ 		<property name="assayDao" ref="assayDAO" />
  		<!-- issue 61 get rid of inventoryDAO -->
  	</bean>
  

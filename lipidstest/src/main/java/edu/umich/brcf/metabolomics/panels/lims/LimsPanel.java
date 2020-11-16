@@ -11,9 +11,9 @@ import org.apache.wicket.model.Model;
 import edu.umich.brcf.metabolomics.panels.lims.compounds.CompoundsPanel;
 import edu.umich.brcf.metabolomics.panels.lims.locations.LocationsPanel;
 import edu.umich.brcf.metabolomics.panels.lims.newestprep.LaunchPrepTools;
-import edu.umich.brcf.metabolomics.panels.lims.newestprep.SmallPrepSearchPanel;
 import edu.umich.brcf.metabolomics.panels.lims.newexperiment.SmallExperimentSearchPanel;
 import edu.umich.brcf.metabolomics.panels.lims.project.SortableProjectPanel;
+import edu.umich.brcf.metabolomics.panels.lims.assays.AssayAliquotDetailPanel;
 import edu.umich.brcf.metabolomics.panels.lims.client.SortableClientPanel;
 
 
@@ -65,6 +65,11 @@ public class LimsPanel extends Panel
 			public Panel getPanel(String panelId) { return new CompoundsPanel(panelId); }
 			});
 		
+		// issue 100
+		tabs.add(new AbstractTab(new Model("ASSAYS & ALIQUOTS")) 
+			{
+			public Panel getPanel(String panelId) { return new AssayAliquotDetailPanel(panelId); }
+			});
 	
 		return tabs;
 		}

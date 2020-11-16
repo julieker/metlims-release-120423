@@ -30,15 +30,13 @@ public class ExperimentAliquot implements Serializable
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ALIQUOT_ID", insertable = false, updatable = false)
 	@org.hibernate.annotations.ForeignKey(name = "EXPERIMENT_ALIQUOT_FK1")
-	private Experiment experiment;
-
+	// issue 98
+	private Aliquot aliquot;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "EXP_ID", insertable = false, updatable = false)
 	@org.hibernate.annotations.ForeignKey(name = "EXPERIMENT_ALIQUOT_FK2")
-	private Aliquot aliquot;
-
-
-	
+	private Experiment experiment;
 
 	public ExperimentAliquot()
 		{
@@ -65,7 +63,5 @@ public class ExperimentAliquot implements Serializable
 		{
 		return aliquot;
 		}
-
-
 	
 	}

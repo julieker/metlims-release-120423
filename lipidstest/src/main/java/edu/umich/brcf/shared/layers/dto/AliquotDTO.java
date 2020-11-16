@@ -78,6 +78,9 @@ public class AliquotDTO implements Serializable
 	private String weightedAmountUnits;
 	private String deleteReason ;
 	private String otherReason ;// issue 79
+	private List<String> assayIds;
+	private String assayId;
+	
 	// issue 61 2020
 	// issue 31 2020
 	// issue 61 2020
@@ -477,4 +480,29 @@ public class AliquotDTO implements Serializable
 	    {
 		this.otherReason = otherReason;
 	    }
+	
+	
+	// issue 100 list of assay ids for an assay in EditAliquot
+	public List<String> getAssayIds() 
+		{
+		return assayIds;
+		}
+
+	public void setAssayIds(List <String> assayIds) 
+		{
+		this.assayIds = assayIds;
+		}
+	
+	// Issue 100 assay id chosen for search in AssayAliquotDetailPanel
+	public String getAssayId() 
+		{
+		return assayId;
+		}
+
+	public void setAssayId(String assayId) 
+		{
+		this.assayId = assayId;
+		}
+	
+	
 	}

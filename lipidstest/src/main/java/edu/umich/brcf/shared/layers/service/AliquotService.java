@@ -10,12 +10,15 @@ import org.springframework.util.Assert;
 import edu.umich.brcf.metabolomics.layers.dao.CompoundDAO;
 import edu.umich.brcf.metabolomics.layers.domain.Compound;
 import edu.umich.brcf.shared.layers.dao.AliquotDAO;
+import edu.umich.brcf.shared.layers.dao.AssayDAO;
 import edu.umich.brcf.shared.layers.dao.ExperimentDAO;
 import edu.umich.brcf.shared.layers.dao.InventoryDAO;
 import edu.umich.brcf.shared.layers.dao.LocationDAO;
 import edu.umich.brcf.shared.layers.dao.SampleDAO;
 import edu.umich.brcf.shared.layers.dao.UserDAO;
 import edu.umich.brcf.shared.layers.domain.Aliquot;
+import edu.umich.brcf.shared.layers.domain.Assay;
+import edu.umich.brcf.shared.layers.domain.AssayAliquot;
 import edu.umich.brcf.shared.layers.domain.Experiment;
 import edu.umich.brcf.shared.layers.domain.ExperimentAliquot;
 import edu.umich.brcf.shared.layers.domain.Inventory;
@@ -35,6 +38,8 @@ public class AliquotService
 	LocationDAO locationDao;
 	InventoryDAO inventoryDao;
 	ExperimentDAO experimentDao;
+	AssayDAO assayDao;
+	
 	// issue 61
 	public Aliquot loadById(String id) 
 		{
@@ -57,6 +62,12 @@ public class AliquotService
 	public void deleteAndSetReason(String aliquotId, String deleteReason) 
 		{
 		aliquotDao.deleteAndSetReason(aliquotId, deleteReason);
+		}
+	
+	// issue 100
+	public void deleteAssayAliquot ( String aliquotId) 
+		{
+		aliquotDao.deleteAssayAliquot(aliquotId);
 		}
 	
 	// issue 79
@@ -105,6 +116,7 @@ public class AliquotService
 				aliquot = aliquotDao.loadById(dto.getAliquotId());
 				aliquot.update(dto);
 				aliquotList.add(aliquot);
+				saveAssays (dto.getAssayIds(), aliquot); // issue 100
 				}
 		    catch (Exception e)
 		        {
@@ -120,6 +132,7 @@ public class AliquotService
 					if (StringUtils.isEmptyOrNull(dto.getCreatedBy()))
 						dto.setCreatedBy(((MedWorksSession) Session.get()).getCurrentUserId());
 					aliquotDao.createAliquot(aliquot);	
+					saveAssays(dto.getAssayIds(), aliquot); // issue 100
 					aliquotList = new ArrayList <Aliquot> ();
 					aliquotList.add(aliquot);
  					return aliquotList;
@@ -132,6 +145,7 @@ public class AliquotService
 						    dto.setAliquotLabel(aliquotFirstString + "_" + i);
 						aliquot = Aliquot.instance( dto.getReplicate(),  loc,  inv, dto.getIsDry() ? '1' : '0' , cmpd, dto.getSolvent(),  DateUtils.calendarFromDateStr(dto.getCreateDate(), Aliquot.ALIQUOT_DATE_FORMAT), dto.getAliquotLabel(), dto.getNotes(), dto.getCreatedBy(), dto.getNeatOrDilution(), dto.getNeatOrDilutionUnits(), new BigDecimal(dto.getIvol()), new BigDecimal(dto.getDcon()), new BigDecimal(dto.getIcon()), new BigDecimal(dto.getWeightedAmount()), new BigDecimal(dto.getDConc()), (dto.getDvol()== null ? new BigDecimal(0) : new BigDecimal(dto.getDvol())), dto.getDConcentrationUnits(), dto.getWeightedAmountUnits(),  new BigDecimal(dto.getMolecularWeight()));	
 						aliquotDao.createAliquot(aliquot);	
+						saveAssays(dto.getAssayIds(), aliquot); // issue 100
 					    if (i == 1)
 						    {
 							aliquot = aliquotDao.loadById(aliquot.getAliquotId());
@@ -234,11 +248,31 @@ public class AliquotService
 		return experimentDao;
 		}
 	
+	public void setAssayDao(AssayDAO assayDao) 
+	    {
+		this.assayDao = assayDao;
+	    }
+
+	public AssayDAO getAssayDao()
+	    {
+		return assayDao;
+		}
+	public List<String> retrieveAssayNames(String aliquotId)
+		{
+		return aliquotDao.retrieveAssayNames(aliquotId);
+		}
+	
 	// issue 79
 	public void saveExperimentAliquot(String aliquotId, Experiment exp)
 		{			
 		Aliquot aliquot = aliquotDao.loadById(aliquotId);
 		aliquotDao.createExperimentAliquot(ExperimentAliquot.instance(exp, aliquot));
+		}
+	
+	// issue 100
+	public void saveAssayAliquot(Aliquot aliquot, Assay assay)
+		{			
+		aliquotDao.createAssayAliquot(AssayAliquot.instance(assay, aliquot));
 		}
 	
 	//issue 86
@@ -261,4 +295,22 @@ public class AliquotService
 			}
 		return aliquotIdListInvDate;
 		}
+	// issue 100
+	private void saveAssays (List <String> assayIds, Aliquot aliquot )
+		{
+		for (String assayId : assayIds) 
+			{
+	        Assay assay = assayDao.loadAssayByID(assayId.substring(assayId.lastIndexOf("(") + 1,assayId.lastIndexOf(")") ));
+	        aliquotDao.deleteAssayAliquot(aliquot.getAliquotId());
+	        aliquotDao.createAssayAliquot(AssayAliquot.instance(assay, aliquot));
+			}
+		}
+	
+	// issue 100
+	public List<Aliquot> getAliquotsFromAssay (String assayId)
+		{
+		List<Aliquot> aliquotsForAssay = aliquotDao.getAliquotsFromAssay(assayId);
+		return aliquotsForAssay;
+		}
+	
     }

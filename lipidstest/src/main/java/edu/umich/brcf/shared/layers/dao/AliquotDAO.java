@@ -11,6 +11,7 @@ import javax.persistence.Query;
 //import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.stereotype.Repository;
 import edu.umich.brcf.shared.layers.domain.Aliquot;
+import edu.umich.brcf.shared.layers.domain.AssayAliquot;
 import edu.umich.brcf.shared.layers.domain.ExperimentAliquot;
 import edu.umich.brcf.shared.layers.domain.VolumeUnits;
 
@@ -140,4 +141,39 @@ public class AliquotDAO extends BaseDAO
 	    query.executeUpdate();			
 	    }
 		
+	// issue 100
+	public void deleteAssayAliquot ( String aliquotId)
+	    {	
+	    Query query = getEntityManager().createNativeQuery(" delete from assay_aliquot where aliquot_id = ?1  " ).setParameter(1,aliquotId);
+	    query.executeUpdate();			
+	    }
+	
+	public List<String> retrieveAssayNames(String aliquotId)
+		{
+		Query query = getEntityManager().createNativeQuery("select a.assay_name||' ('||a.assay_id||')' from assays a, assay_aliquot al where a.assay_id = al.assay_id and aliquot_id = ?1").setParameter(1,aliquotId);
+		List<String> assayList = query.getResultList();
+		return assayList;
+		}
+	
+	// issue 100	
+	public void createAssayAliquot(AssayAliquot assayAliquot)
+		{
+		getEntityManager().persist(assayAliquot);
+		}	
+	
+	// issue 100
+	public List<Aliquot> getAliquotsFromAssay (String assayId)
+		{
+		List<String> alqStringLst =  getEntityManager().createNativeQuery("select distinct t1.aliquot_id from assay_aliquot t1, aliquot t2 where t1.aliquot_id = t2.aliquot_id and t1.assay_id = ?1 and deleted is null order by aliquot_id")
+				.setParameter(1, assayId).getResultList();	
+		List<Aliquot> alqList = new ArrayList <Aliquot> ();
+	    for (String alqString : alqStringLst)
+			{
+	    	Aliquot alq = loadById(alqString);
+			initializeTheKids(alq, new String[] { "location", "inventory" , "compound"});
+			alqList.add(alq);
+			}
+		return alqList; 
+		}
+	
 	}

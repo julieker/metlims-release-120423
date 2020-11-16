@@ -246,7 +246,8 @@ public class LaunchSampleToolsPanel extends Panel
 					uniqueAliquotLabelsAndIds = sampleService.sampleIdsForExpId(selectedExperiment);				
 				if (uniqueAliquotLabelsAndIds == null || uniqueAliquotLabelsAndIds.size() == 0)
 					{
-					String msg =  "Nothing to print : Experiment " + selectedExperiment + " has no registered samples.";
+					// issue 98
+					String msg =  "Nothing to print : Experiment " + selectedExperiment + " has no registered " +  (id.equals("printAliquotBarcodesByExperiment") ? "aliquots" : "samples");
 					target.appendJavaScript("alert('" + msg + "')");
 					}
 				else

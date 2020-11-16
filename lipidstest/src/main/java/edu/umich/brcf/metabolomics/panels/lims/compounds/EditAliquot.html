@@ -44,6 +44,11 @@ function refreshParent() {
 		  	</tr>
 		  	
 		  	<tr>
+			  <td style = "text-align :right">Assays chosen for aliquot:</td>
+			 <td><select wicket:id = "assayIds"></select></td>
+			</tr>
+		  			  	
+		  	<tr>
 			  <td style = "text-align :right">Created By:</td>	  
 			  <td><span wicket:id = "userName">Moes ID</span></td>
 			</tr> 
@@ -65,9 +70,10 @@ function refreshParent() {
 			  <td><select wicket:id = "location"></select></td>
 			</tr>
 				
+			<!-- issue 103 -->
 			 <tr>
 			  <td style = "text-align :right">Create Date:</td>	  
-			  <td><input wicket:id="createDate" readonly type="text" value="date"  size="20"/>
+			  <td><input wicket:id="createDate" type="text" value="date"  size="20"/>
 			  </td>
 			 </tr>
 			 
