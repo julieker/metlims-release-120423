@@ -101,7 +101,7 @@ public class AliquotService
 		}
 		
 	// issue 61 2020
-	public List <Aliquot> save (AliquotDTO dto, String aliquotAssigned)
+	public List <Aliquot> save (AliquotDTO dto, String aliquotAssigned, boolean isAssayListUpdated)
 	    {
 		List <Aliquot> aliquotList = new ArrayList <Aliquot> ();
 		Aliquot aliquot = null;		
@@ -116,7 +116,10 @@ public class AliquotService
 				aliquot = aliquotDao.loadById(dto.getAliquotId());
 				aliquot.update(dto);
 				aliquotList.add(aliquot);
-				saveAssays (dto.getAssayIds(), aliquot); // issue 100
+				
+				// issue 100
+				if (isAssayListUpdated)
+					saveAssays (dto.getAssayIds(), aliquot); // issue 100
 				}
 		    catch (Exception e)
 		        {
@@ -298,6 +301,11 @@ public class AliquotService
 	// issue 100
 	private void saveAssays (List <String> assayIds, Aliquot aliquot )
 		{
+		if (assayIds.size() == 0 )
+		    {
+			aliquotDao.deleteAssayAliquot(aliquot.getAliquotId());
+		    return;
+		    }
 		for (String assayId : assayIds) 
 			{
 	        Assay assay = assayDao.loadAssayByID(assayId.substring(assayId.lastIndexOf("(") + 1,assayId.lastIndexOf(")") ));

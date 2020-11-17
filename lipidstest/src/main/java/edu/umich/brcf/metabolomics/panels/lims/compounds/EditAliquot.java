@@ -121,7 +121,7 @@ public class EditAliquot extends WebPage
 	int maxSolventLength = 94; // issue 79 allow for OTHER:	
 	boolean calculateOnly = true;
 	ListMultipleChoice<String> selectedAssays;
-	
+	boolean isAssayListUpdated = false;
 	public AliquotDTO getAliquotDto() { return aliquotDto; }
 	public void setAliquotDto(AliquotDTO aliquotDto)  { this.aliquotDto = aliquotDto; }
 		
@@ -670,7 +670,7 @@ public class EditAliquot extends WebPage
 						aliquotDto.setCompoundObj(compoundService.loadCompoundById(aliquotDto.getCid()));
 						if (aliquotDto.getReplicate() == null || aliquotDto.getReplicate() <= 0)
 							aliquotDto.setReplicate(1);	
-						List <Aliquot> aliquotList =  aliquotService.save(aliquotDto, aliquotIdAssigned);
+						List <Aliquot> aliquotList =  aliquotService.save(aliquotDto, aliquotIdAssigned, isAssayListUpdated);
 						/// issue 100 
 						if  (!StringUtils.isNullOrEmpty(aliquotIdAssigned))
 							{
@@ -779,6 +779,7 @@ public class EditAliquot extends WebPage
 			    	switch (response)
 			        	{
 			    	    case "updateAssays" :
+			    	    	isAssayListUpdated = true;
 			    	    	break;
 			        	case "updateNeatOrDilution" :
 			        		aliquotDto.setNeatOrDilution (aliquotDto.getNeatOrDilutionText().equals("Neat") ? '1' : '0');
