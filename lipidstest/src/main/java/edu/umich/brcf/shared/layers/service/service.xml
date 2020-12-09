@@ -87,8 +87,13 @@
  		
  		<!-- Issue 214 -->
  	 <bean id="metLIMSAutomatedMessageService" class="edu.umich.brcf.shared.layers.service.MetLIMSAutomatedMessageService">
- 	 </bean>	
- 	
+ 	 </bean>
+ 	 	
+       <!-- issue 94 -->
+     <bean id="mixtureService" class="edu.umich.brcf.shared.layers.service.MixtureService">
+     <property name="mixtureDao" ref="mixtureDAO" />
+     </bean>
+	
  	 <bean id="organizationService" class="edu.umich.brcf.shared.layers.service.OrganizationService">
  		<property name="organizationDao" ref="organizationDAO"/>
  	</bean>

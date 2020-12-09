@@ -26,6 +26,8 @@
 	<bean id="idGeneratorDAO" class="edu.umich.brcf.shared.layers.dao.IdGeneratorDAO" />
 	<bean id="inventoryDAO" class="edu.umich.brcf.shared.layers.dao.InventoryDAO" />
 	<bean id="locationDAO" class="edu.umich.brcf.shared.layers.dao.LocationDAO" />
+	<!-- issue 94 -->
+	<bean id="mixtureDAO" class="edu.umich.brcf.shared.layers.dao.MixtureDAO" />
 	<bean id="organizationDAO" class="edu.umich.brcf.shared.layers.dao.OrganizationDAO" />
 	<bean id="projectDAO" class="edu.umich.brcf.shared.layers.dao.ProjectDAO" />
 	<bean id="protocolReportDAO" class="edu.umich.brcf.shared.layers.dao.ProtocolReportDAO" />

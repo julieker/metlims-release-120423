@@ -6,7 +6,6 @@
 
 package edu.umich.brcf.metabolomics.panels.admin.sample_submission;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -14,7 +13,6 @@ import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import edu.umich.brcf.metabolomics.layers.service.Mrc2SubmissionDataService;
@@ -27,20 +25,14 @@ import edu.umich.brcf.shared.layers.service.RollbackItemService;
 import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.layers.service.SystemConfigService;
 import edu.umich.brcf.shared.layers.service.UserService;
-import edu.umich.brcf.shared.panels.utilitypanels.AbstractGenericSampleFormUploadPage;
 import edu.umich.brcf.shared.panels.utilitypanels.ExperimentOrDateSearchPanel;
 import edu.umich.brcf.shared.panels.utilitypanels.ExperimentPlusCountPanel;
 import edu.umich.brcf.shared.panels.utilitypanels.ExperimentSelectorPanel;
 import edu.umich.brcf.shared.panels.utilitypanels.ExperimentSelectorWithPopupConfirm;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.panels.utilitypanels.OptimizedBarcodeSelectorPage;
-import edu.umich.brcf.shared.util.METWorksException;
 import edu.umich.brcf.shared.util.ModalSizes;
-import edu.umich.brcf.shared.util.SampleSheetIOException;
-import edu.umich.brcf.shared.util.datacollectors.Mrc2TransitionalSubmissionSheetData;
-import edu.umich.brcf.shared.util.interfaces.ISavableSampleData;
 import edu.umich.brcf.shared.util.io.StringUtils;
-import edu.umich.brcf.shared.util.sheetreaders.Mrc2TransitionalSubmissionSheetReader;
 import edu.umich.brcf.shared.util.structures.Pair;
 import edu.umich.brcf.shared.util.widgets.METWorksPctSizableModal;
 
@@ -184,42 +176,9 @@ public class LaunchSampleToolsPanel extends Panel
 			 target.appendJavaScript(StringUtils.makeAlertMessage("Add Sample not available in this version of METLIMS "));
 			 }
 				 
-		 private AbstractGenericSampleFormUploadPage buildAddingReaderPage(final ModalWindow modal, final String selectedExperiment, final Integer selectedCount) 
-			{
-			return new AbstractGenericSampleFormUploadPage(getPage())
-				{
-				@Override
-				protected ISavableSampleData readData(File newFile, FileUpload upload) throws SampleSheetIOException 
-					{
-					// JAK remove arguments from Mrc2TransitionalSubmissionSheetReader call to match actual constructor
-					Mrc2TransitionalSubmissionSheetReader reader = new Mrc2TransitionalSubmissionSheetReader();
-					return (ISavableSampleData) reader.readWorkBook(newFile, upload);
-					}		
-				@Override
-				protected int saveData(ISavableSampleData data) throws METWorksException
-					{
-					return mrc2SubmissionDataService.addUploadedSheetData((Mrc2TransitionalSubmissionSheetData) data, selectedCount);
-					}				
-				@Override
-				protected String getMailAddress() { return "metabolomics@med.umich.edu"; }
-
-				@Override
-				protected String getMailTitle() { return "METLIMS Sample Add Registration Message"; }
-				};
-			}
  		}  
 	
-	public ExperimentSelectorPanel buildDeleteSamplePanel(String id)
-		{
-		return new ExperimentSelectorPanel(id)
-			{
-			@Override
-			public void doSubmit(String selectedExperiment, AjaxRequestTarget target)
-				{
-				}
-			};
-		}
-			
+	
 	public ExperimentSelectorPanel buildPrintBarcodesByExperimentPanel(final String id, final ModalWindow modal)
 		{
 		ExperimentSelectorPanel panel = new ExperimentSelectorPanel(id)
@@ -246,7 +205,6 @@ public class LaunchSampleToolsPanel extends Panel
 					uniqueAliquotLabelsAndIds = sampleService.sampleIdsForExpId(selectedExperiment);				
 				if (uniqueAliquotLabelsAndIds == null || uniqueAliquotLabelsAndIds.size() == 0)
 					{
-					// issue 98
 					String msg =  "Nothing to print : Experiment " + selectedExperiment + " has no registered " +  (id.equals("printAliquotBarcodesByExperiment") ? "aliquots" : "samples");
 					target.appendJavaScript("alert('" + msg + "')");
 					}

@@ -21,6 +21,7 @@ import edu.umich.brcf.metabolomics.panels.admin.accounts.UsersPanel;
 import edu.umich.brcf.metabolomics.panels.admin.database_utility.LaunchDatabaseToolsPanel;
 import edu.umich.brcf.metabolomics.panels.admin.instruments.InstrumentsPanel;
 import edu.umich.brcf.metabolomics.panels.admin.organization.SortableOrganizationPanel;
+import edu.umich.brcf.metabolomics.panels.admin.sample_submission.LaunchMixtureToolsPanel;
 import edu.umich.brcf.metabolomics.panels.admin.sample_submission.LaunchSampleToolsPanel;
 import edu.umich.brcf.metabolomics.panels.admin.system_info.SystemInfoPanel;
 import edu.umich.brcf.metabolomics.panels.admin.messaging.METWorksMessagePanel;
@@ -46,8 +47,12 @@ public class AdminPanel extends Panel
 			{ 
 			public Panel getPanel(String panelId) { return new LaunchSampleToolsPanel(panelId); } 
 			});
-		 
 		
+		// issue 94
+		tabs.add(new AbstractTab(new Model("MIXTURE TOOLS"))
+	        {
+	        public Panel getPanel(String panelId) { return new LaunchMixtureToolsPanel(panelId); }
+	        });
 		tabs.add(new AbstractTab(new Model("DATABASE TOOLS")) 
 			{ 
 			public Panel getPanel(String panelId) { return new LaunchDatabaseToolsPanel(panelId); } 

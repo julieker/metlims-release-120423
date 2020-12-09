@@ -10,6 +10,7 @@ import org.apache.wicket.model.Model;
 
 import edu.umich.brcf.metabolomics.panels.lims.compounds.CompoundsPanel;
 import edu.umich.brcf.metabolomics.panels.lims.locations.LocationsPanel;
+import edu.umich.brcf.metabolomics.panels.lims.mixtures.MixtureDetailPanel;
 import edu.umich.brcf.metabolomics.panels.lims.newestprep.LaunchPrepTools;
 import edu.umich.brcf.metabolomics.panels.lims.newexperiment.SmallExperimentSearchPanel;
 import edu.umich.brcf.metabolomics.panels.lims.project.SortableProjectPanel;
@@ -64,6 +65,12 @@ public class LimsPanel extends Panel
 			{
 			public Panel getPanel(String panelId) { return new CompoundsPanel(panelId); }
 			});
+		
+		//issue 94
+        tabs.add(new AbstractTab(new Model("MIXTURES"))
+	        {
+	        public Panel getPanel(String panelId) { return new MixtureDetailPanel(panelId); }
+	        });
 		
 		// issue 100
 		tabs.add(new AbstractTab(new Model("ASSAYS & ALIQUOTS")) 

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.AssayAliquot;
 import edu.umich.brcf.shared.layers.domain.ExperimentAliquot;
+import edu.umich.brcf.shared.layers.domain.MixtureAliquot;
 import edu.umich.brcf.shared.layers.domain.VolumeUnits;
 
 // issue 61
@@ -29,6 +30,29 @@ public class AliquotDAO extends BaseDAO
 		return aliquotList;
 		}
 	
+	// issue 94
+	public List<String> allAliquotIds()
+		{
+		Query query = getEntityManager().createNativeQuery("select cast(aliquot_id as char(9)) from aliquot order by 1 "
+				);
+		List<String> aliquotList = query.getResultList();
+		return aliquotList;
+		}
+		
+	public List<Aliquot> aliquotIdsForMixtureId (String mid)
+		{
+		List<MixtureAliquot> malqLst =  getEntityManager().createQuery("from MixtureAliquot where mixture_id = ?1  order by aliquot_id")
+				.setParameter(1, mid).getResultList();	
+		List <Aliquot> alqList = new ArrayList <Aliquot> ();
+	    for (MixtureAliquot malq : malqLst)
+			{
+	    	Aliquot alq = malq.getAliquot();
+			initializeTheKids(alq, new String[] { "location", "inventory" , "compound"});
+			alqList.add(alq);
+			}
+		return alqList;
+		}
+	
 	// issue 61 2020
 	public List<String> getMatchingAliquotIds(String input)
 		{
@@ -42,6 +66,12 @@ public class AliquotDAO extends BaseDAO
 		{
 		Aliquot alq = getEntityManager().find(Aliquot.class, aliquotId);
 		initializeTheKids(alq, new String[] { "location", "inventory", "compound" });
+		return alq;
+		}
+	
+	public Aliquot loadByIdForMixture(String aliquotId)
+		{
+		Aliquot alq = getEntityManager().find(Aliquot.class, aliquotId);
 		return alq;
 		}
 	

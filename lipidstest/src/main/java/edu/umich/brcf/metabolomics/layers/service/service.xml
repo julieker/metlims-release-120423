@@ -67,6 +67,15 @@
  	<bean id="lipidMapsEntryService" class="edu.umich.brcf.metabolomics.layers.service.LipidMapsEntryService">
 		<property name="lipidMapsEntryDao" ref="lipidMapsEntryDAO" />
  	</bean>
+ 		<!-- issue 94 -->
+	<bean id="mrc2SMixtureDataService" class="edu.umich.brcf.metabolomics.layers.service.Mrc2MixtureDataService">
+ 	<property name="mixtureDao" ref="mixtureDAO" />
+ 	<property name="userDao" ref="userDAO" />
+ 	<property name="aliquotDao" ref="aliquotDAO" />
+ 	<property name="compoundDao" ref="compoundDAO" />
+ 	<property name="locationDao" ref="locationDAO" />
+ 	<property name="inventoryDao" ref="inventoryDAO" />
+ 	</bean>
  	
  	<bean id="mrc2SubmissionDataService" class="edu.umich.brcf.metabolomics.layers.service.Mrc2SubmissionDataService">
  		<property name="expDao" ref="experimentDAO" />
@@ -113,6 +122,8 @@
 	<bean id="tableAccessService" class="edu.umich.brcf.metabolomics.layers.service.TableAccessService" >
 		<property name="tableAccessDao" ref="tableAccessDAO" />
 	</bean>
+	
+
 	
  
  </beans>

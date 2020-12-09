@@ -3,7 +3,10 @@ package edu.umich.brcf.shared.layers.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.wicket.Session;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -53,11 +56,22 @@ public class AliquotService
 		return aliquotDao.loadAllAliquotsNotChosen(expId);
 		}
 	
-	// issue 61
-	/* public void delete(String aliquotId) 
+	//issue 94
+	public List<String> allAliquotIds()
 		{
-		aliquotDao.delete(aliquotId);
-		}*/
+		return aliquotDao.allAliquotIds();
+		}
+	
+	// issue 94
+	public Map<String, String> allAliquotIdsForMap()
+		{
+		List<String> ids = allAliquotIds();		
+		Map<String, String> map = new HashMap<String, String>();
+		if (ids != null)
+			for (String id : ids)
+				map.put(id, null);		
+		return map;
+		}
 	
 	public void deleteAndSetReason(String aliquotId, String deleteReason) 
 		{
@@ -286,6 +300,13 @@ public class AliquotService
 		return  getInventoryDateList(aliquotIdList);
 		}
 	
+	// issue 94
+	public List<Aliquot> aliquotIdsForMixtureId(String mid)
+		{
+		List<Aliquot> aliquotIdList =  aliquotDao.aliquotIdsForMixtureId(mid);
+		return  aliquotIdList;
+		}
+	
 	// issue 86
 	public List<String> getInventoryDateList(List<String> aliquotIdList)
 		{
@@ -298,18 +319,15 @@ public class AliquotService
 			}
 		return aliquotIdListInvDate;
 		}
-	// issue 100
+	// issue 100 put deleteAssayAliquot outside of the loop
 	private void saveAssays (List <String> assayIds, Aliquot aliquot )
 		{
+		aliquotDao.deleteAssayAliquot(aliquot.getAliquotId());
 		if (assayIds.size() == 0 )
-		    {
-			aliquotDao.deleteAssayAliquot(aliquot.getAliquotId());
 		    return;
-		    }
 		for (String assayId : assayIds) 
 			{
 	        Assay assay = assayDao.loadAssayByID(assayId.substring(assayId.lastIndexOf("(") + 1,assayId.lastIndexOf(")") ));
-	        aliquotDao.deleteAssayAliquot(aliquot.getAliquotId());
 	        aliquotDao.createAssayAliquot(AssayAliquot.instance(assay, aliquot));
 			}
 		}

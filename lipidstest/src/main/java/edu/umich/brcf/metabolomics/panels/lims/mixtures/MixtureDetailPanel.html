@@ -1,0 +1,60 @@
+<wicket:head>
+</wicket:head>
+<wicket:panel>
+<body>
+	    <div wicket:id="modal2"></div>
+		<div>
+		<!--  
+		<fieldset class = "dialog_fieldset" style = "height : 80%; margin-top : .5%; margin-bottom : .5%; width :90%; margin-left : 5%; margin-right : 5%">	
+			<legend class = "dialog_legend">
+			-->
+			<br>
+			<br>
+			<br>
+		   		<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">View Mixture</span>
+		  <!--  
+		   </legend>
+		   -->
+        <center>	
+	<table style = "width :100%"  border="0">
+			<tr>
+			  <th>ID</th>
+			  <th>Date</th>
+			  <th>Created By/Units</th>
+			  <th>Solvent to Add</th>
+			  <th>Desired Final Volume</th>
+			  <th></th>
+			</tr>
+			
+		    <tr wicket:id = "mixtureDetail">
+			      <td>
+			        	<span wicket:id = "mixtureId">Huckleberry Finn</span>
+			      </td>
+			       <td>
+			        	<span wicket:id = "createDate">Huckleberry Finn</span>
+			      </td>
+			      <td>
+			        <span wicket:id = "createdBy">Mark Twain</span>
+			     </td>			    
+			     <td>
+			      	<span wicket:id = "volumeSolvent">(123) 456-7890</span>
+			      </td>
+			      
+			      <td>
+			      	<span wicket:id = "desiredFinalVolume">(123) 456-7890</span>
+			      </td>
+			      <td>
+			      <a wicket:id = "detailMixture" href="#">Detail</a>
+			     </td>
+			      
+		    </tr>
+	  	</table>	
+	
+    </center>
+    <!--  
+	</fieldset>
+	-->
+	</div>	
+</body>
+
+</wicket:panel>
