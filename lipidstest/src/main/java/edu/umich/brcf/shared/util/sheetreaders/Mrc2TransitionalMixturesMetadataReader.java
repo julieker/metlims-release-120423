@@ -95,6 +95,8 @@ public class Mrc2TransitionalMixturesMetadataReader
 	    	if (sheet.getRow(j) == null)
 	    		break;
 	        List<String> tokens = readLine(j, sheet);
+	        if (tokens.size() == 0)
+	        	break;
 	        if (isMixtureRowBlank(tokens))
 	            break;
 	        screenForNonExistentAliquots(tokens.get(aliquotCol), j);
@@ -169,6 +171,8 @@ public class Mrc2TransitionalMixturesMetadataReader
 	 		if (row == null)
 	 			break;
         	cell = row.getCell(i);
+        	if (i == 0 && StringUtils.isEmptyOrNull((cell == null ? "" : cell.toString())))
+        		break;
         	if (i==desiredVolumeCol)
 	        	{
         		raw = cell == null ? " " :  String.valueOf(cell.getNumericCellValue());
