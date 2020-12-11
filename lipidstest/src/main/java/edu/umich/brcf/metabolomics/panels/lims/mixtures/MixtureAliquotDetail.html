@@ -15,14 +15,18 @@
         <br/>	
 	<table style = "width :100%"  border="0">
 			<tr>
-			  <td>Aliquot ID</td>
+			  <td style = "width :15%" >Aliquot ID</td>
+			  <td style = "width :50%">Aliquot Name</td>
 			  <td>Volume</td>
 			  <td>Concentrate</td>
 			</tr>
 			
 		    <tr wicket:id = "aliquotIds">
 			      <td>
-			        	<span wicket:id = "aliquotId">Huckleberry Finn</span>
+			      <a wicket:id = "aliquotLink"><span wicket:id = "aliquotid">Test Name</span></a>
+			      </td>	
+			      <td>
+			        	<span style = "width :50%" wicket:id = "aliquotName">Huckleberry Finn</span>
 			      </td>	
 			       <td>
 			        	<span wicket:id = "aliquotVolume">Huckleberry Finn</span>
@@ -30,6 +34,7 @@
 			       <td>
 			        	<span wicket:id = "aliquotConcentrate">Huckleberry Finn</span>
 			      </td>	
+			       
 		    </tr>
 	  	</table>	
 	
