@@ -99,12 +99,8 @@ public class Mrc2TransitionalSubmissionSheetReader extends SpreadSheetReader imp
 			{
 			String sampleId = item.getSampleId();
 			String researcherId = item.getSampleLabel();
-			
 			if (!idToRsIdMapping.get(sampleId).equals(researcherId)) // JAK change 9
-				throw new SampleSheetIOException("Error while reading submission data : experiment design items didn't map correctly. " , -1 , "Submission Sheet Reader");
-			
-			
-			
+				throw new SampleSheetIOException("Error while reading submission data : experiment design items didn't map correctly. " , -1 , "Submission Sheet Reader");			
 			}		
 		}
 	}

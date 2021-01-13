@@ -160,7 +160,6 @@ public class Mrc2SubmissionDataService
 				su = this.grabNewSubject(dto, gs);
 			Sample sample = BiologicalSample.instance(dto.getSampleID(), dto.getSampleName(), exp, su, gs, dto.getLocID(), dto.getUserDefSampleType(), dto.getUserDefGOS(),
 					dto.getVolume(), dto.getVolUnits(), statusDao.loadById('S'), Calendar.getInstance(), st, null, null);
-	
 			sampleDao.createSample(sample);
 			return sample;
 			}

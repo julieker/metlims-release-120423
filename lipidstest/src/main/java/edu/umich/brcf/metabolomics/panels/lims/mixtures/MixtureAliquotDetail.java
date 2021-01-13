@@ -25,6 +25,8 @@ import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Inventory;
 import edu.umich.brcf.shared.layers.domain.Mixture;
 import edu.umich.brcf.shared.layers.domain.MixtureAliquotPK;
+import edu.umich.brcf.shared.layers.domain.MixtureChildren;
+import edu.umich.brcf.shared.layers.domain.MixtureChildrenPK;
 import edu.umich.brcf.shared.layers.domain.MixtureAliquot;
 import edu.umich.brcf.shared.layers.service.AliquotService;
 import edu.umich.brcf.shared.layers.service.MixtureService;
@@ -47,11 +49,11 @@ public class MixtureAliquotDetail extends WebPage
 	@SpringBean
 	CompoundNameService compoundNameService;
 	Mixture mixture;
-	ListView listView;
 	WebMarkupContainer container;
 	WebMarkupContainer containerAliquot;
 	List<Compound> parentageList;
 	ListView listViewAliquots; // issue 61
+	ListView listViewMixtures; // issue 110
 	MixtureAliquotDetail MixtureAliquotDetail = this;
 	// itemList
 	public MixtureAliquotDetail(String id,  Mixture mix) 
@@ -83,7 +85,19 @@ public class MixtureAliquotDetail extends WebPage
 				listItem.add(new Label("aliquotVolume", new Model(mixtureAliquot.getVolumeAliquot())));
 				listItem.add(new Label("aliquotConcentrate", new Model(mixtureAliquot.getConcentrationAliquot())));				
 				}
-			});			
+			});
+		add(listViewMixtures = new ListView("childrenMixtureIds", new PropertyModel(this, "childrenMixtureIds")) 
+			{
+			public void populateItem(final ListItem listItem) 
+				{
+				final Mixture mix = (Mixture) listItem.getModelObject();	
+			    MixtureChildrenPK mixtureChildrenPK   = MixtureChildrenPK.instance(mix, mixture );	
+			    MixtureChildren mixtureChildren = mixtureService.loadMixtureChildrenById(mixtureChildrenPK);				
+			    listItem.add(new Label("mixtureId", new Model(mixtureChildren.getMixture().getMixtureId())));
+				listItem.add(new Label("mixtureVolume", new Model(mixtureChildren.getVolumeMixture())));
+				listItem.add(new Label("mixtureConcentrate", new Model(mixtureChildren.getConcentrationMixture())));				
+				}
+			});	
 		container = new WebMarkupContainer("itemList");
 		container.setOutputMarkupId(true);
 		// add back jak container.add(listView);
@@ -152,6 +166,14 @@ public class MixtureAliquotDetail extends WebPage
 		{
 		this.mixture=mixture;
 		}
+	
+	// issue 110 
+	public List<Mixture> getChildrenMixtureIds()
+		{
+		List<Mixture> nList = mixtureService.mixtureChildrenForMixtureId(mixture.getMixtureId());
+		return nList;
+		}
+	
 	
 	public List<Aliquot> getAliquotIds()
 		{

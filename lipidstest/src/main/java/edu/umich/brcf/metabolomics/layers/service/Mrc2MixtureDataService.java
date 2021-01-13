@@ -19,6 +19,7 @@ import edu.umich.brcf.shared.layers.dao.UserDAO;
 import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Mixture;
 import edu.umich.brcf.shared.layers.domain.MixtureAliquot;
+import edu.umich.brcf.shared.layers.domain.MixtureChildren;
 import edu.umich.brcf.shared.layers.domain.User;
 import edu.umich.brcf.shared.layers.dto.MixtureDTO;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
@@ -67,16 +68,24 @@ public class Mrc2MixtureDataService
 			{
 			user = userDao.loadById(((MedWorksSession) Session.get()).getCurrentUserId());
 			mixture = Mixture.instance (Calendar.getInstance(), user, StringUtils.isEmptyOrNull(dto.getVolumeSolventToAdd()) ? null : new BigDecimal (dto.getVolumeSolventToAdd()),        StringUtils.isEmptyOrNull(dto.getDesiredFinalVolume()) ? null : new BigDecimal (dto.getDesiredFinalVolume())); // change this JAK		
-			mixtureDao.createMixture(mixture);	
+			mixtureDao.createMixture(mixture);
 		    List<String> aliquotList = new ArrayList <String> ();
-		    aliquotList.addAll(dto.getAliquotList());		    
+		    aliquotList.addAll(dto.getAliquotList());	
 			for (String aliquotStr : aliquotList) 
 			    {
 				// JAK do a wrapper for this
 		        Aliquot aliquot = aliquotDao.loadByIdForMixture(aliquotStr);
 		        mixtureDao.createMixtureAliquot(MixtureAliquot.instance(mixture, aliquot, dto.getAliquotVolumeList().get(index), dto.getAliquotConcentrationList().get(index)));
 				index++;
-				}			
+				}
+			// issue 110
+			index= 0;
+			for  (String mixtureStr : dto.getMixtureList()) 
+				{
+				Mixture childMixture = mixtureDao.loadById(mixtureStr);
+				mixtureDao.createMixtureChild(MixtureChildren.instance(childMixture,mixture,  dto.getMixtureVolumeList().get(index), dto.getMixtureConcentrationList().get(index)));
+				index++;
+				}
 			}
 		catch (Exception e)
 		    {

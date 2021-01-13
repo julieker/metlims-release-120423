@@ -57,8 +57,10 @@ public class Mrc2MixtureMetadata implements Serializable
 		    String finalVolume = dto.getDesiredFinalVolume();
 		    String volumeSolventToAdd            = dto.getVolumeSolventToAdd();
 			List <String> dtoList = new ArrayList<String> ();
-	        dtoList.addAll(dto.getAliquotList());        
-			Mrc2MixtureInfoItem info = new Mrc2MixtureInfoItem(createDate, createdBy,  volumeSolventToAdd,finalVolume, dtoList, dto.getAliquotVolumeList(), dto.getAliquotConcentrationList() );
+	        dtoList.addAll(dto.getAliquotList());  
+	        // issue 110
+			// JAK add in the mixture here for MixtureInfo
+	        Mrc2MixtureInfoItem info = new Mrc2MixtureInfoItem(createDate, createdBy,  volumeSolventToAdd,finalVolume, dtoList, dto.getAliquotVolumeList(), dto.getAliquotConcentrationList(),  dto.getMixtureList(), dto.getMixtureVolumeList(), dto.getMixtureConcentrationList() );
 			infoFields.add(info);
 			}
 		}
@@ -68,7 +70,7 @@ public class Mrc2MixtureMetadata implements Serializable
 		List<MixtureDTO> dtos = new ArrayList<MixtureDTO>();
 		for (int i = 0; i < this.infoFields.size(); i++)
 		    {
-			dtos.add(infoFields.get(i).toIncompleteSampleDTO());
+			dtos.add(infoFields.get(i).toIncompleteMixtureDTO());
 		    }
 		return dtos;
 		}

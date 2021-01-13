@@ -35,8 +35,11 @@ public class MixtureDTO implements Serializable
 	private String mixtureId;
 	private String createDate;
 	private List<String> aliquotList;
+	private List<String> mixtureList;
 	private List<String> aliquotVolumeList;
 	private List<String> aliquotConcentrationList;
+	private List<String> mixtureVolumeList;
+	private List<String> mixtureConcentrationList;
 	private String createdBy ;
 	private String aliquotsChoice; // issue 94
     private String volumeSolventToAdd; // issue 94
@@ -120,6 +123,18 @@ public class MixtureDTO implements Serializable
 		this.aliquotList = aliquotList;
 		}
 	
+	// issue 110
+	public List<String> getMixtureList ()
+		{
+		return mixtureList;
+		}
+
+	public void setMixtureList (List<String> mixtureList)
+		{
+		this.mixtureList = mixtureList;
+		}
+	
+	
 	public List<String> getAliquotVolumeList ()
 		{
 		return aliquotVolumeList;
@@ -138,6 +153,28 @@ public class MixtureDTO implements Serializable
 	public void setAliquotConcentrationList (List<String> aliquotConcentrationList)
 		{
 		this.aliquotConcentrationList = aliquotConcentrationList;
+		}
+	
+	// issue 110
+	public List<String> getMixtureVolumeList ()
+		{
+		return mixtureVolumeList;
+		}
+
+	public void setMixtureVolumeList (List<String> mixtureVolumeList)
+		{
+		this.mixtureVolumeList = mixtureVolumeList;
+		}
+	
+	// issue 110
+	public List<String> getMixtureConcentrationList ()
+		{
+		return mixtureConcentrationList;
+		}
+
+	public void setMixtureConcentrationList (List<String> mixtureConcentrationList)
+		{
+		this.mixtureConcentrationList = mixtureConcentrationList;
 		}
 
 	public String getMixtureId ()

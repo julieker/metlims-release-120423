@@ -16,6 +16,7 @@ import org.apache.wicket.injection.Injector;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import edu.umich.brcf.shared.layers.dto.MixtureDTO;
 import edu.umich.brcf.shared.layers.service.AliquotService;
+import edu.umich.brcf.shared.layers.service.MixtureService;
 import edu.umich.brcf.shared.util.MixtureSheetIOException;
 import edu.umich.brcf.shared.util.datacollectors.Mrc2MixtureMetadata;
 import edu.umich.brcf.shared.util.utilpackages.NumberUtils;
@@ -26,21 +27,24 @@ public class Mrc2TransitionalMixturesMetadataReader
 	@SpringBean
 	AliquotService aliquotService;
 	
+	@SpringBean
+	MixtureService mixtureService; // issue 110
+	
 	public int mrc2AliquotColumnNumber =1;
 	private int rowIdx = -1,  rowCount;
 	private final String sheetName = "Mixture";
 
 	// Used for add mode (next stage)
-	private Map<String, String>  aliquotsIdsInSheet, aliquotsIDsInDatabase;
+	private Map<String, String>  idsInSheet, aliquotsIDsInDatabase, complexMixturesInDatabase, mixtureIDsInDatabase, mixtureIdsInSheet;
 	Map<String, Integer> colLengthMap;
 	List <Integer> fLengths;
 
 	// issue 94
-	List <String> mixtureColNames = Arrays.asList( new String [] {"Primary Name", "Aliquot", "volume_aliquot (uL)", "conc (FROM LIMS) uM", "volume solvent  to add", "desired final volume", "New mixture name" , "Information", "compounds", "Concentration_aliquot", "Units", "# aliquots"});
+	List <String> mixtureColNames = Arrays.asList( new String [] {"Primary Name", "Aliquot", "volume_aliquot (uL)", "conc (FROM LIMS) uM", "volume solvent  to add", "desired final volume",  "Concentration_aliquot", "Units", "# aliquots"});
 	List <String> headersInSpreadsheet = new ArrayList <String> ();
 	private int aliquotCol = 1;
 	private int volAliquotCol = 2;
-	private int concentrateAliquotCol = 9;
+	private int concentrateAliquotCol = 6;
 	private int concFromLimsCol = 3;
 	private int volumeSolventToAdd = 4;
 	private int desiredFinalVolume = 5;
@@ -56,16 +60,19 @@ public class Mrc2TransitionalMixturesMetadataReader
 		} 
 	
 	public Mrc2MixtureMetadata read(Sheet sheet) throws MixtureSheetIOException
-		{ // JAK change 2
+		{ 
+		// issue 110
 		aliquotsIDsInDatabase = aliquotService.allAliquotIdsForMap();
-		aliquotsIdsInSheet = new HashMap<String, String>();
+		mixtureIDsInDatabase = mixtureService.allMixtureIdsForMap();
+		complexMixturesInDatabase = mixtureService.allComplexMixtureIdsForMap();
+		idsInSheet = new HashMap<String, String>();
+		mixtureIdsInSheet = new HashMap<String, String>();
 		Mrc2MixtureMetadata mixturesMetadata = null; 
 		try 
 			{
 			String missingHeaderName =  getMissingHeaderName (headerRowIdx, sheet);
 			if (!StringUtils.isEmptyOrNull(missingHeaderName))
-			    throw new MixtureSheetIOException ("The header:" + missingHeaderName + " is missing", 0, sheetName);	
-			
+			    throw new MixtureSheetIOException ("The header:" + missingHeaderName + " is missing", 0, sheetName);			
 			List <MixtureDTO> mixtures = readMixtureInfo(sheet);
 			mixturesMetadata = new Mrc2MixtureMetadata(mixtures);
 			}
@@ -89,29 +96,52 @@ public class Mrc2TransitionalMixturesMetadataReader
 	  // Issue 94 read in main information
 	    List <String> listOfAliquots = new ArrayList<String> ();
 	    List <String> listOfVolumeAliquots = new ArrayList<String> ();
-	    List <String> listOfConcentrationAliquots = new ArrayList<String> ();	    
+	    List <String> listOfConcentrationAliquots = new ArrayList<String> ();	
+	   // issue 110
+	    List <String> listOfMixtures = new ArrayList<String> ();
+	    List <String> listOfVolumeMixtures = new ArrayList<String> ();
+	    List <String> listOfConcentrationMixtures = new ArrayList<String> ();
 	    for (int j = firstMixtureRow; j <= lastMixtureRow; j++)
 	    	{
 	    	if (sheet.getRow(j) == null)
 	    		break;
 	        List<String> tokens = readLine(j, sheet);
-	        if (tokens.size() == 0)
+	        if (tokens.size() == 0 && j == 0)
+	            throw new MixtureSheetIOException("Unable to load mixture.  This is a blank spreadsheet without any rows", rowCount, sheetName);        	
+	        if (tokens.size() == 0 )
 	        	break;
 	        if (isMixtureRowBlank(tokens))
 	            break;
-	        screenForNonExistentAliquots(tokens.get(aliquotCol), j);
+	        // issue 110
+	        screenForNonExistentAliquotsMixtures(tokens.get(aliquotCol), j);
+	        if (tokens.get(aliquotCol).startsWith("M"))
+	        	screenForComplexMixtures(tokens.get(aliquotCol), j);
 	        screenForMissingInfo(tokens, j);
-	        screenForAliquotSheetDuplicates(tokens.get(aliquotCol),j);
+	        screenForSheetDuplicates(tokens.get(aliquotCol),j);
 	        screenForInvalidNumber(tokens, j);
 	       	if (j == 1)
 	      	    dto = readInMixtureRowTokens(tokens);
-	        listOfAliquots.add(tokens.get(aliquotCol));        
-	        listOfVolumeAliquots.add(tokens.get(volAliquotCol));
-	        listOfConcentrationAliquots.add(tokens.get(concentrateAliquotCol));
-	      	}
+	       	// issue 110
+	       	if (!tokens.get(aliquotCol).startsWith("M"))
+	       		{
+	       		listOfAliquots.add(tokens.get(aliquotCol));        
+	       		listOfVolumeAliquots.add(tokens.get(volAliquotCol));
+	       		listOfConcentrationAliquots.add(tokens.get(concentrateAliquotCol));
+	       		}
+	       	else
+	       		{
+	       		listOfMixtures.add(tokens.get(aliquotCol));        
+	       		listOfVolumeMixtures.add(tokens.get(volAliquotCol));
+	       		listOfConcentrationMixtures.add(tokens.get(concentrateAliquotCol));
+	       		}
+	      	}	    
 	    dto.setAliquotList(listOfAliquots);
 	    dto.setAliquotVolumeList(listOfVolumeAliquots);
 	    dto.setAliquotConcentrationList(listOfConcentrationAliquots);
+	    // issue 110 	    
+	    dto.setMixtureList(listOfMixtures);
+	    dto.setMixtureVolumeList(listOfVolumeMixtures);
+	    dto.setMixtureConcentrationList(listOfConcentrationMixtures);	    
 	    mixtures.add(dto);
 	    return mixtures;
 		}
@@ -130,10 +160,12 @@ public class Mrc2TransitionalMixturesMetadataReader
 		 	}
 	 	}
 	
-	private void screenForNonExistentAliquots(String aid, int rowCount) throws MixtureSheetIOException
+	private void screenForNonExistentAliquotsMixtures(String aOrMid, int rowCount) throws MixtureSheetIOException
 		{
-		if (!aliquotsIDsInDatabase.containsKey(aid))
-	   		throw new MixtureSheetIOException("Unable to upload file,  aliquot " + aid + " does not exist in the database in row:" + rowCount, rowCount, sheetName);
+		if (!aliquotsIDsInDatabase.containsKey(aOrMid) && !aOrMid.startsWith("M"))
+	   		throw new MixtureSheetIOException("Unable to upload file,  aliquot " + aOrMid + " does not exist in the database in row:" + rowCount, rowCount, sheetName);
+		if (!mixtureIDsInDatabase.containsKey(aOrMid) && aOrMid.startsWith("M"))
+	   		throw new MixtureSheetIOException("Unable to upload file,  mixture " + aOrMid + " does not exist in the database in row:" + rowCount, rowCount, sheetName);
 		}
 	 
 	private String getMissingHeaderName (int headerRowIdx, Sheet sheet)
@@ -204,15 +236,22 @@ public class Mrc2TransitionalMixturesMetadataReader
 		 return true;
 		 }
 	 
-	private void screenForAliquotSheetDuplicates(String aid, int rowNum) throws MixtureSheetIOException
+	// issue 110
+	private void screenForSheetDuplicates(String id, int rowNum) throws MixtureSheetIOException
 		{
-	   	if (aliquotsIdsInSheet.containsKey(aid))
+	   	if (idsInSheet.containsKey(id))
 	   		{
-	   		throw new MixtureSheetIOException("Unable to upload file, aliquot: "  + aid + " is duplicated in row: " + rowNum, rowNum, sheetName);
+	   		throw new MixtureSheetIOException("Unable to upload file, " + (id.startsWith("M") ? "mixture:" : "aliquot" ) + id + " is duplicated in row: " + rowNum, rowNum, sheetName);
 	   		}	   	
-	   	aliquotsIdsInSheet.put(aid,  null);
+	   	idsInSheet.put(id,  null);
 		}
-		
+	
+	private void screenForComplexMixtures(String mid, int rowCount) throws MixtureSheetIOException
+		{
+		if (complexMixturesInDatabase.containsKey(mid))
+	   		throw new MixtureSheetIOException("Unable to upload file,  mixture " + mid + " contains other mixtures... in row:" + rowCount, rowCount, sheetName);
+		}
+	
 	// issue 94
 	private void screenForInvalidNumber(List<String> tokens, int rowCount) throws MixtureSheetIOException
 	    {

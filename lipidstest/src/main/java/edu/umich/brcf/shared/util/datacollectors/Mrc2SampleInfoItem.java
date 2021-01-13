@@ -101,12 +101,10 @@ public class Mrc2SampleInfoItem implements Serializable, IWriteConvertable
 			locationId, userDefinedSampleType, volumeAsBigDecimal, units, 'Q',
 			null, Calendar.getInstance(), this.getSampleTypeId(),  
 			"", "", this.getUserDefinedGOS()); 
-		
 		dto.setSubjectName(researcherSubjectId);
 		dto.setSubjectId(researcherSubjectId);
 		return dto;
 		}
-	
 	
 	public String getSampleId() 
 		{

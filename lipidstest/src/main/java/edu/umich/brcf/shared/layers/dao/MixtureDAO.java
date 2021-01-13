@@ -3,11 +3,19 @@
  **********************/
 package edu.umich.brcf.shared.layers.dao;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.Query;
+
 import org.springframework.stereotype.Repository;
+
+import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Mixture;
 import edu.umich.brcf.shared.layers.domain.MixtureAliquot;
 import edu.umich.brcf.shared.layers.domain.MixtureAliquotPK;
+import edu.umich.brcf.shared.layers.domain.MixtureChildren;
+import edu.umich.brcf.shared.layers.domain.MixtureChildrenPK;
 
 // issue 61
 
@@ -39,6 +47,14 @@ public class MixtureDAO extends BaseDAO
 		return mixLst;
 		}
 	
+	// issue 110
+	public List<String> allMixtureIds()
+		{
+		Query query = getEntityManager().createNativeQuery("select cast(t1.mixture_id as char(9)) from mixture t1");
+		List<String> mixtureList = query.getResultList();
+		return mixtureList;
+		}
+	
 	// issue 94	
 	public void createMixtureAliquot(MixtureAliquot mixtureAliquot)
 		{
@@ -49,6 +65,39 @@ public class MixtureDAO extends BaseDAO
 		{
 		MixtureAliquot mixtureAliquot = getEntityManager().find(MixtureAliquot.class, mixtureAliquotPK	);
 		return mixtureAliquot;
+		}
+	// issue 110
+	public void createMixtureChild(MixtureChildren mixtureChildren)
+		{
+		getEntityManager().persist(mixtureChildren);
+		}
+	public MixtureChildren loadMixtureChildrenById(MixtureChildrenPK mixtureChildrenPK)
+		{
+		MixtureChildren mixtureChildren = getEntityManager().find(MixtureChildren.class, mixtureChildrenPK	);
+		return mixtureChildren;
+		}	
+	
+	// issue 110
+	public List<Mixture> mixtureChildrenForMixtureId (String mid)
+		{
+		List<MixtureChildren> mixChildList =  getEntityManager().createQuery("from MixtureChildren where parent_mixture_id = ?1  order by mixture_id")
+				.setParameter(1, mid).getResultList();	
+		List <Mixture> mixList = new ArrayList <Mixture> ();
+	    for (MixtureChildren mchild : mixChildList)
+			{
+	    	Mixture mix = mchild.getMixture();
+			initializeTheKids(mix, new String[] { "createdBy"});
+			mixList.add(mix);
+			}
+		return mixList;
+		}
+	
+	// issue 110
+	public List<String> getComplexMixtureIds()
+		{
+		Query query = getEntityManager().createNativeQuery("select cast(t1.parent_mixture_id as char(9)) from mixture_children t1");
+		List<String> mixtureList = query.getResultList();
+		return mixtureList;
 		}
 	
 	}

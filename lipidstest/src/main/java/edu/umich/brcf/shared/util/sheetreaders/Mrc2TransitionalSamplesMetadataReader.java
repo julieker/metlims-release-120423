@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////
 // Mrc2TransitionalSamplesMetadataReader.java
 // Written by Jan Wigginton, Jun 15, 2017
+// updated by Julie Keros jan 11 2021
 ////////////////////////////////////////////////////
 package edu.umich.brcf.shared.util.sheetreaders;
 
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.wicket.injection.Injector;
@@ -25,61 +28,47 @@ import edu.umich.brcf.shared.util.datacollectors.Mrc2SamplesMetadata; // JAK cha
 import edu.umich.brcf.shared.util.utilpackages.NumberUtils;
 import edu.umich.brcf.shared.util.utilpackages.StringUtils;
 
-
 public class Mrc2TransitionalSamplesMetadataReader
 	{
 	@SpringBean
 	SampleService sampleService;
-
 	public static final int mrc2SampleIdColumnNo = 0;
 	public static final String mrc2SampleIdColumnHeader = "Sample ID";
-
 	private int rowIdx = -1,  rowCount;
 	private final String sheetName = "Samples Metadata";
-
 	// Used for add mode (next stage)
-	private Boolean addMode = false;
-	private String supplementalExperimentId = null, expectedExperimentId = null;
-	
 	private List<String> sampleReadOrder;
 	private Map<String, String> sampleIdMappings, reverseSampleIdMappings;
 	private Map<String, String> idsInSheet, idsInDatabase;
-	
 	Map<String, Integer> colLengthMap;
 	List <Integer> fLengths;
 	List <String> sampleColNames = Arrays.asList( new String [] {"Sample ID", "Researcher_Sample_ID", "Researcher_Subject_ID", "Sample Type", "GenusOrSpecies",
           "Volume", "Units", "Sample Type ID", "GenusOrSpecies ID", "Loc ID"});
-
 	List<String> dropDownCols =  Arrays.asList(new String [] { "Sample Type", "GenusOrSpecies"});
 	
 	public Mrc2TransitionalSamplesMetadataReader() 
 		{
 		Injector.get().inject(this);
 		} 
-	
-	
+
 	public Mrc2SamplesMetadata read(Sheet sheet, String expId) throws SampleSheetIOException
-		{ // JAK change 2
+		{ // JAK change 2		
 		colLengthMap = initializeColLengthMap();
 		idsInDatabase = sampleService.sampleIdMapForExpId(expId);
-		idsInSheet = new HashMap<String, String>();
-		
+		idsInSheet = new HashMap<String, String>();		
 		Mrc2SamplesMetadata samplesMetadata = null; 
 		try 
 			{
 			List <SampleDTO> samples = readSampleInfo(sheet, expId);
 			sampleReadOrder = new ArrayList<String>();
 			sampleIdMappings = new HashMap<String, String>();
-			reverseSampleIdMappings = new HashMap<String, String>();
-		
-			
+			reverseSampleIdMappings = new HashMap<String, String>();			
 			for (int i = 0; i < samples.size(); i++)
 				{
 				sampleReadOrder.add(samples.get(i).getSampleID());
 				sampleIdMappings.put(samples.get(i).getSampleID(), samples.get(i).getResearcherSampleId());
 				reverseSampleIdMappings.put(samples.get(i).getResearcherSampleId(), samples.get(i).getSampleID());
 				}
-		//	System.out.println("Here is samples get id:" + samples.get(522));
 			samplesMetadata = new Mrc2SamplesMetadata(samples);
 			}
 		  catch (SampleSheetIOException e) { throw e; }
@@ -88,7 +77,6 @@ public class Mrc2TransitionalSamplesMetadataReader
 			e.printStackTrace(); 
 			throw new SampleSheetIOException("Unspecified error while reading sample sheet", rowIdx, sheetName);
 			}
-		
 		return samplesMetadata;
 		}
 	
@@ -105,34 +93,27 @@ public class Mrc2TransitionalSamplesMetadataReader
 			  FieldLengths.MRC2_VOLUME_UNITS_LENGTH, 
 			  FieldLengths.MRC2_SAMPLE_TYPE_ID_LENGTH,
 			  FieldLengths.MRC2_GENUS_OR_SPECIES_ID_LENGTH,
-			  FieldLengths.MRC2_LOCATION_ID_LENGTH}); 
-	
+			  FieldLengths.MRC2_LOCATION_ID_LENGTH}); 	
 		int i = 0; 
 		 Map<String, Integer> map = new HashMap<String, Integer>();
 		 for (String name : sampleColNames)
-			map.put(name, fLengths.get(i++));
-	
+			map.put(name, fLengths.get(i++));	
 		return map;
 		}
-	 
-	 
+	  
 	 private List <SampleDTO> readSampleInfo(Sheet sheet,  String expID) throws SampleSheetIOException 
 		{
-		rowCount=0;
+		rowCount=0;		
 	    int firstSampleRow = 3, lastSampleRow = sheet.getLastRowNum()+1;
-	    List<SampleDTO> samples=new ArrayList<SampleDTO>();
-	  
+	    List<SampleDTO> samples=new ArrayList<SampleDTO>();	  
 	    for (int j = firstSampleRow; j < lastSampleRow; j++)
 	    	{
-	        List<String> tokens = readLine(j, sheet);
-	        
+	        List<String> tokens = readLine(j, sheet);	        
 	        if (isSampleRowBlank(tokens))
-	              break;
-	
+	              break;	
 	      	String sid = tokens.get(Mrc2TransitionalSamplesMetadataReader.mrc2SampleIdColumnNo);
 	       	if(sid != null && sid.length() != 9)
-	      		throw new SampleSheetIOException("Unable to upload file,  sample id " + sid + " is not a valid (9 character) metabolomics sample id", rowCount, sheetName);
-	  	
+	      		throw new SampleSheetIOException("Unable to upload file,  sample id " + sid + " is not a valid (9 character) metabolomics sample id", rowCount, sheetName);	  	
 	       	screenForDatabaseDuplicates(sid);
 	       	screenForSheetDuplicates(sid);
 	      	screenForMissingInfo(tokens, sid);
@@ -140,66 +121,59 @@ public class Mrc2TransitionalSamplesMetadataReader
 	      	SampleDTO dto = readInSampleRowTokens(tokens, expID, sid);
 	      	samples.add(dto);
 	      	}
-
 	    return samples;
 		}
 	 
-
 	 private List<String> readLine(int rowIdx, Sheet sheet)
 	 	{
 	 	Row row = sheet.getRow(rowIdx);
-        
+	 	FormulaEvaluator evaluator;
+	 	String raw;
+        // issue 109
 	 	List<String> tokens = new ArrayList<String>();
         for (int i = 0; i < sampleColNames.size(); i++)
         	{
         	Cell cell = row.getCell(i);
-        	if (cell != null) cell.setCellType(Cell.CELL_TYPE_STRING);
-        	String raw = (cell == null ? "" : cell.toString());
-        	tokens.add(raw == null ? "" : raw.trim());
+        	evaluator = sheet.getWorkbook().getCreationHelper().createFormulaEvaluator();		
+    		evaluator.evaluateInCell(cell);
+    		DataFormatter objDefaultFormat = new DataFormatter();			
+    		raw = objDefaultFormat.formatCellValue(cell);
+	        tokens.add(raw == null ? "" : raw.trim());
         	}
         return tokens;
 	 	}
-	 
-	 
+	  
 	 // Need to check for both blank and "please select or describe" in the dropdown fields
 	 private boolean isSampleRowBlank(List<String> tokens)
 		 {
 		 for (int i = 0; i < sampleColNames.size(); i++)
 			 {
 			 String val = tokens.get(i);
-			 String headerName = sampleColNames.get(i).trim();
-			 
+			 String headerName = sampleColNames.get(i).trim();			 
 			 if (dropDownCols.contains(headerName) && val.contains("Please select or describe---"))
-				 continue;
-			 
+				 continue;		 
 			 if (!StringUtils.isNullOrEmpty(val))
 				 return false;
-			 }
-		 
+			 }		 
 		 return true;
 		 }
-	 
-	 
+	  
 	 private void screenForMissingInfo(List<String> tokens, String sid) throws SampleSheetIOException
 		 {
-		for (int i = 0; i < sampleColNames.size(); i++)
+		 for (int i = 0; i < sampleColNames.size(); i++)
 			 {
 			 String val = tokens.get(i);
-			 String headerName = sampleColNames.get(i).trim();
-				
+			 String headerName = sampleColNames.get(i).trim();				
 			 // column species && st can be unselected (for now) -- keep check in place in case this changes
 			 if (dropDownCols.contains(headerName) && val.contains("Please select or describe---"))
-				 continue;
-			
+				 continue;			
 			 boolean isOrdinaryMissing = StringUtils.isNullOrEmpty(val);
-			 boolean isNonStandardMissing = (dropDownCols.contains(headerName) && !isOrdinaryMissing && val.startsWith("---"));
-			 
+			 boolean isNonStandardMissing = (dropDownCols.contains(headerName) && !isOrdinaryMissing && val.startsWith("---"));			 
 			 if (isOrdinaryMissing || isNonStandardMissing)
 				 throw new SampleSheetIOException("Unable to load sample " + sid  + ". Value for column " + sampleColNames.get(i) + " is missing", rowCount, sheetName);
 			 }
 		 }
 	 
- 
 	private void screenForSheetDuplicates(String sid) throws SampleSheetIOException
 		{
 	   	if (idsInSheet.containsKey(sid))
@@ -211,38 +185,32 @@ public class Mrc2TransitionalSamplesMetadataReader
 	   	idsInSheet.put(sid,  null);
 		}
 	
-	
 	private void screenForDatabaseDuplicates(String sid) throws SampleSheetIOException
 		{
 		if (idsInDatabase.containsKey(sid))
 	   		throw new SampleSheetIOException("Unable to upload file,  sample " + sid + " already exists in the database.", rowCount, sheetName);
 		}
-	 	    
-	  
+	 	      
 	  private void  screenForSampleLengthViolations(List<String> tokens, String sid) throws SampleSheetIOException
 		  {
 		  for (int i = 0; i < sampleColNames.size(); i++) 
 	    	  {
 	    	  String val = tokens.get(i);
-	    	  String headerName = sampleColNames.get(i);
-	    	 
+	    	  String headerName = sampleColNames.get(i);	    	 
 	    	  if ("Volume".equals(headerName))
 	    		  {    		  
 	    		  if (val.startsWith("-"))
 	    			  {
 	    			  String msg = "Cannot load sample " + sid + ". Volume must be a positive number.";
 	    			  throw new SampleSheetIOException(msg, rowCount, sheetName);
-	    			  }
-	    	   
+	    			  }	    	   
 	    		  if (!NumberUtils.verifyDecimalRange(val, 13, 9))
 	    			  {
 	    			  String msg = "Cannot load sample " + sid + ". " + " volume " + val + " is an illegal value";
 	    			  throw new SampleSheetIOException(msg, rowCount, sheetName);
-	    			  }
-	    	     
+	    			  }	    	     
 	    		 continue;
-	    	     }
-	    	 
+	    	     }    	 
 	    	 if (val.length() > fLengths.get(i) && i != 5 )
 	    		  {
 	    		  String msg = "Cannot load sample " + sid + ". Column '" + headerName + "'with value " +  val + " cannot be longer than " + fLengths.get(i) + " characters";
@@ -250,35 +218,29 @@ public class Mrc2TransitionalSamplesMetadataReader
 	    		  }
 	    	  }
 	      }
-	  
-	  
+	    
 	  private SampleDTO readInSampleRowTokens(List<String> tokens, String expID, String sid) throws SampleSheetIOException
-			{
-			SampleDTO sdto=new SampleDTO();
-			sdto.setExpID(expID);
-			
-			try
-				{
-				for(int i = 0; i < tokens.size(); i++)
-					setValueForHeaderTag(tokens.get(i), sampleColNames.get(i), sdto);
-				}
-			catch (Exception e)
-				{
-				String msg = "Error while reading sample information " + (StringUtils.isEmptyOrNull(sid) ? "" : "for sample id " + sid); 
-				e.printStackTrace();
-				throw new SampleSheetIOException(msg, rowCount, sheetName);
-				}
-			
-			//System.out.println(sdto);
-			return sdto;
-			}
+		  {
+		  SampleDTO sdto=new SampleDTO();
+		  sdto.setExpID(expID);			
+		  try
+		      {
+			  for(int i = 0; i < tokens.size(); i++)
+				  setValueForHeaderTag(tokens.get(i), sampleColNames.get(i), sdto);
+			  }
+		  catch (Exception e)
+			  {
+			  String msg = "Error while reading sample information " + (StringUtils.isEmptyOrNull(sid) ? "" : "for sample id " + sid); 
+			  e.printStackTrace();
+			  throw new SampleSheetIOException(msg, rowCount, sheetName);
+			  }
+		  return sdto;
+		  }
 	  
-	
 	  private void setValueForHeaderTag(String value, String tag, SampleDTO dto)
 		  {
 		  if (dropDownCols.contains(tag) && (value.contains("Please select or describe---") || value.startsWith("---")))
-				 return;
-		
+				 return;		
 		  tag = tag.toLowerCase();
 		  tag = StringUtils.cleanAndTrim(tag);
 		  switch (tag)
@@ -303,7 +265,6 @@ public class Mrc2TransitionalSamplesMetadataReader
 		  	}
 		} 
 	
-
 	public List<String> getSampleReadOrder()
 		{
 		return sampleReadOrder;
@@ -331,12 +292,6 @@ public class Mrc2TransitionalSamplesMetadataReader
 	}
 
 // JAK change 4
-
-
-
-
-
-
 
 
 ////////////////////////// Scrap Code and spreadsheet reader changes //////////////////
