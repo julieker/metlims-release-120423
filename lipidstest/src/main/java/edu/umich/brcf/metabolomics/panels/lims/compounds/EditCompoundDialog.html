@@ -1,0 +1,138 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+</head>
+
+<wicket:head>
+  <link rel="stylesheet" type="text/css" href="wickets-jquery.css"/>
+   <link rel="stylesheet" type="text/css" href="dialog.css"/>
+ <style>
+ .select2 {
+   overflow-x:hidden;
+   overflow-y:auto;
+   max-height:300px;
+   background-color:#bd9fab;
+   legend { border: 1px solid transparent; background-color: white; color: black; padding: 4px;}
+	    fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+     	.dialogButton { width : 25%; padding-top : 2px; padding-bottom : 2px}
+}
+
+.dropdown-content {
+   overflow-x:hidden;
+   overflow-y:auto;
+   max-height:300px;
+   background-color:#bd9fab;
+}
+.ui-dialog {
+
+	overflow-x: hidden;
+    overflow-y: auto;
+    autoFocus: false;
+	position: absolute;
+    max-height: 1000px;
+    max-width: 1000px;
+    height: 1000px;
+    width: 1000px;
+    scrollTop : 0;
+	top: 0;
+
+	left: 0;
+
+	padding: .2em;
+
+	outline: 0;
+
+}
+ </style>
+</wicket:head>
+
+<script language="JavaScript">
+function refreshParent() {
+	window.opener.location.href = window.opener.location.href;
+
+	  if (window.opener.progressWindow)
+			
+	 {
+	    window.opener.progressWindow.close()
+	  }
+	  window.close();
+}
+</script>
+<body onUnload="opener.location.reload()" class = "dialog_background">
+  
+  <p>
+	
+	<div>
+		<fieldset class = "dialog_fieldset" style = "height : 80%; margin-top : 2%; margin-bottom : 2%; width :90%; margin-left : 5%; margin-right : 5%">	
+			<!--  
+			<legend class = "dialog_legend">
+		   		<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">Edit Compound</span>
+		   </legend>
+		   -->
+  <center>
+   
+    <span wicket:id = "feedback" class = "feedbackMsg"/>
+    <wicket:panel>
+    <!--  
+  <form wicket:id = "form"> </form>
+  -->
+  <form wicket:id = "editCompoundForm" >        
+ 	    <table style = "width : 80%; margin-left : 10%; margin-right : 10%">
+		  	<tr>
+		  		<td style = "text-align :right">CID:</td>
+		  		<td><span wicket:id = "cid">Moes ID</span></td>
+		  	</tr>
+		  
+		  	<tr>
+			  <td style = "text-align :right"><span wicket:id = "molecularweightLabel">Moes ID</span></td>
+			  <td><input wicket:id = "molecular_weight" type="text" value="Moes Metabalome" size="30" /></td>
+			</tr>
+			
+			<tr>
+			  <td style = "text-align :right">Chem_Abs_Number:</td>
+			  <td><input wicket:id = "chem_abs_number" type="text" value="Moes Metabalome" size="30" /></td>
+			</tr>
+			
+			<tr>
+			  <td style = "text-align :right">InchiKey or Smiles?:</td>
+			  <td><select wicket:id = "compoundIdentifier"></select></td>
+			</tr>
+			
+			<tr>
+				<td style = "text-align :right">Smiles:</td>
+				<td><input wicket:id = "smiles" type="text" value="Mark Twain" size="50" /></td>
+			</tr>
+			<tr>
+				<td style = "text-align :right">InchiKey:</td>
+				<td><input wicket:id = "inchiKey" type="text" value="Mark Twain" size="50" /></td>
+			</tr>
+			<tr>
+				<td style = "text-align :right">Parent CID:</td>
+				<td><input wicket:id="parentCid" type="text" value="Moes Email" size="30" /></td>
+			</tr>
+			<!-- issue 62 -->
+			<tr>
+				<td style = "text-align :right">Additional Solubility:</td>
+				<td><input wicket:id="additionalSolubility" type="text" value="Moes Email" size="50" /></td>
+			</tr>
+			
+			<tr>
+				<td style = "text-align :right">Name:</td>
+				<td><input wicket:id="name" type="text" value="street address" size="30"/></td>
+			</tr>
+			<tr>
+				<td style = "text-align :right">Type:</td>
+				<td><select wicket:id="type"></select></td>
+			</tr>
+			<tr>
+				<td style = "text-align :right">HTML:</td>
+				<td><input wicket:id="html" type="text" value="second address" size="30"></td>
+			</tr>
+		</table>
+	    <br/>
+  </form>
+ </wicket:panel>
+  </center>
+	</fieldset>
+	</div>
+</body>
+</html>
