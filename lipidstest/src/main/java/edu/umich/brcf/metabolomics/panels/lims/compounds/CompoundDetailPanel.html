@@ -138,10 +138,16 @@
 		<table style = "margin-top : 40px; margin-bottom : 40px; width : 80%; margin-right : 10%; margin-left : 10%">
 			<tr>
 				<td style = "text-align : center"> <input wicket:id = "edit" style = "width : 120px" type = "button"  value = "Edit Compound"/></td>
-				<td style = "text-align : center"> <input wicket:id = "add" type = "button"   style = "width : 120px"  value = "Add Compound"/></td>
+				<td style = "text-align : center"> <input wicket:id="openEditCompoundDialog"  style = "width : 120px"  type="button"   value="Add Compound"/> </td>
 				<td style = "text-align : center"> <input wicket:id = "goToInv" type = "button"   style = "width : 120px"  value = "Inventory Detail"/></td>
 				<td style = "text-align : center"> <input wicket:id = "addInv" type = "button"   style = "width : 120px"  value = "Add Inventory"/></td>
 				<td style = "text-align : center"> <input wicket:id = "addName" type = "button"  style = "width : 120px"  value = "Add New Name"/></td>
+			    </tr>
+			    <tr>
+			    <td>
+			   
+			    <div wicket:id="editCompoundDialog">[dialog]</div>
+			    </td>
 			</tr>
 		</table>
 		

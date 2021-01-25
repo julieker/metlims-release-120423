@@ -49,10 +49,15 @@ public class CompoundDetail  extends Panel{
 	@SpringBean
 	AliquotService alqService;
 	
-	CompoundDetail prntPanel;
+	CompoundDetail prntPanel = this;
 	TabbedPanel tabbedPanel;                        
 	EmptyPanel emptyPanel;
 	Link invSrch;
+	int doRender = 1;
+	CompoundDetailPanel compoundDetailPanel;
+	public Form<?> formCompoundDetail;
+	boolean atCompound = false;
+	
 	
 	public CompoundDetail(String id)
 		{
@@ -69,12 +74,22 @@ public class CompoundDetail  extends Panel{
 			{
 			super(id);
 			final List tabs=new ArrayList();
-            setCompound(compoundService.loadCompoundById("C00794"));			
+            setCompound(compoundService.loadCompoundById("C00794"));
             tabs.add(new AbstractTab(new Model("Detail")) 
             	{
             	public Panel getPanel(String panelId)
             		{
-            		return new CompoundDetailPanel(panelId, getCompound().getCid(), true);
+            		if (compoundDetailPanel != null)
+            	    // issue 113
+            		    {
+            			compoundDetailPanel.setCmpId(getCompound().getCid());
+            			compoundDetailPanel.updateCompound(getCompound().getCid());
+            			compoundDetailPanel.smilesInchiKeyMultipleSmilesList = compoundDetailPanel.getSmilesFromCompoundIdandSetTag();	
+            			compoundDetailPanel.getStructure();
+            			return compoundDetailPanel;
+            		    }
+            		compoundDetailPanel = new CompoundDetailPanel(panelId, getCompound().getCid(), true) ;
+            		return compoundDetailPanel;            		
             		}
             	});			                                
 			tabs.add(new AbstractTab(new Model("Inventory")) 
@@ -154,7 +169,6 @@ public class CompoundDetail  extends Panel{
 					// issue 84 String cFormat="(C)\\d{5}|(CA)\\d{4}", iFormat="(NV)\\d{5}", aIdFormat="(A)\\d{8}";
 					String cFormat="(C)\\d{5}|(CA)\\d{4}|(D)\\d{5}", iFormat="(NV)\\d{5}", aIdFormat="(A)\\d{8}";
 					}
-
 				@Override
 				protected void onError(AjaxRequestTarget target)  {  }
 				});
@@ -166,6 +180,8 @@ public class CompoundDetail  extends Panel{
 	            	{
 	            	String input = field.getValue().trim();
 	            	ValidateInput(input, target, label);
+	            	atCompound = true;
+	            	compoundDetailPanel.updateCompound(getCompound().getCid());	            	
 	    			}
 				});			
 			add(emptyPanel= new EmptyPanel("emptyPanel"));
@@ -210,7 +226,6 @@ public class CompoundDetail  extends Panel{
 			else if (verifyFormat(iFormat,input.toUpperCase()))
 				{
 				Inventory inv=null;
-				System.out.println("verifying inventory format");
 				try { inv=invService.loadById(input.toUpperCase()); }
 				catch (EmptyResultDataAccessException e)
 					{

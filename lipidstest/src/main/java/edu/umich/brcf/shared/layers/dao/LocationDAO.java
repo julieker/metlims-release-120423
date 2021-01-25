@@ -16,6 +16,7 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import edu.umich.brcf.shared.layers.domain.Location;
+import edu.umich.brcf.shared.util.io.StringUtils;
 
 @Repository
 public class LocationDAO extends BaseDAO
@@ -82,7 +83,6 @@ public class LocationDAO extends BaseDAO
 		return lst;
 		}
 
-	
 	public List<String> getLocationsForSamples()
 		{
 		List<String> units = getDistinctUnitsForSamples();
@@ -97,14 +97,18 @@ public class LocationDAO extends BaseDAO
 		return query.getResultList();
 		}
 
-	
 	public Map<String, String> getNamesForLocationIds(List<String> ids)
 		{
+		// issue 116
 		Map<String, String> descriptions = new HashMap<String, String>();
+		Location l;
 		for (String id : ids)
 			try
 				{
-				Location l = getLocationById(id);
+				if (StringUtils.isEmptyOrNull(id))
+				    l = null;
+				else
+					l = getLocationById(id);
 				String description = (l == null ? "" : l.getDescription());
 				descriptions.put(id, description);
 				} 

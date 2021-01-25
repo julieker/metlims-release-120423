@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////
 // NewExperimentSamplesPanel.java
 // Written by Jan Wigginton, October 2016
+// updated by Julie Keros Jan 22 2022
 ////////////////////////////////////////////////////
 package edu.umich.brcf.metabolomics.panels.lims.newexperiment;
 
@@ -39,6 +40,7 @@ import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.panels.utilitypanels.SampleLocationsPage;
 import edu.umich.brcf.shared.util.behavior.OddEvenAttributeModifier;
 import edu.umich.brcf.shared.util.behavior.SampleStatusAttributeModifier;
+import edu.umich.brcf.shared.util.io.StringUtils;
 import edu.umich.brcf.shared.util.structures.SelectableObject;
 import edu.umich.brcf.shared.util.utilpackages.DateUtils;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
@@ -53,8 +55,8 @@ public class NewExperimentSamplesPanel extends Panel
 	
 	@SpringBean
 	SampleLocationService sampleLocationService;
-
-	
+	private String returnedCode = "B"; // issue 116
+	private String discardedCode = "T"; // issue 116
 	private List<SelectableObject> samples = new ArrayList<SelectableObject>();
 	private Experiment experiment;
 	private ListView listView;
@@ -95,19 +97,16 @@ public class NewExperimentSamplesPanel extends Panel
 				listItem.add(new AjaxCheckBox("selected", new PropertyModel(so, "selected")) 
 					{
 					public void onUpdate(AjaxRequestTarget target) { }
-					});
-				
+					});				
 				listItem.add(new Label("index", new PropertyModel(so, "indexSlotStr")));
 				listItem.add(new Label("sampleId", ((Sample)so.getSelectionObject()).getSampleID()));
 				//TO DO : Verify sampleName -> researchSampleId mapping
 				listItem.add(new Label("sampleName", ((Sample)so.getSelectionObject()).getSampleName()));
 //				listItem.add(new Label("userDesc", ((Sample)so.getSelectionObject()).getVolumeAndUnits()));
 				listItem.add(buildLinkToModal("locationHistory", modal1,((Sample)so.getSelectionObject()).getSampleID() ));
-				listItem.add(new Label("location", ((Sample)so.getSelectionObject()).getLocID()));
-				
-				
-				
-				Component label = new Label("sampleStatus", ((Sample)so.getSelectionObject()).getStatus().getStatusValue());
+				// issue 116
+				listItem.add(new Label("location", ( ((Sample)so.getSelectionObject()).getStatus().getStatusValue().equals(returnedCode) || ((Sample)so.getSelectionObject()).getStatus().getStatusValue().equals(returnedCode) ? null : (Sample)so.getSelectionObject()).getLocID())   );
+				Component label = new Label("sampleStatus",  ((Sample)so.getSelectionObject()).getStatus().getStatusValue());
 				WebMarkupContainer cell = new WebMarkupContainer("cell");
 				cell.add(SampleStatusAttributeModifier.create(((Sample)so.getSelectionObject()).getStatus().getId()));
 				cell.add(label); 
@@ -260,12 +259,18 @@ public class NewExperimentSamplesPanel extends Panel
 			@Override
 			protected void onSave(String status, AjaxRequestTarget target1) 
 				{
-				sampleService.updateStatus(getSamples(), status);
+				sampleService.updateStatus(getSamples(), status );	
+				// issue 116
+				if (status.equals(returnedCode) || status.equals(discardedCode))
+				    {
+					List <SampleLocationDTO> dtos = grabSampleLocationDtos(null);
+					sampleLocationService.logUpdates(dtos);
+					sampleService.updateLocation(getSamples (), null );
+				    }						
 				modal1.close(target1);
 				}
 			});
 		}
-	
 	
 	private Page newEditLocationPage(final ModalWindow modal1)
 		{
@@ -302,8 +307,7 @@ public class NewExperimentSamplesPanel extends Panel
 				SampleLocationDTO dto = SampleLocationDTO.instance(location);
 				dtos.add(dto);
 				}
-			}
-		
+			}		
 		return dtos;
 		}
 	

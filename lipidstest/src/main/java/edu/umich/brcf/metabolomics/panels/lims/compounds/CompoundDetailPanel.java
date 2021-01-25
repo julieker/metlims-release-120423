@@ -14,9 +14,12 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
+import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource;
 import org.apache.wicket.markup.html.link.Link;
@@ -39,13 +42,18 @@ import edu.umich.brcf.metabolomics.layers.service.CompoundNameService;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.metabolomics.layers.service.InventoryService;
 import edu.umich.brcf.shared.layers.domain.Inventory;
+import edu.umich.brcf.shared.layers.dto.CompoundDTO;
 import edu.umich.brcf.shared.util.utilpackages.CompoundIdUtils;
+// issue 113
+import com.googlecode.wicket.jquery.core.JQueryBehavior;
+import com.googlecode.wicket.jquery.core.Options;
+import com.googlecode.wicket.jquery.ui.widget.dialog.DialogButton;
 // issue 61
 public class CompoundDetailPanel extends Panel 
 	{
 	WebMarkupContainer container;
 	ListView listView;
-	
+	 
 	@SpringBean
 	CompoundNameService compoundNameService;
 	
@@ -57,10 +65,18 @@ public class CompoundDetailPanel extends Panel
 	Model<String> strMdlMultipleSmiles = Model.of("");
 	Model<String> strMdlMultipleSmilesForInchi = Model.of("");
 	Label msgMultipleSmiles = null;
+	CompoundDTO compoundDto = new CompoundDTO ();
 	Label msgMultipleSmilesForInchi = null;;
 	List <String> smilesInchiKeyMultipleSmilesList = new ArrayList <String> (); // issue 31
 	Label chem_abs_number_label = null;	
 	private List<CompoundName> names;
+	CompoundDetailPanel cdp = this;
+	boolean openedOnce = false;
+	CompoundDTO cmpDto = new CompoundDTO();
+	EditCompoundDialog editCompoundDialog;
+	final ModalWindow modal1= buildModalWindow("modal1", cdp);
+	public Form<?> formDP;
+		
 	private LoadableDetachableModel getCompoundModel(final String id) 
 		{
 		return new LoadableDetachableModel() 
@@ -74,11 +90,95 @@ public class CompoundDetailPanel extends Panel
 	
 	public CompoundDetailPanel(String id, String cid, final boolean insider)
 		{
-		super(id);
+		super(id);		
 		setOutputMarkupId(true);
-		final CompoundDetailPanel cdp = this;
 		setCmpId(cid);
 		setDefaultModel(new CompoundPropertyModel(getCompoundModel(getCmpId())));		
+		final ModalWindow modal1= buildModalWindow("modal1", cdp);
+		add(modal1);
+		editCompoundDialog = new EditCompoundDialog ("editCompoundDialog", "Add Compound",  cdp, modal1, compoundDto)		
+		    { // NOSONAR
+			private static final long serialVersionUID = 1L;
+		    @Override
+			public void onClick(AjaxRequestTarget target, DialogButton button)
+				{	
+	    	    String editChk = null;
+		    	if (button.toString().equals("Done"))
+		    		{	
+		    		editChk = this.saveCompound(cmpDto);
+		    		if (!editChk.equals("0") && !editChk.contains("could not be found.  The Compound/Name detail is saved for compound:"))
+		    			{
+		    			target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage(editChk));
+		    			return;
+		    			}
+		    		if (editChk.contains("could not be found.  The Compound/Name detail is saved for compound:"))
+		    			target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage(editChk));
+		    		cdp.setCmpId(this.childCompound);
+		    		target.add(this);
+		    		formDP = this.form;
+		    		this.mainDto = new CompoundDTO();
+		    		//setResponsePage(getPage());
+		    		if (editChk.equals("0"))
+			    		target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Compound/Name detail saved for compound:" + cdp.getCmpId()));
+			    	updateCompoundDetail(target, cdp);			    		
+		    		}
+		    	else 
+		    		{
+		    		super.close(target, button);
+		    		}			
+				}  
+		        		
+		    @Override
+			public DialogButton getSubmitButton() 
+	    		{	
+			// TODO Auto-generated method stub
+		    	return this.submitButton;
+	    		}
+		    
+			@Override
+			protected void onOpen(IPartialPageRequestHandler handler)
+				{ 		
+				this.reinitialize();
+				AjaxRequestTarget target = (AjaxRequestTarget) handler;
+				target.add(this.form);
+				target.add(cdp);
+				cdp.getParent().setOutputMarkupId(true);
+				target.add(cdp.getParent());			
+				} 
+			
+			@Override
+			public void onClose(IPartialPageRequestHandler handler, DialogButton button) 
+			    {				
+			    }
+			   
+			@Override
+			public void onConfigure(JQueryBehavior behavior)
+			    {
+				behavior.setOption("width", 1000);
+				behavior.setOption("title", Options.asString(this.getTitle().getObject()));	
+				behavior.setOption("autoOpen", false);
+			    }	
+			
+		    @Override
+			protected void onSubmit(AjaxRequestTarget target, DialogButton button) 
+			    {
+		    	// TODO Auto-generated method stub	
+			    }
+			@Override
+			protected void onError(AjaxRequestTarget target, DialogButton button) 
+			    {
+				// TODO Auto-generated method stub				
+			    }			
+			@Override
+			protected List<DialogButton> getButtons()
+			    {
+				List <DialogButton> dialogButtonList = new ArrayList <DialogButton> ();
+				dialogButtonList.add(new DialogButton("submit", "Done")) ;
+				return dialogButtonList;
+			    }			
+		    };	   
+		    // see jak
+	    add (editCompoundDialog);
 		add(new Label("cid",new PropertyModel(this, "compound.cid")));
 		add(new Label("molecular_formula",new PropertyModel(this, "compound.molecular_formula")));
 		add(new Label("molecularWeightAsDouble",new PropertyModel(this, "compound.molecularWeightAsDouble")));
@@ -100,8 +200,7 @@ public class CompoundDetailPanel extends Panel
 		add (msgMultipleSmilesForInchi);
 		add(new Label("addlSolubility",new PropertyModel(this, "compound.additionalSolubility"))); // issue 62
 		msgMultipleSmiles.setOutputMarkupId(true);	
-		msgMultipleSmilesForInchi.setOutputMarkupId(true);	
-		
+		msgMultipleSmilesForInchi.setOutputMarkupId(true);			
 		add(new ListView("parentsList", new PropertyModel(this, "parentsList")) 
 			{
 			public void populateItem(final ListItem listItem) 
@@ -121,8 +220,7 @@ public class CompoundDetailPanel extends Panel
 				}
 			});
 		add(new NonCachingImage("structure", new PropertyModel(this, "structure")));				
-		final ModalWindow modal1= buildModalWindow("modal1", cdp);
-		add(modal1);		
+				
 		add(buildLinkToModal("add", modal1, cdp).setVisible(insider));
         add(buildLinkToModal("addInv", modal1, cdp).setVisible(insider));
         add(buildLinkToModal("edit", modal1, cdp).setVisible(insider));
@@ -140,7 +238,22 @@ public class CompoundDetailPanel extends Panel
 				listItem.add(buildAjaxLink("editName", modal1, new EditCompoundName(getPage(), new Model(cn), container, modal1)).setVisible(insider));
 				}
 			});
-		listView.setOutputMarkupId(true);
+		listView.setOutputMarkupId(true);		
+		/////////////// issue 113 /////////////////////	
+		this.add(new IndicatingAjaxLink <Void>("openEditCompoundDialog") 
+		    {			
+			private static final long serialVersionUID = 1L; 
+			@Override
+			public boolean isEnabled()
+				{
+	            return true;
+				}
+			@Override
+			public void onClick(AjaxRequestTarget target) 			     
+			    {					
+				editCompoundDialog.open(target);
+			    }
+		    });
 		}
 	
    public ModalWindow buildModalWindow(String linkId, final CompoundDetailPanel cdp)
@@ -152,17 +265,7 @@ public class CompoundDetailPanel extends Panel
        		{	
            public void onClose(AjaxRequestTarget target) 
                { 
-        	   smilesInchiKeyMultipleSmilesList = new ArrayList <String> ();  
-        	   smilesInchiKeyMultipleSmilesList = getSmilesFromCompoundIdandSetTag(); 
-        	   strMdlMultipleSmiles.setObject("");
-        	   strMdlMultipleSmilesForInchi.setObject("");
-        	   if (!StringUtils.isNullOrEmpty(getCompound().getInchiKey()))
-        		   strMdlMultipleSmilesForInchi.setObject(smilesInchiKeyMultipleSmilesList.get(1));
-        	   else if (!StringUtils.isNullOrEmpty(getCompound().getChem_abs_number()) && StringUtils.isNullOrEmpty(getCompound().getSmiles()))    		   
-        	       strMdlMultipleSmiles.setObject(smilesInchiKeyMultipleSmilesList.get(1));
-        	   target.add(msgMultipleSmiles);
-        	   target.add(msgMultipleSmilesForInchi);
-        	   target.add(cdp);
+        	   updateCompoundDetail(target, cdp);
                }
        		});
        
@@ -246,9 +349,12 @@ public class CompoundDetailPanel extends Panel
 	
     private Page setPage(String linkID, final ModalWindow modal1, final CompoundDetailPanel cdp)
 		{
-		switch(linkID)
+		switch(linkID) // see jak
 			{
-			case "addInv" : return new EditInventory(getPage(), getCmpId(), modal1);
+			case "addInv" : 
+				//////////////////////////
+		    ////////////////////////////
+			return new EditInventory(getPage(), getCmpId(), modal1);
 			case "addName" : return new EditCompoundName(getPage(), getCmpId(), container, modal1);
 			case "edit" : return new EditCompound(getPage(), getCompoundModel(getCmpId()), cdp, modal1);
 			case "add" :    
@@ -271,7 +377,7 @@ public class CompoundDetailPanel extends Panel
 			
 			default : 
 				modal1.setInitialWidth(750);
-				modal1.setInitialHeight(540);
+				modal1.setInitialHeight(1040);
 			}
 		}
 	
@@ -321,7 +427,7 @@ public class CompoundDetailPanel extends Panel
 				getCompound();
 				smilesInchiKeyMultipleSmilesList = getSmilesFromCompoundIdandSetTag();
 				target.add(msgMultipleSmiles);
-	        	target.add(msgMultipleSmilesForInchi);
+	          	target.add(msgMultipleSmilesForInchi);
 				target.add(cdp);
 			    }			
 		    };
@@ -367,7 +473,6 @@ public class CompoundDetailPanel extends Panel
 		return parentsList;
 		}
 	
-	
 	public List<Compound> getChildrenList()
 		{
 		List<Compound> childrenList = new ArrayList<Compound>();
@@ -410,9 +515,9 @@ public class CompoundDetailPanel extends Panel
 			| PopupSettings.STATUS_BAR | PopupSettings.SCROLLBARS).setHeight(650).setWidth(1500)); // issue 61
 		return 	link;
 		}
-	
+		
 	// issue 31
-	private List <String> getSmilesFromCompoundIdandSetTag()
+	public List <String> getSmilesFromCompoundIdandSetTag()
 	    {
 		smilesInchiKeyMultipleSmilesList.clear();
 		strMdlMultipleSmilesForInchi.setObject("");
@@ -436,6 +541,22 @@ public class CompoundDetailPanel extends Panel
   		    strMdlMultipleSmiles.setObject(smilesInchiKeyMultipleSmilesList.get(1));
   	        }
   	    return smilesInchiKeyMultipleSmilesList;
+		}
+	
+	// issue 113
+	private void updateCompoundDetail (AjaxRequestTarget target,  CompoundDetailPanel cdp )
+		{
+		smilesInchiKeyMultipleSmilesList = new ArrayList <String> ();  
+ 	   	smilesInchiKeyMultipleSmilesList = getSmilesFromCompoundIdandSetTag(); 
+ 	   	strMdlMultipleSmiles.setObject("");
+ 	   	strMdlMultipleSmilesForInchi.setObject("");
+ 	   	if (!StringUtils.isNullOrEmpty(getCompound().getInchiKey()))
+ 		    strMdlMultipleSmilesForInchi.setObject(smilesInchiKeyMultipleSmilesList.get(1));
+ 	    else if (!StringUtils.isNullOrEmpty(getCompound().getChem_abs_number()) && StringUtils.isNullOrEmpty(getCompound().getSmiles()))    		   
+ 	        strMdlMultipleSmiles.setObject(smilesInchiKeyMultipleSmilesList.get(1));
+ 	   	target.add(msgMultipleSmiles);
+ 	   	target.add(msgMultipleSmilesForInchi);
+ 	   	target.add(cdp);
 		}
 	}
 	
