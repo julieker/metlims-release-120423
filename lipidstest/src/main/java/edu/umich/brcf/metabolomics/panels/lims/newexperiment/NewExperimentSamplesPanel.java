@@ -105,7 +105,7 @@ public class NewExperimentSamplesPanel extends Panel
 //				listItem.add(new Label("userDesc", ((Sample)so.getSelectionObject()).getVolumeAndUnits()));
 				listItem.add(buildLinkToModal("locationHistory", modal1,((Sample)so.getSelectionObject()).getSampleID() ));
 				// issue 116
-				listItem.add(new Label("location", ( ((Sample)so.getSelectionObject()).getStatus().getStatusValue().equals(returnedCode) || ((Sample)so.getSelectionObject()).getStatus().getStatusValue().equals(returnedCode) ? null : (Sample)so.getSelectionObject()).getLocID())   );
+				listItem.add(new Label("location", ( ((Sample)so.getSelectionObject()).getStatus().getStatusValue().equals(returnedCode) || ((Sample)so.getSelectionObject()).getStatus().getStatusValue().equals(discardedCode) ? null : (Sample)so.getSelectionObject()).getLocID())   );
 				Component label = new Label("sampleStatus",  ((Sample)so.getSelectionObject()).getStatus().getStatusValue());
 				WebMarkupContainer cell = new WebMarkupContainer("cell");
 				cell.add(SampleStatusAttributeModifier.create(((Sample)so.getSelectionObject()).getStatus().getId()));
