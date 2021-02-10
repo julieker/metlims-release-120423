@@ -60,7 +60,8 @@ public class Mrc2MixtureMetadata implements Serializable
 	        dtoList.addAll(dto.getAliquotList());  
 	        // issue 110
 			// JAK add in the mixture here for MixtureInfo
-	        Mrc2MixtureInfoItem info = new Mrc2MixtureInfoItem(createDate, createdBy,  volumeSolventToAdd,finalVolume, dtoList, dto.getAliquotVolumeList(), dto.getAliquotConcentrationList(),  dto.getMixtureList(), dto.getMixtureVolumeList(), dto.getMixtureConcentrationList() );
+	        // issue 118
+	        Mrc2MixtureInfoItem info = new Mrc2MixtureInfoItem(createDate, createdBy,  volumeSolventToAdd,finalVolume, dtoList, dto.getAliquotVolumeList(), dto.getAliquotConcentrationList(),  dto.getMixtureList(), dto.getMixtureVolumeList(), dto.getMixtureConcentrationList() , dto.getMixtureName());
 			infoFields.add(info);
 			}
 		}

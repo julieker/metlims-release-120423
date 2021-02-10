@@ -29,6 +29,7 @@ import edu.umich.brcf.shared.layers.domain.Location;
 import edu.umich.brcf.shared.layers.dto.AliquotDTO;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.util.io.StringUtils;
+import edu.umich.brcf.shared.util.structures.PrintableBarcode;
 import edu.umich.brcf.shared.util.utilpackages.DateUtils;
 
 @Transactional
@@ -308,13 +309,15 @@ public class AliquotService
 		}
 	
 	// issue 86
+	// issue 120
 	public List<String> getInventoryDateList(List<String> aliquotIdList)
 		{
 		List<String> aliquotIdListInvDate = new ArrayList <String> ();
 		for (String aliquotId: aliquotIdList )
 			{
 			Aliquot alq = loadById(aliquotId);
-			String invDateStr = (StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" + alq.getInventory().getInventoryId() + "-" + alq.getCreateDateString();
+			int i = StringUtils.isEmptyOrNull(alq.getCompound().getPrimaryName()) ? 0 : (alq.getCompound().getPrimaryName().length() >= 30 ? 30 : alq.getCompound().getPrimaryName().length());
+			String invDateStr = (StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" + alq.getInventory().getInventoryId() + "-" + alq.getCreateDateString() + "<br>"  + (StringUtils.isEmptyOrNull(alq.getCompound().getPrimaryName()) ? "" : alq.getCompound().getPrimaryName().substring(0,i) );
 			aliquotIdListInvDate.add(invDateStr);
 			}
 		return aliquotIdListInvDate;

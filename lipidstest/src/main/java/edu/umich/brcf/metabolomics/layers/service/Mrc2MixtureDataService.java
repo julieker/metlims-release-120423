@@ -67,7 +67,7 @@ public class Mrc2MixtureDataService
 		try 
 			{
 			user = userDao.loadById(((MedWorksSession) Session.get()).getCurrentUserId());
-			mixture = Mixture.instance (Calendar.getInstance(), user, StringUtils.isEmptyOrNull(dto.getVolumeSolventToAdd()) ? null : new BigDecimal (dto.getVolumeSolventToAdd()),        StringUtils.isEmptyOrNull(dto.getDesiredFinalVolume()) ? null : new BigDecimal (dto.getDesiredFinalVolume())); // change this JAK		
+			mixture = Mixture.instance (Calendar.getInstance(), user, StringUtils.isEmptyOrNull(dto.getVolumeSolventToAdd()) ? null : new BigDecimal (dto.getVolumeSolventToAdd()),        StringUtils.isEmptyOrNull(dto.getDesiredFinalVolume()) ? null : new BigDecimal (dto.getDesiredFinalVolume()), dto.getMixtureName()); // issue 118		
 			mixtureDao.createMixture(mixture);
 		    List<String> aliquotList = new ArrayList <String> ();
 		    aliquotList.addAll(dto.getAliquotList());	

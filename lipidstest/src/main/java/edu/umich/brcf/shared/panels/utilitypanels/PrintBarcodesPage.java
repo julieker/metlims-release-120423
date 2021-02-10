@@ -18,9 +18,9 @@ import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -44,6 +44,7 @@ public class PrintBarcodesPage extends WebPage
 	
 	public PrintBarcodesPage(Page page) 
 		{
+		// issue 120
 		backPage = page;
 		add(new FeedbackPanel("feedback").setOutputMarkupId(true));
 		add(new PrintBarcodesForm("printBarcodesForm", null, null));
@@ -64,7 +65,7 @@ public class PrintBarcodesPage extends WebPage
 		backPage = page;
 		modal = m;
 		add(new FeedbackPanel("feedback").setOutputMarkupId(true));
-		add(new PrintBarcodesForm("printBarcodesForm", barcodeIds, selectedExperiment));
+		add(new PrintBarcodesForm("printBarcodesForm", barcodeIds, selectedExperiment));		
 		}
 	
 	public final class PrintBarcodesForm extends Form 
@@ -85,19 +86,16 @@ public class PrintBarcodesPage extends WebPage
 		
 		public PrintBarcodesForm(final String id, final List<String> ids, String s)
 			{
-			super(id);
-			idsToPrint = ids;			
+			super(id);			
+			idsToPrint = ids;	
 			container = new WebMarkupContainer("container");
 			container.setOutputMarkupId(true);
 			selectedExperiment = s;
-			
 			DropDownChoice<String> printerDrp = null;
 			add(printerDrp = new DropDownChoice<String>("printerName", new PropertyModel(this, "printerName"), 
-					barcodePrintingService.getPrinterNames()));
-			
+					barcodePrintingService.getPrinterNames()));			
 			printerDrp.setRequired(true);
 			printerDrp.setOutputMarkupId(true);
-			
 			add(new Label("count", new Model<String>("# Copies :"))
 				{
 				public boolean isVisible() {return (idsToPrint != null); }
@@ -126,20 +124,22 @@ public class PrintBarcodesPage extends WebPage
 				
 				@Override
 				public boolean isEnabled() { return false; }
-				});
-					
-			add(new Label("toprint", "Ids to print : ")
+				}); 
+			
+	         add(new Label("toprint", "Ids to print : ")
 				{
 				public boolean isVisible() { return (!(idsToPrint == null)); }
-				});
-					
-			TextArea<String> samplesBox = new TextArea<String>("samples", new PropertyModel<String>(this, "idListString"))
-				{
+				});// issue 120
+				
+				MultiLineLabel samplesBox = new MultiLineLabel ("samples",new PropertyModel<String>(this, "idListString"))
+	            {
 				@Override
 				public boolean isVisible() { return (!(idsToPrint == null)); }
 				};
+			samplesBox.setEscapeModelStrings(false);	
 			container.add(samplesBox);
-			samplesBox.setOutputMarkupId(true);				
+			samplesBox.setOutputMarkupId(true);
+				 // issue 120			
 			add(container);		
 			// Issue 464			
 			if (modal != null) 
@@ -183,10 +183,10 @@ public class PrintBarcodesPage extends WebPage
 							};						
 						};
 			         add (cancelButton);
-			         cancelButton.setDefaultFormProcessing(false);		
+			         cancelButton.setDefaultFormProcessing(false);	
 		        }
 	
-			add(downloadLink = buildDownloadSheetButton("downloadButton", idsToPrint));			
+			add(downloadLink = buildDownloadSheetButton("downloadButton", idsToPrint));	// issue 120		
 			add(submitLink = new AjaxSubmitLink ("print", this)
 				{
 				@Override
@@ -205,7 +205,8 @@ public class PrintBarcodesPage extends WebPage
 						List<String> allIds = new ArrayList<String>();  						
 						allIds = getAllIds();								
 						for (int j = 0; j < allIds.size(); j++)
-							barcodesList.add(new ValueLabelBean(allIds.get(j), null));
+							// issue 120
+							barcodesList.add(new ValueLabelBean(allIds.get(j).replace("<br>",  "\\&"), null));
 						String errMsg=new PrintableBarcode(barcodePrintingService, printerName, barcodesList).print();//"BarcodeLabelPrinter1"						
 						if (errMsg.length()>0)
 							PrintBarcodesPage.this.error(errMsg);
@@ -234,15 +235,25 @@ public class PrintBarcodesPage extends WebPage
 				((BarcodeSheetWriter) downloadLink.getReport()).setBarcodesToPrint(allIds);
 			return allIds;
 			}
-			
+			// jak put back final
 		private ExcelDownloadLink buildDownloadSheetButton(String id, final List<String> barcodesToPrint)
 			{
+			// issue 120
 			IWriteableSpreadsheet writer;
-			writer = new BarcodeSheetWriter("", barcodesToPrint);			
+			BarcodeSheetWriter bw = new BarcodeSheetWriter("", barcodesToPrint);
+		   // writer = new BarcodeSheetWriter("", barcodesToPrint);
+			writer = bw;
 			ExcelDownloadLink lnk = new ExcelDownloadLink(id, writer)
 				{
 				@Override
 				public boolean isVisible()  { return true; } 
+				
+				@Override
+				public void onClick()
+					{
+				    bw.setBarcodesToPrint(replaceHtmlBR(barcodesToPrint));
+					doClick(writer);					
+					}			
 				};				
 			lnk.setOutputMarkupId(true);
 			return lnk;
@@ -310,6 +321,14 @@ public class PrintBarcodesPage extends WebPage
 		public void setPrinterName(String printerName) 
 			{
 			this.printerName = printerName;
+			}
+		// issue 120
+		public List<String> replaceHtmlBR(List<String> htmlList)
+			{
+			List<String> result = new ArrayList<>();
+			for (String s : htmlList) 
+			    result.add(s.replaceAll("<br>", " "));		    
+			return result;
 			}
 		}
 	}

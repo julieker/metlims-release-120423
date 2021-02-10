@@ -78,6 +78,23 @@ public class MixtureService
 		return mixtureDao.allMixtureIds();
 		}
 	
+	//issue 118
+	public List<String> allMixtureNames()
+		{
+		return mixtureDao.allMixtureNames();
+		}
+	
+	// Issue 118
+	public Map<String, String> allMixtureIdsNamesMap()
+		{
+		List<String> ids = allMixtureNames();
+		Map<String, String> map = new HashMap<String, String>();
+		if (ids != null)
+			for (String id : ids)
+				map.put(id, null);		
+		return map;
+		}
+	
 	// issue 110
 	public Map<String, String> allComplexMixtureIdsForMap()
 		{

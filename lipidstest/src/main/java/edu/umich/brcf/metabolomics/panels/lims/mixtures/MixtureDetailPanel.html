@@ -1,9 +1,18 @@
 <wicket:head>
+<style> 
+div.scrollclass {
+  background-color: lightblue;
+  height: 550px;
+  width: 1000px;
+  overflow-y: scroll;
+}
+
+</style>
 </wicket:head>
 <wicket:panel>
 <body>
 	    <div wicket:id="modal2"></div>
-		<div>
+		 <div style="overflow-y: auto; height : 85%; width : 96%; padding-right : 10px;">
 		<!--  
 		<fieldset class = "dialog_fieldset" style = "height : 80%; margin-top : .5%; margin-bottom : .5%; width :90%; margin-left : 5%; margin-right : 5%">	
 			<legend class = "dialog_legend">
@@ -16,19 +25,23 @@
 		   </legend>
 		   -->
         <center>	
-	<table style = "width :100%"  border="0">
+    <div class="scrollclass">
+	<table style = "width: 100%;">
 			<tr>
 			  <th>ID</th>
+			  <th>Name</th>
 			  <th>Date</th>
 			  <th>Created By/Units</th>
 			  <th>Solvent to Add</th>
 			  <th>Desired Final Volume</th>
 			  <th></th>
-			</tr>
-			
+			</tr>	
 		    <tr wicket:id = "mixtureDetail">
 			      <td>
 			        	<span wicket:id = "mixtureId">Huckleberry Finn</span>
+			      </td>
+			        <td>
+			        	<span wicket:id = "mixtureName">Huckleberry Finn</span>
 			      </td>
 			       <td>
 			        	<span wicket:id = "createDate">Huckleberry Finn</span>
@@ -49,7 +62,7 @@
 			      
 		    </tr>
 	  	</table>	
-	
+	   </div>
     </center>
     <!--  
 	</fieldset>

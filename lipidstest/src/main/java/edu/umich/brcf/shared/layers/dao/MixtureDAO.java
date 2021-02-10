@@ -40,10 +40,10 @@ public class MixtureDAO extends BaseDAO
 		{
 		List<Mixture> mixLst =  getEntityManager().createQuery("from Mixture order by mixture_id")
 				.getResultList();	
-	    for (Mixture mixture : mixLst)
+	 /*   for (Mixture mixture : mixLst)
 			{
 			initializeTheKids(mixture, new String[] { "createdBy"});
-			}
+			}*/
 		return mixLst;
 		}
 	
@@ -53,6 +53,14 @@ public class MixtureDAO extends BaseDAO
 		Query query = getEntityManager().createNativeQuery("select cast(t1.mixture_id as char(9)) from mixture t1");
 		List<String> mixtureList = query.getResultList();
 		return mixtureList;
+		}
+	
+	// issue 118
+	public List<String> allMixtureNames()
+		{
+		Query query = getEntityManager().createNativeQuery("select distinct mixture_name from mixture t1");
+		List<String> mixtureNameList = query.getResultList();
+		return mixtureNameList;
 		}
 	
 	// issue 94	
@@ -86,7 +94,7 @@ public class MixtureDAO extends BaseDAO
 	    for (MixtureChildren mchild : mixChildList)
 			{
 	    	Mixture mix = mchild.getMixture();
-			initializeTheKids(mix, new String[] { "createdBy"});
+		    initializeTheKids(mix, new String[] { "createdBy"});
 			mixList.add(mix);
 			}
 		return mixList;

@@ -47,7 +47,7 @@ public class AliquotDAO extends BaseDAO
 	    for (MixtureAliquot malq : malqLst)
 			{
 	    	Aliquot alq = malq.getAliquot();
-			initializeTheKids(alq, new String[] { "location", "inventory" , "compound"});
+		    initializeTheKids(alq, new String[] { "location", "inventory" , "compound"});
 			alqList.add(alq);
 			}
 		return alqList;

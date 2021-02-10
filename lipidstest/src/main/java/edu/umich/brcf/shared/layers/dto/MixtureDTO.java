@@ -18,18 +18,17 @@ import edu.umich.brcf.shared.layers.domain.Mixture;
 // issue 31 2020
 public class MixtureDTO implements Serializable
 	{
-	public static MixtureDTO instance(String mixtureId,  String createDate, String createdBy, String volumeSolventToAdd, String desiredFinalVolume) 
+	public static MixtureDTO instance(String mixtureId,  String createDate, String createdBy, String volumeSolventToAdd, String desiredFinalVolume, String mixtureName) 
 	    {
-	    return new MixtureDTO(mixtureId, createDate, createdBy, volumeSolventToAdd, desiredFinalVolume);
+	    return new MixtureDTO(mixtureId, createDate, createdBy, volumeSolventToAdd, desiredFinalVolume, mixtureName);
 		}
 	
 	public static MixtureDTO instance(Mixture mixture)
 		{
 		SimpleDateFormat format1 = new SimpleDateFormat("dd-MMM-yy");
 		String formatted = format1.format(mixture.getCreateDate().getTime());
-		// Output "Wed Sep 26 14:23:28 EST 2012"
-		
-		return new MixtureDTO(mixture.getMixtureId(), formatted,  mixture.getCreatedBy().getId(), mixture.getVolSolvent().toString(), mixture.getDesiredFinalVol().toString());
+		// Output "Wed Sep 26 14:23:28 EST 2012"		
+		return new MixtureDTO(mixture.getMixtureId(), formatted,  mixture.getCreatedBy().getId(), mixture.getVolSolvent().toString(), mixture.getDesiredFinalVol().toString(), mixture.getMixtureName());
 		}	
 	// issue 61 2020
 	private String mixtureId;
@@ -44,8 +43,10 @@ public class MixtureDTO implements Serializable
 	private String aliquotsChoice; // issue 94
     private String volumeSolventToAdd; // issue 94
     private String desiredFinalVolume;
+    private String mixtureName;  // issue 118
 
-	private MixtureDTO(String mixtureId, String createDate,   String createdBy, String volumeSolventToAdd, String desiredFinalVolume)
+    // issue 116
+	private MixtureDTO(String mixtureId, String createDate,   String createdBy, String volumeSolventToAdd, String desiredFinalVolume, String mixtureName)
 		{
 		this.mixtureId = mixtureId;		
 		this.createDate = createDate;
@@ -99,6 +100,18 @@ public class MixtureDTO implements Serializable
 	public void setDesiredFinalVolume(String desiredFinalVolume)
 		{
 		this.desiredFinalVolume = desiredFinalVolume;
+		}
+	
+    // issue 118
+	public String getMixtureName()
+		{
+		return mixtureName;
+		}
+
+	//issue 118
+	public void setMixtureName(String mixtureName)
+		{
+		this.mixtureName = mixtureName;
 		}
 	
 	// issue 94	

@@ -11,8 +11,9 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import edu.umich.brcf.metabolomics.layers.domain.Compound;
 import edu.umich.brcf.metabolomics.layers.domain.CompoundName;
@@ -56,6 +57,15 @@ public class MixtureAliquotDetail extends WebPage
 	ListView listViewMixtures; // issue 110
 	MixtureAliquotDetail MixtureAliquotDetail = this;
 	// itemList
+	// issue 118
+	IModel <List<Mixture>> mixtureChildrenModel = new LoadableDetachableModel() 
+		{
+		protected Object load() { return mixtureService.mixtureChildrenForMixtureId(mixture.getMixtureId());}
+		}	;
+	IModel <List<Aliquot>> aliquotModel = new LoadableDetachableModel() 
+		{
+		protected Object load() { return aliquotService.aliquotIdsForMixtureId(mixture.getMixtureId());}
+		}	;
 	public MixtureAliquotDetail(String id,  Mixture mix) 
 		{
 		final ModalWindow modal2= new ModalWindow("modal2");
@@ -73,7 +83,8 @@ public class MixtureAliquotDetail extends WebPage
         	});
         add(modal2);		
 		///// issue 61
-		add(listViewAliquots = new ListView("aliquotIds", new PropertyModel(this, "aliquotIds")) 
+        ///// issue 118
+		add(listViewAliquots = new ListView("aliquotIds", aliquotModel) 
 			{
 			public void populateItem(final ListItem listItem) 
 				{
@@ -86,7 +97,7 @@ public class MixtureAliquotDetail extends WebPage
 				listItem.add(new Label("aliquotConcentrate", new Model(mixtureAliquot.getConcentrationAliquot())));				
 				}
 			});
-		add(listViewMixtures = new ListView("childrenMixtureIds", new PropertyModel(this, "childrenMixtureIds")) 
+		add(listViewMixtures = new ListView("childrenMixtureIds", mixtureChildrenModel) 
 			{
 			public void populateItem(final ListItem listItem) 
 				{
@@ -94,13 +105,13 @@ public class MixtureAliquotDetail extends WebPage
 			    MixtureChildrenPK mixtureChildrenPK   = MixtureChildrenPK.instance(mix, mixture );	
 			    MixtureChildren mixtureChildren = mixtureService.loadMixtureChildrenById(mixtureChildrenPK);				
 			    listItem.add(new Label("mixtureId", new Model(mixtureChildren.getMixture().getMixtureId())));
+			    listItem.add(new Label("mixtureName", new Model(mixtureChildren.getMixture().getMixtureName())));// issue 118
 				listItem.add(new Label("mixtureVolume", new Model(mixtureChildren.getVolumeMixture())));
 				listItem.add(new Label("mixtureConcentrate", new Model(mixtureChildren.getConcentrationMixture())));				
 				}
 			});	
 		container = new WebMarkupContainer("itemList");
 		container.setOutputMarkupId(true);
-		// add back jak container.add(listView);
 		add(container);
         }
 		
@@ -139,7 +150,7 @@ public class MixtureAliquotDetail extends WebPage
 					    });
 					modal2.show(target);
 					}
-				catch (Exception e) {  }
+				catch (Exception e) { e.printStackTrace(); }
 				}
 			};
 	    link.add(new Label("aliquotid", aliquot.getAliquotId()));
@@ -166,21 +177,7 @@ public class MixtureAliquotDetail extends WebPage
 		{
 		this.mixture=mixture;
 		}
-	
-	// issue 110 
-	public List<Mixture> getChildrenMixtureIds()
-		{
-		List<Mixture> nList = mixtureService.mixtureChildrenForMixtureId(mixture.getMixtureId());
-		return nList;
-		}
-	
-	
-	public List<Aliquot> getAliquotIds()
-		{
-		List<Aliquot> nList = aliquotService.aliquotIdsForMixtureId(mixture.getMixtureId());
-		return nList;
-		}
-	
+		
 	public String getCompoundName(Aliquot alq)
 		{
 		List<CompoundName> cnList = compoundNameService.loadByCid(alq.getCompound().getCid());

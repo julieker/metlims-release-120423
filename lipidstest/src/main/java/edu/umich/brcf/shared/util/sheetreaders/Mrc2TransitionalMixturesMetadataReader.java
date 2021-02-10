@@ -17,6 +17,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import edu.umich.brcf.shared.layers.dto.MixtureDTO;
 import edu.umich.brcf.shared.layers.service.AliquotService;
 import edu.umich.brcf.shared.layers.service.MixtureService;
+import edu.umich.brcf.shared.util.FieldLengths;
 import edu.umich.brcf.shared.util.MixtureSheetIOException;
 import edu.umich.brcf.shared.util.datacollectors.Mrc2MixtureMetadata;
 import edu.umich.brcf.shared.util.utilpackages.NumberUtils;
@@ -35,24 +36,24 @@ public class Mrc2TransitionalMixturesMetadataReader
 	private final String sheetName = "Mixture";
 
 	// Used for add mode (next stage)
-	private Map<String, String>  idsInSheet, aliquotsIDsInDatabase, complexMixturesInDatabase, mixtureIDsInDatabase, mixtureIdsInSheet;
+	private Map<String, String>  idsInSheet, mixtureNamesAlreadyInDatabase,  aliquotsIDsInDatabase, complexMixturesInDatabase, mixtureIDsInDatabase, mixtureIdsInSheet;
 	Map<String, Integer> colLengthMap;
 	List <Integer> fLengths;
 
 	// issue 94
-	List <String> mixtureColNames = Arrays.asList( new String [] {"Primary Name", "Aliquot", "volume_aliquot (uL)", "conc (FROM LIMS) uM", "volume solvent  to add", "desired final volume",  "Concentration_aliquot", "Units", "# aliquots"});
+	List <String> mixtureColNames = Arrays.asList( new String [] {"Mixture Name", "Primary Name", "Aliquot", "volume_aliquot (uL)", "conc (FROM LIMS) uM", "volume solvent  to add", "desired final volume",  "Concentration_aliquot", "Units", "# aliquots"});
 	List <String> headersInSpreadsheet = new ArrayList <String> ();
-	private int aliquotCol = 1;
-	private int volAliquotCol = 2;
-	private int concentrateAliquotCol = 6;
-	private int concFromLimsCol = 3;
-	private int volumeSolventToAdd = 4;
-	private int desiredFinalVolume = 5;
+	private int aliquotCol = 2;
+	private int volAliquotCol = 3;
+	private int concentrateAliquotCol = 7;
+	private int concFromLimsCol = 4;
+	private int volumeSolventToAdd = 5;
+	private int desiredFinalVolume = 6;
 	private int maxNumberColumns = 100;
-	private int desiredVolumeCol = 5;
+	private int desiredVolumeCol = 6;
+	private int mixtureNameCol = 0;
 	private int headerRowIdx = 0;
-	
-	List<String> dropDownCols =  Arrays.asList(new String [] { "Sample Type", "GenusOrSpecies"});
+	List <String> mixtureColNamesForLength = Arrays.asList( new String [] {"Mixture Name"}); // issue 118
 	
 	public Mrc2TransitionalMixturesMetadataReader() 
 		{
@@ -62,9 +63,11 @@ public class Mrc2TransitionalMixturesMetadataReader
 	public Mrc2MixtureMetadata read(Sheet sheet) throws MixtureSheetIOException
 		{ 
 		// issue 110
+		colLengthMap = initializeColLengthMap();// issue 118
 		aliquotsIDsInDatabase = aliquotService.allAliquotIdsForMap();
 		mixtureIDsInDatabase = mixtureService.allMixtureIdsForMap();
 		complexMixturesInDatabase = mixtureService.allComplexMixtureIdsForMap();
+		mixtureNamesAlreadyInDatabase = mixtureService.allMixtureIdsNamesMap();
 		idsInSheet = new HashMap<String, String>();
 		mixtureIdsInSheet = new HashMap<String, String>();
 		Mrc2MixtureMetadata mixturesMetadata = null; 
@@ -84,6 +87,30 @@ public class Mrc2TransitionalMixturesMetadataReader
 			}		
 		return mixturesMetadata; 
 		}
+	
+	// issue 118
+	private Map<String, Integer> initializeColLengthMap()
+		{
+		fLengths = Arrays.asList(new Integer[] { 
+			  FieldLengths.MRC2_MIXTURE_NAME}); 	
+		int i = 0; 
+		 Map<String, Integer> map = new HashMap<String, Integer>();
+		 for (String name : mixtureColNamesForLength)
+			map.put(name, fLengths.get(i++));	
+		return map;
+		}
+	
+	// issue 118
+	  private void  screenForMixtureLengthViolations(List<String> tokens) throws  MixtureSheetIOException
+	  {
+	  for (int i = 0; i < mixtureColNamesForLength.size(); i++) 
+    	  {
+    	  String val = tokens.get(i);
+    	  String headerName = mixtureColNamesForLength.get(i);	    	     	 
+    	  if (val.length() > fLengths.get(i) && i == 0 )
+    		  throw new MixtureSheetIOException("Unable to upload file,  mixture name: " + val + " is longer than the allowed value of:" + FieldLengths.MRC2_MIXTURE_NAME, rowCount, sheetName);
+    	  }
+      }
 	
 	 //// Read main mixture info just 1st row
 	 // issue 94
@@ -113,10 +140,12 @@ public class Mrc2TransitionalMixturesMetadataReader
 	        if (isMixtureRowBlank(tokens))
 	            break;
 	        // issue 110
+	        screenForMixtureLengthViolations(tokens);// issue 118
 	        screenForNonExistentAliquotsMixtures(tokens.get(aliquotCol), j);
 	        if (tokens.get(aliquotCol).startsWith("M"))
 	        	screenForComplexMixtures(tokens.get(aliquotCol), j);
 	        screenForMissingInfo(tokens, j);
+	        screenForMixtureNameInDatabase(tokens.get(mixtureNameCol),j);
 	        screenForSheetDuplicates(tokens.get(aliquotCol),j);
 	        screenForInvalidNumber(tokens, j);
 	       	if (j == 1)
@@ -167,6 +196,13 @@ public class Mrc2TransitionalMixturesMetadataReader
 		if (!mixtureIDsInDatabase.containsKey(aOrMid) && aOrMid.startsWith("M"))
 	   		throw new MixtureSheetIOException("Unable to upload file,  mixture " + aOrMid + " does not exist in the database in row:" + rowCount, rowCount, sheetName);
 		}
+	
+	// Issue 118
+	private void screenForMixtureNameInDatabase(String mName, int rowCount) throws MixtureSheetIOException
+		{
+		if (mixtureNamesAlreadyInDatabase.containsKey(mName))
+	   		throw new MixtureSheetIOException("Unable to upload file,  mixture name " + mName + " already exists in row:" + rowCount, rowCount, sheetName);
+		}
 	 
 	private String getMissingHeaderName (int headerRowIdx, Sheet sheet)
 		{
@@ -197,13 +233,13 @@ public class Mrc2TransitionalMixturesMetadataReader
 	 	Row row = sheet.getRow(rowIdx); 	
 	 	List<String> tokens = new ArrayList<String>();
 	 	String raw = null;
-        Cell cell = null;      
+        Cell cell = null;    
 	 	for (int i = 0; i < mixtureColNames.size(); i++)
         	{
 	 		if (row == null)
 	 			break;
         	cell = row.getCell(i);
-        	if (i == 0 && StringUtils.isEmptyOrNull((cell == null ? "" : cell.toString())))
+        	if (i == 1 && StringUtils.isEmptyOrNull((cell == null ? "" : cell.toString())))
         		break;
         	if (i==desiredVolumeCol)
 	        	{
@@ -227,12 +263,14 @@ public class Mrc2TransitionalMixturesMetadataReader
 	 
 	private boolean isMixtureRowBlank(List<String> tokens)
 		 {
-		 for (int i = 0; i < mixtureColNames.size(); i++)
+		 if (tokens.size()<= 1)
+			 return true;
+		 for (int i = 0; i < mixtureColNames.size(); i++) // issue 118
 			 {
 			 String val = tokens.get(i);
-			 if (!StringUtils.isNullOrEmpty(val))
+			 if (!StringUtils.isNullOrEmpty(val) &&  i>0) 
 				 return false;
-			 }		 
+			 }	
 		 return true;
 		 }
 	 
@@ -332,6 +370,9 @@ public class Mrc2TransitionalMixturesMetadataReader
 		tag = StringUtils.cleanAndTrim(tag);
 		switch (tag)
 		  	{
+		    // issue 118
+		  	case "mixturename" 		  : dto.setMixtureName(value);
+			    						break;
 	        case "volumesolventtoadd" : dto.setVolumeSolventToAdd(value); 
 	        						    break;
 	        case "desiredfinalvolume" : dto.setDesiredFinalVolume(value);
@@ -343,21 +384,22 @@ public class Mrc2TransitionalMixturesMetadataReader
 	// issue 94
 	 private void screenForMissingInfo(List<String> tokens, int rowNum) throws MixtureSheetIOException
 		 {
+		 //issue 118 
 		 for (int i = 0; i < mixtureColNames.size(); i++)
 			 {
 			 String val = tokens.get(i);
 			 boolean isOrdinaryMissing = StringUtils.isNullOrEmpty(val);
 			 String headerName = mixtureColNames.get(i).trim();				
 			 // column species && st can be unselected (for now) -- keep check in place in case this changes
-			 if (i != 1 && i != 2 && i!= 3 && i != 9  && i != 4 && i != 5)
+			 if (i!= 0 && i!= 2 && i != 3 && i != 4 && i!= 5   && i != 6 && i != 7)
 				 continue;
 			 
-			 if (rowNum == 1 && (i == 1 || i == 2 || i == 3 || i == 9  ||  i == 4 || i == 5 ))
+			 if (rowNum == 1 && (i == 0 || i == 2 || i == 3 || i == 4 || i == 5  ||  i == 6 || i == 7 ))
 			 	{
 				if (isOrdinaryMissing)
 				    throw new MixtureSheetIOException("Unable to load mixture " + ". Value for column " + mixtureColNames.get(i) + " is missing on row: " + rowNum, rowCount, sheetName);
 			 	}
-			 if (rowNum != 1 && (i == 1 || i == 2 || i== 3 ||  i == 9 ))
+			 if (rowNum != 1 && ( i == 2 || i == 3 || i==4||  i == 7 ))
 			 	{
 				if (isOrdinaryMissing)
 				    throw new MixtureSheetIOException("Unable to load mixture " + ". Value for column " + mixtureColNames.get(i) + " is missing on row: " + rowNum, rowCount, sheetName);

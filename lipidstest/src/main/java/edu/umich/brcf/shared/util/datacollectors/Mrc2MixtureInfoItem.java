@@ -29,9 +29,10 @@ public class Mrc2MixtureInfoItem implements Serializable, IWriteConvertable
     private List<String> mixtureList;
     private List<String> mixtureVolumeList;
     private List<String> mixtureConcentrationList;
+    private String mixtureName;
    // issue 94 
    // issue 110
-	public Mrc2MixtureInfoItem(String createDate, String createdBy, String volumeSolventToAdd, String desiredFinalVolume, List <String> aliquotList, List <String> aliquotVolumeList, List <String> aliquotConcentrationList, List <String> mixtureList, List <String> mixtureVolumeList, List <String> mixtureConcentrationList )
+	public Mrc2MixtureInfoItem(String createDate, String createdBy, String volumeSolventToAdd, String desiredFinalVolume, List <String> aliquotList, List <String> aliquotVolumeList, List <String> aliquotConcentrationList, List <String> mixtureList, List <String> mixtureVolumeList, List <String> mixtureConcentrationList, String mixtureName )
 		{
 		this.volumeSolventToAdd  = volumeSolventToAdd;
 		this.desiredFinalVolume = desiredFinalVolume;
@@ -46,6 +47,7 @@ public class Mrc2MixtureInfoItem implements Serializable, IWriteConvertable
 		this.mixtureList = mixtureList;
 		this.mixtureConcentrationList = mixtureConcentrationList;
 		this.mixtureVolumeList = mixtureVolumeList;
+		this.mixtureName = mixtureName; // issue 118
 		}
 	
 	public MixtureDTO toIncompleteMixtureDTO()
@@ -68,6 +70,7 @@ public class Mrc2MixtureInfoItem implements Serializable, IWriteConvertable
 		dto.setDesiredFinalVolume(desiredFinalVolumeasBigDecimal== null? null :desiredFinalVolumeasBigDecimal.toString());
 		dto.setVolumeSolventToAdd(volumeAsBigDecimal == null? null : volumeAsBigDecimal.toString());
 		dto.setAliquotList(new ArrayList <String> ());
+		dto.setMixtureName(this.mixtureName);// issue 118
 		dto.getAliquotList().addAll(this.aliquotList);
 		dto.setAliquotVolumeList(new ArrayList <String> ());
 		dto.getAliquotVolumeList().addAll(this.aliquotVolumeList);

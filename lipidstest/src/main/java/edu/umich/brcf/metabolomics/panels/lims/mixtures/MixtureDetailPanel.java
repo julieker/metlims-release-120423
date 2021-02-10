@@ -15,8 +15,9 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import edu.umich.brcf.metabolomics.layers.domain.Compound;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
@@ -47,6 +48,12 @@ public class MixtureDetailPanel extends Panel
 	ListView listViewMixtures; // issue 61
 	MixtureDetailPanel MixtureDetailPanel = this;
 	// itemList
+	// issue 118
+	IModel <List<Mixture>> mixtureModel = new LoadableDetachableModel() 
+		{
+		protected Object load() { return mixtureService.loadAllMixtures(); }
+		}	;
+	
 	public MixtureDetailPanel(String id) 
 		{
 	    super(id);
@@ -65,12 +72,14 @@ public class MixtureDetailPanel extends Panel
         add(modal2);
         
 		///// issue 94
-		add(listViewMixtures = new ListView("mixtureDetail", new PropertyModel(this, "mixtureList")) 
+		//// issue 120
+        add(listViewMixtures = new ListView("mixtureDetail", mixtureModel)
 			{
 			public void populateItem(final ListItem listItem) 
 				{
 				final Mixture mixture = (Mixture) listItem.getModelObject();		
 				listItem.add(new Label("mixtureId", new Model(mixture.getMixtureId())));
+				listItem.add(new Label("mixtureName", new Model(mixture.getMixtureName()))); // issue 118
 				listItem.add(new Label("createDate", new Model( mixture.getCreateDateString())));
 				listItem.add(new Label("createdBy", new Model(userService.getFullNameByUserId(mixture.getCreatedBy().getId()))));
 				listItem.add(new Label("volumeSolvent", new Model(mixture.getVolSolvent())));
@@ -129,10 +138,4 @@ public class MixtureDetailPanel extends Panel
 		this.invList=invList;
 		}
 		
-	public List<Mixture> getMixtureList()
-		{
-		List<Mixture> nList = mixtureService.loadAllMixtures();
-		return nList;
-		}
-	
 	}

@@ -29,9 +29,9 @@ public class Mixture implements Serializable
 	{
 	public static String MIXTURE_DATE_FORMAT = "MM/dd/yy";
 
-	public static Mixture instance( Calendar createDate,  User createdBy, BigDecimal volSolvent, BigDecimal desiredFinalVol  ) 
+	public static Mixture instance( Calendar createDate,  User createdBy, BigDecimal volSolvent, BigDecimal desiredFinalVol, String mixtureName  ) 
 		{
-		return new Mixture(null, createDate, createdBy,  volSolvent,  desiredFinalVol);
+		return new Mixture(null, createDate, createdBy,  volSolvent,  desiredFinalVol, mixtureName);
 		}
 
 	@Id()
@@ -57,15 +57,22 @@ public class Mixture implements Serializable
 	@Column(name = "DESIRED_FINAL_VOLUME", columnDefinition = "NUMBER(15,7)")
 	private BigDecimal desiredFinalVol;
 	
+	// issue 120
+	@Basic()
+	@Column(name = "MIXTURE_NAME", unique = true, columnDefinition = "VARCHAR2(50)")
+	private String mixtureName; // issue 118
+	
+	
 	public Mixture() {  }
 	
-	private Mixture(String mixtureId ,  Calendar createDate, User createdBy, BigDecimal volSolvent, BigDecimal desiredFinalVol )
+	private Mixture(String mixtureId ,  Calendar createDate, User createdBy, BigDecimal volSolvent, BigDecimal desiredFinalVol, String mixtureName )
 		{
 		this.mixtureId = mixtureId;
 		this.createDate = createDate;
 		this.createdBy = createdBy;
 		this.volSolvent = volSolvent;
 		this.desiredFinalVol = desiredFinalVol;
+		this.mixtureName = mixtureName;
 		}
 
 	public String getMixtureId()
@@ -122,6 +129,18 @@ public class Mixture implements Serializable
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
 		return (createDate == null) ? "" : sdf.format(createDate.getTime());
 		}
+	
+	// issue 118
+	public void setMixtureName(String mixtureName)
+		{
+		this.mixtureName = mixtureName;
+		}
+
+	public String getMixtureName()
+		{
+		return this.mixtureName;
+		}
+
 	}
 	
 	

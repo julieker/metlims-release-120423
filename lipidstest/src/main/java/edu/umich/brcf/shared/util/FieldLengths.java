@@ -4,8 +4,6 @@
 ////////////////////////////////////////////////////
 package edu.umich.brcf.shared.util;
 
-import edu.umich.brcf.shared.layers.dto.SampleDTO;
-
 public class FieldLengths
 	{
 	public static Integer SMALL_DOCUMENT_LIMIT = 1000000; // issue 441
@@ -41,12 +39,11 @@ public class FieldLengths
 	public static Integer MRC2_GENUS_OR_SPECIES_ID_LENGTH = 8;
 	public static Integer MRC2_SAMPLE_TYPE_LENGTH = 100;
 	public static Integer MRC2_SAMPLE_TYPE_ID_LENGTH = 7;
-	public static Integer MRC2_LOCATION_ID_LENGTH = 6;
-	
+	public static Integer MRC2_LOCATION_ID_LENGTH = 6;	
 	public static Integer MRC2_FACTOR_NAME_LENGTH = 120; 
 	public static Integer MRC2_FACTOR_VALUE_LENGTH = 40;
 	public static Integer MRC2_ASSAY_NAME_LENGTH = 200;
-	
+	public static Integer MRC2_MIXTURE_NAME = 50; // issue 118
 	
 	public static Integer grabFieldLength(String property) 
 		{
