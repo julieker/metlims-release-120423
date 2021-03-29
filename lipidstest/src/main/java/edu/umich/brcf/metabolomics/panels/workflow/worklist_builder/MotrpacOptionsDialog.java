@@ -71,7 +71,17 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 	protected int nBrownAdiposeExercisePrev= 0;
 	protected int nBrownAdiposeSedentaryPrev= 0;
     protected int nHippoCampusExercisePrev= 0;
-	protected int nHippoCampusSedentaryPrev= 0; 
+	protected int nHippoCampusSedentaryPrev= 0;
+	
+	// issue 126
+	protected int nMuscleHumanMalePrev=0;
+	protected int nMuscleHumanFemalePrev=0;
+	protected int nHumanMuscleCntrlPrev=0;
+	
+	// issue 126
+	protected int nMuscleHumanMale=0;
+	protected int nMuscleHumanFemale=0;
+	protected int nHumanMuscleCntrl=0;
 	
 	private int nLungExercise = 0;
 	private int nLungSedentary = 0;
@@ -105,8 +115,11 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 		form.add(buildCountDropdown("nGastroSedentary", "nGastroSedentary")); 
 		form.add(buildCountDropdown("nLiverExercise", "nLiverExercise")); 
 		form.add(buildCountDropdown("nLiverSedentary", "nLiverSedentary")); 
+		
 		form.add(buildCountDropdown("nAdiposeExercise", "nAdiposeExercise"));
 		form.add(buildCountDropdown("nAdiposeSedentary", "nAdiposeSedentary"));
+		
+		
 		form.add(buildCountDropdown("nPlasmaExercise", "nPlasmaExercise"));
 		form.add(buildCountDropdown("nPlasmaSedentary", "nPlasmaSedentary"));
 		// issue 22
@@ -120,7 +133,12 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 		form.add(buildCountDropdown("nBrownAdiposeSedentary", "nBrownAdiposeSedentary"));
 		form.add(buildCountDropdown("nHippoCampusExercise", "nHippoCampusExercise"));
 		form.add(buildCountDropdown("nHippoCampusSedentary", "nHippoCampusSedentary"));
-			
+		
+		// issue 126
+		form.add(buildCountDropdown("nMuscleHumanMale", "nMuscleHumanMale"));
+		form.add(buildCountDropdown("nMuscleHumanFemale", "nMuscleHumanFemale"));
+		form.add(buildCountDropdown("nHumanMuscle", "nHumanMuscleCntrl"));
+		
 		form.add(buildCountDropdown("nRatPlasma", "nRatPlasma"));
 		// Issue 427
 		form.add(buildCountDropdown("nRatG", "nRatG"));
@@ -152,7 +170,7 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 		drp.add(new AjaxFormComponentUpdatingBehavior("change")
 			{
 			@Override
-			protected void onUpdate(AjaxRequestTarget target)  {   }
+			protected void onUpdate(AjaxRequestTarget target)  {  }
 			});
 		return drp;
 		}
@@ -260,11 +278,13 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 	
 	public int getNAdiposeExercise() 
 		{
+		System.out.println("in getnadioposeex in motrpac options");
 		return nAdiposeExercise;
 		}
 	
 	public void setNAdiposeExercise(int nAdiposeExercise) 
 	    {
+		System.out.println ("in set nadipose exercise...");
 		this.nAdiposeExercise = nAdiposeExercise;
 		}
 	
@@ -298,6 +318,40 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 	public void setNLungSedentary(int nLungSedentary) 
 		{
 		this.nLungSedentary = nLungSedentary;
+		}
+	
+	// issue 126
+	public int getNMuscleHumanMale()
+		{
+		System.out.println("in muscle human male in motrpac options:");
+		return nMuscleHumanMale;
+		}
+	
+	public void setNMuscleHumanMale(int nMuscleHumanMale) 
+		{
+		this.nMuscleHumanMale = nMuscleHumanMale;
+		}
+	
+	// issue 126
+	public int getNMuscleHumanFemale()
+		{
+		return nMuscleHumanFemale;
+		}
+	
+	public void setNMuscleHumanFemale(int nMuscleHumanFemale) 
+		{
+		this.nMuscleHumanFemale = nMuscleHumanFemale;
+		}
+	
+	// issue 126
+	public int getNHumanMuscleCntrl()
+		{
+		return nHumanMuscleCntrl;
+		}
+	
+	public void setNHumanMuscleCntrl(int nHumanMuscleCntrl) 
+		{
+		this.nHumanMuscleCntrl = nHumanMuscleCntrl;
 		}
 	
 	// issue 22
@@ -405,6 +459,11 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
     	nRatAPrev= 0;
     	nLungExercisePrev= 0;
     	nLungSedentaryPrev= 0;
+    	// issue 126
+    	nMuscleHumanMalePrev= 0;
+    	nMuscleHumanFemalePrev= 0;
+    	nHumanMuscleCntrlPrev= 0;
+    	
     	nKidneyExercisePrev= 0;
     	nKidneySedentaryPrev= 0;
         nHeartExercisePrev= 0;

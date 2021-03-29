@@ -86,8 +86,12 @@ public class WorklistSimple implements Serializable
 		nRatL = 0,
 		nRatA = 0;
 	private int nCE10Reps, nCE20Reps, nCE40Reps;
-	private int nLungExercise = 0;
-	private int nLungSedentary = 0;
+	// issue 126
+	private int nMuscleHumanMale = 0;
+	private int nMuscleHumanFemale = 0;
+	private int nHumanMuscleCntrl = 0;
+	
+	
 	private int nKidneyExercise = 0;
 	private int nKidneySedentary = 0;
 	private int nHeartExercise = 0;
@@ -98,6 +102,20 @@ public class WorklistSimple implements Serializable
 	private int nHippoCampusSedentary = 0;  
 	private boolean chosenOtherSample = false;
 	private boolean chosenOtherSampleMotrPAC = false;
+	private int nLungExercise = 0;
+	private int nLungSedentary = 0;
+		
+	// issue 126
+	public int getNHumanMuscleCntrl ()
+		{
+		return nHumanMuscleCntrl;
+		}
+	public void setNHumanMuscleCntrl (int nHumanMuscleCntrl)
+		{
+		this.nHumanMuscleCntrl = nHumanMuscleCntrl;
+		}
+	
+	
 	// issue 6
 	public boolean getChosenOtherSample ()
 		{
@@ -106,6 +124,27 @@ public class WorklistSimple implements Serializable
 	public void setChosenOtherSample (boolean vchosenOtherSample)
 		{
 		chosenOtherSample = vchosenOtherSample;
+		}
+	
+	// issue 126
+	public int getNMuscleHumanMale ()
+		{
+		return nMuscleHumanMale;
+		}
+	
+	public void setNMuscleHumanMale (int nMuscleHumanMale)
+		{
+		this.nMuscleHumanMale = nMuscleHumanMale;	
+		}
+	
+	// issue 126
+	public int getNMuscleHumanFemale ()
+		{
+		return nMuscleHumanFemale;
+		}
+	public void setNMuscleHumanFemale (int nMuscleHumanFemale)
+		{
+		this.nMuscleHumanFemale = nMuscleHumanFemale;
 		}
 	public boolean getChosenOtherSampleMotrPAC ()
 		{
@@ -219,6 +258,8 @@ public class WorklistSimple implements Serializable
 		{
 		return 	nLungSedentary;
 		}
+	
+	
 	
 	public int getNKidneyExercise()
 		{
@@ -1592,15 +1633,14 @@ public class WorklistSimple implements Serializable
 				"Method", "Override DA", "Data File"});
 		}
 
+	//issue 126
 	public Boolean getUseGCOptions()
 		{
 		if (getSelectedInstrument() == null)
-				return false;
-		
+				return false;		
 		String si = getSelectedInstrument().trim();
-		// TO DO : Replace this with db lookup...
-		
-		return si.startsWith("IN0025") || si.startsWith("IN0002") || si.startsWith("IN0028"); 
+		// TO DO : Replace this with db lookup...		
+		return si.startsWith("IN0025") || si.startsWith("IN0002") ; 
 		}
 	
 	// IN0028
@@ -1827,6 +1867,9 @@ public class WorklistSimple implements Serializable
 		setNBrownAdiposeSedentary(0);
 		setNHippoCampusExercise(0);
 		setNHippoCampusSedentary(0);
+		setNMuscleHumanFemale(0);
+		setNMuscleHumanMale(0);
+		setNHumanMuscleCntrl(0);
 		}	
 	}
 	

@@ -144,6 +144,7 @@ public class AutoAddControlsPanel extends Panel
 			    if (originalWorklist.getChosenOtherSampleMotrPAC())
 			        {
 			    	target.appendJavaScript(buildHTMLClearString(1,22));
+			    	target.appendJavaScript(buildHTMLClearString(30,32)); // issue 126
 			    	this.clearPrevValues();
 			        }
 				} 
@@ -174,6 +175,10 @@ public class AutoAddControlsPanel extends Panel
 				this.nBrownAdiposeSedentaryPrev=originalWorklist.getNBrownAdiposeSedentary();
 				this.nHippoCampusExercisePrev=originalWorklist.getNHippoCampusExercise();
 				this.nHippoCampusSedentaryPrev=originalWorklist.getNHippoCampusSedentary();
+				// issue 126
+				this.nMuscleHumanFemalePrev=originalWorklist.getNMuscleHumanFemale();
+				this.nMuscleHumanMalePrev=originalWorklist.getNMuscleHumanMale();
+				this.nHumanMuscleCntrlPrev=originalWorklist.getNHumanMuscleCntrl();
 				handler.add(form);					
 			    }
 				
@@ -242,6 +247,9 @@ public class AutoAddControlsPanel extends Panel
 		        originalWorklist.setNBrownAdiposeSedentary(motrpacOptionsDialog.nBrownAdiposeSedentaryPrev);
 		        originalWorklist.setNHippoCampusExercise(motrpacOptionsDialog.nHippoCampusExercisePrev);
 		        originalWorklist.setNHippoCampusSedentary(motrpacOptionsDialog.nHippoCampusSedentaryPrev);
+		        originalWorklist.setNMuscleHumanFemale(motrpacOptionsDialog.nMuscleHumanFemalePrev);
+		        originalWorklist.setNMuscleHumanMale(motrpacOptionsDialog.nMuscleHumanMalePrev);
+		        originalWorklist.setNHumanMuscleCntrl(motrpacOptionsDialog.nHumanMuscleCntrlPrev);
 			    }
 		    });			
 		
@@ -801,6 +809,26 @@ public class AutoAddControlsPanel extends Panel
 		// Issue 422 		
 		// issue 427
 		
+		// issue 126
+		for (int i = 0; i < worklist.getNMuscleHumanMale(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Muscle-Human : Male");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
+		// issue 126
+		for (int i = 0; i < worklist.getNMuscleHumanFemale(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Muscle-Human : Female");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
 		for (int i = 0; i < worklist.getNRatG(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("UM rat   gastrocnemius control");
@@ -833,6 +861,16 @@ public class AutoAddControlsPanel extends Panel
 		for (int i = 0; i < worklist.getNRatPlasma(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("UM rat   plasma control");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
+		// issue 126
+		for (int i = 0; i < worklist.getNHumanMuscleCntrl(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("UM Human muscle control");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
 			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
 			group3.setStandardNotAddedControl(true);
@@ -867,7 +905,18 @@ public class AutoAddControlsPanel extends Panel
 	
 		// issue 422 for MotrPac		
 		// Issue 422
-		// Issue 427		    
+		// Issue 427
+		
+		// issue 126
+		for (int i = 0; i < worklist.getNHumanMuscleCntrl(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("UM Human muscle control");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
 		for (int i = 0; i < worklist.getNRatPlasma(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("UM rat   plasma control");
@@ -902,7 +951,28 @@ public class AutoAddControlsPanel extends Panel
 			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
-			}		
+			}
+		
+		
+		// issue 126
+		for (int i = 0; i < worklist.getNMuscleHumanFemale(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Muscle-Human : Female");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
+		for (int i = 0; i < worklist.getNMuscleHumanMale(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Muscle-Human : Male");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
         // issue 22		
 		for (int i = 0; i < worklist.getNHippoCampusSedentary(); i++)
 			{

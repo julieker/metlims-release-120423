@@ -193,6 +193,11 @@ public class ControlDAO extends BaseDAO
 	tempArray.add("Other Pool.4  (CS0000OP4)");
 	tempArray.add("Other Pool.5  (CS0000OP5)");
 
+	// issue 126
+	
+	tempArray.add("MoTrPAC -   Muscle-Human : Female  (CSMR81020)");
+	tempArray.add("MoTrPAC -   Muscle-Human : Male  (CSMR81010)");
+	
     // issue 22
 	tempArray.add("MoTrPAC -   Hippocampus, Sedentary  (CSMR80025)");
 	tempArray.add("MoTrPAC -   Hippocampus, Exercise  (CSMR80024)");
@@ -218,10 +223,13 @@ public class ControlDAO extends BaseDAO
 	tempArray.add("MoTrPAC -   Gastrocnemius, Exercise (CSMR80008)");
 	tempArray.add("UM rat   plasma control (CS0UMRP01)");
 	
-	// Issue 427
+	// issue 126
 	tempArray.add("UM rat   gastrocnemius control (CS0UMRG01)");
+	// Issue 427
 	tempArray.add("UM rat   liver control (CS0UMRL01)");
 	tempArray.add("UM rat   adipose control (CS0UMRA01)");
+	// issue 126
+	tempArray.add("UM Human muscle control  (CSOUMHM03)");
 	
 	tempArray.add("Standard.0    (CS000STD0)");
 	tempArray.add("Standard.1    (CS000STD1)");
