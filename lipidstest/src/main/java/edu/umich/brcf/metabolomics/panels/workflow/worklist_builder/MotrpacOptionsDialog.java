@@ -278,13 +278,11 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 	
 	public int getNAdiposeExercise() 
 		{
-		System.out.println("in getnadioposeex in motrpac options");
 		return nAdiposeExercise;
 		}
 	
 	public void setNAdiposeExercise(int nAdiposeExercise) 
 	    {
-		System.out.println ("in set nadipose exercise...");
 		this.nAdiposeExercise = nAdiposeExercise;
 		}
 	
@@ -323,7 +321,6 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 	// issue 126
 	public int getNMuscleHumanMale()
 		{
-		System.out.println("in muscle human male in motrpac options:");
 		return nMuscleHumanMale;
 		}
 	
