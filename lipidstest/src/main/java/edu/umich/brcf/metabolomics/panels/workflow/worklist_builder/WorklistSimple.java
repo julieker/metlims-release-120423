@@ -815,10 +815,14 @@ public class WorklistSimple implements Serializable
 	//////////////////////////////////	
 	public void rebuildEverything()   
 	    {  
+		Map <String, String> commentMap = new HashMap <String, String> ();		
 		List <WorklistItemSimple>  originalItems  = new ArrayList <WorklistItemSimple> ();		
-		//if (getItems().size() == 0)
+		
+		// issue 128
 		originalItems = populateOriginalItems(originalItems);
-        clearAllItems();
+		if (this.getSelectedPlatform().equals("agilent"))
+			commentMap = buildCommentMap(originalItems);
+		clearAllItems();
         // issue 426
         List <WorklistItemSimple> controlItemsToAdd;
         colsPerPlate = (isPlatformChosenAs("absciex") ? 9 : 9);
@@ -954,20 +958,11 @@ public class WorklistSimple implements Serializable
 		    	    	}
 		        	}
 	            }
-		    nPlates = updatePlatePositions();
+            // issue 128
+            if (this.getSelectedPlatform().equals("agilent"))
+                populateComments(getItems(),commentMap);
+            nPlates = updatePlatePositions();
         }       
-	/////////////////////////////// issue 456 or 486 issue 4 in metlims.2019
-	/*public Integer getPadding()
-		{
-		largestPadding = new ArrayList <Integer> ();
-		for (Map.Entry<String,Integer> entry : ctrlTypeToRunningTotal.entrySet())  	          
-			largestPadding.add(entry.getValue());
-		Collections.sort(largestPadding);
-		if (largestPadding.size() > 0 )		    
-		    return largestPadding.get(largestPadding.size()-1) -1;
-		else 
-			return 0;		 
-		}*/
 	
 	// issue 16
 	// issue 19
@@ -1208,6 +1203,12 @@ public class WorklistSimple implements Serializable
 			items = new ArrayList <WorklistItemSimple>();
 		
 		return items;
+		}
+	
+	// issue 128
+	public void setItems(List<WorklistItemSimple> items)
+		{
+		this.items = items;
 		}
 	
 	
@@ -1579,8 +1580,7 @@ public class WorklistSimple implements Serializable
 		String name = "Worklist" + dts + "-" + expId  + "-" + aid + "-" + instrument + "-" + pmode;
 		return name;
 		}
-	
-	
+		
 	public ArrayList<String> getSampleNamesArray()
 		{
 		return sampleNamesArray;
@@ -1640,7 +1640,7 @@ public class WorklistSimple implements Serializable
 				return false;		
 		String si = getSelectedInstrument().trim();
 		// TO DO : Replace this with db lookup...		
-		return si.startsWith("IN0025") || si.startsWith("IN0002") ; 
+		return si.startsWith("IN0025") || si.startsWith("IN0002") || si.startsWith("IN0027") ;  // issue 128
 		}
 	
 	// IN0028
@@ -1871,33 +1871,28 @@ public class WorklistSimple implements Serializable
 		setNMuscleHumanMale(0);
 		setNHumanMuscleCntrl(0);
 		}	
-	}
 	
-/*Pool
+	// issue 128
+	private Map <String, String> buildCommentMap (List <WorklistItemSimple> workListItems)
+		{
+		Map <String, String> itemCommentMap = new HashMap <String, String> ();
+		for (WorklistItemSimple item : workListItems)	
+			itemCommentMap.put(item.getSampleName(), item.getComments());
+		return itemCommentMap;
+		}
 
-public void updateIndices()
-	{
-	int j = 0; 
-
-	
-	for (WorklistItemSimple itm : getItems())
-//	for (int i = 0; i < getItems().size(); i++)
-//		{
-//		WorklistItemSimple itm = getItem(i);
-		
-		if (j >= this.getMaxItemsAsInt())
-			{
-			//fillPageWithInvisibleItems(i % (2 * this.maxItems));
-			j = 0;
-			}
-		
-		if (itm.getIsDeleted())
-			itm.setRandomIdx("");
-		else
-			itm.setRandomIdx(++j);
+	// issue 128
+	private List <WorklistItemSimple> populateComments (List <WorklistItemSimple> workListItems, Map <String, String> commentMap)
+		{
+		for (WorklistItemSimple item : workListItems)
+		    {
+			if (commentMap.containsKey(item.getSampleName()))
+				item.setComments(commentMap.get(item.getSampleName()));
+		    }
+		return workListItems;
 		}
 	}
-*/
+	
 
 
 

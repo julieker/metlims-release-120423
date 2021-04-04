@@ -8,7 +8,9 @@ package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -66,7 +68,7 @@ public class WorklistBuilderPanel extends Panel
 	private String selectedRand = null;
     private int controlsLimit = 495;
 	static final String WORKLIST_DATE_FORMAT = "MM/dd/yy";
-    
+    AjaxCheckBox randomizationTypeBox ;
 	public WorklistBuilderPanel()  { this(""); }
 	
 	public WorklistBuilderPanel(String id)
@@ -74,12 +76,10 @@ public class WorklistBuilderPanel extends Panel
 		this(id, null);
 		}
 
-	
 	public WorklistBuilderPanel(String id, WebPage pg)
 		{
 		this(id, pg, null);
 		}
-	
 	
 	public WorklistBuilderPanel(String id, WebPage pg, PrepData prepData)
 		{
@@ -154,7 +154,7 @@ public class WorklistBuilderPanel extends Panel
 			containerDefault.add(selectedModeDrop = buildModeDropdown("selectedModeDrop"));
 			containerDefault.add(buildPlatePosDropdown("startPos", "startPos"));
 			containerDefault.add(buildPlatePosDropdown("endPos", "endPos"));
-			containerDefault.add(buildRandomizeByPlate("randomizeByPlate"));// issue 416
+			containerDefault.add(randomizationTypeBox = buildRandomizeByPlate("randomizeByPlate"));// issue 416
 			
 			selectedPlatformDrop.add(new FocusOnLoadBehavior());
 
@@ -233,6 +233,9 @@ public class WorklistBuilderPanel extends Panel
 					
 					if ("hideall".equals(property))
 						isOpen = true;
+					// issue 126
+					if (!worklist.getOpenForUpdates())
+						isOpen = false;					
 					return isOpen;
 					}
 				
@@ -340,6 +343,13 @@ public class WorklistBuilderPanel extends Panel
 			    public void onUpdate(AjaxRequestTarget target)
 				    {
 				    }
+			    
+			    // issue 128
+				@Override
+				public boolean isEnabled() 
+				    { 
+					return worklist.getOpenForUpdates(); 
+				    }	
 			    };
 		    return box;
 		    }
@@ -389,7 +399,15 @@ public class WorklistBuilderPanel extends Panel
 		
 		private DropDownChoice buildPlatformDropdown(String id)
 			{
-			DropDownChoice drp = new DropDownChoice(id, new PropertyModel(this, "selectedPlatform"), availablePlatforms);
+			DropDownChoice drp = new DropDownChoice(id, new PropertyModel(this, "selectedPlatform"), availablePlatforms)
+				{
+				// issue 128
+				@Override
+				public boolean isEnabled() 
+				    { 
+					return worklist.getOpenForUpdates(); 
+				    }	
+				};
 			setSelectedPlatform("Agilent");
 			drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForPlatform"));
 			return drp;
@@ -425,18 +443,32 @@ public class WorklistBuilderPanel extends Panel
 			return plat.equalsIgnoreCase(platform);
 			}
 
-
+		// issue 128
 		private DropDownChoice buildInstrumentDropdown(String id)
 			{
-			DropDownChoice drp = new DropDownChoice(id, new PropertyModel<String>(this, "selectedInstrument"), new PropertyModel(this, "availableInstruments"));
+			DropDownChoice drp = new DropDownChoice(id, new PropertyModel<String>(this, "selectedInstrument"), new PropertyModel(this, "availableInstruments"))
+			    {
+				@Override
+				public boolean isEnabled() 
+				    { 
+					return worklist.getOpenForUpdates(); 
+				    }				
+				};		
 			drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForInstrument"));
 			return drp;
 			}
-
-		
+	
+		// issue 128
 		private DropDownChoice buildModeDropdown(String id)
 			{
-			DropDownChoice drp = new DropDownChoice(id, new PropertyModel<String>(worklist, "selectedMode"), new PropertyModel(this, "availableModes"));
+			DropDownChoice drp = new DropDownChoice(id, new PropertyModel<String>(worklist, "selectedMode"), new PropertyModel(this, "availableModes"))
+			    {
+				@Override
+				public boolean isEnabled() 
+				    { 
+					return worklist.getOpenForUpdates(); 
+				    }				
+				};	
 			drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForMode"));
 			return drp;
 			}
@@ -477,27 +509,35 @@ public class WorklistBuilderPanel extends Panel
 				@Override
 				protected void onInvalid() { worklist.setRunDate(DateUtils.dateAsFullString(DateUtils.todaysDate())); }
 				
-				public boolean isEnabled() { return isPlatformChosen(); }
+				// issue 128
+				public boolean isEnabled() 
+					{ 
+					return (isPlatformChosen() && worklist.getOpenForUpdates());
+					}
 				};
-			
-				
+						
 			dateFld.setRequired(true);
 			dateFld.setDefaultStringFormat(WorklistBuilderPanel.WORKLIST_DATE_FORMAT);
 			dateFld.setLabel(new Model<String>("Date"));
 			dateFld.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForDate"));
 			return dateFld;
 			}
-
-		
+	
 		private TextField<Integer> buildDefaultInjectionVolFld(String id)
 			{
-			TextField<Integer> fld = new TextField<Integer>(id, new PropertyModel<Integer>(worklist, "defaultInjectionVol"));
+			// issue 128
+			TextField<Integer> fld = new TextField<Integer>(id, new PropertyModel<Integer>(worklist, "defaultInjectionVol"))
+			    {
+				@Override
+				public boolean isEnabled() 
+				    { 
+					return worklist.getOpenForUpdates(); 
+				    }				
+				};
 			fld.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForInjectionVol"));
-
 			return fld;
 			}
-
-		
+	
 		private TextField<String> buildDefaultMaxItemsFld(String id)
 			{
 			TextField<String> fld = new TextField<String>(id, new PropertyModel<String>(worklist, "maxItems"));
@@ -505,15 +545,20 @@ public class WorklistBuilderPanel extends Panel
 
 			return fld;
 			}
-
-		
+	
 		private TextField <String> buildDefaultMethodFld(String id)
 			{
-			TextField<String> fld = new TextField<String>(id, new PropertyModel(worklist, "defaultMethodFileName"));
+			TextField<String> fld = new TextField<String>(id, new PropertyModel(worklist, "defaultMethodFileName"))
+			    {
+				@Override
+				public boolean isEnabled() 
+				    { 
+					return worklist.getOpenForUpdates(); 
+				    }	
+				};
 			fld.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForMethodFile"));
 			return fld;
 			}
-
 		
 		private DropDownChoice buildPlatePosDropdown(String id, String property)
 			{
@@ -539,7 +584,13 @@ public class WorklistBuilderPanel extends Panel
 			return new WorklistAgilentPanel(id, worklist)
 				{
 				@Override
-				public boolean isVisible()	{ return isPlatformChosenAs("agilent"); } 
+				public boolean isVisible()	{ return isPlatformChosenAs("agilent"); }
+				@Override
+				public boolean isEnabled() 
+				    { 
+					// issue 126
+					return worklist.getOpenForUpdates(); 
+				    }	
 				};
 			}
 
@@ -551,7 +602,10 @@ public class WorklistBuilderPanel extends Panel
 				public boolean isVisible() { return isPlatformChosen() && samplesVisible; }
 
 				@Override
-				public boolean isEnabled() { return isPlatformChosen(); }
+				public boolean isEnabled() 
+				    { 
+					return isPlatformChosen() && worklist.getOpenForUpdates(); 
+					}
 							
 				};
 			}
@@ -645,7 +699,6 @@ public class WorklistBuilderPanel extends Panel
 	
 								addSamplesPanel.reinitializeAssays();
 								worklist.setMaxItems(worklist.getUseCarousel() ? "100": "54");
-	
 								target.add(selectedInstrumentDrop);
 								target.add(selectedModeDrop);
 								target.add(addGroupsPanel);// issue 458
@@ -694,6 +747,14 @@ public class WorklistBuilderPanel extends Panel
 			target.add(randomizeSamplesButton);
 			target.add(downloadListButton);
 			target.add(previewPlateButton);
+			// issue 128
+			target.add(selectedPlatformDrop);
+			target.add(selectedInstrumentDrop); 
+			target.add(selectedModeDrop);
+			target.add(dateFld);
+			target.add(randomizationTypeBox);
+			target.add(defaultInjectionVolFld);
+			target.add(defaultMethodFld);
 			}
 
 		//issue 348
@@ -750,7 +811,10 @@ public class WorklistBuilderPanel extends Panel
 			}
 		
 		private void doRandomization(AjaxRequestTarget target) 
-		    {    
+		    {   
+			Map <String, String> commentMap = new HashMap <String, String> ();
+			// issue 128
+			//commentMap = buildCommentMap(worklist.getItems());
 			if (worklist.getItems() == null || worklist.getItems().size() == 0)
 				return;			
 			if (worklist.getOpenForUpdates())
@@ -780,12 +844,34 @@ public class WorklistBuilderPanel extends Panel
 				}
 			else
 				{
+				// issue 128
+				
 				worklist.rebuildEverything();
 				worklist.setOpenForUpdates(true);
+			//	worklist.setItems(populateComments(worklist.getItems(),commentMap));
 				updatePage(target);
 				}
 		    }
-		// issue 464
+		
+		// issue 128
+		
+		/*
+		private Map <String, String> buildCommentMap (List <WorklistItemSimple> workListItems)
+			{
+			Map <String, String> itemCommentMap = new HashMap <String, String> ();
+			for (WorklistItemSimple item : worklist.getItems())	
+				itemCommentMap.put(item.getSampleName(), item.getComments());
+			return itemCommentMap;
+			}
+		
+		private List <WorklistItemSimple> populateComments (List <WorklistItemSimple> workListItems, Map <String, String> commentMap)
+			{
+			for (WorklistItemSimple item : worklist.getItems())	
+				item.setComments(commentMap.get(item.getSampleName()));
+			return worklist.getItems();
+			}
+			*/
+		
 		protected ValidatingAjaxExcelDownloadLink buildExcelDownloadLink(String linkId, final WorklistSimple worklist)
 			{
 			IWriteableSpreadsheet writer = new MsWorklistWriter( worklist);// issue 450
