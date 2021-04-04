@@ -812,9 +812,6 @@ public class WorklistBuilderPanel extends Panel
 		
 		private void doRandomization(AjaxRequestTarget target) 
 		    {   
-			Map <String, String> commentMap = new HashMap <String, String> ();
-			// issue 128
-			//commentMap = buildCommentMap(worklist.getItems());
 			if (worklist.getItems() == null || worklist.getItems().size() == 0)
 				return;			
 			if (worklist.getOpenForUpdates())
@@ -848,29 +845,9 @@ public class WorklistBuilderPanel extends Panel
 				
 				worklist.rebuildEverything();
 				worklist.setOpenForUpdates(true);
-			//	worklist.setItems(populateComments(worklist.getItems(),commentMap));
 				updatePage(target);
 				}
 		    }
-		
-		// issue 128
-		
-		/*
-		private Map <String, String> buildCommentMap (List <WorklistItemSimple> workListItems)
-			{
-			Map <String, String> itemCommentMap = new HashMap <String, String> ();
-			for (WorklistItemSimple item : worklist.getItems())	
-				itemCommentMap.put(item.getSampleName(), item.getComments());
-			return itemCommentMap;
-			}
-		
-		private List <WorklistItemSimple> populateComments (List <WorklistItemSimple> workListItems, Map <String, String> commentMap)
-			{
-			for (WorklistItemSimple item : worklist.getItems())	
-				item.setComments(commentMap.get(item.getSampleName()));
-			return worklist.getItems();
-			}
-			*/
 		
 		protected ValidatingAjaxExcelDownloadLink buildExcelDownloadLink(String linkId, final WorklistSimple worklist)
 			{
