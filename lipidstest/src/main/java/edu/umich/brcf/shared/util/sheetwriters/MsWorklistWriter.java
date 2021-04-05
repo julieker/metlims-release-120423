@@ -134,49 +134,60 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 	// issue 450
 	public Sheet createWorklistSheet(String title, Workbook workBook, WorklistSimple worklist, boolean isPlatformAgilent, String strMode)
 		{
+		// issue 128
+		try
+		    {
 		// issue 450
-		XSSFCellStyle styleHorizontalAndWhite = grabStyleWhite(workBook, true);
-        styleHorizontalAndWhite.setAlignment(HorizontalAlignment.LEFT);
-        styleHorizontalAndWhite.setIndention((short) 2);
-		List<WorklistItemSimple> items = worklist.getItems();
-		List<String> headers = worklist.getColTitles();
-		int rowCt = 0;
-	    String outputFileNameBase = "";
-	    boolean initializedOutputFileNameBase = false;
-		// issue 450
-		//Sheet sheet = createEmptySheet("Worklist Builder Sheet",  workBook, 1, worklist.getColTitles(), 1);
-		Sheet sheet = createEmptySheet(title,  workBook, 1, worklist.getColTitles(), 1);
-		PoiUtils.createBlankRow(rowCt,  sheet);
-		for (int i = 0; i < headers.size(); i++)
-			PoiUtils.createRowEntry(rowCt, i + 1, sheet, headers.get(i), grabStyleBlue(workBook));		
-		rowCt++;
-		for (WorklistItemSimple item : items)
-			{
-			// issue 25
-			if (!initializedOutputFileNameBase)
-				{
-			    outputFileNameBase = item.getOutputFileName();
-			    initializedOutputFileNameBase = true;
-				}			
-			String itemStr = item.toCharDelimited(",");	
-			String [] tokens = StringUtils.splitAndTrim(itemStr, ",", true);
+			XSSFCellStyle styleHorizontalAndWhite = grabStyleWhite(workBook, true);
+	        styleHorizontalAndWhite.setAlignment(HorizontalAlignment.LEFT);
+	        styleHorizontalAndWhite.setIndention((short) 2);
+			List<WorklistItemSimple> items = worklist.getItems();
+			List<String> headers = worklist.getColTitles();
+			int rowCt = 0;
+		    String outputFileNameBase = "";
+		    boolean initializedOutputFileNameBase = false;
+			// issue 450
+			//Sheet sheet = createEmptySheet("Worklist Builder Sheet",  workBook, 1, worklist.getColTitles(), 1);
+			Sheet sheet = createEmptySheet(title,  workBook, 1, worklist.getColTitles(), 1);
 			PoiUtils.createBlankRow(rowCt,  sheet);
-			for (int i = 0; i < tokens.length; i++)
-				{				
-				// issue 410
-				if (! ( i== 6 && tokens[i].length() >= 2))
-				     PoiUtils.createRowEntry(rowCt, i + 1, sheet, i==0 && isPlatformAgilent ? "" : tokens[i], styleHorizontalAndWhite);
-				// issue 450
-				else
-					 PoiUtils.createRowEntry(rowCt, i+ 1, sheet, tokens[i].substring(0,tokens[i].length() -2 ) +   (strMode.equals("Positive") ? "-P" : "-N"), styleHorizontalAndWhite);					
-			    }
+			for (int i = 0; i < headers.size(); i++)
+				PoiUtils.createRowEntry(rowCt, i + 1, sheet, headers.get(i), grabStyleBlue(workBook));		
 			rowCt++;
-			}
-		// issue 432
-		// issue 25		
-		if (worklist.getControlGroupsList().size() > 1 && worklist.isPlatformChosenAs("agilent"))
-			printOutIDDA  (workBook, sheet, rowCt, strMode, outputFileNameBase) ; 
-		return sheet;
+			for (WorklistItemSimple item : items)
+				{
+				// issue 25
+				if (!initializedOutputFileNameBase)
+					{
+					
+				    outputFileNameBase = item.getOutputFileName();
+				    initializedOutputFileNameBase = true;
+					}			
+				String itemStr = item.toCharDelimited(",");	
+				String [] tokens = StringUtils.splitAndTrim(itemStr, ",", true);
+				PoiUtils.createBlankRow(rowCt,  sheet);
+				for (int i = 0; i < tokens.length; i++)
+					{				
+					// issue 410
+					if (! ( i== 6 && tokens[i].length() >= 2))
+					     PoiUtils.createRowEntry(rowCt, i + 1, sheet, i==0 && isPlatformAgilent ? "" : tokens[i], styleHorizontalAndWhite);
+					// issue 450
+					else
+						 PoiUtils.createRowEntry(rowCt, i+ 1, sheet, tokens[i].substring(0,tokens[i].length() -2 ) +   (strMode.equals("Positive") ? "-P" : "-N"), styleHorizontalAndWhite);					
+				    }
+				rowCt++;
+				}
+			// issue 432
+			// issue 25		
+			if (worklist.getControlGroupsList().size() > 1 && worklist.isPlatformChosenAs("agilent"))
+				printOutIDDA  (workBook, sheet, rowCt, strMode, outputFileNameBase) ; 
+			return sheet;
+		    }
+	    catch (Exception e)
+		    {
+			e.printStackTrace();
+			return null;
+		    }
+		
 		}
 	
 	// issue 432
@@ -184,6 +195,9 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		{
 		for (WorklistItemSimple item : worklist.getItems())	
 			{
+			// issue 128
+			if (worklist.getPoolTypeA() == null)
+		        return null;
 			// issue 27
 			if (item.getSampleName().contains(worklist.getPoolTypeA()))
 				return item.getSamplePosition();
@@ -216,6 +230,9 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
         PoiUtils.createBlankRow(rowCt++,  sheet);
         int startPoint = worklist.getStartingPoint() + 1;// issue 29
         String iddaPlatePos = grabPlatePosition() ;// issue 27
+        // issue 128
+        if (iddaPlatePos == null)
+    	    return;
         String fileStr = worklist.grabOutputFileNameIDDA();
         /// issue 25
 		String iddaStr = 	worklist.getPoolTypeA() + "-" + String.format("%0" + worklist.getAmountToPad() +"d",startPoint); // issue 456 // issue 13
