@@ -239,8 +239,8 @@ public class PrintBarcodesPage extends WebPage
 		private ExcelDownloadLink buildDownloadSheetButton(String id, final List<String> barcodesToPrint)
 			{
 			// issue 120
-			IWriteableSpreadsheet writer;
-			BarcodeSheetWriter bw = new BarcodeSheetWriter("", barcodesToPrint);
+			final IWriteableSpreadsheet writer;
+			final BarcodeSheetWriter bw = new BarcodeSheetWriter("", barcodesToPrint);
 		   // writer = new BarcodeSheetWriter("", barcodesToPrint);
 			writer = bw;
 			ExcelDownloadLink lnk = new ExcelDownloadLink(id, writer)

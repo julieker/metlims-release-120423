@@ -20,7 +20,10 @@ import edu.umich.brcf.shared.layers.domain.Mixture;
 import edu.umich.brcf.shared.layers.domain.MixtureAliquot;
 import edu.umich.brcf.shared.layers.domain.MixtureAliquotPK;
 import edu.umich.brcf.shared.layers.domain.MixtureChildren;
+import edu.umich.brcf.shared.layers.domain.MixtureChildrenAliquot;
+import edu.umich.brcf.shared.layers.domain.MixtureChildrenAliquotPK;
 import edu.umich.brcf.shared.layers.domain.MixtureChildrenPK;
+import edu.umich.brcf.shared.util.MixtureSheetIOException;
 
 @Transactional
 public class MixtureService 
@@ -33,12 +36,23 @@ public class MixtureService
 	InventoryDAO inventoryDao;
 	ExperimentDAO experimentDao;
 	MixtureDAO mixtureDao;
+	
+	// issue 123
+	public Mixture loadById(String id) 
+		{
+		return mixtureDao.loadById(id);
+		}
+		
 	// issue 94
 	public List<Mixture> loadAllMixtures()
 		{		
 		return mixtureDao.loadAllMixtures();
 		}
-	
+	// issue 123
+	public List<Object[]> aliquotsForMixtureId(String mId)
+		{
+		return mixtureDao.aliquotsForMixtureId(mId);
+		}
 	// issue 94
 	public MixtureAliquot loadMixtureAliquotById(MixtureAliquotPK mixtureAliquotPK)
 		{		
@@ -50,6 +64,11 @@ public class MixtureService
 		return mixtureDao.loadMixtureChildrenById(mixtureChildrenPK);
 		}
 	
+	public MixtureChildrenAliquot loadMixtureChildrenAliquotById(MixtureChildrenAliquotPK mixtureChildrenAliquotPK)
+		{		
+		return mixtureDao.loadMixtureChildrenAliquotById(mixtureChildrenAliquotPK);
+		}
+		
 	// issue 61	
 	public MixtureDAO getMixtureDao()
 		{
@@ -112,11 +131,25 @@ public class MixtureService
 		return mixtureDao.getComplexMixtureIds();
 		}
 	
+	// issue 123
+	public List<String> getNonComplexMixtureIds()
+		{
+		return mixtureDao.getNonComplexMixtureIds();
+		}
+	
 	//issue 110
 	public List<Mixture> mixtureChildrenForMixtureId(String mid)
 		{
 		List<Mixture> mixtureIdList =  mixtureDao.mixtureChildrenForMixtureId(mid);
 		return  mixtureIdList;
+		}
+	
+	// issue 123
+	public boolean isMixtureNameInDatabase(String mName, Map<String, String> mixtureNamesAlreadyInDatabase) 
+		{
+		if (mixtureNamesAlreadyInDatabase.containsKey(mName))
+	   		return true;
+		return false;
 		}
 	
 	// issue 61

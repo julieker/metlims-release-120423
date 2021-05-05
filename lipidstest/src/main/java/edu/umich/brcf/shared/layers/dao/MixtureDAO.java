@@ -15,6 +15,8 @@ import edu.umich.brcf.shared.layers.domain.Mixture;
 import edu.umich.brcf.shared.layers.domain.MixtureAliquot;
 import edu.umich.brcf.shared.layers.domain.MixtureAliquotPK;
 import edu.umich.brcf.shared.layers.domain.MixtureChildren;
+import edu.umich.brcf.shared.layers.domain.MixtureChildrenAliquot;
+import edu.umich.brcf.shared.layers.domain.MixtureChildrenAliquotPK;
 import edu.umich.brcf.shared.layers.domain.MixtureChildrenPK;
 
 // issue 61
@@ -79,11 +81,25 @@ public class MixtureDAO extends BaseDAO
 		{
 		getEntityManager().persist(mixtureChildren);
 		}
+	
+	// issue 123
+	public void createMixtureChildAliquot(MixtureChildrenAliquot mixtureChildrenAliquot)
+		{
+		getEntityManager().persist(mixtureChildrenAliquot);
+		}
+	
 	public MixtureChildren loadMixtureChildrenById(MixtureChildrenPK mixtureChildrenPK)
 		{
 		MixtureChildren mixtureChildren = getEntityManager().find(MixtureChildren.class, mixtureChildrenPK	);
 		return mixtureChildren;
 		}	
+	
+	// issue 123
+	public MixtureChildrenAliquot loadMixtureChildrenAliquotById(MixtureChildrenAliquotPK mixtureChildrenAliquotPK)
+		{
+		MixtureChildrenAliquot mixtureAliquotChildren = getEntityManager().find(MixtureChildrenAliquot.class, mixtureChildrenAliquotPK	);
+		return mixtureAliquotChildren;
+		}
 	
 	// issue 110
 	public List<Mixture> mixtureChildrenForMixtureId (String mid)
@@ -106,6 +122,21 @@ public class MixtureDAO extends BaseDAO
 		Query query = getEntityManager().createNativeQuery("select cast(t1.parent_mixture_id as char(9)) from mixture_children t1");
 		List<String> mixtureList = query.getResultList();
 		return mixtureList;
+		}
+	
+	// issue 123
+	public List<String> getNonComplexMixtureIds()
+		{
+		Query query = getEntityManager().createNativeQuery("select distinct cast(t1.mixture_id as char(9)) from mixture t1 where mixture_id not in (select parent_mixture_id from mixture_children) order by 1");
+		List<String> mixtureList = query.getResultList();
+		return mixtureList;
+		}
+	
+	// issue 123
+	public List<Object[]> aliquotsForMixtureId(String mId)
+		{
+		Query query = getEntityManager().createNativeQuery("select distinct t3.mixture_id, t3.mixture_name,  t1.aliquot_id, decode(neat,'1', desired_concentration_neat, desired_concentration) desired_concentration , decode(neat,'1',DESIRED_CONCENTRATION_UNITS, NEAT_SOL_VOL_UNITS) from mixture_aliquot t1, aliquot t2, mixture t3 where t1.mixture_id = t3.mixture_id and t1.aliquot_id = t2.aliquot_id and t1.mixture_id = ?1 and dry= '0' order by 3").setParameter(1, mId);
+		return query.getResultList();
 		}
 	
 	}

@@ -3,22 +3,17 @@
 <body>
 	    <div wicket:id="modal2"></div>
 		<div>
-		<!--  
-		<fieldset class = "dialog_fieldset" style = "height : 80%; margin-top : .5%; margin-bottom : .5%; width :90%; margin-left : 5%; margin-right : 5%">	
-			<legend class = "dialog_legend">
-			-->
+		
 		   		<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">View Aliquot</span>
-		  <!--  
-		   </legend>
-		   -->
+		
         <center>
         <br/>	
 	<table style = "width :100%"  border="0">
 			<tr>
-			  <td style = "width :15%" >Aliquot ID</td>
-			  <td style = "width :50%">Aliquot Name</td>
-			  <td>Volume</td>
-			  <td>Concentrate</td>
+			  <td style = "width :15% ;font-weight: bold;" >Aliquot ID</td>
+			  <td style = "width :20% ;font-weight: bold;">Aliquot Name</td>
+			  <td style = "font-weight: bold;"> Volume </td>
+			  <td style = "font-weight: bold;"> Concentrate </td>
 			</tr>
 			
 		    <tr wicket:id = "aliquotIds">
@@ -26,7 +21,7 @@
 			      <a wicket:id = "aliquotLink"><span wicket:id = "aliquotid">Test Name</span></a>
 			      </td>	
 			      <td>
-			        	<span style = "width :50%" wicket:id = "aliquotName">Huckleberry Finn</span>
+			        	<span  wicket:id = "aliquotName">Huckleberry Finn</span>
 			      </td>	
 			       <td>
 			        	<span wicket:id = "aliquotVolume">Huckleberry Finn</span>
@@ -40,35 +35,53 @@
 	  	</table>	
 	  	<br>
 	  	<br>
-	  		<table style = "width :100%"  border="0">
+	  		<table wicket:id = "childrenMixtureIds" style = "width :100%;"  border="0">
 			<tr>
-			  <td style = "width :15%" >Mixture ID</td>
-			  <td style = "width :50%" >Mixture Name</td>
-			  <td>Volume</td>
-			  <td>Concentrate</td>
+			  <td style = "width :15% ; font-weight: bold;" >Mixture ID</td>
+			  <td style = "width :20% ; font-weight: bold;" >Mixture Name</td>
+			  <td  style = "font-weight: bold;" >Volume </td>
 			</tr>
 			
-		    <tr wicket:id = "childrenMixtureIds">
+		    <tr>
 			      <td>
 			      <span wicket:id = "mixtureId">Test Name</span>
+			      <a   wicket:id="expandMixtureButton"   href = "#"  style="text-decoration: none;">    
+			        <span style = "margin-left : 20px; color : blue; font-size : 90%; font-weight : 800"  value = "&nbsp;+&nbsp;" wicket:id="linktext"/>
+			      </a>&nbsp;&nbsp;&nbsp;&nbsp;
 			      </td>	
 			        <td>
-			        	<span "width :50%" wicket:id = "mixtureName">Huckleberry Finn</span>
+			        	<span "width :20%" wicket:id = "mixtureName">Huckleberry Finn</span>
 			      </td>	
 			       <td>
 			        	<span wicket:id = "mixtureVolume">Huckleberry Finn</span>
 			      </td>	
-			       <td>
-			        	<span wicket:id = "mixtureConcentrate">Huckleberry Finn</span>
-			      </td>	
+			     
 			       
 		    </tr>
+		    <tr><td></td></tr>
+		    <tr><td></td></tr>
+		     <tr>
+			  <td wicket:id = "labelAliquotId" style = "width :15% ;font-weight: bold;" >Aliquot ID</td>
+			  <td wicket:id = "labelAliquotName"  style = "width :20% ;font-weight: bold;">Aliquot Name</td>
+			  <td wicket:id = "labelAliquotConcentrate"  style = "font-weight: bold;"> Aliquot Concentrate </td>
+			</tr>
+			 
+		    <tr wicket:id = "aliquotMixtureInfo">
+		    <td>
+		    <span wicket:id = "aliquotChildId">AliquotId</span>
+		    </td> 
+		     <td>
+		    <span wicket:id = "aliquotChildName">Aliquot Name</span>		    
+		    </td>
+		     <td>
+		    <span wicket:id = "aliquotFinalConcentration">Aliquot concentration</span>		    
+		    </td>
+		    </tr>
+		    
 	  	</table>
 	
     </center>
-    <!--  
-	</fieldset>
-	-->
+  
 	</div>	
 </body>
 </html>

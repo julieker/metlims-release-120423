@@ -11,7 +11,11 @@ package edu.umich.brcf.shared.layers.dto;
 // issue 61 2020
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import edu.umich.brcf.metabolomics.panels.lims.mixtures.MixAliquotInfo;
 import edu.umich.brcf.shared.layers.domain.Mixture;
 
 // issue 61 2020
@@ -34,6 +38,7 @@ public class MixtureDTO implements Serializable
 	private String mixtureId;
 	private String createDate;
 	private List<String> aliquotList;
+	private List<String> aliquotNoAssayMultipleChoiceList;
 	private List<String> mixtureList;
 	private List<String> aliquotVolumeList;
 	private List<String> aliquotConcentrationList;
@@ -41,10 +46,13 @@ public class MixtureDTO implements Serializable
 	private List<String> mixtureConcentrationList;
 	private String createdBy ;
 	private String aliquotsChoice; // issue 94
+	private String mixturesChoice; // issue 94
     private String volumeSolventToAdd; // issue 94
     private String desiredFinalVolume;
     private String mixtureName;  // issue 118
-
+    // issue 123
+    Map<String, List<String>> mixtureAliquotMap = new HashMap<String, List<String>>(); 
+    Map<String, List<MixAliquotInfo>> mixtureAliquotInfoMap = new HashMap<String, List<MixAliquotInfo>>();
     // issue 116
 	private MixtureDTO(String mixtureId, String createDate,   String createdBy, String volumeSolventToAdd, String desiredFinalVolume, String mixtureName)
 		{
@@ -67,6 +75,17 @@ public class MixtureDTO implements Serializable
 		this.aliquotsChoice= aliquotsChoice;
 		}
 	
+	// issue 123
+	public String getMixturesChoice()
+		{
+		return mixturesChoice;
+		}
+
+	public void setMixturesChoice(String mixturesChoice)
+		{
+		this.mixturesChoice= mixturesChoice;
+		}
+
 	public String getCreateDate()
 		{
 		return createDate;
@@ -130,10 +149,21 @@ public class MixtureDTO implements Serializable
 		{
 		return aliquotList;
 		}
+	// issue 123
+	public List<String> getAliquotNoAssayMultipleChoiceList ()
+		{
+		return aliquotNoAssayMultipleChoiceList;
+		}
 	
 	public void setAliquotList (List<String> aliquotList)
 		{
 		this.aliquotList = aliquotList;
+		}
+	
+	// issue 123
+	public void setAliquotNoAssayMultipleChoiceList(List<String> aliquotNoAssayMultipleChoiceList)
+		{
+		this.aliquotNoAssayMultipleChoiceList = aliquotNoAssayMultipleChoiceList;
 		}
 	
 	// issue 110
@@ -198,6 +228,30 @@ public class MixtureDTO implements Serializable
 	public void setMixtureId (String mixtureId)
 		{
 		this.mixtureId = mixtureId;
+		}
+	
+	// issue 123
+	public Map<String, List<String>> getMixtureAliquotMap ()
+		{
+		return mixtureAliquotMap;
+		}
+
+	// issue 123
+	public void setMixtureAliquotMap (Map<String, List<String>> mixtureAliquotMap)
+		{
+		this.mixtureAliquotMap = mixtureAliquotMap;
+		}
+	
+	// issue 123
+	public Map<String, List<MixAliquotInfo>> getMixtureAliquotInfoMap ()
+		{
+		return mixtureAliquotInfoMap;
+		}
+
+	// issue 123
+	public void setMixtureAliquotInfoMap (Map<String, List<MixAliquotInfo>> mixtureAliquotInfoMap)
+		{
+		this.mixtureAliquotInfoMap = mixtureAliquotInfoMap;
 		}
 	
 	}

@@ -75,6 +75,14 @@ public class AliquotDAO extends BaseDAO
 		return alq;
 		}
 	
+	// issue 123 
+	public String getCompoundIdFromAliquot (String aliquotId)
+		{
+		Query query = getEntityManager().createNativeQuery("select cast(t1.cid as CHAR(6)) from aliquot t1 where aliquot_id = ?1").setParameter(1, aliquotId);	
+		String cIdStr = query.getResultList().get(0).toString();
+		return cIdStr;
+		}
+	
 	public VolumeUnits loadVolUnitsById(String unitsID) 
 		{
 		VolumeUnits units = getEntityManager().find(VolumeUnits.class, unitsID);
@@ -190,6 +198,22 @@ public class AliquotDAO extends BaseDAO
 		{
 		getEntityManager().persist(assayAliquot);
 		}	
+	
+	// issue 123
+	public List<String> loadAliquotListNoAssay()
+		{
+		Query query = getEntityManager().createNativeQuery("select cast(t1.aliquot_id as VARCHAR2(9)) from aliquot t1 where dry = '0' and deleted is null order by 1 ");		
+		List<String> alqList = query.getResultList();	
+		return (alqList == null ? new ArrayList<String>() : alqList);
+		}
+	
+	// issue 123 
+	public List<String> loadAliquotList(String assayId)
+		{
+		Query query = getEntityManager().createNativeQuery("select cast(t1.aliquot_id as VARCHAR2(9)) from assay_aliquot t1, aliquot t2 where t1.aliquot_id = t2.aliquot_id and dry = '0' and assay_id = ?1 and deleted is null order by 1 ").setParameter(1, assayId);		
+		List<String> alqList = query.getResultList();	
+		return (alqList == null ? new ArrayList<String>() : alqList);
+		}
 	
 	// issue 100
 	public List<Aliquot> getAliquotsFromAssay (String assayId)

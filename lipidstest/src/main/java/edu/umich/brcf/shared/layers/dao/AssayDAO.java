@@ -221,6 +221,14 @@ public class AssayDAO extends BaseDAO
 		{
 		return loadById(assayId).getAssayName();
 		}
+	
+	// issue 123
+	public List<String> loadByAssayWithAliquots()
+		{
+		Query query = getEntityManager().createNativeQuery("select distinct assay_name || ' (' ||  t2.assay_id || ')' from assay_aliquot t1, assays t2 where t1.assay_id = t2.assay_id and t1.aliquot_id in (select aliquot_id from aliquot where dry = '0' and deleted is null) order by 1 ");		
+		List<String> assayList = query.getResultList();	
+		return (assayList == null ? new ArrayList<String>() : assayList);
+		}
 	}
 
 

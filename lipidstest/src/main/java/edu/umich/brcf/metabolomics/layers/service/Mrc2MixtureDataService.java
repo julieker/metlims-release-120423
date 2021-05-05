@@ -11,6 +11,7 @@ import java.util.List;
 import org.apache.wicket.Session;
 import org.springframework.transaction.annotation.Transactional;
 import edu.umich.brcf.metabolomics.layers.dao.CompoundDAO;
+import edu.umich.brcf.metabolomics.panels.lims.mixtures.MixAliquotInfo;
 import edu.umich.brcf.shared.layers.dao.AliquotDAO;
 import edu.umich.brcf.shared.layers.dao.InventoryDAO;
 import edu.umich.brcf.shared.layers.dao.LocationDAO;
@@ -20,6 +21,7 @@ import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Mixture;
 import edu.umich.brcf.shared.layers.domain.MixtureAliquot;
 import edu.umich.brcf.shared.layers.domain.MixtureChildren;
+import edu.umich.brcf.shared.layers.domain.MixtureChildrenAliquot;
 import edu.umich.brcf.shared.layers.domain.User;
 import edu.umich.brcf.shared.layers.dto.MixtureDTO;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
@@ -61,15 +63,18 @@ public class Mrc2MixtureDataService
 		return 0;
 		} 
 	
+	// issue 123
 	public Mixture createNewMixture(MixtureDTO dto)
 		{
 		int index =  0;
 		try 
-			{
+			{			
 			user = userDao.loadById(((MedWorksSession) Session.get()).getCurrentUserId());
 			mixture = Mixture.instance (Calendar.getInstance(), user, StringUtils.isEmptyOrNull(dto.getVolumeSolventToAdd()) ? null : new BigDecimal (dto.getVolumeSolventToAdd()),        StringUtils.isEmptyOrNull(dto.getDesiredFinalVolume()) ? null : new BigDecimal (dto.getDesiredFinalVolume()), dto.getMixtureName()); // issue 118		
 			mixtureDao.createMixture(mixture);
 		    List<String> aliquotList = new ArrayList <String> ();
+		    if (dto.getAliquotList() == null)
+		    	return mixture;
 		    aliquotList.addAll(dto.getAliquotList());	
 			for (String aliquotStr : aliquotList) 
 			    {
@@ -80,18 +85,27 @@ public class Mrc2MixtureDataService
 				}
 			// issue 110
 			index= 0;
+			
+			if (dto.getMixtureList()  == null)
+				return mixture;
 			for  (String mixtureStr : dto.getMixtureList()) 
 				{
 				Mixture childMixture = mixtureDao.loadById(mixtureStr);
-				mixtureDao.createMixtureChild(MixtureChildren.instance(childMixture,mixture,  dto.getMixtureVolumeList().get(index), dto.getMixtureConcentrationList().get(index)));
+				mixtureDao.createMixtureChild(MixtureChildren.instance(childMixture,mixture,  dto.getMixtureVolumeList() == null ? null : dto.getMixtureVolumeList().get(index), dto.getMixtureConcentrationList() == null ? null :dto.getMixtureConcentrationList().get(index)));
+				for (MixAliquotInfo singleMixAliquotInfo : dto.getMixtureAliquotInfoMap().get(mixtureStr))
+					{
+					Aliquot aliquot = aliquotDao. loadByIdForMixture(singleMixAliquotInfo.getAliquotId());
+					mixtureDao.createMixtureChildAliquot(MixtureChildrenAliquot.instance(childMixture, mixture, aliquot, singleMixAliquotInfo.getMixAliquotConcentrationFinal()));
+					}
 				index++;
 				}
 			}
 		catch (Exception e)
 		    {
 			e.printStackTrace();
+			return null;
 		    }
-		return null;
+		return mixture;
 		}
 	
 	// issue 94
@@ -158,6 +172,3 @@ public class Mrc2MixtureDataService
 	}
 
 
-/////////////////////////   SCRAP CODE ////////////////////////
-
-	

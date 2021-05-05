@@ -9,6 +9,7 @@ import edu.umich.brcf.metabolomics.layers.dao.CompoundDAO;
 import edu.umich.brcf.metabolomics.layers.dao.CompoundNameDAO;
 import edu.umich.brcf.metabolomics.layers.domain.Compound;
 import edu.umich.brcf.metabolomics.layers.domain.CompoundName;
+import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.dto.CompoundNameDTO;
 
 
@@ -77,8 +78,7 @@ public class CompoundNameService
 			
 		return cname;
 		}
-	
-	
+		
 	public CompoundNameDAO getCompoundNameDao()
 		{
 		return compoundNameDao;
@@ -100,5 +100,18 @@ public class CompoundNameService
 	public void setCompoundDao(CompoundDAO compoundDao) 
 		{
 		this.compoundDao = compoundDao;
+		}
+	
+	
+	// 123
+	public String getCompoundName(String cid)
+		{
+		List<CompoundName> cnList = loadByCid(cid);
+		for (CompoundName cname : cnList)
+			{
+			if (cname.getNameType().equals("pri"))
+			    return cname.getName().substring(0, (cname.getName().length() >=50 ? 50 : cname.getName().length() ) );
+			}
+		return "";
 		}
 	}

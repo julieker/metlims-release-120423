@@ -51,6 +51,13 @@ public class AliquotService
 		return aliquotDao.loadById(id);
 		}
 	
+	// Issue 123
+	public Aliquot loadByIdForMixture(String id) 
+		{
+		Assert.notNull(id);
+		return aliquotDao.loadByIdForMixture(id);
+		}
+	
 	// issue 79
 	public List<String> loadAllAliquotsNotChosen(String expId)
 		{
@@ -61,6 +68,24 @@ public class AliquotService
 	public List<String> allAliquotIds()
 		{
 		return aliquotDao.allAliquotIds();
+		}
+	
+	//issue 123
+	public List<String> loadAliquotListNoAssay ()
+		{
+		return aliquotDao.loadAliquotListNoAssay();
+		}
+	
+	//issue 123
+	public List<String> loadAliquotList(String assayId)
+		{
+		return aliquotDao.loadAliquotList(assayId);
+		}
+	
+	//issue 123
+	public String getCompoundIdFromAliquot (String aliquotId)
+		{
+		return aliquotDao.getCompoundIdFromAliquot(aliquotId);
 		}
 	
 	// issue 94

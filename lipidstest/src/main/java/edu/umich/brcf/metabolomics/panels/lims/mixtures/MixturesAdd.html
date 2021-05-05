@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<wicket:head>
+<style>
+
+.split {
+  height: 100%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+}
+
+.left {
+  left: 0;
+   overflow-x: scroll;
+  overflow-y: scroll;
+  width: 457px;
+}
+
+.right {
+  right: 0;
+  background-color: #DCDCDC;
+   overflow-x: scroll;
+  overflow-y: scroll;
+  width: 795px;
+}
+
+.centered {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  height: 400px;
+  width: 457px;
+  transform: translate(-48%, -40%);
+  text-align: left;
+}
+
+.topcentered {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 795px;
+  text-align: left;
+}
+
+       .feedbackMsg { color : red; font-weight : 600; text-align : left }    
+ 
+</style>
+
+
+</wicket:head>
+
+<body>
+        <form wicket:id = "MixturesAddForm" >  
+		<div class="split left">
+        <div class="centered">
+		 <span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">Please choose the reason for the deletion</span>
+        <br>
+        <br>
+         <span wicket:id = "mixtureLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">Please choose mixture(s)</span>
+         <br>
+        <br>
+        <center>	
+	
+	<!--  
+	 <div wicket:id="mixtureListContainer" style="padding:15px">
+	 -->
+	 <table style = "width :100%"  border="0">
+	        <tr>
+	        <td>
+	        <span wicket:id = "mixturesChoiceLabel">Choose Mixture(s):</span> 
+	        </td>
+	        <td>
+	        <select  wicket:id = "mixtureList"></select> &nbsp;&nbsp;	
+	        </td>
+	        </tr>
+            <tr> <td></td> </tr>
+            <tr> <td></td> </tr>
+            <tr> <td></td> </tr>
+	        <tr>
+			<td>
+			 <span wicket:id = "chooseAliquotNoAssayLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">Please choose aliquot(s)</span>
+			</td>
+	        <td>
+			<select wicket:id = "aliquotNoAssayMultipleChoiceList" style = "text-align : left;"></select> &nbsp;&nbsp;	      
+			</td>
+	        </tr>
+	  </table>
+	  <table style = "width :100%"  border="0">
+			<tr>
+			<td>
+			 <span wicket:id = "chooseAliquotLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">Please choose aliquot(s)</span>
+			</td>
+			</tr>
+		    <tr wicket:id = "assayList">
+			        
+			       <td>
+			        	<span wicket:id = "AssayId">Huckleberry Finn</span> 
+			      </td>
+			      
+			     
+			      <td>
+						<select wicket:id = "aliquotList" style = "text-align : left;"></select> &nbsp;&nbsp;	      
+				</td>
+			      
+			      <!-- //////////////////////////// -->
+			         
+		    </tr>
+		    
+		    <tr>
+		    
+		       <td>
+			    <input wicket:id="buildMixture" type="submit"  style = "margin-right : 15px; width : 90px;" value="Build Mixture"/>&nbsp;&nbsp;
+			    &nbsp;&nbsp;&nbsp;
+			    <input wicket:id="clear" type="submit"  style = "margin-right : 15px; width : 90px;" value="Clear"/>&nbsp;&nbsp;
+			    </td>	
+			    
+			    <td>
+			    
+			    <!-- issue 464 -->
+			    <input wicket:id="close" type="button" style = "margin-left : 15px; width : 70px;"  value="Close"/> 
+			   </td>
+		    </tr>
+		    
+	  	</table>	
+		    		   
+	
+    </center>
+
+	</div>	
+	</div>
+	
+	<div class="split right">
+    <div class="topcentered" wicket:id="mixtureBuildContainer">
+      <span wicket:id = "feedback" class = "feedbackMsg"/>  
+    
+    <table style = "width :100%"  border="0">
+    <tr>
+    <td>
+    <h2>Mixtures</h2>
+    </td>
+     <td>   <input wicket:id="calculateSolvent" type="submit"  style = "margin-right : 15px; width : 100px;" value="Calculate"/> </td>
+    </tr>
+
+    <tr>
+    <td style = "text-align : left"><span wicket:id="mixtureNameLabel">Mixture Name:</span></td> <td>
+    <input wicket:id="mixtureName" type="text"  value="Add Mixture"/></td>
+    </tr>
+    <tr>
+    <td style = "text-align : left"><span wicket:id="solventLabel">Solvent to add:</span></td> <td>
+    <input wicket:id="volumeSolventToAdd"  value="Add Mixture"/></td>
+   
+    </tr>
+     <tr>
+    <td style = "text-align : left"><span wicket:id="finalVolumeLabel">Final Volume:</span></td> <td>
+    <input wicket:id="desiredFinalVolume" type="text"  style = "margin-right : 15px; width : 100px;" value="Add Mixture"/></td>
+    </tr>
+     <tr><td></td></tr>
+    <tr><td></td></tr>
+    <tr><td></td></tr>
+    <tr><td></td></tr>
+   </table>
+   <table wicket:id = "aliquotInfoList">
+      <tr><td></td></tr>
+    <tr><td></td></tr>
+    <tr><td></td></tr>
+    <tr><td></td></tr>
+	<tr >  
+	<td>
+	 <span style = " font-weight: bold;" wicket:id = "aliquotId"><b> Huckleberry Finn </b> </span>  
+	</td>
+	
+    <td>
+	<a wicket:id="deleteAliquotButton"  href = "#"> <input type = "button" style = "margin-left : 20px; color : red; font-size : 90%; font-weight : 800"  value = "&nbsp;X&nbsp;" title = "Delete this document"/></a>&nbsp;&nbsp;&nbsp;&nbsp;
+   </td>
+	 <td>   <span  style = " font-weight: bold;" wicket:id = "aliquotName">Huckleberry Finn </span>   </td>
+	<td></td>
+	<td></td>
+	<td></td>
+	</tr>
+	
+	<tr>
+	 <td style = "text-align : left;"><span wicket:id="volumeAliquotLabel">volumeAliquotLabel</span></td>
+     <td style = "text-align : left;"><input wicket:id="volumeAliquot" type="text" size="7"  value="volume"/>
+    </td>
+     
+     <td style = "text-align : left;"><span wicket:id="concentrationAliquotLabel">volumeAliquotLabel</span>
+      <input wicket:id="concentrationAliquot" type="text" size="7" value="concentration"/>
+     </td> <td style = "text-align : left;">
+	  <span wicket:id = "concentrationAliquotUnitsLabel">Units:</span>
+	  <input wicket:id="concentrationAliquotUnitsAliquot" type="text" size="7" value="concentration Units"/>
+	 
+	 </td>
+     
+     
+	 <td style = "text-align : left;"><span wicket:id="concentrationAliquotFinalLabel">volumeAliquotLabel</span></td>
+     <td style = "text-align : left;"><input wicket:id="concentrationAliquotFinal" type="text" size="7" value="concentration"/></td>
+	 </tr>
+	 
+	 <!-- /////////////////////////////////////////////////////////////////// -->
+	 <tr><td></td></tr>
+	 <tr><td></td></tr>
+	 <tr><td></td></tr>
+</table>
+<table wicket:id = "mixtureInfoList">
+	 
+	<tr >  
+	<td>
+	 <span style = " font-weight: bold; text-align : left" wicket:id = "mixtureId">Huckleberry Finn</span>  
+	 </td> 
+	 
+	 <td>
+						<!-- <input wicket:id = "deleteMixtureButton" type = "button" style = "margin-left : 20px; color : red; font-size : 90%; font-weight : 800"  value = "&nbsp;X&nbsp;" title = "Delete this document"/> -->
+						<a wicket:id="deleteMixtureButton"  href = "#"> <input type = "button" style = "margin-left : 20px; color : red; font-size : 90%; font-weight : 800"  value = "&nbsp;X&nbsp;" title = "Delete this document"/></a>&nbsp;&nbsp;&nbsp;&nbsp;
+					</td>
+	 
+	 <td>
+	 <span wicket:id="volumeMixtureLabel">volumeAliquotLabel</span>
+	 <input wicket:id="volumeMixture" type="text" size="7" value="volume"/>
+	</td>
+	<!--  
+	 <td style = "text-align : left"><span wicket:id="volumeMixtureLabel">volumeAliquotLabel</span></td>
+     <td style = "text-align : left"><input wicket:id="volumeMixture" type="text" size="7" value="volume"/></td>
+    -->
+    <!--  
+     <td style = "text-align : left"><span wicket:id="concentrationMixtureLabel"></span></td>
+     <td style = "text-align : left"><input wicket:id="concentrationMixture" type="text" size="7" value="concentration"/></td>
+     -->
+	 </tr>
+	   
+	 <tr wicket:id = "mixtureInfoAliquotList">
+	 <td style = "text-align : left">
+	 <span  wicket:id = "aliquotIdForMixture">Huckleberry Finn</span> </td>
+	 <td>
+	  <span  wicket:id = "aliquotNameForMixture">Huckleberry Finn</span> 
+	 </td>
+	 <td> 
+	<span wicket:id = "concentrationAliquotForMixtureLabel">Concentration (Wet):</span>
+	 <input wicket:id="concentrationAliquotForMixture" type="text" size="7" value="concentration"/>
+	
+	 </td>
+	 <td>
+	  <span wicket:id = "concentrationAliquotForMixtureUnitsLabel">Units:</span>
+	  <input wicket:id="concentrationUnitsAliquot" type="text" size="7" value="concentration Units"/>
+	 
+	 </td>
+	 <td>
+	 <span wicket:id = "concentrationAliquotForMixtureFinalLabel">Concentration :</span>
+	 <input wicket:id="concentrationAliquotForFinalMixture" type="text" size="7" value="concentration"/>
+	 </td>
+	 </tr>
+	 <tr><td></td></tr>
+	 <tr><td></td></tr>
+	 <!-- /////////////////////////////////////////////////////////////////// -->
+	</table>
+	
+	
+	<table>
+	 <tr>
+	  <td>
+	  <input wicket:id="createMixture" type="button"  style = "margin-right : 15px; width : 100px;" value="Create Mixture"/>&nbsp;&nbsp;
+	  </td>
+	</tr>
+	 </table>
+	 
+
+	</div>	
+	</div>	
+	</form>
+</body>
+</html>

@@ -135,28 +135,30 @@ public class AssayService
 		return assayDao.allAssayNamesForExpId(expId, skipAbsciex);
 		}
 
-	
 	public List<String> allAssayIdsForExpId(String expId, boolean skipAbsciex)
 		{
 		return assayDao.allAssayIdsForExpId(expId, skipAbsciex);
 		}
 
-	
 	public String getIdForAssayName(String assayName)
 		{
 		return assayDao.getIdForAssayName(assayName);
 		}
-
 	
 	public String getNameForAssayId(String assayId)
 		{
 		return assayDao.getNameForAssayId(assayId);
 		}
 
-	
 	public void setAssayDao(AssayDAO assayDao)
 		{
 		Assert.notNull(assayDao);
 		this.assayDao = assayDao;
 		}
+	
+	// issue 123
+	public List<String> loadByAssayWithAliquots()
+		{
+		return assayDao.loadByAssayWithAliquots();
+		}	
 	}

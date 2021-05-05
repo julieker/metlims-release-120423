@@ -46,7 +46,7 @@ public class MixtureDetailPanel extends Panel
 	WebMarkupContainer containerAliquot;
 	List<Compound> parentageList;
 	ListView listViewMixtures; // issue 61
-	MixtureDetailPanel MixtureDetailPanel = this;
+	MixtureDetailPanel mixtureDetailPanel = this;
 	// itemList
 	// issue 118
 	IModel <List<Mixture>> mixtureModel = new LoadableDetachableModel() 
@@ -54,12 +54,12 @@ public class MixtureDetailPanel extends Panel
 		protected Object load() { return mixtureService.loadAllMixtures(); }
 		}	;
 	
-	public MixtureDetailPanel(String id) 
+	public MixtureDetailPanel(final String id) 
 		{
 	    super(id);
 		final ModalWindow modal2= new ModalWindow("modal2");
-		modal2.setInitialWidth(650);
-        modal2.setInitialHeight(450);
+		modal2.setInitialWidth(850);
+        modal2.setInitialHeight(550);
         modal2.setWidthUnit("em");
         modal2.setHeightUnit("em");     
         add(new Label("titleLabel", "View Mixtures"));
@@ -67,6 +67,8 @@ public class MixtureDetailPanel extends Panel
         	{
             public void onClose(AjaxRequestTarget target)
             	{
+            	//System.out.println("on close");
+            	target.add(mixtureDetailPanel);
             	}
         	}); 
         add(modal2);
@@ -91,6 +93,27 @@ public class MixtureDetailPanel extends Panel
 		container.setOutputMarkupId(true);
 		// add back jak container.add(listView);
 		add(container);
+		
+		// add mixture issue 123
+		AjaxLink addMixtureButton = new AjaxLink <Void> ("addMixture")
+			{
+			@Override
+			public void onClick(AjaxRequestTarget target) 
+				{
+				 setModalDimensions(id, modal2);
+				 modal2.setPageCreator(new ModalWindow.PageCreator()
+	        		 {
+	                 public Page createPage()
+	                	 {
+	                     return new MixturesAdd("deleteAliquot",null, modal2);
+	                	 }
+	        		 });
+				 modal2.show(target);
+				}
+			};
+		
+		add (addMixtureButton);
+		
         }
 	// issue 94	
 	private AjaxLink buildLinkToModalMixtureDetail(final String id, final Mixture mix, final ModalWindow modal1 ) 
@@ -123,8 +146,8 @@ public class MixtureDetailPanel extends Panel
 	
 	private void setModalDimensions(String linkID, ModalWindow modal1)
 		{ 
-		modal1.setInitialWidth(1000);
-		modal1.setInitialHeight(580);
+		modal1.setInitialWidth(2500);
+		modal1.setInitialHeight(590);
 		}
 	
 	private List<Inventory> invList;
