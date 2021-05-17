@@ -33,9 +33,10 @@ public class CompoundIdUtils
 		try 
 	        {
 			// issue 47
-			compoundId = idIndicator.toLowerCase().equals("smiles") ? compoundId.replace("/", ".").replace("&", "%26"): compoundId;
+			//issue 139
+			compoundId = idIndicator.toLowerCase().equals("smiles") ? compoundId.replace("/", "").replace("&", "%26"): compoundId;
 			urlString = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/" + (idIndicator.toLowerCase().equals("cas") ? "name" : idIndicator.toLowerCase()) + "/" +  compoundId + "/xml";
-	        url = new URL(urlString);
+			url = new URL(urlString);
 	        } 
 	    catch (MalformedURLException e2) 
 	        {
@@ -84,15 +85,16 @@ public class CompoundIdUtils
 	private static List<String> createsmilesInchiKeyAndmultipleTagList (StringBuilder sb)
 		{
 		List<String> smilesInchiKeyAndmultipleTagList = new ArrayList <String> ();
-	    smilesInchiKeyAndmultipleTagList.add("");
+		smilesInchiKeyAndmultipleTagList.add("");
 	    smilesInchiKeyAndmultipleTagList.add("");
 	    smilesInchiKeyAndmultipleTagList.add("");
 		if (sb.toString().indexOf("SMILES") < 0)
 		    return smilesInchiKeyAndmultipleTagList;	
-	    String cSmiles = sb.toString().substring(sb.toString().indexOf("SMILES"));	    
-	    int numSmileTags =  ( sb.toString().length() - sb.toString().replace("SMILES", "").length())/"SMILES".length();
+	    String cSmiles = sb.toString().substring(sb.toString().indexOf("SMILES"));	
+	    int numSmileTags =  ( sb.toString().length() - sb.toString().replace("SMILES", "").length())/"SMILES".length();    
 	    smilesInchiKeyAndmultipleTagList.clear();
-	    smilesInchiKeyAndmultipleTagList.add(cSmiles.toString().substring(cSmiles.toString().lastIndexOf("<PC-InfoData_value_sval>")+"<PC-InfoData_value_sval>".length(),cSmiles.toString().lastIndexOf("</PC-InfoData_value_sval>")));
+	    String isomericOnDownStr =  cSmiles.toString().substring(cSmiles.toString().indexOf("<PC-Urn_name>Isomeric</PC-Urn_name>")+"<PC-Urn_name>Isomeric</PC-Urn_name>".length());
+	    smilesInchiKeyAndmultipleTagList.add(isomericOnDownStr.substring(isomericOnDownStr.indexOf("<PC-InfoData_value_sval>") + "<PC-InfoData_value_sval>".length(),  isomericOnDownStr.indexOf("</PC-InfoData_value_sval>") ));
 	    smilesInchiKeyAndmultipleTagList.add(numSmileTags > 2 ? "* There are multiple Smiles": "");
 	    // issue 33
 		if (numSmileTags <= 2)
