@@ -171,7 +171,7 @@ public class AliquotService
 				String aliquotFirstString = "";				
 				if (dto.getReplicate() == 1)
 					{					
-					aliquot = Aliquot.instance( dto.getReplicate(),  loc,  inv, dto.getIsDry() ? '1' : '0', cmpd, dto.getSolvent(),  DateUtils.calendarFromDateStr(dto.getCreateDate(), Aliquot.ALIQUOT_DATE_FORMAT), dto.getAliquotLabel(), dto.getNotes(), dto.getCreatedBy(), dto.getNeatOrDilution(), dto.getNeatOrDilutionUnits(), new BigDecimal(dto.getIvol()), new BigDecimal(dto.getDcon()), new BigDecimal(dto.getIcon()), new BigDecimal(dto.getWeightedAmount()), new BigDecimal(dto.getDConc()) , (dto.getDvol()== null ? new BigDecimal(0) : new BigDecimal(dto.getDvol())), dto.getDConcentrationUnits(), dto.getWeightedAmountUnits(), new BigDecimal(dto.getMolecularWeight()));	
+					aliquot = Aliquot.instance( dto.getReplicate(),  loc,  inv, dto.getIsDry() ? '1' : '0', cmpd, dto.getSolvent(),  DateUtils.calendarFromDateStr(dto.getCreateDate(), Aliquot.ALIQUOT_DATE_FORMAT), dto.getAliquotLabel(), dto.getNotes(), dto.getCreatedBy(), dto.getNeatOrDilution(), dto.getNeatOrDilutionUnits(), new BigDecimal(dto.getIvol()), new BigDecimal(dto.getDcon()), new BigDecimal(dto.getIcon()), new BigDecimal(dto.getWeightedAmount()), new BigDecimal(dto.getDConc()) , (dto.getDvol()== null ? BigDecimal.ZERO : new BigDecimal(dto.getDvol())), dto.getDConcentrationUnits(), dto.getWeightedAmountUnits(), new BigDecimal(dto.getMolecularWeight()));	
 					if (StringUtils.isEmptyOrNull(dto.getCreatedBy()))
 						dto.setCreatedBy(((MedWorksSession) Session.get()).getCurrentUserId());
 					aliquotDao.createAliquot(aliquot);	
@@ -186,7 +186,7 @@ public class AliquotService
 					    {
 						if (i > 1)
 						    dto.setAliquotLabel(aliquotFirstString + "_" + i);
-						aliquot = Aliquot.instance( dto.getReplicate(),  loc,  inv, dto.getIsDry() ? '1' : '0' , cmpd, dto.getSolvent(),  DateUtils.calendarFromDateStr(dto.getCreateDate(), Aliquot.ALIQUOT_DATE_FORMAT), dto.getAliquotLabel(), dto.getNotes(), dto.getCreatedBy(), dto.getNeatOrDilution(), dto.getNeatOrDilutionUnits(), new BigDecimal(dto.getIvol()), new BigDecimal(dto.getDcon()), new BigDecimal(dto.getIcon()), new BigDecimal(dto.getWeightedAmount()), new BigDecimal(dto.getDConc()), (dto.getDvol()== null ? new BigDecimal(0) : new BigDecimal(dto.getDvol())), dto.getDConcentrationUnits(), dto.getWeightedAmountUnits(),  new BigDecimal(dto.getMolecularWeight()));	
+						aliquot = Aliquot.instance( dto.getReplicate(),  loc,  inv, dto.getIsDry() ? '1' : '0' , cmpd, dto.getSolvent(),  DateUtils.calendarFromDateStr(dto.getCreateDate(), Aliquot.ALIQUOT_DATE_FORMAT), dto.getAliquotLabel(), dto.getNotes(), dto.getCreatedBy(), dto.getNeatOrDilution(), dto.getNeatOrDilutionUnits(), new BigDecimal(dto.getIvol()), new BigDecimal(dto.getDcon()), new BigDecimal(dto.getIcon()), new BigDecimal(dto.getWeightedAmount()), new BigDecimal(dto.getDConc()), (dto.getDvol()== null ? BigDecimal.ZERO : new BigDecimal(dto.getDvol())), dto.getDConcentrationUnits(), dto.getWeightedAmountUnits(),  new BigDecimal(dto.getMolecularWeight()));	
 						aliquotDao.createAliquot(aliquot);	
 						saveAssays(dto.getAssayIds(), aliquot); // issue 100
 					    if (i == 1)

@@ -48,7 +48,8 @@ public class Mrc2MixtureDataService
 		dtoList =  data.mixtureMetadata.grabDTOList();
 		try
 			{
-			createNewMixture(dtoList.get(0));			
+			boolean calledFromMetlimsInterface = false;
+			createNewMixture(dtoList.get(0), calledFromMetlimsInterface);			
 			}
 		catch (Exception e)
 			{
@@ -64,7 +65,7 @@ public class Mrc2MixtureDataService
 		} 
 	
 	// issue 123
-	public Mixture createNewMixture(MixtureDTO dto)
+	public Mixture createNewMixture(MixtureDTO dto, boolean calledFromMetlimsInterface )
 		{
 		int index =  0;
 		try 
@@ -88,16 +89,43 @@ public class Mrc2MixtureDataService
 			
 			if (dto.getMixtureList()  == null)
 				return mixture;
-			for  (String mixtureStr : dto.getMixtureList()) 
+			if (calledFromMetlimsInterface)
 				{
-				Mixture childMixture = mixtureDao.loadById(mixtureStr);
-				mixtureDao.createMixtureChild(MixtureChildren.instance(childMixture,mixture,  dto.getMixtureVolumeList() == null ? null : dto.getMixtureVolumeList().get(index), dto.getMixtureConcentrationList() == null ? null :dto.getMixtureConcentrationList().get(index)));
-				for (MixAliquotInfo singleMixAliquotInfo : dto.getMixtureAliquotInfoMap().get(mixtureStr))
+				for  (String mixtureStr : dto.getMixtureList()) 
 					{
-					Aliquot aliquot = aliquotDao. loadByIdForMixture(singleMixAliquotInfo.getAliquotId());
-					mixtureDao.createMixtureChildAliquot(MixtureChildrenAliquot.instance(childMixture, mixture, aliquot, singleMixAliquotInfo.getMixAliquotConcentrationFinal()));
+					Mixture childMixture = mixtureDao.loadById(mixtureStr);
+					mixtureDao.createMixtureChild(MixtureChildren.instance(childMixture,mixture,  dto.getMixtureVolumeList() == null ? null : dto.getMixtureVolumeList().get(index), dto.getMixtureConcentrationList() == null ? null :dto.getMixtureConcentrationList().get(index)));
+					////////////// null pointer error
+					for (MixAliquotInfo singleMixAliquotInfo : dto.getMixtureAliquotInfoMap().get(mixtureStr))
+						{
+						Aliquot aliquot = aliquotDao. loadByIdForMixture(singleMixAliquotInfo.getAliquotId());
+						mixtureDao.createMixtureChildAliquot(MixtureChildrenAliquot.instance(childMixture, mixture, aliquot, singleMixAliquotInfo.getMixAliquotConcentrationFinal()));
+						} 
+					index++;
 					}
-				index++;
+				}
+			else
+				{
+				for  (String mixtureStr : dto.getMixtureList()) 
+					{
+					Mixture childMixture = mixtureDao.loadById(mixtureStr);
+					mixtureDao.createMixtureChild(MixtureChildren.instance(childMixture,mixture,  dto.getMixtureVolumeList() == null ? null : dto.getMixtureVolumeList().get(index), dto.getMixtureConcentrationList() == null ? null :dto.getMixtureConcentrationList().get(index)));
+					
+					List <Object []> aliquotObjects = mixtureDao.aliquotsForMixtureId(mixtureStr);
+					for (Object[] result : aliquotObjects)
+						{
+						MixAliquotInfo mAliquotInfo = new MixAliquotInfo();
+						mAliquotInfo.setAliquotId ((String) result[2]);
+						mAliquotInfo.setMixtureId(result[0].toString());
+						mAliquotInfo.setMixAliquotConcentration ( result[3].toString());
+						mAliquotInfo.setMixAliquotConUnits(result[4].toString());						
+						Double conFinal =  (Double.parseDouble(dto.getMixtureVolumeList() == null ? null : dto.getMixtureVolumeList().get(index))  * Double.parseDouble(mAliquotInfo.getMixAliquotConcentration()))/Double.parseDouble(dto.getDesiredFinalVolume());						
+						mAliquotInfo.setMixAliquotConcentrationFinal(conFinal.toString());
+						Aliquot aliquot = aliquotDao. loadByIdForMixture(mAliquotInfo.getAliquotId());
+						mixtureDao.createMixtureChildAliquot(MixtureChildrenAliquot.instance(childMixture, mixture, aliquot, mAliquotInfo.getMixAliquotConcentrationFinal()));
+						}
+					index++;
+					}
 				}
 			}
 		catch (Exception e)

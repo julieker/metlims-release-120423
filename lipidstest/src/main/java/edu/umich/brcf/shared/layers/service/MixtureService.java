@@ -2,19 +2,15 @@
 package edu.umich.brcf.shared.layers.service;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.transaction.annotation.Transactional;
-import edu.umich.brcf.metabolomics.layers.dao.CompoundDAO;
+import edu.umich.brcf.metabolomics.panels.lims.mixtures.AliquotInfo;
+import edu.umich.brcf.metabolomics.panels.lims.mixtures.MixAliquotInfo;
 import edu.umich.brcf.shared.layers.dao.AliquotDAO;
-import edu.umich.brcf.shared.layers.dao.ExperimentDAO;
-import edu.umich.brcf.shared.layers.dao.InventoryDAO;
-import edu.umich.brcf.shared.layers.dao.LocationDAO;
 import edu.umich.brcf.shared.layers.dao.MixtureDAO;
-import edu.umich.brcf.shared.layers.dao.SampleDAO;
-import edu.umich.brcf.shared.layers.dao.UserDAO;
 import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Mixture;
 import edu.umich.brcf.shared.layers.domain.MixtureAliquot;
@@ -23,18 +19,12 @@ import edu.umich.brcf.shared.layers.domain.MixtureChildren;
 import edu.umich.brcf.shared.layers.domain.MixtureChildrenAliquot;
 import edu.umich.brcf.shared.layers.domain.MixtureChildrenAliquotPK;
 import edu.umich.brcf.shared.layers.domain.MixtureChildrenPK;
-import edu.umich.brcf.shared.util.MixtureSheetIOException;
+import edu.umich.brcf.shared.layers.dto.MixtureDTO;
 
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class MixtureService 
     {	
 	AliquotDAO aliquotDao;
-	SampleDAO sampleDao;
-	UserDAO userDao;
-	CompoundDAO compoundDao;
-	LocationDAO locationDao;
-	InventoryDAO inventoryDao;
-	ExperimentDAO experimentDao;
 	MixtureDAO mixtureDao;
 	
 	// issue 123
@@ -53,6 +43,25 @@ public class MixtureService
 		{
 		return mixtureDao.aliquotsForMixtureId(mId);
 		}
+	
+	// issue 138
+	public boolean isMixturesSecondaryMixture(String mixtureId )
+		{
+		return mixtureDao.isMixturesSecondaryMixture(mixtureId);
+		}
+		
+	// issue 138
+	public List<Object[]> aliquotsForSecondaryMixtures(String secondaryMid, String mId)
+		{
+		return mixtureDao.aliquotsForSecondaryMixtures(secondaryMid, mId);
+		}
+	
+	// issue 138
+	public List<Object[]> secondaryMixturesForMixture(String mId)
+		{
+		return mixtureDao.secondaryMixturesForMixture(mId);
+		}
+	
 	// issue 94
 	public MixtureAliquot loadMixtureAliquotById(MixtureAliquotPK mixtureAliquotPK)
 		{		
@@ -103,10 +112,26 @@ public class MixtureService
 		return mixtureDao.allMixtureNames();
 		}
 	
-	// Issue 118
+	// issue 138
+	public List<String> allMixtureNamesExcludingCurrent(String mixtureId)
+		{
+		return mixtureDao.allMixtureNamesExcludingCurrent(mixtureId);
+		}
+	
+	// issue 138
 	public Map<String, String> allMixtureIdsNamesMap()
 		{
-		List<String> ids = allMixtureNames();
+		return allMixtureIdsNamesMap(null);
+		}
+	
+	// Issue 138
+	public Map<String, String> allMixtureIdsNamesMap(Mixture mixture)
+		{
+		List <String> ids = new ArrayList <String> ();
+		if (mixture != null)
+			ids = allMixtureNamesExcludingCurrent(mixture.getMixtureId());
+		else
+			ids = allMixtureNames();
 		Map<String, String> map = new HashMap<String, String>();
 		if (ids != null)
 			for (String id : ids)
@@ -132,9 +157,9 @@ public class MixtureService
 		}
 	
 	// issue 123
-	public List<String> getNonComplexMixtureIds()
+	public List<String> getNonComplexMixtureIds(Mixture mixtureToEdit)
 		{
-		return mixtureDao.getNonComplexMixtureIds();
+		return mixtureDao.getNonComplexMixtureIds(mixtureToEdit);
 		}
 	
 	//issue 110
@@ -152,6 +177,53 @@ public class MixtureService
 		return false;
 		}
 	
+	public Mixture updateMixture (MixtureDTO mixtureDto, String mId)
+		{
+		Mixture mix = loadById(mId);
+		mix.update(mixtureDto);
+		return mix;
+		}
 	// issue 61
 	
+	// issue 138
+	public void updateMixtureAliquot (List <AliquotInfo> aliquotInfoList, Mixture mix)
+		{
+		mixtureDao.removeMixtureAliquots(mix.getMixtureId());
+		for (AliquotInfo lilAliquotInfo : aliquotInfoList)
+			{
+			Aliquot alq = aliquotDao.loadById(lilAliquotInfo.getAliquotId());
+			MixtureAliquotPK mixtureAliquotPK   = MixtureAliquotPK.instance(mix, alq);
+			MixtureAliquot mixtureAliquot = loadMixtureAliquotById(mixtureAliquotPK);
+			}
+		for (AliquotInfo lilAliquotInfo : aliquotInfoList)
+			{
+			Aliquot alq = aliquotDao.loadById(lilAliquotInfo.getAliquotId());
+		    mixtureDao.createMixtureAliquot(MixtureAliquot.instance(mix, alq, lilAliquotInfo.getVolumeTxt(), lilAliquotInfo.getConcentrationTxtFinal()));
+			}
+	    }
+	
+	// issue 138
+	    
+		public void updateMixtureAndChildrenAliquotInfo (Mixture mix, MixtureDTO mixtureDto, List <AliquotInfo> aliquotInfoList)
+			{
+			updateMixture(mixtureDto, mix.getMixtureId());
+			updateMixtureAliquot(aliquotInfoList,mix);              
+	        mixtureDao.removeSecondaryMixtureAliquots(mix.getMixtureId());
+	        mixtureDao.removeSecondaryMixture(mix.getMixtureId());	
+	        int index = 0;
+	        for  (String mixtureStr : mixtureDto.getMixtureList()) 
+				{
+				Mixture childMixture = mixtureDao.loadById(mixtureStr);
+				mixtureDao.createMixtureChild(MixtureChildren.instance(childMixture,mix,  mixtureDto.getMixtureVolumeList() == null ? null : mixtureDto.getMixtureVolumeList().get(index), mixtureDto.getMixtureConcentrationList() == null ? null :mixtureDto.getMixtureConcentrationList().get(index)));
+				////////////// null pointer error
+				for (MixAliquotInfo singleMixAliquotInfo : mixtureDto.getMixtureAliquotInfoMap().get(mixtureStr))
+					{
+					Aliquot aliquot = aliquotDao. loadByIdForMixture(singleMixAliquotInfo.getAliquotId());
+					mixtureDao.createMixtureChildAliquot(MixtureChildrenAliquot.instance(childMixture, mix, aliquot, singleMixAliquotInfo.getMixAliquotConcentrationFinal()));
+					} 
+				index++;
+				}
+			}
+	
+	public void setAliquotDao(AliquotDAO aliquotDao) { this.aliquotDao = aliquotDao; }
     }

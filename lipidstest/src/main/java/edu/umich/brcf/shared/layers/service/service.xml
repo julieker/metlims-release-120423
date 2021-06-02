@@ -92,6 +92,7 @@
        <!-- issue 94 -->
      <bean id="mixtureService" class="edu.umich.brcf.shared.layers.service.MixtureService">
      <property name="mixtureDao" ref="mixtureDAO" />
+     <property name="aliquotDao" ref="aliquotDAO" />
      </bean>
 	
  	 <bean id="organizationService" class="edu.umich.brcf.shared.layers.service.OrganizationService">

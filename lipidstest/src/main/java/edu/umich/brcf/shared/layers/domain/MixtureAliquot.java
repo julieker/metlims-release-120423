@@ -13,6 +13,7 @@ package edu.umich.brcf.shared.layers.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -23,6 +24,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import edu.umich.brcf.metabolomics.panels.lims.mixtures.AliquotInfo;
 
 @Entity()
 @org.hibernate.annotations.Entity(mutable = false)
@@ -66,6 +69,7 @@ public class MixtureAliquot implements Serializable
 		this.volumeAliquot = new BigDecimal(volumeAliquotStr);
 		this.concentrationAliquot = new BigDecimal(concentrateAliquotStr);
 		}
+	
 	public MixtureAliquotPK getId()
 		{
 		return id;

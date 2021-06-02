@@ -42,10 +42,6 @@ public class MixtureDAO extends BaseDAO
 		{
 		List<Mixture> mixLst =  getEntityManager().createQuery("from Mixture order by mixture_id")
 				.getResultList();	
-	 /*   for (Mixture mixture : mixLst)
-			{
-			initializeTheKids(mixture, new String[] { "createdBy"});
-			}*/
 		return mixLst;
 		}
 	
@@ -65,6 +61,14 @@ public class MixtureDAO extends BaseDAO
 		return mixtureNameList;
 		}
 	
+	// issue 138
+	public List<String> allMixtureNamesExcludingCurrent(String mId)
+		{
+		Query query = getEntityManager().createNativeQuery("select distinct mixture_name from mixture t1 where mixture_id != ?1").setParameter(1, mId);
+		List<String> mixtureNameList = query.getResultList();
+		return mixtureNameList;
+		}
+	
 	// issue 94	
 	public void createMixtureAliquot(MixtureAliquot mixtureAliquot)
 		{
@@ -80,6 +84,27 @@ public class MixtureDAO extends BaseDAO
 	public void createMixtureChild(MixtureChildren mixtureChildren)
 		{
 		getEntityManager().persist(mixtureChildren);
+		}
+	
+	// issue 138
+	public void removeSecondaryMixtureAliquots(String mixtureId)
+		{
+		Query query = getEntityManager().createNativeQuery("delete mixture_children_aliquot where parent_mixture_id =  ?1").setParameter(1, mixtureId);
+		query.executeUpdate();
+		}
+	
+	// issue 138
+	public void removeSecondaryMixture(String mixtureId)
+		{
+		Query query = getEntityManager().createNativeQuery("delete mixture_children where parent_mixture_id =  ?1").setParameter(1, mixtureId);
+		query.executeUpdate();
+		}
+	
+	// issue 138
+	public void removeMixtureAliquots(String mixtureId)
+		{
+		Query query = getEntityManager().createNativeQuery("delete mixture_aliquot where mixture_id = ?1").setParameter(1, mixtureId);
+		query.executeUpdate();
 		}
 	
 	// issue 123
@@ -125,18 +150,48 @@ public class MixtureDAO extends BaseDAO
 		}
 	
 	// issue 123
-	public List<String> getNonComplexMixtureIds()
+	public List<String> getNonComplexMixtureIds(Mixture mixtureToEdit)
 		{
-		Query query = getEntityManager().createNativeQuery("select distinct cast(t1.mixture_id as char(9)) from mixture t1 where mixture_id not in (select parent_mixture_id from mixture_children) order by 1");
+		Query query;
+		if (mixtureToEdit == null)
+			query = getEntityManager().createNativeQuery("select distinct cast(t1.mixture_id as char(9)) from mixture t1 where mixture_id not in (select parent_mixture_id from mixture_children) order by 1");	
+		else
+			query = getEntityManager().createNativeQuery("select distinct cast(t1.mixture_id as char(9)) from mixture t1 where t1.mixture_id <> ?1 and mixture_id not in (select parent_mixture_id from mixture_children) order by 1").setParameter(1, mixtureToEdit.getMixtureId());
 		List<String> mixtureList = query.getResultList();
 		return mixtureList;
 		}
 	
+	// issue 138
+	
+	
 	// issue 123
 	public List<Object[]> aliquotsForMixtureId(String mId)
 		{
-		Query query = getEntityManager().createNativeQuery("select distinct t3.mixture_id, t3.mixture_name,  t1.aliquot_id, decode(neat,'1', desired_concentration_neat, desired_concentration) desired_concentration , decode(neat,'1',DESIRED_CONCENTRATION_UNITS, NEAT_SOL_VOL_UNITS) from mixture_aliquot t1, aliquot t2, mixture t3 where t1.mixture_id = t3.mixture_id and t1.aliquot_id = t2.aliquot_id and t1.mixture_id = ?1 and dry= '0' order by 3").setParameter(1, mId);
+		Query query = getEntityManager().createNativeQuery("select distinct t3.mixture_id, t3.mixture_name,  t1.aliquot_id, decode(neat,'1', desired_concentration_neat, desired_concentration) desired_concentration , decode(neat,'1',DESIRED_CONCENTRATION_UNITS, NEAT_SOL_VOL_UNITS), CONCENTRATION_ALIQUOT, volume_aliquot  from mixture_aliquot t1, aliquot t2, mixture t3 where t1.mixture_id = t3.mixture_id and t1.aliquot_id = t2.aliquot_id and t1.mixture_id = ?1 and dry= '0' order by 3").setParameter(1, mId);
 		return query.getResultList();
 		}
 	
+	// issue 138
+	public List<Object[]> secondaryMixturesForMixture (String mId)
+		{
+		Query query = getEntityManager().createNativeQuery("select t1.mixture_id , volume_mixture from mixture_children t1 where t1.parent_mixture_id = ?1 order by 1").setParameter(1, mId);
+		return query.getResultList();
+		}
+	
+	// issue 138
+	public List<Object[]> aliquotsForSecondaryMixtures(String secondaryMid,String mId )
+		{
+		Query query = getEntityManager().createNativeQuery("select t1.mixture_id , volume_mixture, t3.aliquot_id, concentration_final, decode(neat,'1', desired_concentration_neat, desired_concentration) desired_concentration , decode(neat,'1',DESIRED_CONCENTRATION_UNITS, NEAT_SOL_VOL_UNITS), t4.mixture_name from mixture_children t1,mixture_children_aliquot t2 , aliquot t3, mixture t4 where t1.mixture_id = t2.mixture_id and t1.mixture_id = ?1 and t4.mixture_id = t2.mixture_id and t1.parent_mixture_id = t2.parent_mixture_id and t1.parent_mixture_id = ?2 and t2.aliquot_id = t3.aliquot_id order by 3").setParameter(1, secondaryMid).setParameter(2, mId);
+		return query.getResultList();
+		}
+	
+	// issue 138
+	public boolean isMixturesSecondaryMixture(String mixtureId )
+		{
+		Query query = getEntityManager().createNativeQuery("select parent_mixture_id from mixture_children where mixture_id = ?1 ").setParameter(1, mixtureId);
+		if (query.getResultList().size() > 0)
+		    return true;
+		return false;
+		}
+		
 	}

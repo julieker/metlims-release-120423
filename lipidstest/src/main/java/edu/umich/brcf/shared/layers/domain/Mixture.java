@@ -19,6 +19,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Entity;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import edu.umich.brcf.shared.layers.dto.MixtureDTO;
+import edu.umich.brcf.shared.util.utilpackages.StringUtils;
+
 import javax.persistence.Table;
 
 @Entity()
@@ -73,6 +77,13 @@ public class Mixture implements Serializable
 		this.volSolvent = volSolvent;
 		this.desiredFinalVol = desiredFinalVol;
 		this.mixtureName = mixtureName;
+		}
+	
+	public void update(MixtureDTO mixtureDto)
+		{		
+		this.mixtureName = mixtureDto.getMixtureName();
+		this.volSolvent = StringUtils.isNullOrEmpty(mixtureDto.getVolumeSolventToAdd()) ? null : new BigDecimal(mixtureDto.getVolumeSolventToAdd());
+		this.desiredFinalVol = StringUtils.isNullOrEmpty(mixtureDto.getDesiredFinalVolume()) ? null : new BigDecimal(mixtureDto.getDesiredFinalVolume());
 		}
 
 	public String getMixtureId()

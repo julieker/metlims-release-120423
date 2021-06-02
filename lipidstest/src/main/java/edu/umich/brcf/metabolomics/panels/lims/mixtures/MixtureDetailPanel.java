@@ -47,6 +47,7 @@ public class MixtureDetailPanel extends Panel
 	List<Compound> parentageList;
 	ListView listViewMixtures; // issue 61
 	MixtureDetailPanel mixtureDetailPanel = this;
+	MixturesAdd mixturesAdd;
 	// itemList
 	// issue 118
 	IModel <List<Mixture>> mixtureModel = new LoadableDetachableModel() 
@@ -87,6 +88,7 @@ public class MixtureDetailPanel extends Panel
 				listItem.add(new Label("volumeSolvent", new Model(mixture.getVolSolvent())));
 				listItem.add(new Label("desiredFinalVolume", new Model(mixture.getDesiredFinalVol())));
 				listItem.add(buildLinkToModalMixtureDetail("detailMixture",mixture,modal2));			
+				listItem.add(buildLinkToModalMixtureDetail("editMixture",mixture,modal2));	
 				}
 			});			
 		container = new WebMarkupContainer("itemList");
@@ -105,7 +107,8 @@ public class MixtureDetailPanel extends Panel
 	        		 {
 	                 public Page createPage()
 	                	 {
-	                     return new MixturesAdd("deleteAliquot",null, modal2);
+	                	 mixturesAdd  = new MixturesAdd("addMixture", modal2);
+	                     return mixturesAdd;
 	                	 }
 	        		 });
 				 modal2.show(target);
@@ -130,6 +133,7 @@ public class MixtureDetailPanel extends Panel
 					public Page createPage() {   return setPage(id, modal1, mix);   }
 					});			
 				    modal1.show(target);
+				    //target.add(mixturesAdd);
 				}
 			};
 		return lnk;
@@ -140,6 +144,8 @@ public class MixtureDetailPanel extends Panel
 		switch(linkID)
 			{
 			case "detailMixture" : return new MixtureAliquotDetail (linkID, mix);
+			case "editMixture"   : mixturesAdd = new MixturesAdd (linkID, mix, modal1, true);
+			                       return mixturesAdd;
 			default :              return new MixtureAliquotDetail (linkID, mix);
 			}
 		}
