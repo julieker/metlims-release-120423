@@ -19,6 +19,7 @@ import org.hibernate.Hibernate;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
+import antlr.StringUtils;
 import edu.umich.brcf.metabolomics.layers.domain.Compound;
 import edu.umich.brcf.metabolomics.layers.domain.CompoundName;
 import edu.umich.brcf.shared.layers.dao.BaseDAO;
@@ -57,14 +58,12 @@ public class CompoundDAO extends BaseDAO
 			}
 		return lst;
 		}
-
 	
 	public List<CompoundName> searchName(String str) 
 		{
 		String qry = "from CompoundName cn where cn.name like :name";
 		return getEntityManager().createQuery(qry).setParameter("nane", str.toUpperCase()).getResultList();
 		}
-
 	
 	public Compound loadCompoundById(String id) {
 		Compound c = getEntityManager().find(Compound.class, id);
@@ -78,7 +77,6 @@ public class CompoundDAO extends BaseDAO
 			}
 		return c;
 		}
-
 	
 	public List<String> getMatchingCids(String input)
 		{
@@ -108,8 +106,7 @@ public class CompoundDAO extends BaseDAO
 		
 		return lst;
 		}
-	
-	
+		
 	public Solvent getSolventForLogPValue(BigDecimal value) 
 		{
 		Solvent solvent = (Solvent) DataAccessUtils.requiredSingleResult(getEntityManager().createQuery("from Solvent s "
@@ -118,12 +115,16 @@ public class CompoundDAO extends BaseDAO
 		return solvent;
 		}
 
-	
-	public void createCompound(Compound cmpd)
+	public void createCompound(Compound cmpd, String customizedCid)
 		{
-		getEntityManager().persist(cmpd);
+		if (edu.umich.brcf.shared.util.io.StringUtils.isEmptyOrNull(customizedCid))
+			{
+			getEntityManager().persist(cmpd);
+			return;
+			}
+		cmpd.setCid(customizedCid);
+		getEntityManager().merge(cmpd);
 		}
-
 
 	public List<Inventory> grabCompoundsForMultiplexing() 
 		{
@@ -139,8 +140,7 @@ public class CompoundDAO extends BaseDAO
 			}
 		return returnList;
 		}
-	
-	
+		
 	private List<Inventory> getRandomList(List<Inventory> list) 
 		{
 		List<Inventory> returnList = new ArrayList<Inventory>();
@@ -153,7 +153,6 @@ public class CompoundDAO extends BaseDAO
 
 		return returnList;
 		}
-
 	
 	public List<Compound> getCompoundsWithinMass(double upperLimit, double lowerLimit) 
 		{
@@ -165,7 +164,6 @@ public class CompoundDAO extends BaseDAO
 			
 		return lst;
 		}
-
 	
 	public Compound loadByCatnum(String catnum) 
 		{
@@ -173,4 +171,14 @@ public class CompoundDAO extends BaseDAO
 		String cid = (String) query.getSingleResult();
 		return loadCompoundById(cid);
 		}
+	
+	// issue 144 
+	public boolean doesCompoundIdAlreadyExist (String cid )
+		{
+		Query query = getEntityManager().createNativeQuery("select cid from compound where cid = ?1 ").setParameter(1, cid);
+		if (query.getResultList().size() > 0)
+		    return true;
+		return false;
+		}
+	
 	}

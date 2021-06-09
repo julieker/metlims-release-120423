@@ -56,8 +56,8 @@ public class Compound implements IClusterable
 		}
 
 	@Id()
-	@GeneratedValue(generator = "IdGeneratorDAO")
-	@GenericGenerator(name = "IdGeneratorDAO", strategy = "edu.umich.brcf.shared.layers.dao.IdGeneratorDAO", parameters = {
+	@GeneratedValue(generator = "IdGeneratorDAOForCompound")
+	@GenericGenerator(name = "IdGeneratorDAOForCompound", strategy = "edu.umich.brcf.shared.layers.dao.IdGeneratorDAOForCompound", parameters = {
 			@Parameter(name = "idClass", value = "Compound"), @Parameter(name = "width", value = "6") })
 	@Column(name = "CID", unique = true, nullable = false, length = 6, columnDefinition = "CHAR(6)")
 	private String cid;
@@ -485,5 +485,13 @@ public class Compound implements IClusterable
 	    {
 		return additionalSolubility;
 	    }
+	
+	//issue 144
+	public void setCid (String cid)
+		{
+		this.cid = cid;
+		}
+
+
 	
     }

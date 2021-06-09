@@ -35,6 +35,7 @@ import edu.umich.brcf.metabolomics.layers.domain.CompoundName;
 import edu.umich.brcf.metabolomics.layers.service.CompoundNameService;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.shared.layers.dto.CompoundDTO;
+import edu.umich.brcf.shared.util.FieldLengths;
 import edu.umich.brcf.shared.util.utilpackages.CompoundIdUtils;
 // issue 113
 import com.googlecode.wicket.jquery.ui.widget.dialog.AbstractFormDialog;
@@ -45,14 +46,14 @@ public abstract class EditCompoundDialog extends AbstractFormDialog
 	{
 	@SpringBean
 	CompoundService cmpService;
-	
 	@SpringBean
 	CompoundNameService cnameService;
-	
+	String custCompound = "";
 	public Form<?> form;
 	int chemAbsNumberLength = 30;
 	String impCompound;
 	String childCompound;
+	TextField compoundIdCustomFld;
 	TextField smilesFld;
 	TextField inchiKeyFld;
 	TextField htmlFld;
@@ -86,10 +87,17 @@ public abstract class EditCompoundDialog extends AbstractFormDialog
 			mainWindow = window;
 			if (!StringUtils.isNullOrEmpty(cmpDto.getInchiKey()) ||  !StringUtils.isNullOrEmpty(cmpDto.getSmiles())  ||   !StringUtils.isNullOrEmpty(cmpDto.getChem_abs_number()))
 			    cmpDto.setCompoundIdentifier(!StringUtils.isNullOrEmpty(cmpDto.getSmiles()) ? "Smiles" : (!StringUtils.isNullOrEmpty(cmpDto.getInchiKey()) ? "InchiKey" : "CAS")); 	
-			add(new Label("cid", cid));
+			//add(new Label("cid", cid));
 			chemAbsNumberFld = new TextField("chem_abs_number");
 			chemAbsNumberFld.add(StringValidator.maximumLength(chemAbsNumberLength));
-			add(chemAbsNumberFld);			
+			add(chemAbsNumberFld);	
+			add(new Label("compoundIdCustomLabel", "Compound Id:")
+				{
+				});	
+			
+			compoundIdCustomFld = new TextField ("customCid");
+			add (compoundIdCustomFld);
+			compoundIdCustomFld.add(StringValidator.maximumLength(FieldLengths.COMPOUND_ID_LENGTH));
 			add(new Label("molecularweightLabel", "Molecular Weight:")
 				{
 				public boolean isVisible()
@@ -226,6 +234,7 @@ public abstract class EditCompoundDialog extends AbstractFormDialog
 		editCompoundDialog.chemAbsNumberFld.setDefaultModelObject("");
 		editCompoundDialog.molecularWeightFld.setDefaultModelObject("");
 		editCompoundDialog.additionalSolubilityFld.setDefaultModelObject("");
+		editCompoundDialog.compoundIdCustomFld.setDefaultModelObject("");
 		}
 	
 	///// issue 113
@@ -247,6 +256,9 @@ public abstract class EditCompoundDialog extends AbstractFormDialog
 		editCompoundDialog.htmlFld.setDefaultModelObject(editCompoundDialog.nameFld.getDefaultModelObjectAsString());				
 		String smilesStr = "";
 		String smilesOrSmilesFromCompoundIdStr = "";
+		custCompound = StringUtils.isNullOrEmpty(editCompoundDialog.compoundIdCustomFld.getDefaultModelObjectAsString()) ? null : editCompoundDialog.compoundIdCustomFld.getDefaultModelObjectAsString() ;
+		if (cmpService.doesCompoundIdAlreadyExist(custCompound))
+			return "The compound:" + custCompound + " already exists.  Please choose another.";
 		cmpDto = (CompoundDTO) getForm().getModelObject();
 		if (StringUtils.isNullOrEmpty(cmpDto.getCompoundIdentifier()))
 			return "Please choose InchiKey, Smiles, or CAS from the drop down list";
@@ -306,7 +318,9 @@ public abstract class EditCompoundDialog extends AbstractFormDialog
 				// issue 79
 				// issue 31 2020
 				// issue 41 2020
-				Compound cmp = cmpService.save(cmpDto, smilesOrSmilesFromCompoundIdStr, cidAssigned, err);										
+				// issue 144
+				//editCompoundDialog.nameFld.getDefaultModelObjectAsString()			
+				Compound cmp = cmpService.save(cmpDto, smilesOrSmilesFromCompoundIdStr, cidAssigned, err, custCompound);										
 				if (cmp.getCid() != null && (cmpDto.getCid()== null || cmpDto.getCid().equals("to be assigned")))
 					cmpDto.setMolecular_weight(Double.toString(cmp.getMass(smilesOrSmilesFromCompoundIdStr)));					
 				childCompound = cmp.getCid();

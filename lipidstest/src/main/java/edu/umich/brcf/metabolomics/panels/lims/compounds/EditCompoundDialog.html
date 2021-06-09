@@ -77,10 +77,17 @@ function refreshParent() {
   -->
   <form wicket:id = "editCompoundForm" >        
  	    <table style = "width : 80%; margin-left : 10%; margin-right : 10%">
+		  	<!--  
 		  	<tr>
 		  		<td style = "text-align :right">CID:</td>
 		  		<td><span wicket:id = "cid">Moes ID</span></td>
 		  	</tr>
+		  	-->
+		  	
+		  	<tr>
+			  <td style = "text-align :right"><span wicket:id = "compoundIdCustomLabel">Moes ID</span></td>
+			  <td><input wicket:id = "customCid" type="text" value="Moes Metabalome" size="30" /></td>
+			</tr>
 		  
 		  	<tr>
 			  <td style = "text-align :right"><span wicket:id = "molecularweightLabel">Moes ID</span></td>

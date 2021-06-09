@@ -302,16 +302,8 @@ public class MixturesAdd extends WebPage
 			// issue 123			
 			mixturesSelected = new ListMultipleChoice ("mixtureList",mixtureService.getNonComplexMixtureIds(mixtureToEdit) )	
 			    {
-				 @Override
-				 public boolean isEnabled()
-					{ 
-					if ( mixtureDto.getMixtureId() != null)
-						return !mixtureService.isMixturesSecondaryMixture(mixtureDto.getMixtureId());
-					else
-						return true;
-					}
-			     @Override
-				 protected void onComponentTag(ComponentTag tag)
+			    @Override
+				protected void onComponentTag(ComponentTag tag)
 				    {
 				    super.onComponentTag(tag);
 				     tag.put("onfocus", "this.size = 20;");

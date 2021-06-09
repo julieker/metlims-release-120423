@@ -30,6 +30,12 @@ public class CompoundService
 		return compoundDao.getMatchingCids(input);
 		}
 	
+	// issue 144
+	public boolean doesCompoundIdAlreadyExist(String cid)
+		{
+		return compoundDao.doesCompoundIdAlreadyExist(cid);
+		}
+	
 	//issue 48
 	public List<String> getMatchingCASIds(String input)
 		{
@@ -58,7 +64,13 @@ public class CompoundService
 		}
 
 	// issue 27 2020
+	
 	public Compound save(CompoundDTO dto, String smilesOrSmilesFromCompoundIdStr, String cidAssigned, boolean err) 
+	    {
+		Compound compound = save (dto, smilesOrSmilesFromCompoundIdStr,cidAssigned,err, null);
+	    return compound;
+	    }
+	public Compound save(CompoundDTO dto, String smilesOrSmilesFromCompoundIdStr, String cidAssigned, boolean err, String customizedCid) 
 		{
 		Assert.notNull(dto);		
 		Compound compound = null;
@@ -100,7 +112,8 @@ public class CompoundService
 				// issue 8
 				if (!StringUtils.isEmptyOrNull(compound.getSmiles()) || !StringUtils.isEmptyOrNull(smilesOrSmilesFromCompoundIdStr)  )
 					compound.updateSolvent(compoundDao.getSolventForLogPValue(compound.getLogP()));				    
-				compoundDao.createCompound(compound);
+				// issue 144
+				compoundDao.createCompound(compound, customizedCid);
 				}		
 			catch (Exception e) { e.printStackTrace(); compound = null; throw new RuntimeException(msg); }		
 		if (compound != null && !err)		

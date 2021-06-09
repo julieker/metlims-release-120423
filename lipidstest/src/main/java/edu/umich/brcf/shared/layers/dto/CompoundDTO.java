@@ -37,6 +37,7 @@ public class CompoundDTO implements Serializable
 		}	
 	private String cid;
 	private String chem_abs_number;
+	private String customCid;
 	private String smiles;
 	private String parentCid;
 	private String name;
@@ -80,11 +81,22 @@ public class CompoundDTO implements Serializable
 		{
 		return chem_abs_number;
 		}
-	
+
 	public void setChem_abs_number(String chem_abs_number) 
 	    {
 		this.chem_abs_number = chem_abs_number;
 	    }
+	
+	public String getCustomCid() 
+		{
+		return customCid;
+		}
+	
+	public void setCustomCid(String customCid) 
+	    {
+		this.customCid = customCid;
+	    }
+	
 	public String getSmiles() 
 	    {
 		return smiles;

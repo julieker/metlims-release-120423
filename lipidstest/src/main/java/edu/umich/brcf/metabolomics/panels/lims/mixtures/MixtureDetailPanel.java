@@ -124,6 +124,11 @@ public class MixtureDetailPanel extends Panel
 		// issue 39
 		 AjaxLink lnk =  new AjaxLink<Void> (id)
 			{
+			@Override 
+			public boolean isEnabled()
+				{
+				return ! (id.equals("editMixture") && mixtureService.isMixturesSecondaryMixture(mix.getMixtureId()));
+				}
 			@Override
 			public void onClick(AjaxRequestTarget target)
 				{
@@ -133,7 +138,6 @@ public class MixtureDetailPanel extends Panel
 					public Page createPage() {   return setPage(id, modal1, mix);   }
 					});			
 				    modal1.show(target);
-				    //target.add(mixturesAdd);
 				}
 			};
 		return lnk;
