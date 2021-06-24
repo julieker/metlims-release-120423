@@ -40,6 +40,9 @@ public class ProjectDetail2 extends WebPage
 		add(new Label("description", project.getDescription()));
 		add(new Label("client", project.getClient().getLab()));
 		add(new Label("contactPerson", project.getContactPerson().getFullName()));
+		// issue 148
+		add(new Label("contactPhone", project.getContactPerson().getPhone()));
+		add(new Label("contactEmail", project.getContactPerson().getEmail()));
 		add(new Label("statusID", project.getStatusID()));
 		
 		Calendar stDate = project.getStartDate();
