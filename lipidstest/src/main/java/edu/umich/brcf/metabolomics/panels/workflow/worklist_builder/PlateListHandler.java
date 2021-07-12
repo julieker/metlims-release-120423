@@ -28,12 +28,31 @@ public class PlateListHandler implements Serializable
 	String startPos = "A1", endPos = "A1";
 	Integer startIdx = 0, endIdx = 53;
 	Boolean useCarousel = false;
-	
+	int startOfStandards = 45;
+	int startOfOtherControls = 36;
 	private int nPlates = 1;
+	String masterPoolMP = "Master Pool   (CS00000MP)"; // issue 146
+    String masterPoolQCMP = "Master Pool.QCMP (CS000QCMP)"; // issue 146
 	List<String> possiblePlatePositions = new ArrayList<String>();
 	
 	// issue 391 issue 403 issue 418
 	// issue 422
+	// issue 146
+	public static List <String> STANDARD_CONTROL_TYPES = Arrays.asList(new String []{ "CS000STD0",   "CS000STD1", "CS000STD2", "CS000STD3",   "CS000STD4",
+			"CS000STD5",   "CS000STD6", "CS000STD7", "CS000STD8",   "CS000STD9",
+			"CS00STD10",   "CS00STD11", "CS00STD12",});
+	public static List <String> POOL_CHEAR_CONTROL_TYPES = Arrays.asList(new String [] {
+			"CS00000MP", 
+			"CS000QCMP", 
+			"CS000BPM1", "CS000BPM2", // issue 17
+			"CS000BPM3",   "CS000BPM4", "CS000BPM5", "CS0000OP0",
+			"CS0000OP1",   "CS0000OP2", "CS0000OP3", "CS0000OP4",   "CS0000OP5", "CS0000OP6","R00CHRUR1",   "R00CHRUR2", "R00CHRPL1", "R00CHRPL2",
+			"CS0UMRG01", "CS0UMRL01", "CS0UMRA01","CS0UMRP01", "CSOUMHM03","CSMR80008","CSMR80009", "CSMR80010","CSMR80011", "CSMR80012","CSMR80013", 
+			"CSMR80014", "CSMR80015","CSMR80016","CSMR80017","CSMR80018","CSMR80019","CSMR80020","CSMR80021","CSMR80022", "CSMR80023","CSMR80024",
+			 "CSMR80025","CSMR81010", "CSMR81020", 
+			"CS00000RC","CS00000PB", "CS00000SB","CS00000NB", "CS00000QC"
+	});
+	
 	public static List <String> CONTROL_TYPES_IN_END_TO_START_ORDER = Arrays.asList(new String []
 		     { "R00CHRUR1",   "R00CHRUR2", "R00CHRPL1", "R00CHRPL2",
 		    // issue 126
@@ -49,27 +68,27 @@ public class PlateListHandler implements Serializable
 			"CS000BPM1", "CS000BPM2", // issue 17
 			"CS000BPM3",   "CS000BPM4", "CS000BPM5", "CS0000OP0",
 			"CS0000OP1",   "CS0000OP2", "CS0000OP3", "CS0000OP4",   "CS0000OP5", "CS0000OP6",
-			"CS000STD0",   "CS000STD1", "CS000STD2", "CS000STD3",   "CS000STD4",
+		/*	"CS000STD0",   "CS000STD1", "CS000STD2", "CS000STD3",   "CS000STD4",
 			"CS000STD5",   "CS000STD6", "CS000STD7", "CS000STD8",   "CS000STD9",
-			"CS00STD10",   "CS00STD11", "CS00STD12", 
-			"CS00000PB",   "CS00000SB", "CS00000NB", "CS00000QC" } // issue 450  
+			"CS00STD10",   "CS00STD11", "CS00STD12", */
+			"CS00STD12",   "CS00STD11", "CS00STD10", "CS000STD9",   "CS000STD8",
+			"CS000STD7",   "CS000STD6", "CS000STD5", "CS000STD4",   "CS000STD3",
+			"CS000STD2",   "CS000STD1", "CS000STD0",
+			// issue 146
+			"CS00000PB",   "CS00000SB", "CS00000NB", "CS00000QC",		     
+		     } // issue 450  
 				);
 	
 	PlateListHandler(int nRows, int nCols, boolean useCarousel)
 		{
-		this.useCarousel = useCarousel;
-		
+		this.useCarousel = useCarousel;		
 		this.nRows = useCarousel ? 10 : nRows;
-		this.nCols = useCarousel ? 10 : nCols;
-		
-		this.nPositions = useCarousel ? 100 : nRows * nCols;
-		
+		this.nCols = useCarousel ? 10 : nCols;		
+		this.nPositions = useCarousel ? 100 : nRows * nCols;		
 		this.possiblePlatePositions = this.getPossiblePlatePositions();
-		
 		setStartIdx(0);
 		setEndIdx(nPositions - 1);
 		}
-	
 	
 	public List<WorklistItemSimple> condenseSortAndSpace(List<WorklistItemSimple> items)
 		{
@@ -78,12 +97,10 @@ public class PlateListHandler implements Serializable
 	    List <WorklistItemSimple> spacedItems = buildSpacedSortedList(uniqueItems);
 		return spacedItems;
 		}
-	
-	
+		
 	List<WorklistItemSimple> grabUniqueItems(List <WorklistItemSimple> items)
 		{
-		List <WorklistItemSimple> uniqueItems = new ArrayList<WorklistItemSimple>();
-		
+		List <WorklistItemSimple> uniqueItems = new ArrayList<WorklistItemSimple>();		
 		Map<String, WorklistItemSimple> plateMap = new HashMap<String, WorklistItemSimple>();
 		for (int i = 0; i < items.size(); i++)
 			plateMap.put(items.get(i).getSamplePosition(), items.get(i));
@@ -97,8 +114,7 @@ public class PlateListHandler implements Serializable
 					item.setSampleName(tokens[0]);
 				}
 			
-			uniqueItems.add(item);
-		
+			uniqueItems.add(item);		
 			}
 		return uniqueItems;
 		}
@@ -106,13 +122,14 @@ public class PlateListHandler implements Serializable
 	// issue 391
 	private List<WorklistItemSimple> buildSpacedSortedList(List <WorklistItemSimple> uniqueItems)
 		{
+		int i = 0;
 		Collections.sort(uniqueItems, new WorklistItemSimpleByPlatePosComparator());
 		List<WorklistItemSimple> spacedList = new ArrayList<WorklistItemSimple>();		
 		int itemsAdded = 0, j = 0;		
 		String lastPlate = null, currPlate = null;
-		boolean movedToNextPage = false;			
+		boolean movedToNextPage = false;
 		while (itemsAdded < uniqueItems.size())
-			{		
+			{	
 			String targetLabel = getExpectedPosition(j);
 	               if (j%nPositions == 0 )
 	                   lastPlate = null;
@@ -126,22 +143,23 @@ public class PlateListHandler implements Serializable
 					samplePos = tokens[1];
 			        currPlate = tokens[0];
 					}
-				}
-			
-			// issue 391 issue 410
-			if  (uniqueItems.size() < nPositions && uniqueItems.get(itemsAdded).getRepresentsControl() && !movedToNextPage ) 
-			    {
-				if (j > nPositions)
+				}	
+			// issue 146
+			if  (j < (nPositions*(uniqueItems.get(0).getGroup().getParent().getStartPlateControls()-1) ) && uniqueItems.get(itemsAdded).getRepresentsControl() && !movedToNextPage)	    
+				{
+	 			if (j >= nPositions*(uniqueItems.get(0).getGroup().getParent().getStartPlateControls() - 1)) // move to 3rd page
 					movedToNextPage= true;
 				spacedList.add(new WorklistItemSimple());
-			    }			
+			    }
 			else if (samplePos != null && samplePos.trim().equals(targetLabel) && (lastPlate == null || currPlate.equals(lastPlate)) )			  				  
 				spacedList.add(uniqueItems.get(itemsAdded++));
 			else 
 				if (uniqueItems.get(itemsAdded).getRepresentsControl())
-				    spacedList.add(new WorklistItemSimple());
+					{
+					spacedList.add(new WorklistItemSimple());
+					}
 			lastPlate = currPlate;
-			j++;			
+			j++;
 			if (j > 20000)
 				break;
 			}
@@ -153,9 +171,7 @@ public class PlateListHandler implements Serializable
 		{
 		if (useCarousel)
 			return getCarouselExpectedPosition(i);
-		
 		i %= nPositions; 
-		
 		int col = i % nCols;
 	    int row = (int) (Math.floor(i/nCols));
 	    char rowLabel =  (char) ('A' + row);
@@ -193,6 +209,11 @@ public class PlateListHandler implements Serializable
 	// issue 391 327
 	 Map<String, Integer> buildControlPositionIdxByTypeMap(List<WorklistItemSimple> items, WorklistSimple worklist) 
 		{
+		int standardsIndex = 0;
+	    int prevIdx;
+	    int nextIdx;
+	    boolean standardsExist = false;
+	    boolean startedAfterStandards = false;
 		Map<String, Integer> controlTypeCountsMap = new HashMap<String, Integer>();
 		Map<String, Integer> controlTypeToPositionIndexMap = new HashMap<String, Integer>();
 		for (int i = 0; i < items.size(); i++)
@@ -203,30 +224,52 @@ public class PlateListHandler implements Serializable
 			controlType = StringParser.parseId(controlType);
 			// issue 17
 			if (controlType.indexOf("CS000QCMP") > -1  && worklist.getBothQCMPandMP())
-				continue;
-			
+				continue;			
 			if (!controlTypeCountsMap.containsKey(controlType))
 				controlTypeCountsMap.put(controlType, 0);
 			int nOfType = controlTypeCountsMap.get(controlType);
 			controlTypeCountsMap.put(controlType, ++nOfType);
+			}		
+		prevIdx = nPositions - 1;
+		// issue 146
+		nextIdx = startOfStandards;
+		for (int i = 0; i < STANDARD_CONTROL_TYPES.size(); i++)
+			{			
+			String controlType = PlateListHandler.STANDARD_CONTROL_TYPES.get(i);
+			if (nextIdx >= worklist.getMaxItemsAsInt())
+				nextIdx = startOfOtherControls;
+			if (controlTypeCountsMap.get(controlType) != null)
+			    {
+				standardsExist = true;
+				standardsIndex++;
+				controlTypeToPositionIndexMap.put(controlType,  nextIdx++); 
+			    }
 			}
-		int prevIdx = nPositions - 1;
-		for (int i = 0; i < CONTROL_TYPES_IN_END_TO_START_ORDER.size(); i++)
+		// issue 146 take care of case where QCMP and MP need to be counted as 1 control to avoid skipping a row
+		int countControls = worklist.buildControlTypeMap().size();
+		if (worklist.buildControlTypeMap().get(masterPoolMP) != null && worklist.buildControlTypeMap().get(masterPoolQCMP) != null)
+			countControls--;
+		int indexForOtherControls = calculateOtherControlsStartIndex(countControls,standardsIndex);
+		nextIdx = indexForOtherControls;
+		boolean movedPassStandards = false;
+		// issue 146 don't override standards slot if standards > 9
+		for (int i = 0; i < POOL_CHEAR_CONTROL_TYPES.size(); i++)
 			{
-			String controlType = PlateListHandler.CONTROL_TYPES_IN_END_TO_START_ORDER.get(i);
+			if (standardsIndex > 9 && !startedAfterStandards && nextIdx == 36)
+				{
+				nextIdx = nextIdx + (standardsIndex - 9); 
+				startedAfterStandards = true;
+				}
+			// issue 146 take care of case where you have to use standards slot last row
+			if (nextIdx >= 45 && standardsIndex > 0 && !movedPassStandards)
+				{
+				nextIdx = nextIdx + standardsIndex;
+				movedPassStandards= true;
+				}
+			String controlType = PlateListHandler.POOL_CHEAR_CONTROL_TYPES.get(i);	
 			if (controlTypeCountsMap.get(controlType) != null) 
-				controlTypeToPositionIndexMap.put(controlType,  prevIdx--);
-			}
-		for (int i = 0; i < items.size(); i++)
-			{
-			WorklistItemSimple item = items.get(i);
-			if (!item.getRepresentsUserDefinedControl()) continue;
-			
-			String controlType = item.getNameForUserControlGroup();
-	        if (!controlTypeToPositionIndexMap.containsKey(controlType) )
-			    controlTypeToPositionIndexMap.put(controlType, prevIdx--);
-			}
-		
+				controlTypeToPositionIndexMap.put(controlType,  nextIdx++); 
+			}	
 		return controlTypeToPositionIndexMap;
 		}
 	
@@ -235,14 +278,13 @@ public class PlateListHandler implements Serializable
 	 // issue 409
 	 private int placeControlsByTypeOnPlate(WorklistSimple worklist,  Map<Integer, String> map, int plate) throws METWorksException 
 		{
-		List<WorklistItemSimple> items = worklist.getItems();	
+		List<WorklistItemSimple> items = worklist.getItems();
 		Map<String, Integer> controlPositionIdxByTypeMap =  buildControlPositionIdxByTypeMap(items, worklist);
 		Map<String, String> foundControlTypesMap = new HashMap<String, String>();		
 		int  idx = 0, targetIdx = 0, spotsLeft  = nPositions;
 		String plateStr = "P" + plate; 	
 		for (int i = 0; i < items.size(); i++)
-			{
-			
+			{		
 			WorklistItemSimple item = items.get(i);			
 			if (!item.getRepresentsControl()) continue;			
 			String controlType = (item.getRepresentsUserDefinedControl() ? item.getNameForUserControlGroup() : ((WorklistControlGroup) item.getGroup()).getControlType());			
@@ -267,7 +309,6 @@ public class PlateListHandler implements Serializable
 			    targetIdx = controlPositionIdxByTypeMap.get(StringParser.parseId(controlType));
 			item.setSamplePosition(plateStr + "-" + map.get(targetIdx));
 			item.setRackPosition(plateStr + "-" + map.get(targetIdx));
-			//System.out.println("here is plate string:" + item.getSampleName() + " " +  item.getSamplePosition());
 			}
 	    return spotsLeft;
 	    }
@@ -280,12 +321,14 @@ public class PlateListHandler implements Serializable
 		List<WorklistItemSimple> items = worklist.getItems();
 		Boolean orderWasUploaded = worklist.wasCustomOrdered();		
 		Map<Integer, String> map = buildPositionMap();	
-
 		int idxForPage = 0, plate = 1, spotsLeft =  nRows * nCols;
 		Integer targetIdx = 0; 		
 		String plateStr = "";
-		int idx = 1;	
-		int nSpotsLeftOn2 = placeControlsByTypeOnPlate(worklist, map, 2);
+		int idx = 1;
+		int nSpotsLeft;		
+		// issue 146
+		worklist.setStartPlateControls((int) calculatePlate  (worklist.countSamples(), worklist.buildControlTypeMap() , worklist.getMaxItemsAsInt()   )); // issue 146
+		nSpotsLeft = placeControlsByTypeOnPlate(worklist, map, worklist.getStartPlateControls());
 		for (int i = 0; i < items.size(); i++)
 			{
 			WorklistItemSimple item = items.get(i);		
@@ -298,13 +341,8 @@ public class PlateListHandler implements Serializable
 				pageItemsArray.clear();
 				idxForPage = 0;
 				plate++;
-				spotsLeft = (plate == 2 ? nSpotsLeftOn2 : nPositions); 
-				// issue 404
-				if (plate ==2 && nSpotsLeftOn2 == 0 ) 
-				    {
-				    plate ++;
-				    spotsLeft = nPositions;
-				    }
+				// issue 146 put back
+				spotsLeft = nPositions;
 				idx = 1;
 				}
 			plateStr = "";
@@ -345,13 +383,10 @@ public class PlateListHandler implements Serializable
 
 	private Map<Integer, String> buildPositionMap()
 		{
-		Map<Integer, String> map = new HashMap<Integer, String>();
-		
-		String rowLabel = "", colLabel = "";
-		
+		Map<Integer, String> map = new HashMap<Integer, String>();		
+		String rowLabel = "", colLabel = "";		
 		if (this.useCarousel)
-			return buildCarouselPositionMap();
-		
+			return buildCarouselPositionMap();		
 		for (int row = 0; row < this.nRows; row++) 
 			{
 			for (int col = 0; col < nCols; col++)
@@ -369,31 +404,25 @@ public class PlateListHandler implements Serializable
 				Integer idx = row * nCols + col;
 				map.put(idx, rowLabel + colLabel);
 				}
-			}
-		
+			}		
 		return map;
 		}
 
-	
 	private Map<Integer, String> buildCarouselPositionMap()
 		{
-		Map<Integer, String> map = new HashMap<Integer, String>();
-	
+		Map<Integer, String> map = new HashMap<Integer, String>();	
 		for (int i = 0; i < 100; i ++)
 			{
 			Integer I = i + 1;
 			map.put(i, I.toString());
-			}
-		
+			}		
 		return map;
 		}
 
-	
 	public Integer getStartIdx() 
 		{
 		return startIdx;
 		}
-
 	
 	public void setStartIdx(Integer startIdx) 
 		{
@@ -401,7 +430,6 @@ public class PlateListHandler implements Serializable
 		this.startPos = this.getExpectedPosition(startIdx);
 		}
 
-	
 	public Integer getEndIdx() 
 		{
 		return endIdx;
@@ -413,7 +441,6 @@ public class PlateListHandler implements Serializable
 		this.endPos = this.getExpectedPosition(endIdx);
 		}
 
-	
 	public String getStartPos() 
 		{
 		return startPos;
@@ -425,25 +452,70 @@ public class PlateListHandler implements Serializable
 		this.startIdx = this.getExpectedIdx(startPos);
 		}
 
-	
 	public String getEndPos() 
 		{
 		return endPos;
 		}
 
-	
 	public void setEndPos(String endPos) 
 		{
 		this.endPos = endPos;
 		this.endIdx = this.getExpectedIdx(endPos);
 		}
 	
-	
 	public int getNPlates()
 		{
 		return nPlates;
 		}
+	
+	// issue 146
+	public double calculatePlate  (int countSamples, Map<String, Integer> controlTypeMap, int maxItems)
+		{
+		int countControls = controlTypeMap.size();
+		// issue 146 take care of case where QCMP and MP need to be counted as 1 control to avoid skipping a row
+		if (controlTypeMap.get(masterPoolMP) != null && controlTypeMap.get(masterPoolQCMP) != null)
+			countControls--;
+		int countStandards = grabNumberStandards(controlTypeMap);
+		double nPlates = Math.floor(countSamples/maxItems) ;
+		if (countSamples%maxItems  > 0)
+			nPlates ++;
+		double squaresLeft = (maxItems * nPlates) - countSamples;
+		squaresLeft = squaresLeft - (squaresLeft%9);
+		double rowsNeededControls = Math.floor((countControls-countStandards)/9) + ((countControls-countStandards)%9 > 0 ?1 : 0) + (countStandards > 0 ? 1 : 0) ;
+		double rowsLeft = squaresLeft/9;
+		if ((squaresLeft <  countControls) || (rowsLeft < rowsNeededControls))
+			nPlates ++;
+		return nPlates;		
+		}
+	
+	public int grabNumberStandards (Map<String, Integer> controlTypeMap)
+		{
+		int numberStandards = 0;
+		if ( controlTypeMap == null || controlTypeMap.size() == 0)
+			return 0;				
+		for(String key : controlTypeMap.keySet()) 
+		    {
+			 if (key == null || key.indexOf("STD") == -1) 
+			       continue;
+			 numberStandards ++;
+		    }
+		return numberStandards;
+		}
+
+	// issue 146
+	public int calculateOtherControlsStartIndex (int countControls, int countStandards)
+		{
+		String doubleStr;
+		double rowsAboveStandards = Math.floor((countControls - (countStandards >9 ? 9 : countStandards))/9);
+		double remainder = countControls - (countStandards >9 ? 9 : countStandards)%9;
+		double countCalc = (countControls - (countStandards >9 ? 9 : countStandards));
+		remainder = countCalc%9;
+		if (remainder > 0 )
+			rowsAboveStandards ++;
+		// issue 146 take care of case where you have < 54 controls but have to use bottom standards row
+		if (rowsAboveStandards > 5 && countControls <= 54)
+			rowsAboveStandards = 5;
+		return  (int) (countStandards == 0 ? (45 - (9*(rowsAboveStandards -1))) :   (45-(9*rowsAboveStandards))   );
+		}	
 	}
-	
-	
-	
+		

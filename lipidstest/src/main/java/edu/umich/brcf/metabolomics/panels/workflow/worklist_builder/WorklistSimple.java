@@ -50,7 +50,7 @@ public class WorklistSimple implements Serializable
 	private String defaultInjectionVol = "5.0";
 	private String defaultMethodFileName = "";
 	private String defaultExperimentId = "", defaultAssayId = "";
-	private String maxItems = "50"; 
+	private String maxItems = "54"; 
 	private Boolean allSelected = false;
 	private Boolean openForUpdates = true;
 	private boolean plateWarningGiven = false, plateWarningGivenTwice = false;
@@ -89,9 +89,7 @@ public class WorklistSimple implements Serializable
 	// issue 126
 	private int nMuscleHumanMale = 0;
 	private int nMuscleHumanFemale = 0;
-	private int nHumanMuscleCntrl = 0;
-	
-	
+	private int nHumanMuscleCntrl = 0;	
 	private int nKidneyExercise = 0;
 	private int nKidneySedentary = 0;
 	private int nHeartExercise = 0;
@@ -104,7 +102,8 @@ public class WorklistSimple implements Serializable
 	private boolean chosenOtherSampleMotrPAC = false;
 	private int nLungExercise = 0;
 	private int nLungSedentary = 0;
-		
+	private int startPlateControls = 0;
+	
 	// issue 126
 	public int getNHumanMuscleCntrl ()
 		{
@@ -1733,11 +1732,22 @@ public class WorklistSimple implements Serializable
 		return (this.getSelectedPlatform().trim().toLowerCase().equals("absciex") ? "PL002" : "PL001");
 		}
 	
+	// issue 146
+	public int getStartPlateControls()
+		{
+		return startPlateControls;
+		}
+	
+	public void setStartPlateControls(int startPlateControls)
+		{
+		this.startPlateControls = startPlateControls;
+		}
+	
 	public int getNPlates()
 		{
 		return nPlates;
 		}
-	
+
 	public void setNPlates(int nPlates)
 		{
 		this.nPlates = nPlates;

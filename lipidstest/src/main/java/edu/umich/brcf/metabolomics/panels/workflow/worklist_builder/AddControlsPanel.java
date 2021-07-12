@@ -42,7 +42,8 @@ public class AddControlsPanel extends Panel
 	// TO DO Clean up all the reference here to point to worklist object's list
 	List<WorklistControlGroup> controlGroupsList;
 	ListView<WorklistControlGroup> controlGroupsListView;
-
+    String masterPoolMP = "Master Pool   (CS00000MP)";
+    String masterPoolQCMP = "Master Pool.QCMP (CS000QCMP)";
 	List<String> availableDirections = Arrays.asList(new String[] { "Before", "After" });
 	List<String> availableQuantities = Arrays.asList(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14","15" });
 	IndicatingAjaxLink buildButton, clearButton;
@@ -130,13 +131,20 @@ public class AddControlsPanel extends Panel
 		return drp;
 		}
 
-	
 	private DropDownChoice buildControlTypeDropdown(final String id, final WorklistControlGroup item, String propertyName)
 		{
 		DropDownChoice drp = new DropDownChoice(id, new PropertyModel(item, propertyName), new LoadableDetachableModel<List<String>>()
 			{
 			@Override
-			protected List<String> load() { return originalWorklist.getControlIds(); }
+			protected List<String> load() 
+			    { 
+				// issue 146 don't include Master Pools
+				List <String> controlIdsNoMasterPools = new ArrayList <String> ();
+				controlIdsNoMasterPools.addAll(originalWorklist.getControlIds());
+				controlIdsNoMasterPools.remove(masterPoolMP);
+				controlIdsNoMasterPools.remove(masterPoolQCMP);
+				return controlIdsNoMasterPools; 
+			    }
 			}) 
 			{
 			private Boolean isAlreadyInitialized = false;
@@ -463,7 +471,6 @@ public class AddControlsPanel extends Panel
 				switch (response)
 					{
 					case "updateForControlDrop":
-					
 						if (!StringUtils.isEmptyOrNull(item.getRelatedSample()) && controlTypeChangeWarningShownTwice == false)
 							{
 							target.appendJavaScript("alert('If you change a control group type, you may need to rebuild your worklist twice -- once to update the control type"
