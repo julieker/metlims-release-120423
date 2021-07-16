@@ -50,7 +50,7 @@ public class PlateListHandler implements Serializable
 			"CS0UMRG01", "CS0UMRL01", "CS0UMRA01","CS0UMRP01", "CSOUMHM03","CSMR80008","CSMR80009", "CSMR80010","CSMR80011", "CSMR80012","CSMR80013", 
 			"CSMR80014", "CSMR80015","CSMR80016","CSMR80017","CSMR80018","CSMR80019","CSMR80020","CSMR80021","CSMR80022", "CSMR80023","CSMR80024",
 			 "CSMR80025","CSMR81010", "CSMR81020", 
-			"CS00000RC","CS00000PB", "CS00000SB","CS00000NB", "CS00000QC"
+			"CS00000RC","CS00000SB","CS00000PB", "CS00000NB", "CS00000QC" // issue 151
 	});
 	
 	public static List <String> CONTROL_TYPES_IN_END_TO_START_ORDER = Arrays.asList(new String []
@@ -327,7 +327,8 @@ public class PlateListHandler implements Serializable
 		int idx = 1;
 		int nSpotsLeft;		
 		// issue 146
-		worklist.setStartPlateControls((int) calculatePlate  (worklist.countSamples(), worklist.buildControlTypeMap() , worklist.getMaxItemsAsInt()   )); // issue 146
+		// issue 151
+		worklist.setStartPlateControls((int) calculatePlate  (countOfTheSamples(items), worklist.buildControlTypeMap() , worklist.getMaxItemsAsInt()   )); // issue 146
 		nSpotsLeft = placeControlsByTypeOnPlate(worklist, map, worklist.getStartPlateControls());
 		for (int i = 0; i < items.size(); i++)
 			{
@@ -517,5 +518,18 @@ public class PlateListHandler implements Serializable
 			rowsAboveStandards = 5;
 		return  (int) (countStandards == 0 ? (45 - (9*(rowsAboveStandards -1))) :   (45-(9*rowsAboveStandards))   );
 		}	
+
+	// issue 151
+    public int countOfTheSamples (List <WorklistItemSimple> worklistItems)
+	    {
+	    int i = 0;
+	    for (WorklistItemSimple witem : worklistItems)
+	    	{
+	    	if (witem.getRepresentsControl())
+	    		continue;
+	    	i++;
+	    	}
+	    return i;	
+	    }
 	}
 		

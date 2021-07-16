@@ -98,7 +98,6 @@ public class AddControlsPanel extends Panel
 		return container;
 		}
 
-	
 	private Label buildDisappearingLabel(String id, final WorklistControlGroup item, String labelText)
 		{
 		return new Label(id, new Model(labelText + ":"))
@@ -107,7 +106,6 @@ public class AddControlsPanel extends Panel
 			public boolean isVisible() { return (item == controlGroupsList.get(0)); }
 			};
 		}
-
 	
 	private DropDownChoice buildRelatedSampleDropdown(final String id, final WorklistControlGroup item, String propertyName)
 		{
@@ -141,12 +139,16 @@ public class AddControlsPanel extends Panel
 				// issue 146 don't include Master Pools
 				List <String> controlIdsNoMasterPools = new ArrayList <String> ();
 				controlIdsNoMasterPools.addAll(originalWorklist.getControlIds());
-				controlIdsNoMasterPools.remove(masterPoolMP);
-				controlIdsNoMasterPools.remove(masterPoolQCMP);
+				// issue 151				
+				if ((item == null  ||  StringUtils.isEmptyOrNull(item.getControlType())) || ( !item.getControlType().equals (masterPoolMP) && !item.getControlType().equals (masterPoolQCMP)))
+						{
+						controlIdsNoMasterPools.remove(masterPoolMP);
+						controlIdsNoMasterPools.remove(masterPoolQCMP);
+						}
 				return controlIdsNoMasterPools; 
 			    }
 			}) 
-			{
+		    {
 			private Boolean isAlreadyInitialized = false;
 
 			public boolean isEnabled()
@@ -165,7 +167,6 @@ public class AddControlsPanel extends Panel
 		return drp;
 		}
 
-	
 	private DropDownChoice buildQuantityDropdown(final String id, final WorklistControlGroup item, String propertyName)
 		{
 		DropDownChoice drp = new DropDownChoice(id, new PropertyModel(item, propertyName), new LoadableDetachableModel<List<String>>()
@@ -186,7 +187,6 @@ public class AddControlsPanel extends Panel
 		return drp;
 		}
 
-	
 	private DropDownChoice buildDirectionDropdown(final String id, final WorklistControlGroup item, String propertyName)
 		{
 		DropDownChoice drp = new DropDownChoice(id, new PropertyModel(item, propertyName), new LoadableDetachableModel<List<String>>()
@@ -293,6 +293,8 @@ public class AddControlsPanel extends Panel
 			  	// issue 22
 	        	Map<String, Integer> controlTypeMap = originalWorklist.buildControlTypeMap();
 	        	// issue 22
+	        	controlTypeDrop.getChoices().remove(masterPoolMP);
+	        	controlTypeDrop.getChoices().remove(masterPoolQCMP);
 	        	int numberDistinctControls = controlTypeMap.size()  ;
 	        	int numberNullControls = getTotalNullControlTypes(controlGroupsList);
 	        	if ( numberDistinctControls + numberNullControls - (numberNullControls > 1 ? 1 : 0 ) > originalWorklist.getMaxItemsAsInt())
@@ -302,11 +304,11 @@ public class AddControlsPanel extends Panel
 	        	    }		
 				originalWorklist.addControlGroup();
 				target.add(container);
+				target.add(controlTypeDrop);
 				}
 			};
 		}
 
-	
 	private Label buildTopLabel(String id, String label, final WorklistControlGroup item)
 		{
 		return new Label(id, label)
@@ -395,18 +397,24 @@ public class AddControlsPanel extends Panel
 				}
 
 			@Override
+			// issue 151
 			public void onClick(AjaxRequestTarget target)
 				{
+				if (!item.getControlType().equals (masterPoolMP) && !item.getControlType().equals (masterPoolQCMP))
+					{
+					controlTypeDrop.getChoices().remove(masterPoolMP);
+					controlTypeDrop.getChoices().remove(masterPoolQCMP);
+					}				
 				if (! doBothQCMPandMPExist(originalWorklist))
 					originalWorklist.setBothQCMPandMP(false); // issue 17
 	        	CountPair countPair = originalWorklist.getLargestControlTypeTotal();
 	        	// issue 16
 	        	// issue 19
-		        	if (countPair.getCount() > 99)
-			        	{
-		        		target.appendJavaScript(StringUtils.makeAlertMessage("The control type:" + countPair.getTag() + " has " + countPair.getCount() + " entries. Please limit this to " + originalWorklist.getLimitNumberControls()));
-		        		return;	
-			        	}
+	        	if (countPair.getCount() > 99)
+		        	{
+	        		target.appendJavaScript(StringUtils.makeAlertMessage("The control type:" + countPair.getTag() + " has " + countPair.getCount() + " entries. Please limit this to " + originalWorklist.getLimitNumberControls()));
+	        		return;	
+		        	}
 		          	// issue 404 issue 8
 		        	Map<String, Integer> controlTypeMap = originalWorklist.buildControlTypeMap();
 		        	int numberDistinctControls = controlTypeMap.size()  ;
