@@ -249,6 +249,9 @@ public class PlateListHandler implements Serializable
 		int countControls = worklist.buildControlTypeMap().size();
 		if (worklist.buildControlTypeMap().get(masterPoolMP) != null && worklist.buildControlTypeMap().get(masterPoolQCMP) != null)
 			countControls--;
+		// issue 151
+		if (worklist.buildControlTypeMap().get(null) != null)
+			countControls--;
 		int indexForOtherControls = calculateOtherControlsStartIndex(countControls,standardsIndex);
 		nextIdx = indexForOtherControls;
 		boolean movedPassStandards = false;
@@ -475,6 +478,9 @@ public class PlateListHandler implements Serializable
 		int countControls = controlTypeMap.size();
 		// issue 146 take care of case where QCMP and MP need to be counted as 1 control to avoid skipping a row
 		if (controlTypeMap.get(masterPoolMP) != null && controlTypeMap.get(masterPoolQCMP) != null)
+			countControls--;
+		// issue 151
+		if (controlTypeMap.get(null) != null)
 			countControls--;
 		int countStandards = grabNumberStandards(controlTypeMap);
 		double nPlates = Math.floor(countSamples/maxItems) ;
