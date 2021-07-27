@@ -103,7 +103,8 @@ public class WorklistBuilderPanel extends Panel
 		// issue 416
 		String selectedPlatform = null, selectedInstrument = null ;
 		
-		DropDownChoice<String> selectedPlatformDrop, selectedInstrumentDrop, selectedModeDrop;
+		// issue 153
+		DropDownChoice<String> selectedPlatformDrop, selectedInstrumentDrop, selectedModeDrop, startPlateDrop;
 		
 		List<String> availablePlates  = Arrays.asList(new String[] {"1", "2", "3", "4"});
 		List<String> availablePlatforms = Arrays.asList(new String[] {"Agilent", "ABSciex" });
@@ -147,16 +148,13 @@ public class WorklistBuilderPanel extends Panel
 			plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);
 			containerDefault = new WebMarkupContainer("containerDefault");
 
-			// Platform fields
-		
-			
+			// Platform fields		
 			containerDefault.add(selectedPlatformDrop = buildPlatformDropdown("selectedPlatformDrop"));
-			
 			containerDefault.add(selectedInstrumentDrop = buildInstrumentDropdown("selectedInstrumentDrop"));
 			containerDefault.add(selectedModeDrop = buildModeDropdown("selectedModeDrop"));
 			containerDefault.add(buildPlatePosDropdown("startPos", "startPos"));
 			containerDefault.add(buildPlatePosDropdown("endPos", "endPos"));
-			containerDefault.add(buildStartPlateDropDown("selectedStartPlateDropDown"));
+			containerDefault.add(startPlateDrop = buildStartPlateDropDown("selectedStartPlateDropDown"));
 			
 			containerDefault.add(randomizationTypeBox = buildRandomizeByPlate("randomizeByPlate"));// issue 416
 			
@@ -417,16 +415,18 @@ public class WorklistBuilderPanel extends Panel
 			return drp;
 			}
 
+		// issue 153
 		private DropDownChoice buildStartPlateDropDown(String id)
 			{
 			DropDownChoice drp = new DropDownChoice(id, new PropertyModel(worklist, "startPlate"), availablePlates)
 				{
 				// issue 128
 				//@Override
-				/* public boolean isEnabled() 
+				@Override
+				public boolean isEnabled() 
 				    { 
-					
-				    }	*/
+					return worklist.getOpenForUpdates(); 
+				    }	
 								
 				};
 			drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateStartPlate"));	
@@ -776,6 +776,7 @@ public class WorklistBuilderPanel extends Panel
 			target.add(randomizationTypeBox);
 			target.add(defaultInjectionVolFld);
 			target.add(defaultMethodFld);
+			target.add(startPlateDrop); // issue 153
 			}
 
 		//issue 348
