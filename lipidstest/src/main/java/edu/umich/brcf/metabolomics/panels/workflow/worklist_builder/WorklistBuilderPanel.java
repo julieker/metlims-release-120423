@@ -105,6 +105,7 @@ public class WorklistBuilderPanel extends Panel
 		
 		DropDownChoice<String> selectedPlatformDrop, selectedInstrumentDrop, selectedModeDrop;
 		
+		List<String> availablePlates  = Arrays.asList(new String[] {"1", "2", "3", "4"});
 		List<String> availablePlatforms = Arrays.asList(new String[] {"Agilent", "ABSciex" });
 		List<String> availableModes = Arrays.asList(new String[] { "Positive", "Negative", "Positive + Negative" });
 		List<String> agilentInstruments,  absciexInstruments; 
@@ -150,10 +151,13 @@ public class WorklistBuilderPanel extends Panel
 		
 			
 			containerDefault.add(selectedPlatformDrop = buildPlatformDropdown("selectedPlatformDrop"));
+			
 			containerDefault.add(selectedInstrumentDrop = buildInstrumentDropdown("selectedInstrumentDrop"));
 			containerDefault.add(selectedModeDrop = buildModeDropdown("selectedModeDrop"));
 			containerDefault.add(buildPlatePosDropdown("startPos", "startPos"));
 			containerDefault.add(buildPlatePosDropdown("endPos", "endPos"));
+			containerDefault.add(buildStartPlateDropDown("selectedStartPlateDropDown"));
+			
 			containerDefault.add(randomizationTypeBox = buildRandomizeByPlate("randomizeByPlate"));// issue 416
 			
 			selectedPlatformDrop.add(new FocusOnLoadBehavior());
@@ -413,6 +417,21 @@ public class WorklistBuilderPanel extends Panel
 			return drp;
 			}
 
+		private DropDownChoice buildStartPlateDropDown(String id)
+			{
+			DropDownChoice drp = new DropDownChoice(id, new PropertyModel(worklist, "startPlate"), availablePlates)
+				{
+				// issue 128
+				//@Override
+				/* public boolean isEnabled() 
+				    { 
+					
+				    }	*/
+								
+				};
+			drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateStartPlate"));	
+			return drp;
+		}
 		
 		public void setSelectedPlatform(String p)
 			{
@@ -648,7 +667,9 @@ public class WorklistBuilderPanel extends Panel
 						{					    
 						switch (response)
 							{
-							case "updateForDate":
+						    case "updateStartPlate":
+							    break;
+						    case "updateForDate":
 								if (worklist != null)
 									worklist.rebuildEverything();
 								//		worklist.updateOutputFileNames();

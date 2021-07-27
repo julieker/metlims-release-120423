@@ -20,10 +20,9 @@ import edu.umich.brcf.shared.util.StringParser;
 import edu.umich.brcf.shared.util.comparator.WorklistItemBySampleIdComparator;
 import edu.umich.brcf.shared.util.comparator.WorklistItemSimpleByPlatePosComparator;
 
-
-
 public class PlateListHandler implements Serializable
 	{
+	int thePlateIdx = 0;
 	int nRows, nCols, nPositions;
 	String startPos = "A1", endPos = "A1";
 	Integer startIdx = 0, endIdx = 53;
@@ -34,7 +33,11 @@ public class PlateListHandler implements Serializable
 	String masterPoolMP = "Master Pool   (CS00000MP)"; // issue 146
     String masterPoolQCMP = "Master Pool.QCMP (CS000QCMP)"; // issue 146
 	List<String> possiblePlatePositions = new ArrayList<String>();
-	
+	// cycle plate
+	//issue 153
+	List<String> thePlateList = new ArrayList <String> ();
+	//List<String> thePlateList = Arrays.asList(new String[] {"4", "1", "2", "3"});
+	 
 	// issue 391 issue 403 issue 418
 	// issue 422
 	// issue 146
@@ -93,9 +96,11 @@ public class PlateListHandler implements Serializable
 	public List<WorklistItemSimple> condenseSortAndSpace(List<WorklistItemSimple> items)
 		{
 		// Group list there's only one control item per unique type assumes items already labeled by plate up front..
-	    List <WorklistItemSimple> uniqueItems = grabUniqueItems(items); 
-	    List <WorklistItemSimple> spacedItems = buildSpacedSortedList(uniqueItems);
-		return spacedItems;
+	   
+		List <WorklistItemSimple> uniqueItems = grabUniqueItems(items); 
+	    List <WorklistItemSimple> spacedItems = new ArrayList <WorklistItemSimple> ();
+		spacedItems = buildSpacedSortedList(uniqueItems);
+	    return spacedItems;
 		}
 		
 	List<WorklistItemSimple> grabUniqueItems(List <WorklistItemSimple> items)
@@ -113,27 +118,22 @@ public class PlateListHandler implements Serializable
 				if (tokens.length > 0)
 					item.setSampleName(tokens[0]);
 				}
-			
 			uniqueItems.add(item);		
 			}
 		return uniqueItems;
 		}
 	
-	// issue 391
-	private List<WorklistItemSimple> buildSpacedSortedList(List <WorklistItemSimple> uniqueItems)
+	private List<WorklistItemSimple> buildSpacedSortedList (List <WorklistItemSimple> uniqueItems)
 		{
-		int i = 0;
-		Collections.sort(uniqueItems, new WorklistItemSimpleByPlatePosComparator());
-		List<WorklistItemSimple> spacedList = new ArrayList<WorklistItemSimple>();		
-		int itemsAdded = 0, j = 0;		
+		int itemsAdded = 0, j = 0, whatPlate = 1;
 		String lastPlate = null, currPlate = null;
-		boolean movedToNextPage = false;
+		 
+		Collections.sort(uniqueItems, new WorklistItemSimpleByPlatePosComparator());
+		List<WorklistItemSimple> spacedList = new ArrayList<WorklistItemSimple>();
 		while (itemsAdded < uniqueItems.size())
-			{	
-			String targetLabel = getExpectedPosition(j);
-	               if (j%nPositions == 0 )
-	                   lastPlate = null;
-			WorklistItemSimple item = uniqueItems.get(itemsAdded);			
+			{
+			WorklistItemSimple item = uniqueItems.get(itemsAdded);
+			
 			String samplePos = item.getSamplePosition();
 			if (!(samplePos == null || "".equals(samplePos)))
 				{
@@ -143,30 +143,59 @@ public class PlateListHandler implements Serializable
 					samplePos = tokens[1];
 			        currPlate = tokens[0];
 					}
-				}	
-			// issue 146
-			if  (j < (nPositions*(uniqueItems.get(0).getGroup().getParent().getStartPlateControls()-1) ) && uniqueItems.get(itemsAdded).getRepresentsControl() && !movedToNextPage)	    
+				}
+			//// issue 153 add fillers where ever they need to be:
+			
+			int calcit = calcNumericalPosition(samplePos, currPlate);
+			if (calcit == j)
 				{
-	 			if (j >= nPositions*(uniqueItems.get(0).getGroup().getParent().getStartPlateControls() - 1)) // move to 3rd page
-					movedToNextPage= true;
-				spacedList.add(new WorklistItemSimple());
-			    }
-			else if (samplePos != null && samplePos.trim().equals(targetLabel) && (lastPlate == null || currPlate.equals(lastPlate)) )			  				  
 				spacedList.add(uniqueItems.get(itemsAdded++));
-			else 
-				if (uniqueItems.get(itemsAdded).getRepresentsControl())
+				}
+			else
+				{
+				while (j < calcit)
 					{
 					spacedList.add(new WorklistItemSimple());
+					j++;
 					}
-			lastPlate = currPlate;
+				continue;
+				}
 			j++;
-			if (j > 20000)
-				break;
 			}
 		return spacedList;
 		}
+	
+	// issue 391
+	//issue 153
    
 	
+
+	///////////////
+	
+	int calcNumericalPosition(String pos, String plate)
+		{
+		String row;
+		row = pos.substring(0,1);
+		int rowInt = 0;
+		int posInt = 0;
+		int platePosInt = 0;
+		int calculatedNumericalPosition;		
+		switch (row)
+			{
+			case "A" : rowInt = 0; break;
+			case "B" : rowInt = 9; break;
+			case "C" : rowInt = 18; break;
+			case "D" : rowInt = 27; break;
+			case "E" : rowInt = 36; break;
+			case "F" : rowInt = 45; break;
+			}
+		platePosInt = (Integer.parseInt(plate.substring(1,2))) - 1;
+		platePosInt = platePosInt*54;
+		posInt = Integer.parseInt(pos.substring(1,2));
+		calculatedNumericalPosition = ((posInt + rowInt) - 1) + platePosInt;
+		return calculatedNumericalPosition;
+		}	
+
 	String getExpectedPosition(int i)
 		{
 		if (useCarousel)
@@ -177,8 +206,7 @@ public class PlateListHandler implements Serializable
 	    char rowLabel =  (char) ('A' + row);
 	    return ("" + rowLabel + (col + 1));
 		}
-	
-	
+
 	String getCarouselExpectedPosition(int pos)
 		{
 		Integer I = pos % nPositions;
@@ -189,8 +217,7 @@ public class PlateListHandler implements Serializable
 		{
 		return getPossiblePlatePositions().indexOf(pos);
 		}
-	
-	
+		
 	List<String> getPossiblePlatePositions()
 		{
 		if (possiblePlatePositions != null && possiblePlatePositions.size() > 0)
@@ -320,18 +347,35 @@ public class PlateListHandler implements Serializable
 	 // issue 409
 	 public int updatePlatePositionsForAgilent(WorklistSimple worklist) throws METWorksException
 		{
+		
 		List<WorklistItemSimple> pageItemsArray = new ArrayList<WorklistItemSimple>();
 		List<WorklistItemSimple> items = worklist.getItems();
+		// issue 153
+		constructThePlateList(worklist);
 		Boolean orderWasUploaded = worklist.wasCustomOrdered();		
 		Map<Integer, String> map = buildPositionMap();	
-		int idxForPage = 0, plate = 1, spotsLeft =  nRows * nCols;
+		int pIdx = 0;
+		//issue 153
+		int plate = 1;
+		int idxForPage = 0, spotsLeft =  nRows * nCols;
 		Integer targetIdx = 0; 		
 		String plateStr = "";
 		int idx = 1;
 		int nSpotsLeft;		
 		// issue 146
 		// issue 151
-		worklist.setStartPlateControls((int) calculatePlate  (countOfTheSamples(items), worklist.buildControlTypeMap() , worklist.getMaxItemsAsInt()   )); // issue 146
+		// cycle plate 
+		//issue 153
+		
+		// issue 153 do not do plate cycling
+		if (worklist.countOfSamplesForItems(items) + (worklist.buildControlTypeMap().get(null) != null ? worklist.buildControlTypeMap().size()-1 : worklist.buildControlTypeMap().size()  )  > (worklist.getCyclePlateLimit() * worklist.getMaxItemsAsInt()))
+			worklist.setStartPlateControls((int) calculatePlate  (worklist.countOfSamplesForItems(items), worklist.buildControlTypeMap() , worklist.getMaxItemsAsInt()   )); // issue 146
+		else 
+			{
+			thePlateIdx = (int) calculatePlate  (worklist.countOfSamplesForItems(items), worklist.buildControlTypeMap() , worklist.getMaxItemsAsInt()   );
+			worklist.setStartPlateControls(Integer.parseInt(thePlateList.get(thePlateIdx-1 < 0 ? 0 : thePlateIdx-1)));
+			}
+		plate = Integer.parseInt(thePlateList.get(0));
 		nSpotsLeft = placeControlsByTypeOnPlate(worklist, map, worklist.getStartPlateControls());
 		for (int i = 0; i < items.size(); i++)
 			{
@@ -344,7 +388,11 @@ public class PlateListHandler implements Serializable
 				updatePageItemPositions(pageItemsArray, map, plateStr, orderWasUploaded);
 				pageItemsArray.clear();
 				idxForPage = 0;
-				plate++;
+				// cycle plate
+				//issue 153
+			//	plate = plateCycling ? Integer.parseInt(thePlateList.get(++pIdx)) : plate++;;
+				plate = Integer.parseInt(thePlateList.get(++pIdx));
+				//plate = Integer.parseInt(thePlateList.get(++pIdx));
 				// issue 146 put back
 				spotsLeft = nPositions;
 				idx = 1;
@@ -524,18 +572,32 @@ public class PlateListHandler implements Serializable
 			rowsAboveStandards = 5;
 		return  (int) (countStandards == 0 ? (45 - (9*(rowsAboveStandards -1))) :   (45-(9*rowsAboveStandards))   );
 		}	
-
-	// issue 151
-    public int countOfTheSamples (List <WorklistItemSimple> worklistItems)
-	    {
-	    int i = 0;
-	    for (WorklistItemSimple witem : worklistItems)
-	    	{
-	    	if (witem.getRepresentsControl())
-	    		continue;
-	    	i++;
-	    	}
-	    return i;	
-	    }
+    
+    // issue 153
+    public void constructThePlateList (WorklistSimple worklist)
+    	{
+    	double numPlates = 0;
+    	if (worklist.countOfSamplesForItems(worklist.getItems())+  (worklist.buildControlTypeMap().get(null) != null ? worklist.buildControlTypeMap().size()-1 : worklist.buildControlTypeMap().size()  ) <= (worklist.getCyclePlateLimit() * worklist.getMaxItemsAsInt()))
+    		{
+	    	if (worklist.getStartPlate().equals( "1" ))
+				thePlateList = Arrays.asList(new String[] {"1", "2", "3", "4"});
+			else if (worklist.getStartPlate().equals( "2" ))
+				thePlateList = Arrays.asList(new String[] { "2", "3", "4", "1"});
+			else if (worklist.getStartPlate().equals( "3" ))
+				thePlateList = Arrays.asList(new String[] { "3", "4", "1", "2"});
+			else 
+				thePlateList = Arrays.asList(new String[] { "4", "1", "2", "3"});
+    		}
+    	else 
+    		{
+    		numPlates =  Math.floor( (worklist.countOfSamplesForItems(worklist.getItems()) + worklist.buildControlTypeMap().size())/54) ;
+    		if  ( (worklist.countOfSamplesForItems(worklist.getItems()) + worklist.buildControlTypeMap().size())%54 > 0)
+    			numPlates ++;
+    		for (int i = 1;i<= numPlates; i++)
+    			{
+    			thePlateList.add(String.valueOf(i));
+    			}
+    		}
+    	}
 	}
 		

@@ -507,7 +507,7 @@ public class AutoAddControlsPanel extends Panel
 		        }
 	        @Override
 	        public void onClick(AjaxRequestTarget target)
-		        {	
+		        {
 	    		// issue 509
 	        	if (!(poolSpacingA > 0) &&  ( worklist.getMasterPoolsAfter() > 0  ||  worklist.getMasterPoolsBefore()  > 0))	        		
 	        		{
@@ -549,6 +549,12 @@ public class AutoAddControlsPanel extends Panel
 		        		return;	
 			        	}	
 		        worklist.rebuildEverything();
+		      	// issue 153
+	        	if (originalWorklist.countOfSamplesForItems(originalWorklist.getItems())+  (originalWorklist.buildControlTypeMap().get(null) != null ? originalWorklist.buildControlTypeMap().size()-1 : originalWorklist.buildControlTypeMap().size()  ) > (originalWorklist.getCyclePlateLimit() * originalWorklist.getMaxItemsAsInt()))
+					{
+	        		String msg =  "alert('This worklist currently contains more than:" + originalWorklist.getCyclePlateLimit() + " plates.  Therefore plate cycling will not be used." +  "')";
+					target.appendJavaScript(msg); 
+					}
 			    worklist.updateSampleNamesArray();
 			    refreshPage(target);	        	
 		        }

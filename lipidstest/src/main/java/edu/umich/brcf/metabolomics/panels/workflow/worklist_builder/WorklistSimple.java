@@ -50,7 +50,8 @@ public class WorklistSimple implements Serializable
 	private String defaultInjectionVol = "5.0";
 	private String defaultMethodFileName = "";
 	private String defaultExperimentId = "", defaultAssayId = "";
-	private String maxItems = "54"; 
+	private String maxItems = "54";
+	private int cyclePlateLimit = 4;
 	private Boolean allSelected = false;
 	private Boolean openForUpdates = true;
 	private boolean plateWarningGiven = false, plateWarningGivenTwice = false;
@@ -103,6 +104,18 @@ public class WorklistSimple implements Serializable
 	private int nLungExercise = 0;
 	private int nLungSedentary = 0;
 	private int startPlateControls = 0;
+	private String startPlate = "1";
+	
+	// issue 153
+	public String getStartPlate ()
+		{
+		return startPlate;
+		}
+	
+	public void setStartPlate (String startPlate)
+		{
+		this.startPlate = startPlate;
+		}
 	
 	// issue 126
 	public int getNHumanMuscleCntrl ()
@@ -1752,6 +1765,16 @@ public class WorklistSimple implements Serializable
 		{
 		this.nPlates = nPlates;
 		}
+	
+	public int getCyclePlateLimit()
+		{
+		return cyclePlateLimit;
+		}
+
+	public void setCyclePlateLimit(int cyclePlateLimit)
+		{
+		this.cyclePlateLimit = cyclePlateLimit;
+		}
 
 	public void setOpenForUpdates(boolean open)
 		{
@@ -1901,6 +1924,19 @@ public class WorklistSimple implements Serializable
 		    }
 		return workListItems;
 		}
+	
+	// issue 153
+    public int countOfSamplesForItems (List <WorklistItemSimple> worklistItems)
+	    {
+	    int i = 0;
+	    for (WorklistItemSimple witem : worklistItems)
+	    	{
+	    	if (witem.getRepresentsControl())
+	    		continue;
+	    	i++;
+	    	}
+	    return i;	
+	    }
 	}
 	
 

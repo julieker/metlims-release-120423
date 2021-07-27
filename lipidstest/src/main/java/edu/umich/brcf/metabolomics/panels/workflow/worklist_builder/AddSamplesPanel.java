@@ -446,6 +446,11 @@ public class AddSamplesPanel extends Panel
 				{
 				originalWorklist.getSampleGroup(0).setExpRandom(globalRand);
 				originalWorklist.rebuildEverything();
+				if (originalWorklist.countOfSamplesForItems(originalWorklist.getItems())+  (originalWorklist.buildControlTypeMap().get(null) != null ? originalWorklist.buildControlTypeMap().size()-1 : originalWorklist.buildControlTypeMap().size()  ) > (originalWorklist.getCyclePlateLimit() * originalWorklist.getMaxItemsAsInt()))
+					{
+					String msg =  "alert('This worklist currently contains more than:" + originalWorklist.getCyclePlateLimit() + " plates.  Therefore plate cycling will not be used." +  "')";
+					target.appendJavaScript(msg); 
+					}
 				int excludedCount = originalWorklist.countExcludedSamples();
 				if (!buildWarningGiven && secondBuild && originalWorklist.getControlGroupsList() != null && originalWorklist.getControlGroupsList().size() > 1) 
 					{

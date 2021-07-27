@@ -250,7 +250,12 @@ public class AddControlsPanel extends Panel
 				{
 				// issue 17	
 				if (originalWorklist.countGroups(true) > 1)
-					{	
+					{
+					if (originalWorklist.countOfSamplesForItems(originalWorklist.getItems())+ originalWorklist.buildControlTypeMap().size()  > (originalWorklist.getCyclePlateLimit() * originalWorklist.getMaxItemsAsInt()))
+						{
+						String msg =  "alert('This worklist currently contains more than:" + originalWorklist.getCyclePlateLimit() + " plates.  Therefore plate cycling will not be used." +  "')";
+						target.appendJavaScript(msg); 
+						}
 					CountPair countPair = originalWorklist.getLargestControlTypeTotal();
 					// issue 16
 		        	// issue 19
@@ -400,6 +405,12 @@ public class AddControlsPanel extends Panel
 			// issue 151
 			public void onClick(AjaxRequestTarget target)
 				{
+				// issue 153
+				if (originalWorklist.countOfSamplesForItems(originalWorklist.getItems())+ originalWorklist.buildControlTypeMap().size()  > (originalWorklist.getCyclePlateLimit() * originalWorklist.getMaxItemsAsInt()))
+					{
+					String msg =  "alert('This worklist currently contains more than:" + originalWorklist.getCyclePlateLimit() + " plates.  Therefore plate cycling will not be used." +  "')";
+					target.appendJavaScript(msg); 
+					}
 				if (!item.getControlType().equals (masterPoolMP) && !item.getControlType().equals (masterPoolQCMP))
 					{
 					controlTypeDrop.getChoices().remove(masterPoolMP);
