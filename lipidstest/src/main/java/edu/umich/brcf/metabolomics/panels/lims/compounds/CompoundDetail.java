@@ -139,18 +139,19 @@ public class CompoundDetail  extends Panel{
 							// issue 48
 						    for (String strName : compoundNameService.getMatchingNamesCompoundId(input)) 
 							   {
-							   input=input.replaceAll("''", "'");
-							   if (strName.toUpperCase().contains(input.toUpperCase()))
+							   if (strName.toUpperCase().replaceAll("'", "''").contains(input.toUpperCase()))
 							       choices.add(strName);
 							   } 
 							for (String strName : compoundService.getMatchingCASIds(input)) 
 							   {
-							   input=input.replaceAll("''", "'");
 							   if (strName.toUpperCase().contains(input.toUpperCase()))
 							       choices.add(strName);
 							   } 
+							// issue 158
+							input=input.replaceAll("''", "'");
 							}
 						}
+					
 					catch(IllegalStateException ie) { System.out.println("Name is "+name); }				
 					return choices.iterator(); 
 					}
@@ -210,6 +211,8 @@ public class CompoundDetail  extends Panel{
 			// issue 84
 			String cFormat="(C)\\d{5}|(CA)\\d{4}|(D)\\d{5}", iFormat="(NV)\\d{5}", aIdFormat="(A)\\d{8}";
 			Compound c=null;
+			// issue 158
+			input=input.replaceAll("'", "''"); 
 			if (verifyFormat(cFormat,input.toUpperCase()) && !input.contains("CID:"))
 				{
 				try 
@@ -270,6 +273,7 @@ public class CompoundDetail  extends Panel{
 					}
 				else   
 				    {
+					// issue 158
 					CompoundName compoundName = compoundNameService.loadByNameCompoundId(input);
 					if (compoundName != null)
 						setCompound(c=compoundService.loadCompoundById(compoundName.getCompound().getCid()));

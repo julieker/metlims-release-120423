@@ -53,7 +53,8 @@ public class CompoundNameDAO extends BaseDAO
 	// issue 48
 	public List<String> getMatchingNamesCompoundId(String str)
 		{
-		Query query = getEntityManager().createNativeQuery("select name || ' CID:' || cid from names where cid like 'C%' and lower(name) like '%"+str.toLowerCase()+"%' order by length(name)");
+		// issue 158
+		Query query = getEntityManager().createNativeQuery("select name || ' CID:' || cid from names where (cid like 'C%' or cid like 'D%' ) and lower(name) like '%"+str.toLowerCase()+"%' order by length(name)");
 		query.setMaxResults(50);		
 		List<String> nameList = query.getResultList();		
 		/*for( CompoundName name : nameList)
@@ -79,13 +80,16 @@ public class CompoundNameDAO extends BaseDAO
 		}
 	
 	// issue 48
+	// issue 158
 	public CompoundName loadByNameCompoundId(String name)
 	    {
 		if (name.indexOf("CID:") < 0)
 			return null;
 		String parsedName = name.substring(0,name.lastIndexOf("CID:"));
+		// issue 158
+		parsedName = parsedName.replaceAll("''", "'");
 		String parsedCid = name.substring(name.lastIndexOf("CID:")+4);
-		List<CompoundName> lst =  getEntityManager().createQuery("from CompoundName cn where cn.compound.cid like 'C%' and trim(cn.name) = trim(?1) and trim(cn.compound.cid) = trim(?2)")
+		List<CompoundName> lst =  getEntityManager().createQuery("from CompoundName cn where (cn.compound.cid like 'C%' or cn.compound.cid like 'D%') and trim(cn.name) = trim(?1) and trim(cn.compound.cid) = trim(?2)")
 			    .setParameter(1, parsedName).setParameter(2, parsedCid).getResultList();		
 		CompoundName cmpdName;
 		try
