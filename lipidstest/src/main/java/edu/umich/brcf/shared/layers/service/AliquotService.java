@@ -345,12 +345,12 @@ public class AliquotService
 			int i = StringUtils.isEmptyOrNull(alq.getCompound().getPrimaryName()) ? 0 : (alq.getCompound().getPrimaryName().length() >= 60 ? 60 : alq.getCompound().getPrimaryName().length());
 			String invDateStr = "";
 			String iname = i==0 ? "" : (alq.getCompound().getPrimaryName().length() > 30 ? alq.getCompound().getPrimaryName().substring(0,30)+ "<br>"  + alq.getCompound().getPrimaryName().substring(30) : alq.getCompound().getPrimaryName());
-			if (alq.getCompound().getPrimaryName().length() > 30)
+			if (!StringUtils.isEmptyOrNull(alq.getCompound().getPrimaryName()) && alq.getCompound().getPrimaryName().length() > 30)
 				i=i+4;
 			if (alq.getDry() != '1')
-				invDateStr = (StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" + alq.getInventory().getInventoryId() + "-" + alq.getCreateDateString() + "<br>" + (StringUtils.isEmptyOrNull(iname) ? "" : iname.substring(0,i).replace(" ", "-") + "<br>"  + alq.getSolvent() + "-" + (alq.getNeat().equals('1') ? alq.getDconc() : alq.getDcon())  + "-" + (alq.getNeat().equals('1') ? alq.getDConcentrationUnits() : alq.getNeatSolVolUnits()));	
+				invDateStr = (StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" + alq.getInventory().getInventoryId() + "-" + alq.getCreateDateString() + "<br>" + (StringUtils.isEmptyOrNull(iname) ? "" : iname.substring(0,i).replace(" ", "-") + "<br>" ) + alq.getSolvent() + "-" + (alq.getNeat().equals('1') ? alq.getDconc() : alq.getDcon())  + "-" + (alq.getNeat().equals('1') ? alq.getDConcentrationUnits() : alq.getNeatSolVolUnits());	
 			else
-				invDateStr = (StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" + alq.getInventory().getInventoryId() + "-" + alq.getCreateDateString() + "<br>" + (StringUtils.isEmptyOrNull(iname) ? "" : iname.substring(0,i).replace(" ", "-") + "<br>"   + alq.getWeightedAmount()  + "-" + alq.getWeightedAmountUnits());
+				invDateStr = (StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" + alq.getInventory().getInventoryId() + "-" + alq.getCreateDateString() + "<br>" + (StringUtils.isEmptyOrNull(iname) ? "" : iname.substring(0,i).replace(" ", "-") + "<br>" )  + alq.getWeightedAmount()  + "-" + alq.getWeightedAmountUnits();
 			aliquotIdListInvDate.add(invDateStr);
 			}
 		return aliquotIdListInvDate;
