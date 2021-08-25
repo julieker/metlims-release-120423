@@ -193,8 +193,12 @@ public class InventoryDetailPanel extends Panel
 				try
 					{
 					// issue 120
+					// issue 162					
 					int i = StringUtils.isEmptyOrNull(alq.getCompound().getPrimaryName()) ? 0 : (alq.getCompound().getPrimaryName().length() >= 30 ? 30 : alq.getCompound().getPrimaryName().length());
-					new PrintableBarcode(barcodePrintingService, "Compound Zebra",null).printBarcodes((StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" + alq.getInventory().getInventoryId() + "-" + alq.getCreateDateString() + "\\&" + (StringUtils.isEmptyOrNull(alq.getCompound().getPrimaryName()) ? "" : alq.getCompound().getPrimaryName().substring(0,i)), true);	
+					List <String> aliquotPrintList = new ArrayList<String> ();
+					aliquotPrintList.add(alq.getAliquotId());
+					String barcodeStr = aliquotService.getInventoryDateList(aliquotPrintList).get(0).replace("<br>",  "\\&");
+					new PrintableBarcode(barcodePrintingService, "Compound Zebra",null).printBarcodes(barcodeStr, true);
 					target.appendJavaScript(StringUtils.makeAlertMessage("Printed Aliquot:" + alq.getAliquotId()));
 					}
 				catch (RuntimeException r)

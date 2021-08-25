@@ -90,11 +90,9 @@ public class PrintableBarcode implements Serializable
                                s = s + "^FO0,70^A0N,38,25^FD" +  barcodeBean.getValue().trim()  +  "^XZ}$";  
 						       }
 						   // issue 120
+						   // issue 162
 						   else 
-						   	   {
-							   s = "${^XA^LT-3^LS-120^FO0,12^BY,1^BXN,2,200^FD" + barcodeBean.getValue().trim().replace("\\&","")  + "^FS" ;                                
-							   s = s + "^FO0,65^A0N,27,14^FB300,4,,^FD" +  barcodeBean.getValue().trim()  +  "^XZ}$"; 
-						   	   } 
+							   s = "${^XA^LT0^LS-100^FO0,10^A0N,24,12^FB340,4,,^FD" +  barcodeBean.getValue().trim()  +  "^XZ}$"; 
 						addString2=((barcodeBean.getLabel()==null)||(barcodeBean.getLabel().trim().length()==0))? "":"TEXT 0(0,0,1,2) 270 45 "+barcodeBean.getLabel()+'\n';
 						addString1=((barcodeBean.getLabel()==null)||(barcodeBean.getLabel().trim().length()==0))? "TEXT 0(0,0,1,2) 175 90 "+barcodeBean.getValue().trim()+'\n':"TEXT 0(0,0,1,2) 270 5 "+barcodeBean.getValue().trim()+'\n';
 					    if ((barcodeBean.getValue()!=null)&&(barcodeBean.getValue().trim().length()>0))
