@@ -41,6 +41,7 @@ import edu.umich.brcf.metabolomics.layers.dto.GeneratedWorklistItemDTO;
 import edu.umich.brcf.metabolomics.layers.service.GeneratedWorklistService;
 import edu.umich.brcf.metabolomics.layers.service.InstrumentService;
 import edu.umich.brcf.shared.layers.service.SampleAssayService;
+import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.panels.utilitypanels.ValidatingAjaxExcelDownloadLink;
@@ -61,6 +62,8 @@ public class WorklistBuilderPanel extends Panel
 	
 	@SpringBean
 	SampleAssayService sampleAssayService;
+	@SpringBean
+	SampleService sampleService;
 	
 	private static final long serialVersionUID = -2719126649022550590L;
 	private WebPage backPage;
@@ -69,6 +72,8 @@ public class WorklistBuilderPanel extends Panel
     private int controlsLimit = 495;
 	static final String WORKLIST_DATE_FORMAT = "MM/dd/yy";
     AjaxCheckBox randomizationTypeBox ;
+    WorklistBuilderPanel worklistBuilder = this;
+    
 	public WorklistBuilderPanel()  { this(""); }
 	
 	public WorklistBuilderPanel(String id)
@@ -114,7 +119,8 @@ public class WorklistBuilderPanel extends Panel
 		METWorksAjaxUpdatingDateTextField dateFld;
 		TextField <String> defaultMethodFld, defaultItemsPerListFld;
 		TextField <Integer> defaultInjectionVolFld;
-		
+		// issue 166
+		TextField <Integer> startSequenceFld;// issue 166
 		WorklistAgilentPanel agPanel;
 		WorklistABSciexPanel abPanel;
 		AddSamplesPanel addSamplesPanel;
@@ -155,6 +161,7 @@ public class WorklistBuilderPanel extends Panel
 			containerDefault.add(buildPlatePosDropdown("startPos", "startPos"));
 			containerDefault.add(buildPlatePosDropdown("endPos", "endPos"));
 			containerDefault.add(startPlateDrop = buildStartPlateDropDown("selectedStartPlateDropDown"));
+			containerDefault.add(startSequenceFld = buildStartSequenceFld("startSequence"));//issue 166
 			
 			containerDefault.add(randomizationTypeBox = buildRandomizeByPlate("randomizeByPlate"));// issue 416
 			
@@ -556,6 +563,23 @@ public class WorklistBuilderPanel extends Panel
 			fld.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForInjectionVol"));
 			return fld;
 			}
+		
+		// issue 166
+		private TextField<Integer> buildStartSequenceFld(String id)
+		{
+		// issue 128
+		TextField<Integer> fld = new TextField<Integer>(id, new PropertyModel<Integer>(worklist, "startSequence"))
+		    {
+			@Override
+			public boolean isEnabled() 
+			    { 
+				return worklist.getOpenForUpdates(); 
+			    }				
+			};
+		fld.add(this.buildStandardFormComponentUpdateBehavior("change", "updateStartSequence"));
+		return fld;
+		
+		}
 	
 		private TextField<String> buildDefaultMaxItemsFld(String id)
 			{
@@ -738,6 +762,13 @@ public class WorklistBuilderPanel extends Panel
 	
 									}
 								break;
+								// issue 166	
+							case "updateStartSequence":
+							    target.add(startSequenceFld);
+								Map<String, String> idsVsReasearcherNameMap =
+								    sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());
+							    worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
+							    break;
 							case "updateForMode":
 
 								if (worklist != null)
@@ -752,8 +783,7 @@ public class WorklistBuilderPanel extends Panel
 						}
 					};
 				}
-
-		
+	
 		private void updatePage(AjaxRequestTarget target)
 			{
 			target.add(abPanel);
@@ -777,6 +807,7 @@ public class WorklistBuilderPanel extends Panel
 			target.add(defaultInjectionVolFld);
 			target.add(defaultMethodFld);
 			target.add(startPlateDrop); // issue 153
+			target.add(startSequenceFld);// issue 166
 			}
 
 		//issue 348
@@ -866,6 +897,10 @@ public class WorklistBuilderPanel extends Panel
 				// issue 128
 				
 				worklist.rebuildEverything();
+				// issue 166
+				Map<String, String> idsVsReasearcherNameMap =
+					    sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());
+				worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
 				worklist.setOpenForUpdates(true);
 				updatePage(target);
 				}
@@ -898,21 +933,16 @@ public class WorklistBuilderPanel extends Panel
 				@Override
 				public boolean validate()
 					{
-				
 					if (worklist.getItems() == null || worklist.getItems().size() == 0)
 						return false;
-
 					persistWorksheetToDatabase();
 					return true;
 					}
-				};
-			
+				};		
 			link.setOutputMarkupId(true);
-			return link;	
-			
+			return link;				
 			}
-		
-		
+				
 		protected void persistWorksheetToDatabase()
 			{
 			GeneratedWorklistItemDTO a;

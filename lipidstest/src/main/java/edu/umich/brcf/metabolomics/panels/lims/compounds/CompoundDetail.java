@@ -122,8 +122,17 @@ public class CompoundDetail  extends Panel{
 					try
 						{
 						if (verifyFormat(cidFormat,input.toUpperCase()))
+							{
 							for (String cid : compoundService.getMatchingCids(input.toUpperCase())) 
 								choices.add(cid);
+							// issue 165
+							for (String strName : compoundNameService.getMatchingNamesCompoundId(input)) 
+							   {
+							   if (strName.toUpperCase().replaceAll("'", "''").contains(input.toUpperCase()))
+							       choices.add(strName);
+							   } 
+							
+							}
 						else if (verifyFormat(nvIdFormat,input.toUpperCase()))
 							for (String invId : invService.getMatchingInvIds(input.toUpperCase())) 
 								choices.add(invId);

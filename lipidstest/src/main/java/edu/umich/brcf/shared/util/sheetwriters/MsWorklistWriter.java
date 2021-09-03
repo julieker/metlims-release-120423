@@ -42,8 +42,8 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 	protected WorklistSimple worklist;
 	// issue 450
     private final int CONTROLNAMECOL = 2;
-	private final int CONTROLPOSCOL = 3;
-	private final int IDDADATAFILECOL = 7;
+	private final int CONTROLPOSCOL = 4;// issue 166
+	private final int IDDADATAFILECOL = 8; // issue 166
 	
 	// issue 450
 	public MsWorklistWriter( WorklistSimple worklist)

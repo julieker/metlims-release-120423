@@ -48,6 +48,7 @@ public class WorklistSimple implements Serializable
 	private String selectedPlatform  = null, selectedInstrument = null, selectedMode =  "Positive";
 	private String runDate = "";
 	private String defaultInjectionVol = "5.0";
+	private String startSequence = "1";
 	private String defaultMethodFileName = "";
 	private String defaultExperimentId = "", defaultAssayId = "";
 	private String maxItems = "54";
@@ -1331,6 +1332,28 @@ public class WorklistSimple implements Serializable
 			}
 		}
 	
+	// issue 166
+	public String getStartSequence()
+		{
+		return startSequence;
+		}
+	
+	// issue 166
+	public void setStartSequence (String startSequence)
+		{
+		String tmp = this.startSequence;
+		try
+			{
+			Integer.parseInt(startSequence);
+			this.startSequence = startSequence;
+			}
+		catch (NumberFormatException | NullPointerException e)
+			{
+			this.startSequence = tmp;
+			System.out.println("Can't set start sequence to " + startSequence + ". Change cancelled - start sequence is " + getStartSequence());
+			}		
+		}
+	
 	public String getDefaultInjectionVol()
 		{
 		return defaultInjectionVol;
@@ -1638,10 +1661,10 @@ public class WorklistSimple implements Serializable
 				"Injection Vol"});
 		}
 	
-	
+	// issue 166
 	private List<String> grabAgilentColTitles()
 		{
-		return Arrays.asList(new String [] {"Order", "Sample Name", "Sample Position", "Injection Vol",
+		return Arrays.asList(new String [] {"Order", "Sample Name", "Comment", "Sample Position", "Injection Vol",
 				"Method", "Override DA", "Data File"});
 		}
 
@@ -1937,6 +1960,20 @@ public class WorklistSimple implements Serializable
 	    	}
 	    return i;	
 	    }
+    
+    // issue 166
+	public void populateSampleName (WorklistSimple ws, Map<String, String> idsVsReasearcherNameMap)
+		{
+		int idx =Integer.parseInt(ws.getStartSequence());
+		for (WorklistItemSimple item : ws.getItems())
+			{
+			if (item.getRepresentsControl())
+				continue;
+			item.setResearcherName(idsVsReasearcherNameMap.get(item.getSampleName()));
+			item.setSampleIndex(String.valueOf(idx));
+			idx++;
+			}
+		}
 	}
 	
 

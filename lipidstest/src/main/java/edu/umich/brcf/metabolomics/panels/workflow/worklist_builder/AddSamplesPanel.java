@@ -9,6 +9,7 @@ package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -45,6 +46,7 @@ import edu.umich.brcf.metabolomics.panels.lims.prep.EditGCPrep;
 import edu.umich.brcf.shared.layers.service.AssayService;
 import edu.umich.brcf.shared.layers.service.ControlService;
 import edu.umich.brcf.shared.layers.service.ExperimentService;
+import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.panels.utilitypanels.ConfirmBox;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
@@ -75,6 +77,9 @@ public class AddSamplesPanel extends Panel
 
 	@SpringBean
 	ExperimentService experimentService; 
+	
+	@SpringBean
+	SampleService sampleService; 
 
 	@SpringBean
 	private ControlService controlService;	
@@ -444,8 +449,12 @@ public class AddSamplesPanel extends Panel
 
 			public void onClick(AjaxRequestTarget target)
 				{
+				//issue 166				
 				originalWorklist.getSampleGroup(0).setExpRandom(globalRand);
 				originalWorklist.rebuildEverything();
+				Map<String, String> idsVsReasearcherNameMap =
+				        sampleService.sampleIdToResearcherNameMapForExpId(originalWorklist.getSampleGroup(0).getExperimentId());								
+				originalWorklist.populateSampleName(originalWorklist,idsVsReasearcherNameMap );
 				if (originalWorklist.countOfSamplesForItems(originalWorklist.getItems())+  (originalWorklist.buildControlTypeMap().get(null) != null ? originalWorklist.buildControlTypeMap().size()-1 : originalWorklist.buildControlTypeMap().size()  ) > (originalWorklist.getCyclePlateLimit() * originalWorklist.getMaxItemsAsInt()))
 					{
 					String msg =  "alert('This worklist currently contains more than:" + originalWorklist.getCyclePlateLimit() + " plates.  Therefore plate cycling will not be used." +  "')";
@@ -655,13 +664,6 @@ public class AddSamplesPanel extends Panel
 			availableAssays.add("Choose experiment first");
 			}
 		}
-	
-	// Issue 422 issue 427
-	/////
-
-    //////////////////////////////////////////
-	// issue 432
-	// issue 11 in metlims.2019 move clearOutPoolIDDAControls () to WorklistSimple
 	
 	}
 

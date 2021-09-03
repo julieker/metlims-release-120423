@@ -29,7 +29,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.util.io.StringUtils;
 
@@ -38,7 +40,9 @@ public class AddControlsPanel extends Panel
 	{
 	WorklistSimple originalWorklist;
 	ModalWindow modal1;
-
+// issue 166
+	@SpringBean
+	SampleService sampleService;
 	// TO DO Clean up all the reference here to point to worklist object's list
 	List<WorklistControlGroup> controlGroupsList;
 	ListView<WorklistControlGroup> controlGroupsListView;
@@ -48,48 +52,37 @@ public class AddControlsPanel extends Panel
 	List<String> availableQuantities = Arrays.asList(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14","15" });
 	IndicatingAjaxLink buildButton, clearButton;
 	AjaxLink addButton, deleteButton;
-
 	DropDownChoice<String> controlTypeDrop, directionDrop, quantityDrop, relatedSampleDrop;
-
 	private Boolean needsRebuild = false,  controlTypeChangeWarningShownOnce = false, controlTypeChangeWarningShownTwice = false;
-
 	WebMarkupContainer container = new WebMarkupContainer("container");
 	List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
     
 	public AddControlsPanel(String id, WorklistSimple worklist)
 		{
 		super(id);
-
 		modal1 = ModalCreator.createModalWindow("modal1", 800, 320);
 		add(modal1);
-
 		originalWorklist = worklist;
-		originalWorklist.initializeControls();
-			
+		originalWorklist.initializeControls();			
 		container.setOutputMarkupId(true);
 		container.setOutputMarkupPlaceholderTag(true);
 		add(container);
-
 		container.add(controlGroupsListView = new ListView("controlGroupsListView", new PropertyModel(originalWorklist, "controlGroupsList"))
 			{
 			public void populateItem(ListItem listItem)
 				{
 				final WorklistControlGroup item = (WorklistControlGroup) listItem.getModelObject();
-
 				listItem.add(deleteButton = buildDeleteButton("deleteButton", item, container));
 				listItem.add(addButton = buildAddButton("addButton", item, container));
-
 				listItem.add(controlTypeDrop = buildControlTypeDropdown("controlTypeDrop", item, "controlType"));
 				listItem.add(quantityDrop = buildQuantityDropdown("quantityDrop", item, "quantity"));
 				listItem.add(directionDrop = buildDirectionDropdown("directionDrop", item, "direction"));
 				listItem.add(relatedSampleDrop = buildRelatedSampleDropdown("relatedSampleDrop", item, "relatedSample"));
-
 				listItem.add(buildLinkToInfoModal("questionButton", item, modal1));
 				listItem.add(buildButton = buildBuildButton("buildButton", item, container));
 				listItem.add(clearButton = buildClearButton("clearButton", item, container));
 				}
 			});
-
 		controlGroupsListView.setOutputMarkupId(true);
 		}
 
@@ -162,7 +155,6 @@ public class AddControlsPanel extends Panel
 
 			public void setIsAlreadyInitialized(Boolean isAlreadyInitialized) { this.isAlreadyInitialized = isAlreadyInitialized; }
 			};
-
 		drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForControlDrop", item));
 		return drp;
 		}
@@ -203,7 +195,6 @@ public class AddControlsPanel extends Panel
 				return originalWorklist.getItems().size() > 0;
 				}
 			};
-
 		drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForDirectionDrop", item));
 		return drp;
 		}
@@ -239,6 +230,7 @@ public class AddControlsPanel extends Panel
 			}
 		return false;
 	    }
+	
 	private AjaxLink buildDeleteButton(String id, final WorklistControlGroup item, final WebMarkupContainer container)
 		{
 		return new AjaxLink <Void> (id)
@@ -435,6 +427,11 @@ public class AddControlsPanel extends Panel
 		        		return;
 		        	    }
 				originalWorklist.rebuildEverything();
+				// issue 166
+				Map<String, String> idsVsReasearcherNameMap =
+				        sampleService.sampleIdToResearcherNameMapForExpId(originalWorklist.getSampleGroup(0).getExperimentId());								
+				originalWorklist.populateSampleName(originalWorklist,idsVsReasearcherNameMap );
+				
 				// issue 426
 				String circularSample = originalWorklist.isThereCircular();
 				if (circularSample != null)
@@ -527,43 +524,3 @@ public class AddControlsPanel extends Panel
 
 
 
-
-/////////////////////////  CODE SCRAP ////////////////////////////////////
-/*
- * 
- * private Select buildControlTypeDropWithSections(final String id, String propertyName)
-		{
-		SelectOption opt1, opt2;
-		Select languages = new Select(id, new PropertyModel<String>(this, propertyName));
-		languages.add(opt1 = new SelectOption<String>("framework1", new Model<String>("Wicket")));
-		languages.add(opt2 = new SelectOption<String>("framework2", new Model<String>("Spring MVC")));
-		languages.add(new SelectOption<String>("framework3", new Model<String>("JSF 2.0")));
-		languages.add(new SelectOption<String>("Script1", new Model<String>("jQuery")));
-		languages.add(new SelectOption<String>("Script2", new Model<String>("prototype")));
-		
-		opt1.setOutputMarkupId(true);
-		opt2.setOutputMarkupId(true);
-		opt1.setVisible(false);
-		opt2.setVisible(false);
-		return languages;
-		}
-	
- * 
- * 
- * 
-SelectOptions<String> fruitOptions = new SelectOptions<String>(
-        "fruits", Arrays.asList(new String [] { "s1", "s2", "s3"}));
-        
-
-SelectOptions<Produce> vegetableOptions = new SelectOptions<Produce>(
-            "vegetables",
-            vegetableCollection, 
-            new VegetableRenderer());
-
-Select select = new Select("produceSelect", 
-     new PropertyModel<Produce>(model, "favProduce"));
-select.add(fruitOptions);
-select.add(vegetableOptions);
-}
-
-*/

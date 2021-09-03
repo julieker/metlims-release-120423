@@ -9,10 +9,7 @@ package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
-
-import org.apache.wicket.Session;
-
-import edu.umich.brcf.shared.panels.login.MedWorksSession;
+import org.apache.wicket.injection.Injector;
 import edu.umich.brcf.shared.util.interfaces.ICommentObject;
 import edu.umich.brcf.shared.util.interfaces.IWriteConvertable;
 import edu.umich.brcf.shared.util.structures.SelectableObject;
@@ -20,12 +17,15 @@ import edu.umich.brcf.shared.util.utilpackages.DateUtils;
 import edu.umich.brcf.shared.util.utilpackages.StringUtils;
 
 
-
 public class WorklistItemSimple extends SelectableObject implements Serializable, IWriteConvertable, ICommentObject
 	{
+	// issue 166
 	private boolean representsUserDefinedControl = false;
 	private String nameForUserControlGroup = "";
 	private String shortNameForUserControlGroup = "";// issue 346
+	private String researcherName ; // issue 166
+	private String sampleIndex ; // issue 166
+	
 	
 	private static final long serialVersionUID = 5062930960041066301L;
 
@@ -170,7 +170,30 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		return relatedSample;
 		}
 	
-
+	// issue 166
+	public String getResearcherName()
+	    {
+		return researcherName;
+		}
+	
+	// issue 166
+	public void setResearcherName(String researcherName)
+		{
+		this.researcherName = researcherName;	
+		}
+	
+	// issue 166
+	public String getSampleIndex()
+	    {
+		return sampleIndex;
+		}
+	
+	// issue 166
+	public void setSampleIndex(String sampleIndex)
+		{
+		this.sampleIndex = sampleIndex;	
+		}
+	
 	public void resetOptions()
 		{
 		overrideMethod = "";
@@ -296,8 +319,7 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 			return;
 		
 		try
-			{
-			
+			{			
 			Date date = DateUtils.dateFromDateStr(parent.getRunDate(), "mm/dd/yy");
 			String fullString = DateUtils.dateAsFullString(date);
 			dts = DateUtils.grabYYYYmmddString(fullString);
@@ -522,11 +544,39 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		}
 
 	// issue 25
+	// issue 166
+	public String calcPosIndicator (WorklistItemSimple wI)
+		{
+		if (wI.getRepresentsControl())
+			return "";
+		else
+			return String.valueOf(this.getSampleIndex());
+		}
+	// issue 166
+	public String calcCommentContent (String theSampleId)
+		{
+		
+		if (!this.getRepresentsControl())
+			return this.getResearcherName();
+		else
+			{
+			WorklistControlGroup wg = this.getGroup().getParent().getControlGroupsList().get(0);
+			String controlCode = this.getSampleName().substring(0,this.getSampleName().lastIndexOf("-"));
+			for (WorklistControlGroup wwg : this.getGroup().getParent().getControlGroupsList())
+				{
+				if (wwg.getControlType().contains(controlCode))
+					return wwg.getControlType().substring(0, wwg.getControlType().lastIndexOf("(")).replace(",", "");
+				}
+			return wg.getControlType().replace(",", "");			
+			}
+		}
 	public String writeInAgilentFormat(char separator)
 		{
 		StringBuilder sb = new StringBuilder();       
 		sb.append(this.getRandomIdx().toString() + separator);
 		sb.append(this.getSampleName() + separator);
+		sb.append(calcPosIndicator(this) +  (this.getRepresentsControl() ? "" : "_") + calcCommentContent(this.getSampleName()) +  separator);// issue 166
+		//sb.append(" " + separator);
 		sb.append(this.getSamplePosition() + separator);
 		sb.append(this.getInjectionVolume() + separator);
 		sb.append(this.getMethodFileName() + separator);
@@ -536,7 +586,7 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		sb.append((parent.getIsCustomDirectoryStructure() ? this.grabDataFileWithCustomDirectory() : this.getOutputFileName()  )+ separator);      
 		return sb.toString();
 		}
-	
+
 	public WorklistGroup getGroup()
 		{
 		return group;
@@ -569,10 +619,10 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	    {
 	    this.shortNameForUserControlGroup = shortNameForUserControlGroup;
 	    }
-	
-    
+   
 	public void setNameForUserControlGroup(String nameForUserControlGroup) 
 		{
 		this.nameForUserControlGroup = nameForUserControlGroup;
 		}
+	
 	}

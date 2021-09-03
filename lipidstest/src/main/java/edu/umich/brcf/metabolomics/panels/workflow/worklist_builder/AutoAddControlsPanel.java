@@ -39,6 +39,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import edu.umich.brcf.shared.layers.domain.Sample;
 import edu.umich.brcf.shared.layers.service.ControlService;
+import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.util.FormatVerifier;
 import edu.umich.brcf.shared.util.StringParser;
@@ -54,6 +55,10 @@ public class AutoAddControlsPanel extends Panel
 	{
 	@SpringBean
 	private ControlService controlService;
+	
+	// issue 166
+	@SpringBean
+	SampleService sampleService;
 	
 	private WorklistSimple originalWorklist;
 	private ModalWindow modal1;
@@ -485,7 +490,7 @@ public class AutoAddControlsPanel extends Panel
 	    drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForQuantityDrop", null));
 	    return drp;
 	    }
-
+	
 	// issue 394
 	private IndicatingAjaxLink buildBuildButton(String id, final WebMarkupContainer container , final WorklistSimple worklist )
 	    {
@@ -505,6 +510,7 @@ public class AutoAddControlsPanel extends Panel
 			    if (worklist.countGroups(true) > 1)
 				    tag.put("value", "Update Controls");
 		        }
+		    
 	        @Override
 	        public void onClick(AjaxRequestTarget target)
 		        {
@@ -549,6 +555,10 @@ public class AutoAddControlsPanel extends Panel
 		        		return;	
 			        	}	
 		        worklist.rebuildEverything();
+		        // issue 166
+				Map<String, String> idsVsReasearcherNameMap =
+				        sampleService.sampleIdToResearcherNameMapForExpId(originalWorklist.getSampleGroup(0).getExperimentId());								
+				worklist.populateSampleName(originalWorklist,idsVsReasearcherNameMap );
 		      	// issue 153
 	        	if (originalWorklist.countOfSamplesForItems(originalWorklist.getItems())+  (originalWorklist.buildControlTypeMap().get(null) != null ? originalWorklist.buildControlTypeMap().size()-1 : originalWorklist.buildControlTypeMap().size()  ) > (originalWorklist.getCyclePlateLimit() * originalWorklist.getMaxItemsAsInt()))
 					{
