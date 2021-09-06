@@ -166,9 +166,9 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 				String [] tokens = StringUtils.splitAndTrim(itemStr, ",", true);
 				PoiUtils.createBlankRow(rowCt,  sheet);
 				for (int i = 0; i < tokens.length; i++)
-					{				
+					{	
 					// issue 410
-					if (! ( i== 6 && tokens[i].length() >= 2))
+					if (! ( i== IDDADATAFILECOL - 1 && tokens[i].length() >= 2)) // issue 166
 					     PoiUtils.createRowEntry(rowCt, i + 1, sheet, i==0 && isPlatformAgilent ? "" : tokens[i], styleHorizontalAndWhite);
 					// issue 450
 					else
