@@ -69,6 +69,7 @@ public class WorklistSimple implements Serializable
 	int nPlates;	
 	int rowsPerPlate = 6, colsPerPlate = 9;
 	private boolean randomizeByPlate = true; // issue 416
+	private boolean defaultPool = true; // issue 169
     private boolean isCircularRelationship;
     private int lastPoolBlockNumber = 0;
     private Map<String, Integer> ctrlTypeToRunningTotal = new HashMap<String, Integer>();
@@ -1739,6 +1740,18 @@ public class WorklistSimple implements Serializable
 	public Boolean getRandomizeByPlate() // issue 416
 		{
 		return randomizeByPlate;
+		}
+	
+	// issue 169
+	public void setDefaultPool(Boolean defaultPool) // issue 416
+		{
+		this.defaultPool =  defaultPool;		
+		}
+
+	// issue 169
+	public Boolean getDefaultPool() // issue 416
+		{
+		return defaultPool;
 		}
 	
 	public void setAllSelected(Boolean as)

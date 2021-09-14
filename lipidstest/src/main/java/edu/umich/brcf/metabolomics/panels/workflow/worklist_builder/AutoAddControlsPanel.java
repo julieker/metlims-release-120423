@@ -21,6 +21,7 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
@@ -59,7 +60,11 @@ public class AutoAddControlsPanel extends Panel
 	// issue 166
 	@SpringBean
 	SampleService sampleService;
+	AutoAddControlsPanel autoAddControlsPanel = this;
 	
+	final CustomizeControlGroupPageDialog customizeControlGroupPageDialog;
+	
+	AjaxCheckBox defaultPoolBox ;
 	private WorklistSimple originalWorklist;
 	private ModalWindow modal1;
 	private List<String> availableStrQuantities = Arrays.asList(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" });
@@ -82,6 +87,7 @@ public class AutoAddControlsPanel extends Panel
 	private WebMarkupContainer container = new WebMarkupContainer("container");
 	private List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
 	private String example = "";
+	private boolean prevDefaultPool = true ; // issue 169
     
 	public AutoAddControlsPanel(String id, final WorklistSimple worklist)
 		{
@@ -96,7 +102,8 @@ public class AutoAddControlsPanel extends Panel
 		container.setOutputMarkupId(true);
 		container.setOutputMarkupPlaceholderTag(true);
 		add(container);
-	
+	 
+		container.add(defaultPoolBox = buildDefaultPool("defaultPool"));// issue 416
 		container.add(standardsDrop = buildQuantityDropdown("standardsDrop","nStandardsStr"));
 		container.add(poolsDropA = buildQuantityDropdown("poolsDropA","poolSpacingStrA"));
 		container.add(poolsDropB = buildQuantityDropdown("poolsDropB","poolSpacingStrB"));
@@ -113,6 +120,8 @@ public class AutoAddControlsPanel extends Panel
 		container.add(buildButton = buildBuildButton("buildButton",container, worklist));
 		container.add(clearButton = buildClearButton("clearButton",container));
 		// issue 56
+	
+		
 		
 		final MotrpacOptionsDialog motrpacOptionsDialog = new MotrpacOptionsDialog ("motrpacOptionsDialog",  "MoTrPAC Controls", originalWorklist)		
 		    { // NOSONAR
@@ -140,6 +149,7 @@ public class AutoAddControlsPanel extends Panel
 			protected void onOpen(IPartialPageRequestHandler handler)
 				{ 					
 				AjaxRequestTarget target = (AjaxRequestTarget) handler;
+				prevDefaultPool  = autoAddControlsPanel.originalWorklist.getDefaultPool(); //issue 169
 			    target.add(this);
 			    target.add(this.getParent());
 			    handler.add(form); 
@@ -148,8 +158,8 @@ public class AutoAddControlsPanel extends Panel
 			    // issue 6
 			    if (originalWorklist.getChosenOtherSampleMotrPAC())
 			        {
-			    	target.appendJavaScript(buildHTMLClearString(1,22));
-			    	target.appendJavaScript(buildHTMLClearString(30,32)); // issue 126
+			    	target.appendJavaScript(buildHTMLSetString(1,22,"0"));
+			    	target.appendJavaScript(buildHTMLSetString(30,32, "0")); // issue 126
 			    	this.clearPrevValues();
 			        }
 				} 
@@ -184,6 +194,11 @@ public class AutoAddControlsPanel extends Panel
 				this.nMuscleHumanFemalePrev=originalWorklist.getNMuscleHumanFemale();
 				this.nMuscleHumanMalePrev=originalWorklist.getNMuscleHumanMale();
 				this.nHumanMuscleCntrlPrev=originalWorklist.getNHumanMuscleCntrl();
+				// issue 169
+				autoAddControlsPanel.defaultPoolBox.setDefaultModelObject(true);
+				worklist.setDefaultPool(true);
+				autoAddControlsPanel.defaultPoolBox.setDefaultModelObject(prevDefaultPool);
+				worklist.setDefaultPool(prevDefaultPool);
 				handler.add(form);					
 			    }
 				
@@ -258,7 +273,7 @@ public class AutoAddControlsPanel extends Panel
 			    }
 		    });			
 		
-		final CustomizeControlGroupPageDialog customizeControlGroupPageDialog = new CustomizeControlGroupPageDialog("customizeControlGroupPageDialog", "Customize pool settings", originalWorklist) 
+		customizeControlGroupPageDialog = new CustomizeControlGroupPageDialog("customizeControlGroupPageDialog", "Customize pool settings", originalWorklist) 
 		    { // NOSONAR
 			private static final long serialVersionUID = 1L;
 		    @Override
@@ -296,11 +311,59 @@ public class AutoAddControlsPanel extends Panel
 			protected void onOpen(IPartialPageRequestHandler handler)
 				{ 
 				AjaxRequestTarget target = (AjaxRequestTarget) handler;
+				prevDefaultPool  = autoAddControlsPanel.originalWorklist.getDefaultPool(); //issue 169
 				if (originalWorklist.getChosenOtherSample())
 			        {
-			    	target.appendJavaScript(buildHTMLClearString(23,29));
+			    	target.appendJavaScript(buildHTMLSetString(23,29,"0"));
 			    	this.clearPrevValues();
 			        }
+				// issue 169
+				if (originalWorklist.getDefaultPool())
+					{
+					if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 1)
+						{
+						target.appendJavaScript(buildHTMLSetString(24,24,"1"));
+						originalWorklist.setMasterPoolsAfter(1);
+						}
+					if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsBefore() <= 1)
+						{
+						target.appendJavaScript(buildHTMLSetString(23,23,"1"));
+						originalWorklist.setMasterPoolsBefore(1);
+						}
+				  	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsAfter() <= 1)
+				  		{
+				  		target.appendJavaScript(buildHTMLSetString(26,26,"1"));
+				  		originalWorklist.setBatchPoolsAfter(1);
+				  		}
+				  	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsBefore() <= 1)
+				  		{
+				  		target.appendJavaScript(buildHTMLSetString(25,25,"1"));
+				  		originalWorklist.setBatchPoolsBefore(1);
+				  		}
+					}
+				else
+					{
+					if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 1)
+						{
+						target.appendJavaScript(buildHTMLSetString(24,24,"0"));
+						originalWorklist.setMasterPoolsAfter(0);
+						}
+					if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsBefore() <= 1)
+						{
+						target.appendJavaScript(buildHTMLSetString(23,23,"0"));
+						originalWorklist.setMasterPoolsBefore(0);
+						}
+				  	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsAfter() <= 1)
+				  		{
+				  		target.appendJavaScript(buildHTMLSetString(26,26,"0"));
+				  		originalWorklist.setBatchPoolsAfter(0);
+				  		}
+				  	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsBefore() <= 1)
+				  		{
+				  		target.appendJavaScript(buildHTMLSetString(25,25,"0"));
+				  		originalWorklist.setBatchPoolsBefore(0);
+				  		}
+					}		
 				target.add(this);
 				}
 		    
@@ -314,9 +377,13 @@ public class AutoAddControlsPanel extends Panel
 		    	this.nCE10RepsPrev= originalWorklist.getNCE10Reps();
 		    	this.nCE20RepsPrev= originalWorklist.getNCE20Reps();
 		    	this.nCE40RepsPrev= originalWorklist.getNCE40Reps();
+		    	// issue 169
+		    	autoAddControlsPanel.defaultPoolBox.setDefaultModelObject(true);
+				worklist.setDefaultPool(true);
+		    	autoAddControlsPanel.defaultPoolBox.setDefaultModelObject(prevDefaultPool);
+				worklist.setDefaultPool(prevDefaultPool);
 				handler.add(feedback); 			
 			    }
-			
 			@Override
 			public void onConfigure(JQueryBehavior behavior)
 			    {
@@ -328,6 +395,8 @@ public class AutoAddControlsPanel extends Panel
 				behavior.setOption("title", Options.asString(this.getTitle().getObject()));
 				behavior.setOption("height", 400);
 			    behavior.setOption("autofocus", false);
+			    
+			    
 			    }	
 		    @Override
 			protected void onSubmit(AjaxRequestTarget target, DialogButton button) 
@@ -335,6 +404,7 @@ public class AutoAddControlsPanel extends Panel
 		    	// TODO Auto-generated method stub
 		    	if (originalWorklist.getChosenOtherSample())
 			        originalWorklist.setChosenOtherSample(false);
+		    	
 			    }
 			@Override
 			protected void onError(AjaxRequestTarget target, DialogButton button) 
@@ -466,7 +536,51 @@ public class AutoAddControlsPanel extends Panel
 		drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForPoolTypeDropB", null));
 		return drp;
 		}
-		
+	
+	// issue 169 
+	protected AjaxCheckBox buildDefaultPool(String id)
+	    {
+	    AjaxCheckBox box = new AjaxCheckBox("defaultPool", new PropertyModel(originalWorklist, "defaultPool"))
+		    {
+		    @Override
+		    public void onUpdate(AjaxRequestTarget target)
+			    {
+		    	if (!originalWorklist.getDefaultPool())
+			    	{
+			    	if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 1)
+			    		originalWorklist.setMasterPoolsAfter(0);
+			    	if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsBefore() <= 1)
+			    		originalWorklist.setMasterPoolsBefore(0);
+			    	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsAfter() <= 1)
+			    		originalWorklist.setBatchPoolsAfter(0);
+			    	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsBefore() <= 1)
+			    		originalWorklist.setBatchPoolsBefore(0);
+			    	}
+		    	else
+		    		{
+				    if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 1)
+				        originalWorklist.setMasterPoolsAfter(1);
+				    if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsBefore() <= 1)
+				    	originalWorklist.setMasterPoolsBefore(1);
+				    if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsAfter() <= 1)
+				    	originalWorklist.setBatchPoolsAfter(1);
+				    if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsBefore() <= 1)
+				    	originalWorklist.setBatchPoolsBefore(1);
+		    		}
+		        if (originalWorklist.getMasterPoolsAfter() == 0  && ( originalWorklist.getNCE10Reps() > 0  || originalWorklist.getNCE20Reps() > 0 || originalWorklist.getNCE40Reps() > 0 ))
+		    		target.appendJavaScript(StringUtils.makeAlertMessage("There are NCE values for an IDDA run but no after amount for Pool A.   The IDDA will not appear.  Please go to the customization box and set an after amount for Pool A."));
+		    	target.add(this);
+			    }		    
+		    // issue 128
+			@Override
+			public boolean isEnabled() 
+			    { 
+				return originalWorklist.getOpenForUpdates(); 
+			    }	
+		    };
+	    return box;
+	    }
+	
 	// Issue 302
 	private DropDownChoice buildQuantityDropdown(final String id,  final String propertyName)
 	    {
@@ -526,7 +640,42 @@ public class AutoAddControlsPanel extends Panel
 	        		target.appendJavaScript(StringUtils.makeAlertMessage("There is customization for Pool B.  Please choose a value for Pool Spacing B "));
 	        		return;
 	        		}
-	        	// issue 17
+	        	// issue 169
+	        	if (originalWorklist.getDefaultPool())
+		        	{
+		        	if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 0)
+		        		{
+		        		originalWorklist.setMasterPoolsAfter(1);
+		        		customizeControlGroupPageDialog.setMasterPoolsAfter(originalWorklist.getMasterPoolsAfter());
+		        		}
+		        	if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsBefore() <= 0)
+		        		{
+		        		originalWorklist.setMasterPoolsBefore(1);
+		        		customizeControlGroupPageDialog.setMasterPoolsBefore(originalWorklist.getMasterPoolsBefore());
+		        		}
+		        	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsAfter() <= 0)
+		        		{
+		        		originalWorklist.setBatchPoolsAfter(1);
+		        		customizeControlGroupPageDialog.setBatchPoolsAfter(originalWorklist.getBatchPoolsAfter());
+		        		}
+		        	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsBefore() <= 0)
+		        		{
+		        		originalWorklist.setBatchPoolsBefore(1);
+		        		customizeControlGroupPageDialog.setBatchPoolsBefore(originalWorklist.getBatchPoolsBefore());
+		        		}
+		        	}
+	        	else
+		    		{
+				    if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 1)
+				        originalWorklist.setMasterPoolsAfter(0);
+				    if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsBefore() <= 1)
+				    	originalWorklist.setMasterPoolsBefore(0);
+				    if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsAfter() <= 1)
+				    	originalWorklist.setBatchPoolsAfter(0);
+				    if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsBefore() <= 1)
+				    	originalWorklist.setBatchPoolsBefore(0);
+		    		}
+	        		// issue 17
 	        	worklist.setBothQCMPandMP (StringParser.parseId(poolTypeA).equals("CS00000MP") && StringParser.parseId(poolTypeB).equals("CS000QCMP") && poolSpacingA > 0 && poolSpacingB > 0);    		
 	        	if (StringParser.parseId(poolTypeA).equals(StringParser.parseId(poolTypeB)))
 	        		{
@@ -1321,7 +1470,25 @@ public class AutoAddControlsPanel extends Panel
 						if (!StringUtils.isEmptyOrNull(nMatrixBlanksStr))
 							nMatrixBlanks = Integer.parseInt(nMatrixBlanksStr);						
 						if (!StringUtils.isEmptyOrNull(nChearBlanksStr))
-							nChearBlanks = Integer.parseInt(nChearBlanksStr);						
+							nChearBlanks = Integer.parseInt(nChearBlanksStr);	
+						// issue 169
+						if (originalWorklist.getDefaultPool())
+							{
+							if (poolSpacingA == 0)
+								{						
+								if (originalWorklist.getMasterPoolsAfter() <= 1 )	
+									originalWorklist.setMasterPoolsAfter(0);
+								if (originalWorklist.getMasterPoolsBefore() <= 1 )	
+									originalWorklist.setMasterPoolsBefore(0);		
+								}
+							if (poolSpacingB == 0)
+								{						
+								if (originalWorklist.getBatchPoolsAfter() <= 1 )	
+									originalWorklist.setBatchPoolsAfter(0);
+								if (originalWorklist.getBatchPoolsBefore() <= 1 )	
+									originalWorklist.setBatchPoolsBefore(0);		
+								}
+							}
 						break;	
 						// issue 13
 					case "updateForPoolTypeDropB" :
@@ -1351,7 +1518,6 @@ public class AutoAddControlsPanel extends Panel
 		return nStandards;
 		}
 
-
 	public Integer getPoolSpacingA()
 		{
 		return poolSpacingA;
@@ -1378,7 +1544,6 @@ public class AutoAddControlsPanel extends Panel
 		this.poolSpacingA = poolSpacingA;
 		}
 
-
 	public void setPoolSpacingB(Integer poolSpacingB)
 	    {
 	    this.poolSpacingB = poolSpacingB;
@@ -1389,7 +1554,6 @@ public class AutoAddControlsPanel extends Panel
 		this.nBlanks = nBlanks;
 		}
 	
-
 	public WebMarkupContainer getContainer()
 		{
 		return container;
@@ -1400,12 +1564,10 @@ public class AutoAddControlsPanel extends Panel
 		return nMatrixBlanksStr;
 		}
 
-
 	public String getnChearBlanksStr()
 		{
 		return nChearBlanksStr;
 		}
-
 
 	public String getChearBlankType()
 		{
@@ -1429,30 +1591,23 @@ public class AutoAddControlsPanel extends Panel
 		this.nMatrixBlanksStr = nMatrixBlanksStr;
 		}
 
-
 	public void setnChearBlanksStr(String nChearBlanksStr)
 		{
 		this.nChearBlanksStr = nChearBlanksStr;
 		}
-
 
 	public void setChearBlankType(String chearBlankType)
 		{
 		this.chearBlankType = chearBlankType;
 		}
 	
-	// issue 6	
-	private String buildHTMLClearString(int start, int end)
+// issue 170	
+	private String buildHTMLSetString(int start, int end, String valStr)
 		{
-		//"document.getElementById(\"1\").selectedIndex = 0; alert('hi');"
 		int i;
 		String htmlStr = "";
 		for (i=start;i<=end;i++)
-			{
-			htmlStr = htmlStr + "document.getElementById(" + "\"" + Integer.toString(i) + "\""+ ").selectedIndex = 0;"	;
-			}
+			htmlStr = htmlStr + "document.getElementById(" + "\"" + Integer.toString(i) + "\""+ ").selectedIndex =" + valStr  + ";";
 		return htmlStr;
-		}
-	
-		
+		}		
 	}

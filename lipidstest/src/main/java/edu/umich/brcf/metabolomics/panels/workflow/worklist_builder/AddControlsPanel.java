@@ -260,6 +260,10 @@ public class AddControlsPanel extends Panel
 					if (! doBothQCMPandMPExist(originalWorklist))
 						originalWorklist.setBothQCMPandMP(false);
 					originalWorklist.rebuildEverything();
+					// issue 169
+				    Map<String, String> idsVsReasearcherNameMap =
+					     sampleService.sampleIdToResearcherNameMapForExpId(originalWorklist.getSampleGroup(0).getExperimentId());								
+					originalWorklist.populateSampleName(originalWorklist,idsVsReasearcherNameMap );
 					target.appendJavaScript("alert('After deleting a control group, please verify that remaining control groups still"
 							+ " have a valid insertion point selected.  If not, select a new insertion point (for each group missing one) and click Update Controls to refresh your worklist');");
 					} 
