@@ -400,8 +400,18 @@ public class EditDocumentPage extends WebPage
 		
 		private void uploadProtocol(FileUpload upload, DocumentDTO docDto, String assayId)
 			{
+			// issue 173
 			documentService.saveProtocolReport(docDto);
 			EditDocumentPage.this.info("Protocol uploaded successfully.");
+			final String assayName = assayId == null ? "Unknown" : assayService.getNameForAssayId(assayId);
+			final String userName = userService.getFullNameByUserId(((MedWorksSession) getSession()).getCurrentUserId());
+			String msg = mailer.getProtocolUploadMessage(userName, assayName, expId);
+			List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("protocol_report_notification_contact");
+     		
+			for (String email_contact : email_contacts)
+	     		{
+	     		mailer.sendMessage(new METWorksMailMessage("metabolomics@med.umich.edu", email_contact, "METLIMS Protocol Upload Message", msg));
+	     		} 
 			}
 		
 		

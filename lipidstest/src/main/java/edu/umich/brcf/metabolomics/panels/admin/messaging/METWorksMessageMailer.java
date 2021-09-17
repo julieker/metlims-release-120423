@@ -80,6 +80,12 @@ public class METWorksMessageMailer
 		return "New standard protocol uploaded by " + user + " for " + assay + " and sample type " + sampleType;
 		}
 	
+	//issue 173
+	public String getProtocolUploadMessage(String user, String assay, String expId)
+		{
+		return "Protocol Report uploaded by " + user + " for " + expId + ", assay (" + assay  + ") ";
+		}
+	
 	private String convertToHtml(String text, String headerText)
 		{
 		String html = "<html><body>" + "<h2>" + headerText + "</h2>" + "<i>"
