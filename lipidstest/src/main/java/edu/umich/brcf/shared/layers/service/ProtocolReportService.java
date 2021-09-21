@@ -71,6 +71,12 @@ public class ProtocolReportService
 		return protocolReportDao.loadInfoForRunDateRange(fromDate, toDate);
 		}
 	
+	// Issue 176
+	public List<Object[]> getMissingProtocols (Calendar fromDate, Calendar toDate)
+		{
+		return protocolReportDao.getMissingProtocols(fromDate, toDate);
+		}
+	
 	// Issue 245
 	public void deleteProtocolReport(long reportId)
         {

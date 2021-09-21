@@ -5,13 +5,24 @@
 
 package edu.umich.brcf.metabolomics.panels.workflow.workflow_tracking;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.PropertyModel;
 
+import edu.umich.brcf.metabolomics.panels.lims.compounds.EditAliquot;
+import edu.umich.brcf.metabolomics.panels.lims.compounds.InventoryDetailPanel;
+import edu.umich.brcf.shared.layers.dto.AliquotDTO;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.panels.utilitypanels.EditDocumentPage;
 import edu.umich.brcf.shared.panels.utilitypanels.ExperimentAssaySelectorPanel;
@@ -23,13 +34,15 @@ import edu.umich.brcf.shared.util.io.StringUtils;
 
 public class WorkflowTrackingMainPanel extends Panel
 	{
+	String clientOrProtocol = "Client Report"; 
+	private DropDownChoice<String> clientOrProtocolDrop; 
 	public WorkflowTrackingMainPanel(String id)
 		{
 		super(id);
 
 		ModalWindow modal = ModalCreator.createScalingModalWindow("modal1", 0.4, 0.3,  (MedWorksSession) getSession());
 		add(modal);
-		
+		add(clientOrProtocolDrop = buildClientOrProtocolDrop("clientOrProtocolDrop","clientOrProtocol"));
 		add(new FeedbackPanel("feedback"));
 
 		add(buildAssaySelector("selector", true, null));
@@ -50,13 +63,12 @@ public class WorkflowTrackingMainPanel extends Panel
 					return;
 
 				Boolean searchByRunDate = (searchType == null ? false : searchType.equals("Run Date"));
-
 				try
 					{
 					if (searchType.equals("Experiment"))
 						setResponsePage(new SubmittedReportsPage("searchResults", (WebPage) this.getPage(), selectedExperiment, false));
-					else
-						setResponsePage(new SubmittedReportsPage("searchResults", (WebPage) this.getPage(),fromDate, toDate, false, searchByRunDate));
+					else					
+						setResponsePage(new SubmittedReportsPage("searchResults", (WebPage) this.getPage(),fromDate, toDate, false, searchByRunDate, clientOrProtocol.equals("Client Report") ? true : false));					
 					} 
 				catch (Exception e) {  }
 				}
@@ -97,4 +109,45 @@ public class WorkflowTrackingMainPanel extends Panel
 			public WebPage getResponsePage(String id, WebPage backPage, String selectedExperiment, String assayId) {return null; }
 			};
 		}
+	
+	// issue 176	
+	public String getClientOrProtocol ()
+		{
+		return clientOrProtocol ;
+		}
+
+ // issue 176
+	public void setClientOrProtocol (String clientOrProtocol)
+		{
+		this.clientOrProtocol =  clientOrProtocol;
+		}
+	
+	private DropDownChoice buildClientOrProtocolDrop(final String id,  final String propertyName)
+		{
+		DropDownChoice drp = new DropDownChoice(id, new PropertyModel(this, propertyName), Arrays.asList(new String[] {"Client Report", "Protocol Report" }))
+			{
+			
+			};	
+			drp.add(buildStandardFormComponentUpdateBehavior("change", "updatecClientOrProtocol" ));	
+		return drp;
+		}
+	
+	private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior(String event, final String response)
+	{
+	 return new AjaxFormComponentUpdatingBehavior(event)
+	    {
+	    @Override
+	    protected void onUpdate(AjaxRequestTarget target)
+	    	{
+	    	switch (response)
+	        	{
+	    	    case "updatecClientOrProtocol" :
+	    	    	target.add(clientOrProtocolDrop);
+	    	    	break;
+	        	default : break;
+	        	}
+	    	}
+	    };
+	}  
+	
 	}

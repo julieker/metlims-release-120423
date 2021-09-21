@@ -19,10 +19,15 @@ public class SubmittedReportsPage extends MedWorksBasePage
 		add(new SubmittedReportsPanel("searchResults", backPage, expId, ifEdit, false));
 		}
 
-	
+	// issue 176	
 	public SubmittedReportsPage(String id, WebPage backPage, Calendar fromDateCal, Calendar toDateCal, Boolean ifEdit, Boolean useRunDate)
 		{
+		this ( id,  backPage,  fromDateCal,  toDateCal,  ifEdit,  useRunDate,  true);
+		}
+	
+	public SubmittedReportsPage(String id, WebPage backPage, Calendar fromDateCal, Calendar toDateCal, Boolean ifEdit, Boolean useRunDate, boolean useClient)
+		{
 		super();
-		add(new SubmittedReportsPanel("searchResults", backPage, fromDateCal, toDateCal, ifEdit, useRunDate));
+		add(new SubmittedReportsPanel("searchResults", backPage, fromDateCal, toDateCal, ifEdit, useRunDate, useClient));
 		}
 	}

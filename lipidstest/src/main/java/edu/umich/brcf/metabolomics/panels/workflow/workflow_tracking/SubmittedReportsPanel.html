@@ -16,8 +16,11 @@
 	<body  style = "margin-top : 50px">
 	
 		<div wicket:id="feedback"></div>
+		<div>&nbsp;<br></div>
 		
 		<form wicket:id = "reportsForm">
+			<div wicket:id = "modal1"></div>
+		<div wicket:id="clientContainer">	
 			<table style = "width : 96%; margin-left : 2%; margin-right : 2%; margin-top : 3%">
 				<tr>
 					<td style = "width : 50%; text-align : left">
@@ -29,8 +32,7 @@
 				</tr> 
 			</table>
 			
-			<div>&nbsp;<br></div>
-			<div wicket:id = "modal1"></div>
+			
 			<span>	
 				<table style = "font-size : 80%; background : white; border : solid grey 1px; width : 98%; margin-left : 1% ; margin-right : 1%; font-size : 90%">
 					<tr style = "border : solid 1px white; background : #0053CF; color : white; font-weight : 300">	
@@ -52,9 +54,72 @@
 							<input wicket:id = "reportLink" type = "button"  value = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;View data...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"/>  							
 						</td>
 					</tr>
+					</table>
+					</span>	
+					</div>
+					<div wicket:id="protocolContainer">	
+					
+					
+						<table style = "width : 96%; margin-left : 2%; margin-right : 2%; margin-top : 3%">
+				<tr>
+					<td style = "width : 50%; text-align : left">
+						<h3><span wicket:id = "searchResultProtocolTitle" style = "margin-top: 5%; color :  #0053CF;"> </span></h3>
+					</td>
+					<td style = "width : 50%; text-align : right">
+						<input wicket:id = "backButtonProtocol" type="button"   value="&nbsp;&nbsp;New Search&nbsp;&nbsp;" />
+					</td>
+				</tr> 
+			</table>
 			
+				
+					<table style = "font-size : 80%; background : white; border : solid grey 1px; width : 98%; margin-left : 1% ; margin-right : 1%; font-size : 90%">
+					<tr style = "border : solid 1px white; background : #0053CF; color : white; font-weight : 300">	
+						<th>Upload Date</th>
+						<th>File Name</th>
+						<th>Experiment Id</th>
+						<th>Assay Id</th>
+						<th>Uploaded By</th>
+						<th></th>
+					</tr>	
+					<tr wicket:id = "reportListsProtocol" >
+						<td style = "text-align : center; width : 10%;"> <span wicket:id = "dateCreated" ></span> </td>
+						<td style = "text-align : right; width : 30%; padding-right : 5px"> <span wicket:id = "fileName" ></span> </td>
+						<td style = "text-align : center; width : 10%; "> <span wicket:id = "expId" ></span> </td>
+						<td style = "text-align : right; width : 30%; padding-right : 5px"> <span wicket:id = "assayId" ></span> </td>
+						<td style = "text-align : right; width : 10%; padding-right : 5px"> <span wicket:id = "uploadedBy" ></span> </td>
+						<td style = "width : 10%; text-align : center">
+							<input wicket:id = "reportLinkProtocol" type = "button"  value = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;View data...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"/>  							
+						</td>
+						</tr>
+				  </table>
+				  
+				  <table style = "width : 96%; margin-left : 2%; margin-right : 2%; margin-top : 3%">
+				<tr>
+					<td style = "width : 50%; text-align : left">
+						<h3><span wicket:id = "missingProtocolResultTitle" style = "margin-top: 5%; color :  #0053CF;"> </span></h3>
+					</td>
+				</tr> 
+			       </table>
+				  
+				  
+				  <table style = "font-size : 80%; background : white; border : solid grey 1px; width : 98%; margin-left : 1% ; margin-right : 1%; font-size : 90%">     
+						<tr style = "border : solid 1px white; background : #0053CF; color : white; font-weight : 300">	
+						<th>Experiment Id</th>
+						<th>Experiment Name</th>
+						<th>Date Created</th>
+					   </tr>	
+						
+						<tr wicket:id = "reportListsMissingProtocol" >
+						 
+						<td style = "text-align : center; width : 10%;"> <span wicket:id = "expId" ></span> </td>
+						
+						<td style = "text-align : right; width : 30%; padding-right : 5px"> <span wicket:id = "expName" ></span> </td>
+						<td style = "text-align : center; width : 10%; "> <span wicket:id = "dateCreated" ></span> </td>
+					    </tr>
+				
 				</table>
-			</span>				
+				</div>
+						
 		</form>
 	</body>
 </wicket:panel>

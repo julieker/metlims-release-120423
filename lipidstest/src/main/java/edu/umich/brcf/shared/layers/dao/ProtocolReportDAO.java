@@ -177,6 +177,26 @@ public class ProtocolReportDAO extends BaseDAO
 	    return idNameMap;
 	    }
 	
+    
+//////////
+//issue 176
+///////////////////////
+	public List<Object[]> getMissingProtocols (Calendar fromDate, Calendar toDate)
+		{
+		fromDate.set(Calendar.HOUR_OF_DAY, 0);
+		fromDate.set(Calendar.MINUTE, 0);
+		fromDate.set(Calendar.SECOND, 0);
+
+		toDate.set(Calendar.HOUR_OF_DAY, 0);
+		toDate.set(Calendar.MINUTE, 0);
+		toDate.set(Calendar.SECOND, 0);
+		Query query = getEntityManager().createNativeQuery("select exp_id, exp_name, creationdate "
+				+ " from experiment where trunc(creationdate) between ?1 and ?2 and exp_id not in (select  EXPERIMENT_ID from PROTOCOL_REPORT where deleted is null) order by 1 ").setParameter(1, fromDate).setParameter(2, toDate);	
+		ArrayList<String> missingProtocolList = new ArrayList<String>();
+		List<Object[]> resultList  = query.getResultList();	    
+		return resultList;
+		}  
+    
 //////////
 // issue 441
 	public List<String> getDescriptorList (String sReportId)
