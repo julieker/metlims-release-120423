@@ -72,6 +72,7 @@ public class WorklistBuilderPanel extends Panel
     private int controlsLimit = 495;
 	static final String WORKLIST_DATE_FORMAT = "MM/dd/yy";
     AjaxCheckBox randomizationTypeBox ;
+    AjaxCheckBox changeDefaultInjVolumeBox ;
     WorklistBuilderPanel worklistBuilder = this;
     
 	public WorklistBuilderPanel()  { this(""); }
@@ -164,6 +165,7 @@ public class WorklistBuilderPanel extends Panel
 			containerDefault.add(startSequenceFld = buildStartSequenceFld("startSequence"));//issue 166
 			
 			containerDefault.add(randomizationTypeBox = buildRandomizeByPlate("randomizeByPlate"));// issue 416
+			containerDefault.add(changeDefaultInjVolumeBox = buildChangeDefaultInjVolume("changeDefaultInjVolume"));// issue 179
 			
 			selectedPlatformDrop.add(new FocusOnLoadBehavior());
 
@@ -363,6 +365,27 @@ public class WorklistBuilderPanel extends Panel
 		    return box;
 		    }
 		
+		// issue 179		
+		protected AjaxCheckBox buildChangeDefaultInjVolume(String id)
+		    {
+		    AjaxCheckBox box = new AjaxCheckBox("changeDefaultInjVolume", new PropertyModel(worklist, "changeDefaultInjVolume"))
+			    {
+			    @Override
+			    public void onUpdate(AjaxRequestTarget target)
+				    {
+				    }
+			    
+			    // issue 128
+				@Override
+				public boolean isEnabled() 
+				    { 
+					return worklist.getOpenForUpdates(); 
+				    }	
+			    };
+			box.add(this.buildStandardFormComponentUpdateBehavior("change", "updateChangeDefaultInjVol"));
+		    return box;
+		    }
+		
 			// Issue 464
 		private IndicatingAjaxLink buildLinkToPlatePreview(final String linkID, final ModalWindow modal1)
 			{
@@ -557,7 +580,7 @@ public class WorklistBuilderPanel extends Panel
 				@Override
 				public boolean isEnabled() 
 				    { 
-					return worklist.getOpenForUpdates(); 
+					return worklist.getOpenForUpdates() && worklist.getChangeDefaultInjVolume(); 
 				    }				
 				};
 			fld.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForInjectionVol"));
@@ -693,6 +716,10 @@ public class WorklistBuilderPanel extends Panel
 							{
 						    case "updateStartPlate":
 							    break;
+						    case "updateChangeDefaultInjVol" :
+						    	target.add(defaultInjectionVolFld);
+							    target.add(changeDefaultInjVolumeBox);
+						        break;
 						    case "updateForDate":
 								if (worklist != null)
 									worklist.rebuildEverything();
@@ -750,7 +777,6 @@ public class WorklistBuilderPanel extends Panel
 								break;
 
 							case "updateForInstrument":
-
 								if (worklist != null)
 									{
 									worklist.setSelectedInstrument(getSelectedInstrument());
@@ -759,7 +785,6 @@ public class WorklistBuilderPanel extends Panel
 									worklist.updateIndices();
 									// worklist.setOpenForUpdates(true);
 									worklist.updateOutputFileNames();
-	
 									}
 								break;
 								// issue 166	
@@ -770,11 +795,9 @@ public class WorklistBuilderPanel extends Panel
 							    worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
 							    break;
 							case "updateForMode":
-
 								if (worklist != null)
 									worklist.updateOutputFileNames();
 								break;
-
 							case "updateForPlatePos":
 								break;
 							}
@@ -808,6 +831,7 @@ public class WorklistBuilderPanel extends Panel
 			target.add(defaultMethodFld);
 			target.add(startPlateDrop); // issue 153
 			target.add(startSequenceFld);// issue 166
+			target.add(changeDefaultInjVolumeBox);// issue 179
 			}
 
 		//issue 348

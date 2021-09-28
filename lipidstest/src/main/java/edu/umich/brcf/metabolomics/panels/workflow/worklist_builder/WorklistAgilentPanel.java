@@ -39,7 +39,7 @@ public class WorklistAgilentPanel extends BaseWorklistPanel
 		//listItem.add(WorklistFieldBuilder.buildIntegerWorklistField("randomIdx", item, "randomIdx"));
 		listItem.add(WorklistFieldBuilder.buildStringWorklistField("sampleName", item, "sampleName"));
 		listItem.add(WorklistFieldBuilder.buildStringWorklistField("samplePosition", item, "samplePosition"));
-		listItem.add(WorklistFieldBuilder.buildDoubleWorklistField("injectionVolume", item, "injectionVolume"));
+		listItem.add(WorklistFieldBuilder.buildDoubleWorklistFieldAgilent("injectionVolume", item, "injectionVolume"));
 		listItem.add(WorklistFieldBuilder.buildStringWorklistField("methodFileName", item, "methodFileName"));
 		listItem.add(WorklistFieldBuilder.buildStringWorklistField("overrideMethod", item, "overrideMethod"));
 		listItem.add(WorklistFieldBuilder.buildStringWorklistField("outputFileName", item, "outputFileName"));

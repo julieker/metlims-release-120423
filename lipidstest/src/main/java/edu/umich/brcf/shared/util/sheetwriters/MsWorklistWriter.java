@@ -41,9 +41,11 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 	private String selectedExperiment; 
 	protected WorklistSimple worklist;
 	// issue 450
-    private final int CONTROLNAMECOL = 2;
-	private final int CONTROLPOSCOL = 4;// issue 166
-	private final int IDDADATAFILECOL = 8; // issue 166
+	
+	// issue 179
+    private final int CONTROLNAMECOL = 0;
+	private final int CONTROLPOSCOL = 1;// issue 166
+	private final int IDDADATAFILECOL = 3; // issue 166
 	
 	// issue 450
 	public MsWorklistWriter( WorklistSimple worklist)
@@ -129,8 +131,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 			}
 	    return "";
 		}
-	
-	
+		
 	// issue 450
 	public Sheet createWorklistSheet(String title, Workbook workBook, WorklistSimple worklist, boolean isPlatformAgilent, String strMode)
 		{
@@ -151,7 +152,8 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 			Sheet sheet = createEmptySheet(title,  workBook, 1, worklist.getColTitles(), 1);
 			PoiUtils.createBlankRow(rowCt,  sheet);
 			for (int i = 0; i < headers.size(); i++)
-				PoiUtils.createRowEntry(rowCt, i + 1, sheet, headers.get(i), grabStyleBlue(workBook));		
+				// issue 179
+				PoiUtils.createRowEntry(rowCt, i, sheet, headers.get(i), grabStyleBlue(workBook));		
 			rowCt++;
 			for (WorklistItemSimple item : items)
 				{
@@ -165,14 +167,17 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 				String itemStr = item.toCharDelimited(",");	
 				String [] tokens = StringUtils.splitAndTrim(itemStr, ",", true);
 				PoiUtils.createBlankRow(rowCt,  sheet);
+				sheet.setColumnWidth(CONTROLNAMECOL, 28*256); // issue 179
+				sheet.setColumnWidth(IDDADATAFILECOL, 96*256);
 				for (int i = 0; i < tokens.length; i++)
 					{	
-					// issue 410
-					if (! ( i== IDDADATAFILECOL - 1 && tokens[i].length() >= 2)) // issue 166
-					     PoiUtils.createRowEntry(rowCt, i + 1, sheet, i==0 && isPlatformAgilent ? "" : tokens[i], styleHorizontalAndWhite);
-					// issue 450
+						// issue 410
+					// issue 179
+					if (! ( i== IDDADATAFILECOL  && tokens[i].length() >= 2)) // issue 166
+						PoiUtils.createRowEntry(rowCt, i , sheet,  tokens[i], styleHorizontalAndWhite);
+						// issue 450
 					else
-						 PoiUtils.createRowEntry(rowCt, i+ 1, sheet, tokens[i].substring(0,tokens[i].length() -2 ) +   (strMode.equals("Positive") ? "-P" : "-N"), styleHorizontalAndWhite);					
+						PoiUtils.createRowEntry(rowCt, i, sheet, tokens[i].substring(0,tokens[i].length() -2 ) +   (strMode.equals("Positive") ? "-P" : "-N"), styleHorizontalAndWhite);
 				    }
 				rowCt++;
 				}

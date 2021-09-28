@@ -529,6 +529,7 @@ public class AddSamplesPanel extends Panel
 					{
 					case "updateForRandomDrop":                        
 						item.setIsRandomized(false);
+						originalWorklist.setRandomizeByPlate(false);// issue 179
 						originalWorklist.setDefaultPool(true); // issue 169
 						originalWorklist.clearOutMotorPacControls(); // issue 422
 						originalWorklist.clearOutPoolIDDAControls();// issue 432
@@ -552,6 +553,7 @@ public class AddSamplesPanel extends Panel
 
 					case "updateForAssayDrop":
 						String val = item.getAssayType();
+						originalWorklist.setRandomizeByPlate(false);// issue 179
 						originalWorklist.setDefaultPool(true); // issue 169
 						originalWorklist.clearOutMotorPacControls(); // issue 422
 						originalWorklist.clearOutPoolIDDAControls();// issue 432
@@ -580,6 +582,7 @@ public class AddSamplesPanel extends Panel
 						break;
 
 					case "updateForExperimentDrop":
+						originalWorklist.setRandomizeByPlate(false);// issue 179
 						item.setIsRandomized(false);
 						originalWorklist.setDefaultPool(true); // issue 169
 						if (originalWorklist == null)

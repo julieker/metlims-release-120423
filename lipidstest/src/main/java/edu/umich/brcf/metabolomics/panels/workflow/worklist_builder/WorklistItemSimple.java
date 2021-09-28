@@ -9,7 +9,6 @@ package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
-import org.apache.wicket.injection.Injector;
 import edu.umich.brcf.shared.util.interfaces.ICommentObject;
 import edu.umich.brcf.shared.util.interfaces.IWriteConvertable;
 import edu.umich.brcf.shared.util.structures.SelectableObject;
@@ -25,13 +24,9 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	private String shortNameForUserControlGroup = "";// issue 346
 	private String researcherName ; // issue 166
 	private String sampleIndex ; // issue 166
-	
-	
 	private static final long serialVersionUID = 5062930960041066301L;
-
 	private WorklistSimple parent;
 	private WorklistGroup group;
-
 	private String workListName;
 	private String methodFileName, outputFileName, outputFileDir;
 	private String overrideMethod;
@@ -42,17 +37,12 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	private String sampleTypeTagForFilename = "";
     public String sampleWorklistLabel; // issue 411
 	private String injectionVolume;
-
 	private String rackCode, plateCode;
 	private String rackPosition, platePosition, vialPosition;
-
 	private String experimentId;
 	private String comments = "";
-
 	private Boolean representsControl = false;
-
 	private Boolean isDeleted, isHandEdited;
-
 	int belongsToPlate;
 	private int direction;
 	
@@ -390,10 +380,13 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		try
 			{
 			// Ersatz validator...
-			
+			// issue 179
+			if (parent.getSelectedPlatform().equals("absciex"))
 			// Issue 464
-			if (!StringUtils.isNullOrEmpty(v))
-				Double.parseDouble(v);
+				{
+				if (!StringUtils.isNullOrEmpty(v))
+					Double.parseDouble(v);
+				}
 			injectionVolume = v;
 			} 
 		catch (NumberFormatException e) { }
@@ -564,6 +557,9 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 			String controlCode = this.getSampleName().substring(0,this.getSampleName().lastIndexOf("-"));
 			for (WorklistControlGroup wwg : this.getGroup().getParent().getControlGroupsList())
 				{
+				// issue 179
+				if (wwg.getControlType() == null)
+					continue;
 				if (wwg.getControlType().contains(controlCode))
 					return wwg.getControlType().substring(0, wwg.getControlType().lastIndexOf("(")).replace(",", "");
 				}
@@ -571,19 +567,40 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 			}
 		}
 	public String writeInAgilentFormat(char separator)
+	// issue 179
 		{
+		int dashIndex;
+		int stdIndex;
+		String stdIntString;
 		StringBuilder sb = new StringBuilder();       
-		sb.append(this.getRandomIdx().toString() + separator);
+		// issue 179 sb.append(this.getRandomIdx().toString() + separator);
 		sb.append(this.getSampleName() + separator);
-		sb.append(calcPosIndicator(this) +  (this.getRepresentsControl() ? "" : "_") + calcCommentContent(this.getSampleName()) +  separator);// issue 166
-		//sb.append(" " + separator);
 		sb.append(this.getSamplePosition() + separator);
-		sb.append(this.getInjectionVolume() + separator);
-		sb.append(this.getMethodFileName() + separator);
-		sb.append(this.getOverrideMethod() + separator);
+		sb.append(this.getMethodFileName() + separator); 
+		sb.append((parent.getIsCustomDirectoryStructure() ? this.grabDataFileWithCustomDirectory() : this.getOutputFileName()  )+ separator);  
+		sb.append(((this.getSampleName().contains("CS000STD") || this.getSampleName().contains("CS00STD")) ? "Calibration" : "Sample") + separator);
+		
+		if ((this.getSampleName().contains("CS000STD") || this.getSampleName().contains("CS00STD")) && this.getSampleName().contains("-"))
+			{
+			dashIndex = this.getSampleName().lastIndexOf("-");
+			stdIndex  =  this.getSampleName().indexOf("STD") + 3;
+			stdIntString = this.getSampleName().substring(stdIndex, dashIndex);
+			}
+		else 
+			stdIntString = "";
+		sb.append(stdIntString + separator);
+		sb.append(this.getInjectionVolume() + separator); 
+		// issue 179
+	    Integer countOfSamples = this.getGroup().getParent().countOfSamplesForItems(this.getGroup().getParent().getItems());
+		Integer endingIndex = Integer.parseInt(this.getGroup().getParent().getStartSequence()) + countOfSamples-1;
+		String endingIndexStr = endingIndex.toString();
+		String theIndex = this.getRepresentsControl() ? "" : String.format("%1$" + endingIndexStr.length() + "s" , calcPosIndicator(this)).replace(' ', '0');	
+		sb.append(theIndex +  (this.getRepresentsControl() ? "" : "_") + calcCommentContent(this.getSampleName()) +  separator);// issue 166
+		sb.append((" ") + separator);
+		sb.append((" ") + separator);
+		sb.append((" ") + separator);
 		// issue 25
-		// issue 32
-		sb.append((parent.getIsCustomDirectoryStructure() ? this.grabDataFileWithCustomDirectory() : this.getOutputFileName()  )+ separator);      
+		// issue 32		
 		return sb.toString();
 		}
 

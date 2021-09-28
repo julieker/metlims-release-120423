@@ -37,10 +37,8 @@ public class WorklistFieldBuilder implements Serializable
 	    	wrkField.add(AttributeModifier.append("title", item.getMethodFileName()));
 	    if (field.equals("overrideMethod"))
 	    	wrkField.add(AttributeModifier.append("title", item.getOverrideMethod()));
-	    //return new TextField(id, new PropertyModel<String>(item, field));
-		return wrkField;
+	    return wrkField;
 		}
-
 
 	public static Label buildPlateLabelField(String id, final WorklistItemSimple item, String field)
 		{
@@ -86,10 +84,8 @@ public class WorklistFieldBuilder implements Serializable
 	public static TextField buildStringWorklistField(final String id, final WorklistItemSimple item, final String field)
 		{
 		TextField txt = WorklistFieldBuilder.buildStringTextField(id, item, field);
-
 		txt.add(buildTextDecoratingBehavior(id, item, field));
 		txt.add(buildChangeRegistrationBehavior(id, item, field));
-
 		return txt;
 		}
 
@@ -124,7 +120,25 @@ public class WorklistFieldBuilder implements Serializable
 		txt.add(buildTextDecoratingBehavior(id, item, field));
 		return txt;
 		}
-
+	
+	// issue 179
+	public static TextField buildDoubleWorklistFieldAgilent(final String id, final WorklistItemSimple item, final String field)
+		{
+		TextField txt;
+		if (item.getGroup().getParent().getChangeDefaultInjVolume())
+			{
+			item.setInjectionVolume (item.getGroup().getParent().getDefaultInjectionVol());
+			txt = WorklistFieldBuilder.buildDoubleTextField(id, item, field);
+			}
+		else
+			{
+			item.setInjectionVolume("As Method");
+			txt = WorklistFieldBuilder.buildStringWorklistField(id, item, field);
+			//txt = new TextField(id, new PropertyModel<String>(item, field));
+			}
+		txt.add(buildTextDecoratingBehavior(id, item, field));
+		return txt;
+		}
 	
 	public static TextField buildIntegerWorklistField(final String id, final WorklistItemSimple item, String field)
 		{

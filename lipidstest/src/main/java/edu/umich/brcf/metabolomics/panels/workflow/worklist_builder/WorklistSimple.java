@@ -68,7 +68,7 @@ public class WorklistSimple implements Serializable
 	PlateListHandler plateListHandler; 
 	int nPlates;	
 	int rowsPerPlate = 6, colsPerPlate = 9;
-	private boolean randomizeByPlate = true; // issue 416
+	private boolean randomizeByPlate = false; // issue 416 issue 179
 	private boolean defaultPool = true; // issue 169
     private boolean isCircularRelationship;
     private int lastPoolBlockNumber = 0;
@@ -107,6 +107,10 @@ public class WorklistSimple implements Serializable
 	private int nLungSedentary = 0;
 	private int startPlateControls = 0;
 	private String startPlate = "1";
+	// issue 179
+	
+	private boolean changeDefaultInjVolume = false;
+	
 	
 	// issue 153
 	public String getStartPlate ()
@@ -1663,10 +1667,11 @@ public class WorklistSimple implements Serializable
 		}
 	
 	// issue 166
+	// issue 179
 	private List<String> grabAgilentColTitles()
 		{
-		return Arrays.asList(new String [] {"Order", "Sample Name", "Comment", "Sample Position", "Injection Vol",
-				"Method", "Override DA", "Data File"});
+		return Arrays.asList(new String [] { "Sample Name", "Sample Position", "Method", "Data File", "Sample Type", "Level Name",  "Injection Vol",
+				"Comment", "Barcode", "Sample Group", "Info."});
 		}
 
 	//issue 126
@@ -1740,6 +1745,17 @@ public class WorklistSimple implements Serializable
 	public Boolean getRandomizeByPlate() // issue 416
 		{
 		return randomizeByPlate;
+		}
+	
+	// issue 179
+	public void setChangeDefaultInjVolume(Boolean changeDefaultInjVolume) // issue 416
+		{
+		this.changeDefaultInjVolume= changeDefaultInjVolume;		
+		}
+
+	public Boolean getChangeDefaultInjVolume() // issue 416
+		{
+		return changeDefaultInjVolume;
 		}
 	
 	// issue 169
