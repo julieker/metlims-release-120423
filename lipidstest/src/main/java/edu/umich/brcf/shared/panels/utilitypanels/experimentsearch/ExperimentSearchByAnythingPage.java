@@ -73,7 +73,7 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 		GrabExperimentLabelPanel expPanel;
 		GrabProjectLabelPanel  projPanel;
 		GrabContactLabelPanel contactPanel;
-	
+		GrabPILabelPanel piPanel;
 		GrabOrganizationLabelPanel orgPanel;
 		AjaxCancelLink cancelLink;
 		
@@ -114,6 +114,11 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 			orgPanel = buildSearchByOrganizationPanel("searchForOrganizationPanel");
 			container.add(orgPanel);
 			orgPanel.setOutputMarkupId(true);
+			
+			// issue 181
+			piPanel = buildSearchByPIPanel("searchForPIPanel");
+			container.add(piPanel);
+			piPanel.setOutputMarkupId(true);
 			
 	//		samplePanel = buildSearchForSamplePanel("searchForSamplePanel");
 	//		container.add(samplePanel);
@@ -196,7 +201,8 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 						{
 						isValid = true; //clientService.verifyContactExists(contact);
 						target.add(searchLink);
-						List<Project> projList = projectService.loadProjectExperimentByClientContact(contact);
+						// issue 181
+						List<Project> projList = projectService.loadProjectExperimentByContact(contact);
 						setProjectList(projList);
 						if (ListUtils.isNonEmpty(projList))
 							{
@@ -215,7 +221,37 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 				};
 			}
 	
-	
+		//// issue 181
+		GrabPILabelPanel buildSearchByPIPanel(String id)
+			{
+			return new GrabPILabelPanel(id)
+				{
+				@Override
+				protected void onSelect(String contact, AjaxRequestTarget target)
+					{
+					try
+						{
+						isValid = true; //clientService.verifyContactExists(contact);
+						target.add(searchLink);
+						// issue 181
+						List<Project> projList = projectService.loadProjectExperimentByClientContact(contact);
+						setProjectList(projList);
+						if (ListUtils.isNonEmpty(projList))
+							{
+							List<Experiment> expList = projectList.get(0).getExperimentList();
+							setExperiment(ListUtils.isNonEmpty(expList) ?  expList.get(0) : null);
+							}
+						}
+					catch (Exception e) { doError(e.getMessage(), target); }
+					}
+				
+				@Override 
+				public boolean isVisible()
+					{
+					return (getSearchTypeOuter() != null && getSearchTypeOuter().startsWith("Principal"));
+					}
+				};
+			}
 		
 		GrabProjectLabelPanel buildSearchByProjPanel(String id)
 			{

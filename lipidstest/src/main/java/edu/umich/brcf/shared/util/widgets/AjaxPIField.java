@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////
-//AjaxContactField.java
-//Written by Jan Wigginton, Feb 10, 2017
+//AjaxPIField.java
+//Written by Julie Keros, Oct 30 , 2021
+// for issue 181
 ////////////////////////////////////////////////////
 
 package edu.umich.brcf.shared.util.widgets;
@@ -20,7 +21,7 @@ import edu.umich.brcf.shared.layers.service.ClientService;
 import edu.umich.brcf.shared.layers.service.UserService;
 
 //SampleTypeField
-public class AjaxContactField extends AutoCompleteTextField
+public class AjaxPIField extends AutoCompleteTextField
 	{
 	@SpringBean 
 	ClientService clientService;
@@ -28,7 +29,7 @@ public class AjaxContactField extends AutoCompleteTextField
 	@SpringBean 
 	UserService userService;
 	
-	public AjaxContactField(String id) 
+	public AjaxPIField(String id) 
 		{
 		super(id, new Model(""));
 		}
@@ -48,7 +49,7 @@ public class AjaxContactField extends AutoCompleteTextField
 		
 		try
 			{
-			List<String> contactChoices  = userService.allUserNamesContactSearch(input);
+			List<String> contactChoices  = clientService.allContacts();
 			
 			for (String contact : contactChoices) {
 				if (contact.toUpperCase().contains(input.toUpperCase()))

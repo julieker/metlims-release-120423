@@ -479,6 +479,23 @@ public class ExperimentDAO extends BaseDAO
 		return eidList;
 		}
 	
+	// issue 181
+	public List<String> loadExperimentIdsByContact(String contact)
+		{
+		String searchString = contact.replaceAll(",", "").replaceAll("'", "''"); // issue 462
+		Query query = getEntityManager().createQuery(
+				"select distinct(e.expID) from Project p, Experiment e, User u "
+						+ "where e.project.projectID=p.projectID and p.contactPerson =u.id and (u.firstName ||' ' "
+						+ "|| u.lastName = '"
+						+ searchString
+						+ "' or u.lastName ||' '|| u.firstName = '"
+						+ searchString 
+						+ "')");
+	
+		List<String> eidList = query.getResultList();
+		return eidList;
+		}
+	
 	public List<String> getShortcodeIdsForExpId(String expId)
 		{
 		Query query2 = getEntityManager().createNativeQuery("select cast(s.shortcode as VARCHAR2(20)) from "

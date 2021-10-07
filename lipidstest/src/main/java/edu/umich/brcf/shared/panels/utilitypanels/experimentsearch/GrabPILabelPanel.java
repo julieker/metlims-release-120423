@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////
-// GrabContactLabelPanel.java
-// Written by Jan Wigginton, Oct 26, 2016
+// GrabPILabelPanel.java
+// Written by Julie Keros Sep 30 2021 
+// for issue 181
 ////////////////////////////////////////////////////
 package edu.umich.brcf.shared.panels.utilitypanels.experimentsearch;
 
@@ -13,80 +14,75 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import edu.umich.brcf.shared.layers.service.ClientService;
-import edu.umich.brcf.shared.util.widgets.AjaxContactField;
+import edu.umich.brcf.shared.util.widgets.AjaxPIField;
 
 
-public abstract class GrabContactLabelPanel extends Panel
+public abstract class GrabPILabelPanel extends Panel
 	{
 	@SpringBean 
 	private ClientService clientService;
 	
-	private String contact, input; 
+	private String pi, input; 
 	private String searchType = "Name";
 	private FeedbackPanel feedback;
 	
-	
-	public GrabContactLabelPanel(String id)
+	public GrabPILabelPanel(String id)
 		{
 		super(id);
 		add(feedback = new FeedbackPanel("feedback"));
 		feedback.setOutputMarkupId(true);
 		
-		add(new GrabContactLabelForm("grabContactLabelForm"));
+		add(new GrabPILabelForm("GrabPILabelForm"));
 		}
 	
-	
-	public final class GrabContactLabelForm extends Form 
+	public final class GrabPILabelForm extends Form 
 		{
-		public GrabContactLabelForm(final String id)
+		public GrabPILabelForm(final String id)
 			{
 			super(id);
 			
 		//	AjaxClientField userNameField;
-			AjaxContactField userNameField;
+			AjaxPIField userNameField;
 			
-			add(userNameField = new AjaxContactField("contact"));
+			add(userNameField = new AjaxPIField("PI"));
 			userNameField.setOutputMarkupId(true);
 			userNameField.add(buildFormSubmitBehavior(false, userNameField));
 			}
-	
 		
-		private AjaxFormSubmitBehavior buildFormSubmitBehavior(final boolean isDrop, final AjaxContactField nameField)
+		private AjaxFormSubmitBehavior buildFormSubmitBehavior(final boolean isDrop, final AjaxPIField nameField)
 			{
 			return new AjaxFormSubmitBehavior(this, "change") 
 				{
 				protected void onSubmit(AjaxRequestTarget target) 
 					{
-					input = isDrop ? contact : ((AutoCompleteTextField)(nameField)).getInput();
+					input = isDrop ? pi : ((AutoCompleteTextField)(nameField)).getInput();
 					
 					Boolean contactExists = false;
 					try
 						{
 						// issue 181
-						contactExists = clientService.verifyContactExistsContactSearch(input);
+						contactExists = clientService.verifyContactExists(input);
 						target.add(feedback);
-						GrabContactLabelPanel.this.onSelect(input, target);
+						GrabPILabelPanel.this.onSelect(input, target);
 						}	
 					catch (Exception e) 
 						{ 
-						GrabContactLabelPanel.this.error(e.getMessage());
+						GrabPILabelPanel.this.error(e.getMessage());
 						target.add(feedback);
 						}
 					if (!contactExists)
 						{
-						GrabContactLabelPanel.this.error("Unable to locate contact with name " + input + " in the database");
+						GrabPILabelPanel.this.error("Unable to locate contact with name " + input + " in the database");
 						target.add(feedback);
 						}
 					}
 				};
 			}
 	
-	
-		public String getContact() { return contact; }
-		public void setContact(String e) { contact = e; }
+		public String getPi() { return pi; }
+		public void setPi(String e) { pi = e; }
 		}
-	
-	
+		
 	public String getSearchType()
 		{
 		return searchType;
@@ -97,8 +93,8 @@ public abstract class GrabContactLabelPanel extends Panel
 		this.searchType = searchType;
 		}
 	
-	public String getContact() { return contact; }
-	public void setContact(String e) { contact = e; }
+	public String getPi() { return pi; }
+	public void setPi(String e) { pi = e; }
 	
 	protected abstract void onSelect(String exp, AjaxRequestTarget target);
 	}
@@ -106,7 +102,7 @@ public abstract class GrabContactLabelPanel extends Panel
 
 
 /*
-public abstract class GrabContactLabelPanel extends Panel
+public abstract class GrabPILabelPanel extends Panel
 	{
 	@SpringBean 
 	private ClientService clientService;
@@ -116,24 +112,24 @@ public abstract class GrabContactLabelPanel extends Panel
 	private FeedbackPanel feedback;
 	
 	
-	public GrabContactLabelPanel(String id)
+	public GrabPILabelPanel(String id)
 		{
 		super(id);
 		add(feedback = new FeedbackPanel("feedback"));
 		feedback.setOutputMarkupId(true);
 		
-		add(new GrabContactLabelForm("grabContactLabelForm"));
+		add(new GrabPILabelForm("GrabPILabelForm"));
 		}
 		
 	
-	public final class GrabContactLabelForm extends Form 
+	public final class GrabPILabelForm extends Form 
 		{
-		public GrabContactLabelForm(final String id)
+		public GrabPILabelForm(final String id)
 			{
 			super(id);
 			
 			AjaxClientField contactNameField;
-			add(contactNameField = new AjaxClientField("contact")
+			add(contactNameField = new AjaxClientField("PI")
 				{
 				@Override
 				public boolean isVisible()  { return "Name".equals(getSearchType()); }
@@ -155,7 +151,7 @@ public abstract class GrabContactLabelPanel extends Panel
 				protected List<String> load() { return clientService.allContactsWithIds(); }
 				};
 			
-			return new DropDownChoice<String>(id, new PropertyModel<String>(this, "contact"), contactListModel)
+			return new DropDownChoice<String>(id, new PropertyModel<String>(this, "PI"), contactListModel)
 				{
 				@Override
 				public boolean isVisible()  { return "Id".equals(getSearchType()); }
@@ -177,17 +173,17 @@ public abstract class GrabContactLabelPanel extends Panel
 						{
 						contactExists = clientService.verifyContactExists(input);
 						target.add(feedback);
-						GrabContactLabelPanel.this.onSelect(input, target);
+						GrabPILabelPanel.this.onSelect(input, target);
 						}	
 					catch (Exception e) 
 						{ 
-						GrabContactLabelPanel.this.error(e.getMessage());
+						GrabPILabelPanel.this.error(e.getMessage());
 						target.add(feedback);
 						}
 					
 					if (!contactExists)
 						{
-						GrabContactLabelPanel.this.error("Unable to locate contact with name " + input + " in the database");
+						GrabPILabelPanel.this.error("Unable to locate contact with name " + input + " in the database");
 						target.add(feedback);
 						}
 					}
@@ -198,13 +194,13 @@ public abstract class GrabContactLabelPanel extends Panel
 		public String getSearchType() { return searchType; }
 		public void setSearchType(String st) { searchType = st; }
 		
-		public String getContact() { return contact; }
-		public void setContact(String e) { contact = e; }
+		public String getPi() { return contact; }
+		public void setPi(String e) { contact = e; }
 		}
 	
 	
-	public String getContact() { return contact; }
-	public void setContact(String e) { contact = e; }
+	public String getPi() { return contact; }
+	public void setPi(String e) { contact = e; }
 	
 	
 	public String getSearchType()  { return searchType; }

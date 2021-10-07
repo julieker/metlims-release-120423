@@ -113,6 +113,27 @@ public class UserDAO extends BaseDAO
 		return fullNames;
 		}
 	
+	// issue 181
+	public List<String> allUserNamesContactSearch(String input)
+		{
+		Query query = getEntityManager().createNativeQuery("select cast(u.last_name as VARCHAR2(30)), cast(u.first_name as"
+					+ " VARCHAR2(20)), cast(u.researcher_id AS VARCHAR2(6)) from Researcher  u where (upper(last_name) like '%" + input + "%' or upper(first_name) like '%" + input + "%') order by u.last_name");
+	
+		List<Object[]> userList = query.getResultList();
+	
+		ArrayList<String> fullNames = new ArrayList<String>();
+		for (Object[] user : userList)
+			{
+			String firstName = (String) user[1];
+			String lastName = (String) user[0];
+			String id = "(" + (String) user[2] + ")";
+			String name = lastName + ", " + firstName;
+	
+			fullNames.add(name);
+			}
+	
+		return fullNames;
+		}
 
 	public List<String> allUserNames()
 		{

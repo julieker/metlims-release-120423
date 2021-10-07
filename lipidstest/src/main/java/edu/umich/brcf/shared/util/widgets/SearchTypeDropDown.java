@@ -44,7 +44,8 @@ public abstract class SearchTypeDropDown extends DropDownChoice
 	
 	private List <String> getSearchTypes()
 		{
-		return Arrays.asList(new String [] {"Experiment Id", "Experiment Name", "Project Id", "Project Name", "Contact Name", "Organization Name"});
+		// issue 181
+		return Arrays.asList(new String [] {"Experiment Id", "Experiment Name", "Project Id", "Project Name", "Contact Name", "Principal Investigator",  "Organization Name"});
 		}
 	
 	

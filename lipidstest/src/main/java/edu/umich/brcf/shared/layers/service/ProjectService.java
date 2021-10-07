@@ -82,6 +82,12 @@ public class ProjectService
 		{
 		return projectDao.loadProjectExperimentByClientContact(contact);
 		}
+	
+	// issue 181
+	public List<Project> loadProjectExperimentByContact(String contact)
+		{
+		return projectDao.loadProjectExperimentByContact(contact);
+		}
 
 	public List<Project> getProjectExperimentsForOrganization(String organization)
 		{

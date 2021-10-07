@@ -75,7 +75,21 @@ public class ClientService
 		return clientDao.allContactsWithIds();
 		}
 	
-	
+	// issue 181 
+	public boolean verifyContactExistsContactSearch (String str)
+		{
+		List<String> eidList = null; 
+		try  
+			{
+			eidList = experimentDao.loadExperimentIdsByContact(str);
+			}
+		catch (Exception e)
+			{
+			throw new RuntimeException("Error while loading contact with name " + str +  "from database");
+			}
+		
+		return (eidList.size() > 0);
+		}
 	public boolean verifyContactExists(String str)
 		{
 		if (StringUtils.isEmptyOrNull(str)) 

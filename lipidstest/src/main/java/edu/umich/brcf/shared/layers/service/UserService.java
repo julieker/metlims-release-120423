@@ -45,28 +45,12 @@ public class UserService
 				}
 			};
 		}
-
-	/*
-	public List<String> populateNewUserPasswords()
+	
+	// issue 181
+	public List<String> allUserNamesContactSearch(String input) 
 		{
-		List<User> userList = userDao.allUsersWithNullNewPasswords();
-		List<String> updatedUsers = new ArrayList<String>();
-		
-		String key = "Beecher Lab";
-	//	DesEncrypter encrypter = new DesEncrypter(key);
-		for (User user: userList)
-			{
-			String oldPassEncrypted = user.getPassword();
-			String oldPassDecrypted = encrypter.decrypt(oldPassEncrypted);
-			//System.out.println("Populating new password field for " + user.getFullNameByLast());
-			updatedUsers.add(user.getFullNameByLast());
-			user.setPasswordNew(BCryptEncrypter.encrypt(oldPassDecrypted));
-			UserDTO dto = userDao.putUserIntoUserDTO(user);
-			userDao.save(dto);
-			}
-		
-		return updatedUsers;
-		} */
+		return userDao.allUserNamesContactSearch(input.toUpperCase());
+		}
 	
 	public List<UserDTO> allAdmins() 
 		{

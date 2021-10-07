@@ -199,6 +199,29 @@ public class ProjectDAO extends BaseDAO
 		return projectList;
 		}
 	
+	// issue 181
+	public List<Project> loadProjectExperimentByContact(String searchStr) 
+		{
+		List<Project> projectList = new ArrayList<Project>();
+		
+		String contact = searchStr.replaceAll(",", "").replaceAll("'", "''"); // issue 462
+		Query query = getEntityManager().createQuery("select distinct(p.projectID) from Project p, User u "+ 
+				"where p.contactPerson =u.id and (u.firstName||' ' " +
+				"||u.lastName = '"+contact+
+				"' or u.lastName ||' '|| u.firstName= '"+contact+
+				"')");
+		
+		List<String> pidList = query.getResultList();
+		for( String pid : pidList)
+			{
+			Project p = loadProjectWithExpList(pid);
+			if(!projectList.contains(p))
+				projectList.add(p);
+			}
+		
+		return projectList;
+		}
+
 	
 	public boolean checkProjNameExists(String name)
 		{
