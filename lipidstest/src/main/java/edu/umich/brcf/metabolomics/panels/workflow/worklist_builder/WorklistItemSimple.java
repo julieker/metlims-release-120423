@@ -576,7 +576,8 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		// issue 179 sb.append(this.getRandomIdx().toString() + separator);
 		sb.append(this.getSampleName() + separator);
 		sb.append(this.getSamplePosition() + separator);
-		sb.append(this.getMethodFileName() + separator); 
+		// issue 181
+		sb.append((StringUtils.isNullOrEmpty(this.getMethodFileName()) ? " " : this.getMethodFileName())  + separator); 
 		sb.append((parent.getIsCustomDirectoryStructure() ? this.grabDataFileWithCustomDirectory() : this.getOutputFileName()  )+ separator);  
 		sb.append(((this.getSampleName().contains("CS000STD") || this.getSampleName().contains("CS00STD")) ? "Calibration" : "Sample") + separator);
 		
