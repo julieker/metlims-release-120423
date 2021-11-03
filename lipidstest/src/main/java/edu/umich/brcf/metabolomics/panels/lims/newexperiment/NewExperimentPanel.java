@@ -7,8 +7,10 @@ package edu.umich.brcf.metabolomics.panels.lims.newexperiment;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
@@ -26,6 +28,7 @@ import edu.umich.brcf.shared.layers.domain.Project;
 import edu.umich.brcf.shared.layers.service.ExperimentService;
 import edu.umich.brcf.shared.layers.service.ProjectService;
 import edu.umich.brcf.shared.layers.service.SampleService;
+import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.util.comparator.ProjectByStartDateComparator;
 import edu.umich.brcf.shared.util.utilpackages.ListUtils;
 
@@ -73,7 +76,7 @@ public class NewExperimentPanel extends Panel
 	public NewExperimentPanel(String id, String eid, List<String> projectIds, ModalWindow modal)
 		{
 		super(id);
-	
+		((MedWorksSession) Session.get()).setExpProjmap(new  HashMap<String, List <Experiment> >());
 		setOutputMarkupId(true);
 		add(new FeedbackPanel("feedback"));
 		

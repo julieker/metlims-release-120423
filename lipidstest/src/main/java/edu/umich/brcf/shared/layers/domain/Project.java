@@ -18,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -34,7 +35,9 @@ public class Project implements Serializable
 	public static String fullIdFormat = "(PR)\\d{4}";
 	public static List<String> STATUS_TYPES = Arrays.asList(new String[] { "A", "I" });
 	public static String PROJECT_DATE_FORMAT = "MM/dd/yy";
-
+	@Transient
+	List <Experiment> expAssayDateCritList;
+	
 	public static Project instance(Client client, String projectName, String description, User contactPerson, 
 			String statusID, Calendar startDate, Calendar finalDeadline, String timelineID, String notes)
 		{
@@ -277,9 +280,24 @@ public class Project implements Serializable
 		{
 		this.experimentList = experimentList;
 		}
-
+	
 	public void setDocList(List<ProjectDocument> docList)
 		{
 		this.docList = docList;
 		}
+	
+	// issue 187
+	@Transient
+	public List <Experiment> getExpAssayDateCritList ()
+		{
+		return expAssayDateCritList;
+		}
+	
+	// issue 187
+	@Transient
+	public void setExpAssayDateCritList (List <Experiment> vexpAssayDateCritList)
+		{
+		expAssayDateCritList = vexpAssayDateCritList;
+		}
+	
 	}

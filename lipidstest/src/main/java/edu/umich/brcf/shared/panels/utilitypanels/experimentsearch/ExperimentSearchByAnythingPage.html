@@ -7,7 +7,7 @@
 		
 		.dialog_legend { font-weight : bold; background : transparent; color : blue; border : none; padding: 4px;  text-align : left;	 }
 		.dialog_background  { background : #F4F4F4 ; height : 100%}
-		.dialog_fieldset {  border: 2px outset #4D94FF; background-color : white; }	
+		.dialog_fieldset {  border: 1px outset #4D94FF; background-color : white; }	
 	</style>
 </wicket:head>
 
@@ -16,7 +16,7 @@
 
 	<div>
 	
-		<fieldset class = "dialog_fieldset" style = "height : 80%; margin-top : 2%; margin-bottom : 2%; width :90%; margin-left : 5%; margin-right : 5%">	
+		<fieldset class = "dialog_fieldset" style = "height : 100%; margin-top : 0%; margin-bottom : 0%; width :100%; margin-left : 0%; margin-right : 0%">	
 			
 			<legend class = "dialog_legend" >
 		   		<span  style = "text-align : left; font-weight : bold; color :  #0053CF">Search for Experiment Details</span>
@@ -53,6 +53,7 @@
 						   	<span wicket:id = "searchForProjectPanel"></span>
 						   	<span wicket:id = "searchForOrganizationPanel"></span>
 						   	<span wicket:id = "searchForPIPanel"></span>
+						   	<span wicket:id = "searchForAssayPanel"></span>
 						<!--    	<span wicket:id = "searchForSamplePanel"></span> -->
 						</td>
 						<td></td>

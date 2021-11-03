@@ -25,7 +25,6 @@ public abstract class SearchTypeDropDown extends DropDownChoice
 		
 		this.setModel(new PropertyModel(object, propertyName));
 		availableSearchTypes = getSearchTypes();
-		
 		setChoices(new LoadableDetachableModel<List<String>>() 
 			{
 			@Override
@@ -45,7 +44,7 @@ public abstract class SearchTypeDropDown extends DropDownChoice
 	private List <String> getSearchTypes()
 		{
 		// issue 181
-		return Arrays.asList(new String [] {"Experiment Id", "Experiment Name", "Project Id", "Project Name", "Contact Name", "Principal Investigator",  "Organization Name"});
+		return Arrays.asList(new String [] {"Experiment Id", "Experiment Name", "Project Id", "Project Name", "Contact Name", "Principal Investigator",  "Organization Name", "Assay Id"});
 		}
 	
 	
@@ -66,65 +65,3 @@ public abstract class SearchTypeDropDown extends DropDownChoice
 
 
 
-/*
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.PropertyModel;
-
-import edu.umich.brcf.metabolomics.panels.lims.experiment.NewExperimentPanel;
-
-
-public abstract class SearchTypeDropDown extends DropDownChoice
-	{
-	List<String> volumeUnits = null;
-	
-	public SearchTypeDropDown(String id, Object object, final String propertyName)
-		{
-		super(id, new PropertyModel(object, propertyName));
-		
-		NewExperimentPanel panel ;
-		setModel(new PropertyModel(object, propertyName));
-		volumeUnits = getVolumeUnits();
-		
-		setChoices(new LoadableDetachableModel<List<String>>() 
-			{
-			@Override
-			protected List<String> load() 
-				{ 
-				if (volumeUnits == null)
-					volumeUnits = getVolumeUnits();
-				
-				return volumeUnits;
-				}
-			});
-			
-			add(buildUpdateBehavior("change", "updateForVolumeDrop"));			
-			}
-		
-		
-		private List <String> getVolumeUnits()
-			{
-			return Arrays.asList(new String [] {"Experiment", "Project", "Contact", "Organization", "Sample"});
-			}
-		
-		
-		protected AjaxFormComponentUpdatingBehavior buildUpdateBehavior(String event, String eventTag)
-			{
-			return new AjaxFormComponentUpdatingBehavior(event)
-				{
-				@Override
-				protected void onUpdate(AjaxRequestTarget target)
-					{
-					doUpdateBehavior(target);
-					}	
-				};
-			}
-		
-		protected abstract void doUpdateBehavior(AjaxRequestTarget target);
-		}
-*/

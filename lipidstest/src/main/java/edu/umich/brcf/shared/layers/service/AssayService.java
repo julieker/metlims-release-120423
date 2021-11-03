@@ -10,6 +10,7 @@ import org.springframework.util.Assert;
 
 import edu.umich.brcf.shared.layers.dao.AssayDAO;
 import edu.umich.brcf.shared.layers.domain.Assay;
+import edu.umich.brcf.shared.layers.domain.Experiment;
 import edu.umich.brcf.shared.layers.domain.SampleAssay;
 import edu.umich.brcf.shared.util.FormatVerifier;
 import edu.umich.brcf.shared.util.StringParser;
@@ -29,6 +30,18 @@ public class AssayService
 	public void createSampleAssay(SampleAssay sampleAssay)
 		{
 		assayDao.createSampleAssay(sampleAssay);
+		}
+	
+	// issue 187
+	public List<String> allAssayNamesAndIdsMatching()
+		{
+		return assayDao.allAssayNamesAndIdsMatching();
+		}
+	
+	// issue 187
+	public List<String> allAssayNamesAndIdsMatching(boolean forAssaySearch)
+		{
+		return assayDao.allAssayNamesAndIdsMatching(forAssaySearch);
 		}
 	
 	// Issue 249
@@ -105,6 +118,7 @@ public class AssayService
 	
 	public List<String> allAssayNamesForPlatform(String platform)
 		{
+		System.out.println("here is platform:" + platform);
 		return assayDao.allAssayNamesForPlatform(platform);
 		}
 
@@ -160,5 +174,28 @@ public class AssayService
 	public List<String> loadByAssayWithAliquots()
 		{
 		return assayDao.loadByAssayWithAliquots();
-		}	
+		}
+	
+	// issue 187
+	public String getAssayIdForSearchString(String str, String label)
+		{
+		if (str == null) 
+			throw new RuntimeException("Assay string string can't be null");
+		
+		String assayId = str;
+		if(!FormatVerifier.verifyFormat(Assay.fullIdFormat,str.toUpperCase()))
+			assayId = StringParser.parseId(str);
+		//if(!FormatVerifier.verifyFormat(Experiment.fullIdFormat,assayId.toUpperCase()))
+		//	{
+			try  
+				{
+				Assay assay = assayDao.loadById(str);
+				assayId = assay.getAssayId();
+				}
+			catch (Exception e) { throw new RuntimeException("Assay load error : cannot find assay  " + label + " "  + str);  }
+			//}
+		
+		return assayId;
+		} 
+	
 	}

@@ -117,7 +117,7 @@ public class UserDAO extends BaseDAO
 	public List<String> allUserNamesContactSearch(String input)
 		{
 		Query query = getEntityManager().createNativeQuery("select cast(u.last_name as VARCHAR2(30)), cast(u.first_name as"
-					+ " VARCHAR2(20)), cast(u.researcher_id AS VARCHAR2(6)) from Researcher  u where (upper(last_name) like '%" + input + "%' or upper(first_name) like '%" + input + "%') order by u.last_name");
+					+ " VARCHAR2(20)), cast(u.researcher_id AS VARCHAR2(6)) from Researcher  u where (upper(last_name) like '%" + input + "%' or upper(first_name) like '%" + input + "%' or upper(last_name) || ', ' || upper(first_name) like '%" + input + "%')  and (researcher_id in (select contactperson_id from project)) order by u.last_name");
 	
 		List<Object[]> userList = query.getResultList();
 	

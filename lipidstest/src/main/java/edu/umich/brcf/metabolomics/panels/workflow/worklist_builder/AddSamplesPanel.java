@@ -529,6 +529,7 @@ public class AddSamplesPanel extends Panel
 					{
 					case "updateForRandomDrop":                        
 						item.setIsRandomized(false);
+						originalWorklist.setChearBlankType("Plasma"); // issue 186
 						originalWorklist.setRandomizeByPlate(false);// issue 179
 						originalWorklist.setDefaultPool(true); // issue 169
 						originalWorklist.clearOutMotorPacControls(); // issue 422
@@ -553,6 +554,7 @@ public class AddSamplesPanel extends Panel
 
 					case "updateForAssayDrop":
 						String val = item.getAssayType();
+						originalWorklist.setChearBlankType("Plasma"); // issue 186
 						originalWorklist.setRandomizeByPlate(false);// issue 179
 						originalWorklist.setDefaultPool(true); // issue 169
 						originalWorklist.clearOutMotorPacControls(); // issue 422
@@ -582,6 +584,7 @@ public class AddSamplesPanel extends Panel
 						break;
 
 					case "updateForExperimentDrop":
+						originalWorklist.setChearBlankType("Plasma"); // issue 186
 						originalWorklist.setRandomizeByPlate(false);// issue 179
 						item.setIsRandomized(false);
 						originalWorklist.setDefaultPool(true); // issue 169

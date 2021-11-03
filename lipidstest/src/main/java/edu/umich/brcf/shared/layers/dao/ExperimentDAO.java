@@ -46,6 +46,41 @@ public class ExperimentDAO extends BaseDAO
 		getEntityManager().remove(exp);
 		}
 
+	// issue 187
+	// issue 187
+	// bringing back just the criteria....
+	public List<Experiment> loadExpExperimentProjectByAssay(String searchStr, String projId) 
+		{	
+		List<Project> projectList = new ArrayList<Project>();
+		searchStr = StringParser.parseId(searchStr);
+		List <Experiment> listOfExperiments = new ArrayList <Experiment> ();
+		Query query;
+		query = getEntityManager().createNativeQuery("select distinct(e.exp_id) from experiment e, sample s, sample_assays sa  " + 
+				" where e.exp_id = s.exp_id and s.sample_id = sa.sample_id  and status is not null and trim(status) != ' ' and status != 'X' " + 
+				"  and e.project_id = '" + projId + "' and sa.assay_id ='" + searchStr + "' order by 1");	
+		
+		String sqlQuery = "select distinct(e.exp_id) from experiment e, sample s, sample_assays sa  " + 
+				" where e.exp_id = s.exp_id and s.sample_id = sa.sample_id  and status is not null and trim(status) != ' ' and status != 'X' " + 
+				"  and e.project_id = '" + projId + "' and sa.assay_id ='" + searchStr + "' order by 1";
+		for (Object lexpid : query.getResultList())
+			listOfExperiments.add(this.loadById(lexpid.toString()));
+		return 	listOfExperiments;
+		}
+	
+	// issue 187
+	public List<Experiment> loadExpExperimentProjectByAssay(String searchStr, String projId, String fromDate, String toDate) 
+		{	
+		List<Project> projectList = new ArrayList<Project>();
+		searchStr = StringParser.parseId(searchStr);
+		List <Experiment> listOfExperiments = new ArrayList <Experiment> ();
+		Query query;
+		query = getEntityManager().createNativeQuery("select distinct(e.exp_id) from experiment e, sample s, sample_assays sa  " + 
+				" where e.exp_id = s.exp_id and s.sample_id = sa.sample_id  and status is not null and trim(status) != ' ' and status != 'X' " + 
+				"  and e.project_id = '" + projId + "' and sa.assay_id ='" + searchStr + "' and trunc(e.creationdate) between to_date('" + fromDate + "', 'mm/dd/yy')  and to_date('" + toDate + "', 'mm/dd/yy')  order by 1");	
+		for (Object lexpid : query.getResultList())
+			listOfExperiments.add(this.loadById(lexpid.toString()));
+		return 	listOfExperiments;
+		}
 	
 	public List<Experiment> allExperiments()
 		{
@@ -294,8 +329,6 @@ public class ExperimentDAO extends BaseDAO
 		String queryString = "select cast(s.subject_id as VARCHAR2(9)) from sample s where s.exp_id = ?1 ";
 		Query query = getEntityManager().createNativeQuery(queryString).setParameter(1, expId);
 		List<String> subjectList = query.getResultList();
-		System.out.println(queryString);
-
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		for (int i = 0; i < subjectList.size(); i++)

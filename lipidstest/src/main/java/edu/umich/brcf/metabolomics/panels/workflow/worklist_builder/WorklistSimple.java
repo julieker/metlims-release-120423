@@ -80,6 +80,7 @@ public class WorklistSimple implements Serializable
 	private int limitNumberControls = 99;
 	private String lastSample ; // issue 29
 	private int startingPoint ; // issue 29
+	private String chearBlankType = "Plasma";// issue 181
 	private int nGastroExercise = 0, nGastroSedentary = 0,nLiverExercise = 0,
 	    nLiverSedentary = 0,nAdiposeExercise = 0,nAdiposeSedentary = 0,
 		nPlasmaExercise = 0,
@@ -110,6 +111,7 @@ public class WorklistSimple implements Serializable
 	// issue 179
 	
 	private boolean changeDefaultInjVolume = false;
+	// issue 186
 	
 	
 	// issue 153
@@ -123,6 +125,17 @@ public class WorklistSimple implements Serializable
 		this.startPlate = startPlate;
 		}
 	
+	// issue 186
+	public String getChearBlankType ()
+		{
+		return chearBlankType;
+		}
+	
+	public void setChearBlankType  (String chearBlankType)
+		{
+		this.chearBlankType = chearBlankType;
+		}
+		
 	// issue 126
 	public int getNHumanMuscleCntrl ()
 		{

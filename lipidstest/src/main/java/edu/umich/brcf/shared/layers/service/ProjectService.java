@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.util.Assert;
 
+import edu.umich.brcf.shared.layers.dao.AssayDAO;
 import edu.umich.brcf.shared.layers.dao.ClientDAO;
 import edu.umich.brcf.shared.layers.dao.ProjectDAO;
 import edu.umich.brcf.shared.layers.dao.UserDAO;
@@ -203,13 +204,33 @@ public class ProjectService
 		return projectId;
 		} 
 	
-
+	// issue 187
+	public List<Project> loadProjectExperimentByAssay(String searchStr) 
+		{
+		return projectDao.loadProjectExperimentByAssay(searchStr);
+		}
+	// issue 187
+	public List<String> loadExpProjectExperimentByAssay(String searchStr, String dateFrom, String dateTo) 
+		{
+		return projectDao.loadExpProjectExperimentByAssay(searchStr, dateFrom, dateTo);
+		}
+	
+	// issue 187
+	public List<String> loadExpProjectExperimentByAssay(String searchStr) 
+		{
+		return projectDao.loadExpProjectExperimentByAssay(searchStr);
+		}
+	
+	public List<Project> loadProjectExperimentByAssay(String searchStr, String dateFrom, String dateTo) 
+		{
+		return projectDao.loadProjectExperimentByAssay(searchStr, dateFrom, dateTo);
+		}
+	
 	public List<String> projectIdsByStartDate()
 		{
 		return projectDao.projectIdsByStartDate();
 		}
 	
-
 	public void setProjectDao(ProjectDAO projectDao) { this.projectDao = projectDao; }
 	public void setUserDao(UserDAO userDao) { this.userDao = userDao; }
 	public void setClientDao(ClientDAO clientDao) { this.clientDao = clientDao; }

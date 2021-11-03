@@ -83,7 +83,6 @@ public class AutoAddControlsPanel extends Panel
 	private String nStandardsStr = "1", poolSpacingStrA = "0 (NO POOLS)", poolSpacingStrB = "0 (NO POOLS)", nBlanksStr = "1", nMatrixBlanksStr = "0", nChearBlanksStr= "0";
 	// issue 13 2020 
 	private String nProcessBlanksStr = "1";
-	private String chearBlankType = "Urine";
 	private WebMarkupContainer container = new WebMarkupContainer("container");
 	private List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
 	private String example = "";
@@ -112,7 +111,7 @@ public class AutoAddControlsPanel extends Panel
 		container.add(processBlanksDrop = buildQuantityDropdown("processBlanksDrop","nProcessBlanksStr")); // issue 13 2020
 		container.add(qcDrop1 = buildQuantityDropdown("qcDrop1","nMatrixBlanksStr"));
 		container.add(qcDrop2 = buildQuantityDropdown("qcDrop2","nChearBlanksStr"));
-		container.add(chearBlankTypeDrop = buildChearBlankTypeDropdown("chearBlankTypeDrop","chearBlankType"));
+		container.add(chearBlankTypeDrop = buildChearBlankTypeDropdown("chearBlankTypeDrop"));
 		//customizeButton
 		// issue 13
 		container.add(poolTypeADrop = buildPoolTypeDropdownA("poolTypeADrop","poolTypeA"));
@@ -476,9 +475,9 @@ public class AutoAddControlsPanel extends Panel
 		container.add(motrpacOptionsDialog);
 		}
 	
-	private DropDownChoice buildChearBlankTypeDropdown(final String id,  final String propertyName)
+	private DropDownChoice buildChearBlankTypeDropdown(final String id)
 		{
-		DropDownChoice drp = new DropDownChoice(id, new PropertyModel(this, propertyName), new LoadableDetachableModel<List<String>>()
+		DropDownChoice drp = new DropDownChoice(id, new PropertyModel(originalWorklist, "chearBlankType"), new LoadableDetachableModel<List<String>>()
 			{
 			@Override
 			protected List<String> load() { return availableChearBlankTypes; }
@@ -798,9 +797,10 @@ public class AutoAddControlsPanel extends Panel
 	
 		for (int i = 0; i < nChearBlanks; i++)
 			{
-			if ("Urine".equals(chearBlankType))
+			// issue 186
+			if ("Urine".equals(originalWorklist.getChearBlankType()))
 				id = controlService.controlIdForNameAndAgilent("Reference 1 - urine");
-			else if ("Plasma".equals(chearBlankType))
+			else if ("Plasma".equals(originalWorklist.getChearBlankType()))
 				id = controlService.controlIdForNameAndAgilent("Reference 1 - plasma");
 			
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
@@ -1340,9 +1340,9 @@ public class AutoAddControlsPanel extends Panel
 			}	
 		for (int i = 0; i < nChearBlanks; i++)
 			{
-			if ("Urine".equals(chearBlankType))
+			if ("Urine".equals(originalWorklist.getChearBlankType()))
 				id = controlService.controlIdForNameAndAgilent("Reference 1 - urine");
-			if ("Plasma".equals(chearBlankType))
+			if ("Plasma".equals(originalWorklist.getChearBlankType()))
 				id = controlService.controlIdForNameAndAgilent("Reference 1 - plasma");			
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
 			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
@@ -1564,14 +1564,9 @@ public class AutoAddControlsPanel extends Panel
 		return nMatrixBlanksStr;
 		}
 
-	public String getnChearBlanksStr()
+	 public String getnChearBlanksStr()
 		{
 		return nChearBlanksStr;
-		}
-
-	public String getChearBlankType()
-		{
-		return chearBlankType;
 		}
 
 	// issue 13
@@ -1594,11 +1589,6 @@ public class AutoAddControlsPanel extends Panel
 	public void setnChearBlanksStr(String nChearBlanksStr)
 		{
 		this.nChearBlanksStr = nChearBlanksStr;
-		}
-
-	public void setChearBlankType(String chearBlankType)
-		{
-		this.chearBlankType = chearBlankType;
 		}
 	
 // issue 170	

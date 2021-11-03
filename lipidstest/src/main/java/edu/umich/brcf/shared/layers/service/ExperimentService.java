@@ -75,6 +75,19 @@ public class ExperimentService
 		return experimentDao.loadWithInfoForSubjectTracking(expId);
 		}
 	
+	// issue 187
+	public List<Experiment> loadExpExperimentProjectByAssay(String searchStr, String projId) 
+		{
+		return experimentDao.loadExpExperimentProjectByAssay(searchStr, projId);
+		}
+	
+	// issue 187
+	public List<Experiment> loadExpExperimentProjectByAssay(String searchStr, String projId, String fromDate, String toDate) 
+		{
+		return experimentDao.loadExpExperimentProjectByAssay(searchStr, projId, fromDate, toDate);
+		}
+	
+	
 	
 	public List<SubjectInfoItem> loadOptimizedForSubjectTracking(String expId)
 		{

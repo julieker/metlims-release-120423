@@ -2,16 +2,13 @@ package edu.umich.brcf.shared.layers.dao;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.stream.Collectors;
 import javax.persistence.Query;
-
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
-
 import edu.umich.brcf.shared.layers.domain.Assay;
 import edu.umich.brcf.shared.layers.domain.SampleAssay;
-
-
+import edu.umich.brcf.shared.util.io.StringUtils;
 
 @Repository
 public class AssayDAO extends BaseDAO
@@ -44,14 +41,12 @@ public class AssayDAO extends BaseDAO
 		return assay;
 		}
 
-	
 	public String getStandardNameForAssayName(String name)
 		{
 		Assay assay = loadAssayByName(name);
 		return (assay == null ? "" : assay.getAssayName());
 		}
 
-	
 	public void createSampleAssay(SampleAssay sampleAssay)
 		{
 		getEntityManager().persist(sampleAssay);
@@ -76,7 +71,6 @@ public class AssayDAO extends BaseDAO
 		return (getEntityManager().find(Assay.class, assayId));
 		}
 
-	
 	public List<String> allAssayNames()
 		{
 		Query query = getEntityManager().createNativeQuery("select a.assay_name||' ('||a.assay_id||')' from assays a order by a.assay_id");
@@ -84,7 +78,6 @@ public class AssayDAO extends BaseDAO
 		return assayList;
 		}
 
-	
 	public List<String> allAssayNamesAndIds()
 		{
 		List<String> names = allAssayNamesForPlatform("agilent");
@@ -96,16 +89,44 @@ public class AssayDAO extends BaseDAO
 		return names;
 		}
 	
+	//issue 187
+	public List<String> allAssayNamesAndIdsMatching()
+		{
+		return allAssayNamesAndIdsMatching(false);
+		}
+	
+	// issue 187
+	public List<String> allAssayNamesAndIdsMatching(boolean forAssaySearch)
+		{
+		List<String> names = allAssayNamesForPlatform("agilent");
+		List<String> other_names = allAssayNamesForPlatform("absciex");
+	
+		for (int i = 0; i < other_names.size(); i++)
+			names.add(other_names.get(i));
+	
+		if (forAssaySearch)
+			names =   names.stream().sorted().collect(Collectors.toList()); 
+		return names;
+		}
+	
+	// issue 187
+	public List<String> allAssayNamesForPlatform(String platform, String input)
+		{
+		Query query;
+		String platId = platform.equalsIgnoreCase("absciex") ? "PL002" : "PL001";
+	    if (StringUtils.isEmptyOrNull(input))
+			query = getEntityManager().createNativeQuery("select a.assay_name||' ('||a.assay_id||')' from assays a where a.platform_id = "
+				+ "?1  order by a.assay_id").setParameter(1, platId);
+	    else
+	    	query = getEntityManager().createNativeQuery("select a.assay_name||' ('||a.assay_id||')' from assays a where a.platform_id = "
+					+ "?1  and a.assay_id like '%" + input + "%' order by a.assay_id").setParameter(1, platId);	
+		List<String> assayList = query.getResultList();
+		return assayList;
+		}
 	
 	public List<String> allAssayNamesForPlatform(String platform)
 		{
-		String platId = platform.equalsIgnoreCase("absciex") ? "PL002" : "PL001";
-	
-		Query query = getEntityManager().createNativeQuery("select a.assay_name||' ('||a.assay_id||')' from assays a where a.platform_id = "
-				+ "?1  order by a.assay_id").setParameter(1, platId);
-		
-		List<String> assayList = query.getResultList();
-		return assayList;
+		return allAssayNamesForPlatform(platform, null);
 		}
 	
 	
@@ -220,6 +241,16 @@ public class AssayDAO extends BaseDAO
 	public String getNameForAssayId(String assayId)
 		{
 		return loadById(assayId).getAssayName();
+		}
+	
+	// issue 187
+	public Assay loadByName(String name)
+		{
+		List<Assay> lst = getEntityManager().createQuery("from Assay a where a.assayName = :name").setParameter("name", name).getResultList();
+		
+		Assay assay = (Assay) DataAccessUtils.requiredSingleResult(lst);
+		
+		return assay;
 		}
 	
 	// issue 123

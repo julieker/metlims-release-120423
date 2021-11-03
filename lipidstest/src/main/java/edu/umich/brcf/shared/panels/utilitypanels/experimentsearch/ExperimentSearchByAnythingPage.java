@@ -6,7 +6,9 @@
 package edu.umich.brcf.shared.panels.utilitypanels.experimentsearch;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -18,8 +20,10 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import edu.umich.brcf.metabolomics.panels.lims.newexperiment.SmallExperimentSearchPanel;
 import edu.umich.brcf.shared.layers.domain.Experiment;
 import edu.umich.brcf.shared.layers.domain.Project;
+import edu.umich.brcf.shared.layers.service.AssayService;
 import edu.umich.brcf.shared.layers.service.ClientService;
 import edu.umich.brcf.shared.layers.service.ExperimentService;
 import edu.umich.brcf.shared.layers.service.OrganizationService;
@@ -27,11 +31,9 @@ import edu.umich.brcf.shared.layers.service.ProjectService;
 import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.util.utilpackages.ListUtils;
+import edu.umich.brcf.shared.util.utilpackages.StringUtils;
 import edu.umich.brcf.shared.util.widgets.AjaxCancelLink;
 import edu.umich.brcf.shared.util.widgets.SearchTypeDropDown;
-
-
-
 public abstract class ExperimentSearchByAnythingPage extends  WebPage
 	{
 	@SpringBean
@@ -49,18 +51,20 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 	@SpringBean
 	ClientService clientService;
 	
+	@SpringBean
+	AssayService assayService;	
 	private Boolean isValid = false;
 	private String searchTypeOuter = "Experiment";
-	
 	private Page backPage;
 	private FeedbackPanel feedback;
 	private AjaxSubmitLink searchLink;
+	public ExperimentSearchForm experimentSearchForm;
 	
-	
+	public GrabAssayLabelPanel assayPanel;
 	public ExperimentSearchByAnythingPage(Page webPage)
 		{
 		this.backPage = webPage;
-		add(new ExperimentSearchForm("experimentSearchForm")); 
+		add(experimentSearchForm = new ExperimentSearchForm("experimentSearchForm")); 
 		}
 	
 	public final class ExperimentSearchForm extends Form 
@@ -73,15 +77,17 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 		GrabExperimentLabelPanel expPanel;
 		GrabProjectLabelPanel  projPanel;
 		GrabContactLabelPanel contactPanel;
+		
 		GrabPILabelPanel piPanel;
 		GrabOrganizationLabelPanel orgPanel;
 		AjaxCancelLink cancelLink;
+		
 		
 		public ExperimentSearchForm(final String id) 
 			{
 			super(id);
 			setOutputMarkupId(true);
-			
+					
 			final WebMarkupContainer container = new WebMarkupContainer("container");
 			container.setOutputMarkupId(true);
 			add(container);
@@ -120,6 +126,10 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 			container.add(piPanel);
 			piPanel.setOutputMarkupId(true);
 			
+			assayPanel = buildSearchByAssayPanel("searchForAssayPanel");
+			container.add(assayPanel);
+			assayPanel.setOutputMarkupId(true);		
+			
 	//		samplePanel = buildSearchForSamplePanel("searchForSamplePanel");
 	//		container.add(samplePanel);
 	//		samplePanel.setOutputMarkupId(true);
@@ -149,6 +159,7 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 						case "Project Name" : projPanel.setSearchType("Name"); target.add(projPanel);  break;
 						case "Contact Name" : contactPanel.setSearchType("Name"); target.add(contactPanel);  break;
 						case "Organization Name" : orgPanel.setSearchType("Name"); target.add(orgPanel);  break;
+						case "Assay Id" : assayPanel.setSearchType("Id");
 						default : 
 						}
 				
@@ -186,6 +197,38 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 					}
 				@Override 
 				public boolean isVisible() {  return (getSearchTypeOuter() != null && getSearchTypeOuter().startsWith("Experiment"));   }
+				};
+			}
+		
+		// issue 187
+		public GrabAssayLabelPanel buildSearchByAssayPanel(String id)
+			{
+			return new  GrabAssayLabelPanel(id)
+				{
+				@Override
+				protected void onSelect(String str, String createDate, String createDateTo, AjaxRequestTarget target)
+					{
+					try
+						{
+						isValid=true;
+						List <Project> projList = projectService.loadProjectExperimentByAssay(str);
+						setProjectList(projList);
+						
+						if (ListUtils.isNonEmpty(projList))
+							{
+							List<Experiment> expList = projectList.get(0).getExperimentList();
+							setExperiment(ListUtils.isNonEmpty(expList) ?  expList.get(0) : null);
+							}
+						target.add(searchLink);
+						//projectList.add(projectService.getProject(experiment.getProject().getProjectID()));
+						}	
+					catch (Exception e) 
+						{ 
+						doError(e.getMessage(), target);
+						}
+					}
+				@Override 
+				public boolean isVisible() {  return (getSearchTypeOuter() != null && getSearchTypeOuter().startsWith("Assay"));   }
 				};
 			}
 		
@@ -283,48 +326,6 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 				public boolean isVisible() { return getSearchTypeOuter() != null && getSearchTypeOuter().startsWith("Project");}
 				};
 			}
-	
-	
-		/*public NewSearchForSamplePanel buildSearchForSamplePanel(String id)
-			{
-			return new NewSearchForSamplePanel(id)
-				{
-				@Override
-				protected void onSelect(String sample, AjaxRequestTarget target)
-					{
-					projectList = new ArrayList<Project>();
-					Experiment e = (sampleService.loadById(sample)).getExp();
-					projectList.add(projectService.getProject(e.getProject().getProjectID()));
-					setProjectList(projectList);
-					setExperiment(experimentService.loadById(e.getExpID()));
-					}
-				
-				@Override 
-				public boolean isVisible() { return (getSearchTypeOuter() != null && getSearchTypeOuter().startsWith("Sample")); }
-				};
-			} */
-		
-	/*{
-					try
-						{
-						String projectId  = projectService.getProjectIdForSearchString(input, "with name");
-						//this.searchValid = true;
-						isValid = true;
-						target.add(searchLink);
-						System.out.println("Input was " + input);
-						String project = projectService.getProjectIdForSearchString(input, "project name");
-						projectList = new ArrayList<Project>();
-						projectList.add(projectService.getProject(project));
-						setProjectList(projectList);
-						
-						List<Experiment>  expList = null;
-						if (projectList.size() > 0)
-							expList = projectList.get(0).getExperimentList();
-						
-						setExperiment(ListUtils.isNonEmpty(expList) ?  expList.get(0) : null);
-						}
-					catch (Exception e) { doError(e.getMessage(), target); }*/
-		
 		
 		public GrabOrganizationLabelPanel buildSearchByOrganizationPanel(String id)
 			{
@@ -402,32 +403,55 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 			    @Override
 		       public void onSubmit(AjaxRequestTarget target)// issue 464
 			       	{
-		      		if (experiment == null)
+			    	List <Project> projList = new ArrayList <Project> ();
+			    	if (searchTypeOuter.equals("Assay Id"))
+			    		{
+			    		if (!assayPanel.grabAssayLabelForm.getUseDate())
+			    			{
+			    			projList = projectService.loadProjectExperimentByAssay(assayPanel.grabAssayLabelForm.getAssay());
+			    			}
+			    		else 
+			    			{
+			    			if (StringUtils.isEmptyOrNull(assayPanel.grabAssayLabelForm.getCreateDate()) || StringUtils.isEmptyOrNull(assayPanel.grabAssayLabelForm.getCreateDateTo()))
+			    				{
+			    				target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please enter in a from and to date"));
+			    				return;
+			    				}
+			    			projList = projectService.loadProjectExperimentByAssay(assayPanel.grabAssayLabelForm.getAssay(),   assayPanel.grabAssayLabelForm.getCreateDate() ,assayPanel.grabAssayLabelForm.getCreateDateTo());
+			    			}
+			    		if (projList.size() == 0)
+			    			{
+			    			target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("No records match your criteria.  Please try another date range or Assay."));
+		    				return;
+			    			}
+			    		setProjectList(projList);
+						if (ListUtils.isNonEmpty(projList))
+							{
+							List<Experiment> expList = projectList.get(0).getExperimentList();
+							setExperiment(ListUtils.isNonEmpty(expList) ?  expList.get(0) : null);
+							}	
+			    		}			    			
+			    	if (experiment == null)
 		      			{
 		      			isValid = false;
 		      			target.add(searchLink);
 		      			return;
 		      			}
 		      	
-		      		isValid = true;
-		      		target.add(searchLink);
-		      	
+		      		isValid = true;	 
+		      		target.add(searchLink);		      	    
 		      		// otherwise save the ids and projet ids to the session.
 		      		ExperimentSearchByAnythingPage.this.doBusiness(experiment.getExpID() , getProjIds());
 					experiment = null;
 					modal1.close(target);
-			       	}	
-			    
+			       	}			    
 			    @Override
 				 public boolean isEnabled()
 					 {
 					 return isValid;
 					 }
-				};
-				
-				
+				};				
 			}
-		
 		
 		private List<String> getProjIds()
 			{

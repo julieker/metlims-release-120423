@@ -4,9 +4,8 @@
 ////////////////////////////////////////////////////
 package edu.umich.brcf.metabolomics.panels.lims.newexperiment;
 
+import java.util.HashMap;
 import java.util.List;
-
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -18,10 +17,8 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-
 import edu.umich.brcf.metabolomics.panels.lims.newexperiment.NewExperimentPanel;
 import edu.umich.brcf.shared.layers.domain.Experiment;
 import edu.umich.brcf.shared.layers.service.ExperimentService;
@@ -30,8 +27,6 @@ import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.panels.utilitypanels.experimentsearch.ExperimentSearchByAnythingPage;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
-
-
 
 public class SmallExperimentSearchPanel extends Panel 
 		{
@@ -50,13 +45,16 @@ public class SmallExperimentSearchPanel extends Panel
 		private String progressMessage = "", searchLabel = "newExperimentSearch";//                          *************** Experiment search active ***************";
 		IndicatingAjaxLink experimentSearchBtn;
 		WebMarkupContainer container;
+		ExperimentSearchByAnythingPage experimentSearchByAnythingPage;
+		SmallExperimentSearchPanel smallExperimentSearchPanel = this;
 		
 		public SmallExperimentSearchPanel(String id) 
 			{
 			super(id);
 			setOutputMarkupId(true);
 			add(new FeedbackPanel("feedback"));
-			
+			((MedWorksSession) Session.get()).setExpProjmap(new  HashMap<String, List <Experiment> >());
+					
 			ExperimentSearchForm form;
 			add(form = new ExperimentSearchForm("experimentSearchForm"));
 			form.setOutputMarkupId(true);
@@ -83,7 +81,6 @@ public class SmallExperimentSearchPanel extends Panel
 						target.add(progressLabel);
 						String val = (String) ((MedWorksSession) Session.get()).getSaveValue();
 						List<String> pList = ((MedWorksSession) Session.get()).getSaveValues();
-						
 						expPanel.setExperiment(val == null ?  null : experimentService.loadByIdWithProject(val));
 						expPanel.updateProjectList(val, pList);
 						expPanel.renewPage(target);
@@ -91,13 +88,9 @@ public class SmallExperimentSearchPanel extends Panel
 						experimentSearchBtn.setEnabled(true);
 						progressLabel.setEnabled(false);
 						target.add(container);
-					//	System.out.println("Done renewing container");
 						}
-					});
-				
-				container.add(modal1); 
-				
-				
+					});				
+				container.add(modal1); 				
 				final ModalWindow modal2 = ModalCreator.createModalWindow("modal2", 650, 400);
 				modal2.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() 
 					{
@@ -108,10 +101,8 @@ public class SmallExperimentSearchPanel extends Panel
 						target.add(experimentSearchBtn);
 						}
 					});
-				
-				
-				container.add(modal2);
-				
+							
+				container.add(modal2);				
 				container.add(progressLabel = new Label("progressLabel", new PropertyModel<String>(this, "progressMessage"))
 					{
 					@Override
@@ -124,16 +115,14 @@ public class SmallExperimentSearchPanel extends Panel
 			    		}	
 					});
 				progressLabel.setOutputMarkupId(true);
-				progressLabel.setEnabled(false);
-				
+				progressLabel.setEnabled(false);				
 				container.add(buildLinkToModal("createExperiment",modal2).setOutputMarkupId(true));
 				container.add(experimentSearchBtn = buildLinkToModal("newExperimentSearch", modal1));
 				experimentSearchBtn.setOutputMarkupId(true);
 				container.add(expPanel = new NewExperimentPanel("expPanel",  null, null, null));
 				expPanel.setOutputMarkupId(true);
 				}
-
-		
+	
 		private IndicatingAjaxLink buildLinkToModal(final String linkID, final ModalWindow modal1) 
 			{
 			// issue 39
@@ -184,13 +173,29 @@ public class SmallExperimentSearchPanel extends Panel
 						case "createExperiment" :  { return buildEditExperiment(modal1); }
 							
 						default : 
-							return new ExperimentSearchByAnythingPage(getPage())
+							//experimentSearchByAnythingPage = new ExperimentSearchByAnythingPage(getPage());
+							return experimentSearchByAnythingPage  = new ExperimentSearchByAnythingPage(getPage())
 								{
 								@Override
+								// issue 187
 								protected void doBusiness(String expId, List<String> projIds)
-									{
+									{	
 									((MedWorksSession) Session.get()).setSaveValue(expId);
 									((MedWorksSession) Session.get()).setSaveValues(projIds);
+									((MedWorksSession) Session.get()).setExpProjmap(new  HashMap<String, List <Experiment> >());
+									if (experimentSearchByAnythingPage.experimentSearchForm.getSearchTypeOuter().equals("Assay Id") && projIds.size() > 0 )
+										{	
+										for (String lilProjId: projIds)
+											{										
+											if (!experimentSearchByAnythingPage.assayPanel.grabAssayLabelForm.getUseDate())
+											    ((MedWorksSession) Session.get()).getExpProjmap().put(lilProjId,  experimentService.loadExpExperimentProjectByAssay(experimentSearchByAnythingPage.assayPanel.getAssay(), lilProjId));
+											else 
+												 ((MedWorksSession) Session.get()).getExpProjmap().put(lilProjId,  experimentService.loadExpExperimentProjectByAssay(experimentSearchByAnythingPage.assayPanel.getAssay(), lilProjId,experimentSearchByAnythingPage.assayPanel.grabAssayLabelForm.getCreateDate(), experimentSearchByAnythingPage.assayPanel.grabAssayLabelForm.getCreateDateTo()));
+											}
+										String firstProject = projIds.get(0);
+										String firstExperiment = ((MedWorksSession) Session.get()).getExpProjmap().get(firstProject).get(0).getExpID();
+										((MedWorksSession) Session.get()).setSaveValue(firstExperiment);
+										}
 									}
 								};
 						}
@@ -201,7 +206,8 @@ public class SmallExperimentSearchPanel extends Panel
 			switch (linkID)
 				{
 				case "createExperiment" :  initWidth = 600; initHeight = 650; break;
-				case "newExperimentSearch" : initWidth = 800; initHeight = 250; break;
+				// issue 187
+				case "newExperimentSearch" : initWidth = 800; initHeight = 300; break;
 				default : initWidth = 625; initHeight = 230; break;
 				}
 			
