@@ -1,0 +1,37 @@
+<wicket:head>
+	<link rel="stylesheet" type="text/css" href="dialog.css"/>
+</wicket:head>
+	
+<wicket:panel>	
+	
+	  	<form wicket:id = "grabAssayLabelForm" style = "vertical-align : top; margin-top : 0%; border : none"  >
+		
+			  	<table>
+			  	<tr><td></td></tr>
+			  	<tr><td></td></tr>
+			  	
+			  		<tr>
+						<td style = "text-align : left">
+						    
+							<input wicket:id="assay" type="text" value="" size="50"/>
+							<select wicket:id= "assayDrop"><option>EX00411</option><option>EX00412</option><option>EX00413</option></select>
+		                     </td>
+		                     </tr>
+		                     <tr style = "text-align : left">
+			                 <td style = "text-align :left"> 
+			                  
+			                 <span style = "vertical-align : top; color : darkblue; font-weight : 500"> Date?  &nbsp; </span> &nbsp;
+			                	
+			                  <input wicket:id = "useDate"  type = "checkbox" /> 	                
+			                 <input wicket:id="createDateTxt" type="text" size = "3px" style = "text-align :left ; padding-left : 3px; height : 10% ; width : 20%"/> &nbsp;		              
+			                 <span style = "vertical-align : top; color : darkblue; font-weight : 500">To :&nbsp; </span>		                 
+			                 <input wicket:id="createDateToTxt" type="text" value="date"  size="20"/> &nbsp;
+			                 </td>						
+							</tr>
+					
+				</table>
+				
+		  </form>
+		 <div wicket:id = "feedback" class = "feedbackMsg80"></div>
+    
+</wicket:panel>
