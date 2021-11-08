@@ -6,10 +6,8 @@
 package edu.umich.brcf.shared.panels.utilitypanels.experimentsearch;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
@@ -19,8 +17,6 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-
-import edu.umich.brcf.metabolomics.panels.lims.newexperiment.SmallExperimentSearchPanel;
 import edu.umich.brcf.shared.layers.domain.Experiment;
 import edu.umich.brcf.shared.layers.domain.Project;
 import edu.umich.brcf.shared.layers.service.AssayService;
@@ -59,8 +55,12 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 	private FeedbackPanel feedback;
 	private AjaxSubmitLink searchLink;
 	public ExperimentSearchForm experimentSearchForm;
-	
+	public ExperimentSearchByAnythingPage experimentSearchByAnythingPage = this;
 	public GrabAssayLabelPanel assayPanel;
+    WebMarkupContainer spinContainer; // issue 187
+    WebMarkupContainer spinner; // issue 187
+    
+//	boolean isSpinner = false;
 	public ExperimentSearchByAnythingPage(Page webPage)
 		{
 		this.backPage = webPage;
@@ -87,7 +87,29 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 			{
 			super(id);
 			setOutputMarkupId(true);
-					
+			
+			spinContainer = new WebMarkupContainer("spinContainer")
+				{
+				/*public boolean isVisible()
+					{
+					return isSpinner;
+					}*/
+			     };
+		    add(spinContainer);
+			spinContainer.setOutputMarkupId(true);
+			spinContainer.setOutputMarkupPlaceholderTag(true);	
+			
+			spinner= new WebMarkupContainer("spinner")
+			{
+			/*public boolean isVisible()
+				{
+				return isSpinner;
+				}*/
+		     };
+		    spinContainer.add(spinner);
+			spinner.setOutputMarkupId(true);
+			spinner.setOutputMarkupPlaceholderTag(true);	
+			
 			final WebMarkupContainer container = new WebMarkupContainer("container");
 			container.setOutputMarkupId(true);
 			add(container);
@@ -104,7 +126,9 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 		
 			container.add(searchLink = buildSearchLink("searchLink",modal1));
 			searchLink.setOutputMarkupId(true);
-			
+			// issue 187
+		    searchLink.add(( new AttributeModifier("onclick", buildHtmlProgress())));	
+						
 		    expPanel = buildSearchByExperimentPanel("searchForExperimentPanel");
 			expPanel.setOutputMarkupId(true);
 			container.add(expPanel);
@@ -142,7 +166,6 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 					}
 				});
 			}
-	
 		
 		public SearchTypeDropDown buildSearchTypeDrop(String id, final WebMarkupContainer container)
 			{
@@ -220,7 +243,6 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 							setExperiment(ListUtils.isNonEmpty(expList) ?  expList.get(0) : null);
 							}
 						target.add(searchLink);
-						//projectList.add(projectService.getProject(experiment.getProject().getProjectID()));
 						}	
 					catch (Exception e) 
 						{ 
@@ -402,55 +424,70 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 				{
 			    @Override
 		       public void onSubmit(AjaxRequestTarget target)// issue 464
-			       	{
-			    	List <Project> projList = new ArrayList <Project> ();
-			    	if (searchTypeOuter.equals("Assay Id"))
-			    		{
-			    		if (!assayPanel.grabAssayLabelForm.getUseDate())
-			    			{
-			    			projList = projectService.loadProjectExperimentByAssay(assayPanel.grabAssayLabelForm.getAssay());
-			    			}
-			    		else 
-			    			{
-			    			if (StringUtils.isEmptyOrNull(assayPanel.grabAssayLabelForm.getCreateDate()) || StringUtils.isEmptyOrNull(assayPanel.grabAssayLabelForm.getCreateDateTo()))
-			    				{
-			    				target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please enter in a from and to date"));
+			       	{	
+			    	try
+				    	{
+				    	List <Project> projList = new ArrayList <Project> ();
+				    	if (searchTypeOuter.equals("Assay Id"))
+				    		{
+				    		if (!assayPanel.grabAssayLabelForm.getUseDate())
+				    			{
+				    			projList = projectService.loadProjectExperimentByAssay(assayPanel.grabAssayLabelForm.getAssay());
+				    			}
+				    		else 
+				    			{
+				    			if (StringUtils.isEmptyOrNull(assayPanel.grabAssayLabelForm.getCreateDate()) || StringUtils.isEmptyOrNull(assayPanel.grabAssayLabelForm.getCreateDateTo()))
+				    				{
+				    			    target.add(experimentSearchByAnythingPage);
+				    			    ExperimentSearchByAnythingPage.this.info("Enter in Start and End Date");
+				    			    return;
+				    				}
+				    			projList = projectService.loadProjectExperimentByAssay(assayPanel.grabAssayLabelForm.getAssay(),   assayPanel.grabAssayLabelForm.getCreateDate() ,assayPanel.grabAssayLabelForm.getCreateDateTo());
+				    			}
+				    		
+				    		if (projList.size() == 0)
+				    			{
+				    			target.add(experimentSearchByAnythingPage);
+				    			ExperimentSearchByAnythingPage.this.info("No records match your criteria.  Please try another date range or Assay");
 			    				return;
-			    				}
-			    			projList = projectService.loadProjectExperimentByAssay(assayPanel.grabAssayLabelForm.getAssay(),   assayPanel.grabAssayLabelForm.getCreateDate() ,assayPanel.grabAssayLabelForm.getCreateDateTo());
-			    			}
-			    		if (projList.size() == 0)
-			    			{
-			    			target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("No records match your criteria.  Please try another date range or Assay."));
-		    				return;
-			    			}
-			    		setProjectList(projList);
-						if (ListUtils.isNonEmpty(projList))
-							{
-							List<Experiment> expList = projectList.get(0).getExperimentList();
-							setExperiment(ListUtils.isNonEmpty(expList) ?  expList.get(0) : null);
-							}	
-			    		}			    			
-			    	if (experiment == null)
-		      			{
-		      			isValid = false;
-		      			target.add(searchLink);
-		      			return;
-		      			}
-		      	
-		      		isValid = true;	 
-		      		target.add(searchLink);		      	    
-		      		// otherwise save the ids and projet ids to the session.
-		      		ExperimentSearchByAnythingPage.this.doBusiness(experiment.getExpID() , getProjIds());
-					experiment = null;
-					modal1.close(target);
+				    			}
+				    		setProjectList(projList);
+							if (ListUtils.isNonEmpty(projList))
+								{
+								List<Experiment> expList = projectList.get(0).getExperimentList();
+								setExperiment(ListUtils.isNonEmpty(expList) ?  expList.get(0) : null);
+								}	
+				    		}			    			
+				    	if (experiment == null)
+			      			{
+			      			isValid = false;
+			      			target.add(searchLink);
+			      			return;
+			      			}		      	
+			      		isValid = true;	 
+			      		target.add(searchLink);		      	    
+			      		ExperimentSearchByAnythingPage.this.doBusiness(experiment.getExpID() , getProjIds());
+						experiment = null;
+						modal1.close(target);
+				    	}
+			    	catch (Exception e)
+				    	{
+				    	e.printStackTrace();	
+				    	}
 			       	}			    
 			    @Override
 				 public boolean isEnabled()
 					 {
 					 return isValid;
 					 }
-				};				
+			    @Override
+				 public void onError(AjaxRequestTarget target)
+					 {
+			    	 target.add(experimentSearchByAnythingPage);
+	    			 ExperimentSearchByAnythingPage.this.info("There was an error.  Please make sure you have entered a valid date range....");;
+    				 return;
+					 }
+				};				 
 			}
 		
 		private List<String> getProjIds()
@@ -479,8 +516,16 @@ public abstract class ExperimentSearchByAnythingPage extends  WebPage
 			ExperimentSearchByAnythingPage.this.error(msg);
 			//target.add(feedback);
 			}
+		
+		private String buildHtmlProgress()
+			{
+			String htmlStr = "";
+			htmlStr = htmlStr + " document.getElementById(" + "\"" + "spinner" + "\")" + ".style.display = 'block';";
+			htmlStr = htmlStr + " document.getElementById(" + "\"" + "spinnertext" + "\")" + ".style.display = 'block';";
+			return htmlStr;
+			}
 		}
-	
+		
 	protected abstract void doBusiness(String expId, List<String> projIds);
 	}
 
