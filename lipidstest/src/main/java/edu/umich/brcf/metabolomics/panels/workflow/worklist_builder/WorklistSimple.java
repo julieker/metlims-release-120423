@@ -106,6 +106,8 @@ public class WorklistSimple implements Serializable
 	private boolean chosenOtherSampleMotrPAC = false;
 	private int nLungExercise = 0;
 	private int nLungSedentary = 0;
+	public int nPlasmaHumanFemale  = 0;
+	public int nPlasmaHumanMale  = 0;
 	private int startPlateControls = 0;
 	private String startPlate = "1";
 	// issue 179
@@ -167,6 +169,29 @@ public class WorklistSimple implements Serializable
 		{
 		this.nMuscleHumanMale = nMuscleHumanMale;	
 		}
+	
+	// issue 193
+	public int getNPlasmaHumanMale ()
+		{
+		return nPlasmaHumanMale;
+		}
+   // issue 193
+	public void setNPlasmaHumanMale (int nPlasmaHumanMale)
+		{
+		this.nPlasmaHumanMale = nPlasmaHumanMale;	
+		}
+	
+	// issue 193
+	public int getNPlasmaHumanFemale ()
+		{
+		return nPlasmaHumanFemale;
+		}
+   // issue 193
+	public void setNPlasmaHumanFemale (int nPlasmaHumanFemale)
+		{
+		this.nPlasmaHumanFemale = nPlasmaHumanFemale;	
+		}
+	
 	
 	// issue 126
 	public int getNMuscleHumanFemale ()
@@ -1967,6 +1992,8 @@ public class WorklistSimple implements Serializable
 		setNHippoCampusSedentary(0);
 		setNMuscleHumanFemale(0);
 		setNMuscleHumanMale(0);
+		setNPlasmaHumanFemale(0);
+		setNPlasmaHumanMale(0);
 		setNHumanMuscleCntrl(0);
 		}	
 	

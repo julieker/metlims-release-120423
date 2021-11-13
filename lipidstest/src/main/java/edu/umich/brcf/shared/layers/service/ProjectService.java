@@ -209,17 +209,6 @@ public class ProjectService
 		{
 		return projectDao.loadProjectExperimentByAssay(searchStr);
 		}
-	// issue 187
-	public List<String> loadExpProjectExperimentByAssay(String searchStr, String dateFrom, String dateTo) 
-		{
-		return projectDao.loadExpProjectExperimentByAssay(searchStr, dateFrom, dateTo);
-		}
-	
-	// issue 187
-	public List<String> loadExpProjectExperimentByAssay(String searchStr) 
-		{
-		return projectDao.loadExpProjectExperimentByAssay(searchStr);
-		}
 	
 	public List<Project> loadProjectExperimentByAssay(String searchStr, String dateFrom, String dateTo) 
 		{

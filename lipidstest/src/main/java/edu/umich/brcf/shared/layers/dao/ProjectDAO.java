@@ -225,37 +225,6 @@ public class ProjectDAO extends BaseDAO
 		return projectList;		
 		}
 		
-	// issue 187
-	public List <String> loadExpProjectExperimentByAssay(String searchStr) 
-		{	
-		List<Project> projectList = new ArrayList<Project>();
-		searchStr = StringParser.parseId(searchStr);
-		Query query;
-		
-		query = getEntityManager().createNativeQuery("select project_id || ':' || u.exp_id from experiment u where project_id in ( " + 
-				" select distinct project_id from experiment t1 where project_id in (select distinct(project_id)  from experiment e, sample s, sample_assays sa   where status is not null and trim(status) != ' ' and status != 'X' and  e.exp_id = s.exp_id and s.sample_id = sa.sample_id  and sa.assay_id ='" +  searchStr + "')) " + 
-				" minus " + 
-				" select distinct(project_id || ':' || e.exp_id )  from experiment e, sample s, sample_assays sa   where e.exp_id = s.exp_id and s.sample_id = sa.sample_id   and status is not null and trim(status) != ' ' and status != 'X' and sa.assay_id = '" +
-				searchStr + "' order by 1 ");		
-		List<String> pidList = query.getResultList();			
-		return pidList;		
-		}
-	
-	// issue 187
-	public List<String> loadExpProjectExperimentByAssay(String searchStr, String fromDate, String toDate) 
-		{	
-		List<Project> projectList = new ArrayList<Project>();
-		searchStr = StringParser.parseId(searchStr);
-		Query query;		
-		query = getEntityManager().createNativeQuery("select project_id || '->' || u.exp_id from experiment u where project_id in ( " + 
-				" select distinct project_id from experiment t1 where project_id in (select distinct(project_id)  from experiment e, sample s, sample_assays sa   where e.exp_id = s.exp_id and s.sample_id = sa.sample_id and status is not null and trim(status) != ' ' and status != 'X' and sa.assay_id ='" +  searchStr + "'     and trunc(e.creationdate) between to_date('" + fromDate + "', 'mm/dd/yy')  and to_date('" + toDate + "', 'mm/dd/yy'))) " + 
-				" minus " + 
-				" select distinct(project_id || '->' || e.exp_id )  from experiment e, sample s, sample_assays sa   where e.exp_id = s.exp_id and s.sample_id = sa.sample_id and status is not null and trim(status) != ' ' and status != 'X' and sa.assay_id = '" +
-				searchStr + "'  and trunc(e.creationdate) between to_date('" + fromDate + "', 'mm/dd/yy')  and to_date('" + toDate + "', 'mm/dd/yy')    order by 1 ");		
-		List<String> pidList = query.getResultList();	
-		return pidList;		
-		}
-	
 	public List<Project> loadProjectExperimentByAssay(String searchStr, String fromDate, String toDate) 
 		{
 		

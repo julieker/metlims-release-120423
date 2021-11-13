@@ -193,8 +193,11 @@ public class ControlDAO extends BaseDAO
 	tempArray.add("Other Pool.4  (CS0000OP4)");
 	tempArray.add("Other Pool.5  (CS0000OP5)");
 
-	// issue 126
+	// issue 193
+	tempArray.add("MoTrPAC -   Plasma-Human: Female (CSMR81030)");
+	tempArray.add("MoTrPAC -   Plasma-Human: Male (CSMR81040)");
 	
+	// issue 126	
 	tempArray.add("MoTrPAC -   Muscle-Human : Female  (CSMR81020)");
 	tempArray.add("MoTrPAC -   Muscle-Human : Male  (CSMR81010)");
 	

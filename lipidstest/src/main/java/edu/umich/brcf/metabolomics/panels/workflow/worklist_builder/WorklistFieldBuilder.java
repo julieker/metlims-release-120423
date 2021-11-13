@@ -399,6 +399,11 @@ public class WorklistFieldBuilder implements Serializable
 			style += "#CC99FF";
 		else if (item.getSampleType().startsWith("UM Human muscle control"))
 			style += "#CCFFFF";
+		// issue 193
+		else if (item.getSampleType().startsWith("MoTrPAC -   Plasma-Human: Male"))
+			style += "#CCFAFf";
+		else if (item.getSampleType().startsWith("MoTrPAC -   Plasma-Human: Female"))
+			style += "#CCF0FF";
 		// color will be good choice when pool1b is no longer use 
 		else if (item.getRepresentsUserDefinedControl())
 			style += "#e0b3dd";		

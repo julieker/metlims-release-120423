@@ -83,6 +83,12 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 	protected int nMuscleHumanFemale=0;
 	protected int nHumanMuscleCntrl=0;
 	
+	// issue 193
+	protected int nPlasmaHumanMale=0;
+	protected int nPlasmaHumanFemale=0;
+	protected int nPlasmaHumanMalePrev=0;
+	protected int nPlasmaHumanFemalePrev=0;
+	
 	private int nLungExercise = 0;
 	private int nLungSedentary = 0;
 	private int nKidneyExercise = 0;
@@ -137,6 +143,11 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 		// issue 126
 		form.add(buildCountDropdown("nMuscleHumanMale", "nMuscleHumanMale"));
 		form.add(buildCountDropdown("nMuscleHumanFemale", "nMuscleHumanFemale"));
+		// issue 193
+		form.add(buildCountDropdown("nPlasmaHumanMale", "nPlasmaHumanMale"));
+		form.add(buildCountDropdown("nPlasmaHumanFemale", "nPlasmaHumanFemale"));
+		
+		
 		form.add(buildCountDropdown("nHumanMuscle", "nHumanMuscleCntrl"));
 		
 		form.add(buildCountDropdown("nRatPlasma", "nRatPlasma"));
@@ -329,6 +340,18 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 		this.nMuscleHumanMale = nMuscleHumanMale;
 		}
 	
+	// issue 193
+	public int getNPlasmaHumanMale()
+		{
+		return nPlasmaHumanMale;
+		}
+
+	// issue 193
+	public void setNPlasmaHumanMale(int nPlasmaHumanMale) 
+		{
+		this.nPlasmaHumanMale = nPlasmaHumanMale;
+		}
+	
 	// issue 126
 	public int getNMuscleHumanFemale()
 		{
@@ -338,6 +361,18 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 	public void setNMuscleHumanFemale(int nMuscleHumanFemale) 
 		{
 		this.nMuscleHumanFemale = nMuscleHumanFemale;
+		}
+	
+	// issue 193
+	public int getNPlasmaHumanFemale()
+		{
+		return nPlasmaHumanFemale;
+		}
+
+	// issue 193
+	public void setNPlasmaHumanFemale(int nPlasmaHumanFemale) 
+		{
+		this.nPlasmaHumanFemale = nPlasmaHumanFemale;
 		}
 	
 	// issue 126
@@ -459,6 +494,11 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
     	// issue 126
     	nMuscleHumanMalePrev= 0;
     	nMuscleHumanFemalePrev= 0;
+    	
+     	nPlasmaHumanMalePrev= 0;
+    	nPlasmaHumanFemalePrev= 0;
+    	
+    	
     	nHumanMuscleCntrlPrev= 0;
     	
     	nKidneyExercisePrev= 0;

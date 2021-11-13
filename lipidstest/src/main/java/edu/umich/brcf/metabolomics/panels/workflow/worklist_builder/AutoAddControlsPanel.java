@@ -158,7 +158,7 @@ public class AutoAddControlsPanel extends Panel
 			    if (originalWorklist.getChosenOtherSampleMotrPAC())
 			        {
 			    	target.appendJavaScript(buildHTMLSetString(1,22,"0"));
-			    	target.appendJavaScript(buildHTMLSetString(30,32, "0")); // issue 126
+			    	target.appendJavaScript(buildHTMLSetString(30,34, "0")); // issue 126 issue 193
 			    	this.clearPrevValues();
 			        }
 				} 
@@ -190,8 +190,12 @@ public class AutoAddControlsPanel extends Panel
 				this.nHippoCampusExercisePrev=originalWorklist.getNHippoCampusExercise();
 				this.nHippoCampusSedentaryPrev=originalWorklist.getNHippoCampusSedentary();
 				// issue 126
+				this.nPlasmaHumanFemalePrev=originalWorklist.getNPlasmaHumanFemale();
+				this.nPlasmaHumanMalePrev=originalWorklist.getNPlasmaHumanMale();
+				// issue 193
 				this.nMuscleHumanFemalePrev=originalWorklist.getNMuscleHumanFemale();
 				this.nMuscleHumanMalePrev=originalWorklist.getNMuscleHumanMale();
+				
 				this.nHumanMuscleCntrlPrev=originalWorklist.getNHumanMuscleCntrl();
 				// issue 169
 				autoAddControlsPanel.defaultPoolBox.setDefaultModelObject(true);
@@ -269,6 +273,9 @@ public class AutoAddControlsPanel extends Panel
 		        originalWorklist.setNMuscleHumanFemale(motrpacOptionsDialog.nMuscleHumanFemalePrev);
 		        originalWorklist.setNMuscleHumanMale(motrpacOptionsDialog.nMuscleHumanMalePrev);
 		        originalWorklist.setNHumanMuscleCntrl(motrpacOptionsDialog.nHumanMuscleCntrlPrev);
+		        // issue 193
+		        originalWorklist.setNPlasmaHumanFemale(motrpacOptionsDialog.nPlasmaHumanFemalePrev);
+		        originalWorklist.setNPlasmaHumanMale(motrpacOptionsDialog.nPlasmaHumanMalePrev);
 			    }
 		    });			
 		
@@ -747,17 +754,19 @@ public class AutoAddControlsPanel extends Panel
 		String firstSample =  nItems <= 0 ? null : worklist.getItem(0).getSampleName();
 		String lastSample =  nItems <= 0 ? null : worklist.getItem(nItems -1).getSampleName();
 		worklist.setLastSample(lastSample); // issue 29
-		String id = "", finalLabel = "";
-		
-		for (int i = 0; i < nBlanks; i++)
+		String id = "", finalLabel = "";	
+		// issue 191
+		if (nStandards > 0)
 			{
-			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
-			group3.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group3);
+			for (int i = 0; i < nBlanks; i++)
+				{
+				id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+				finalLabel = controlService.dropStringForIdAndAgilent(id);
+				WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+				group3.setStandardNotAddedControl(true);
+				originalWorklist.addControlGroup(group3);
+				}
 			}
-	
 		for (int i = 0; i < nStandards ; i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("Standard." + i);
@@ -973,7 +982,7 @@ public class AutoAddControlsPanel extends Panel
 			}
 		// Issue 422 		
 		// issue 427
-		
+				
 		// issue 126
 		for (int i = 0; i < worklist.getNMuscleHumanMale(); i++)
 			{
@@ -993,6 +1002,27 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
+		
+		// issue 193
+		for (int i = 0; i < worklist.getNPlasmaHumanMale(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Plasma-Human: Male (CSMR81040)");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+	
+		// issue 193
+		for (int i = 0; i < worklist.getNPlasmaHumanFemale(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Plasma-Human: Female (CSMR81030)");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
 		
 		for (int i = 0; i < worklist.getNRatG(); i++)
 			{
@@ -1118,7 +1148,25 @@ public class AutoAddControlsPanel extends Panel
 			originalWorklist.addControlGroup(group3);
 			}
 		
+	// issue 193
+		for (int i = 0; i < worklist.getNPlasmaHumanFemale(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Plasma-Human: Female (CSMR81030)");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
 		
+		for (int i = 0; i < worklist.getNPlasmaHumanMale(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Plasma-Human: Male (CSMR81040)");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+				
 		// issue 126
 		for (int i = 0; i < worklist.getNMuscleHumanFemale(); i++)
 			{
@@ -1313,15 +1361,19 @@ public class AutoAddControlsPanel extends Panel
 			WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
 			group4.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group4);
-			}	
-		for (int i = 0; i < nBlanks; i++)
+			}
+		// issue 191
+		if (nStandards > 0)
 			{
-			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group4.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group4);
-			}	
+			for (int i = 0; i < nBlanks; i++)
+				{
+				id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+				finalLabel = controlService.dropStringForIdAndAgilent(id);
+				WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+				group4.setStandardNotAddedControl(true);
+				originalWorklist.addControlGroup(group4);
+				}
+			}
 		for (int i = nStandards - 1; i >= 0; i--)
 			{
 			id = controlService.controlIdForNameAndAgilent("Standard." + i);
