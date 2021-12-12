@@ -33,9 +33,9 @@ public class Mixture implements Serializable
 	{
 	public static String MIXTURE_DATE_FORMAT = "MM/dd/yy";
 
-	public static Mixture instance( Calendar createDate,  User createdBy, BigDecimal volSolvent, BigDecimal desiredFinalVol, String mixtureName  ) 
+	public static Mixture instance( Calendar createDate,  User createdBy, BigDecimal volSolvent, BigDecimal desiredFinalVol, String mixtureName, String desireFinalVolUnits  ) 
 		{
-		return new Mixture(null, createDate, createdBy,  volSolvent,  desiredFinalVol, mixtureName);
+		return new Mixture(null, createDate, createdBy,  volSolvent,  desiredFinalVol, mixtureName, desireFinalVolUnits);
 		}
 
 	@Id()
@@ -66,10 +66,17 @@ public class Mixture implements Serializable
 	@Column(name = "MIXTURE_NAME", unique = true, columnDefinition = "VARCHAR2(50)")
 	private String mixtureName; // issue 118
 	
+	// issue 120
+	// issue 196
+	@Basic()
+	@Column(name = "DESIRED_FINAL_VOLUME_UNITS", unique = true, columnDefinition = "VARCHAR2(10)")
+	private String desiredFinalVolUnits; // issue 118
+	
+
 	
 	public Mixture() {  }
 	
-	private Mixture(String mixtureId ,  Calendar createDate, User createdBy, BigDecimal volSolvent, BigDecimal desiredFinalVol, String mixtureName )
+	private Mixture(String mixtureId ,  Calendar createDate, User createdBy, BigDecimal volSolvent, BigDecimal desiredFinalVol, String mixtureName, String desiredFinalVolUnits )
 		{
 		this.mixtureId = mixtureId;
 		this.createDate = createDate;
@@ -77,6 +84,7 @@ public class Mixture implements Serializable
 		this.volSolvent = volSolvent;
 		this.desiredFinalVol = desiredFinalVol;
 		this.mixtureName = mixtureName;
+		this.desiredFinalVolUnits = desiredFinalVolUnits; //issue 196
 		}
 	
 	public void update(MixtureDTO mixtureDto)
@@ -84,6 +92,7 @@ public class Mixture implements Serializable
 		this.mixtureName = mixtureDto.getMixtureName();
 		this.volSolvent = StringUtils.isNullOrEmpty(mixtureDto.getVolumeSolventToAdd()) ? null : new BigDecimal(mixtureDto.getVolumeSolventToAdd());
 		this.desiredFinalVol = StringUtils.isNullOrEmpty(mixtureDto.getDesiredFinalVolume()) ? null : new BigDecimal(mixtureDto.getDesiredFinalVolume());
+		this.desiredFinalVolUnits = mixtureDto.getFinalVolumeUnits(); //issue 196
 		}
 
 	public String getMixtureId()
@@ -151,7 +160,19 @@ public class Mixture implements Serializable
 		{
 		return this.mixtureName;
 		}
-
+	// issue 196
+	public void setDesiredFinalVolUnits(String desiredFinalVolUnits)
+		{
+		this.desiredFinalVolUnits = desiredFinalVolUnits;
+		}
+	
+	
+	// issue 196
+	public String getDesiredFinalVolUnits()
+		{	
+		return this.desiredFinalVolUnits;
+		}
+	
 	}
 	
 	

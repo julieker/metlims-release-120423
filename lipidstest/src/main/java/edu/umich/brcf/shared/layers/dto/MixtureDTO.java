@@ -35,10 +35,12 @@ public class MixtureDTO implements Serializable
 		return new MixtureDTO(mixture.getMixtureId(), formatted,  mixture.getCreatedBy().getId(), mixture.getVolSolvent().toString(), mixture.getDesiredFinalVol().toString(), mixture.getMixtureName());
 		}	
 	// issue 61 2020
+	private String finalVolumeUnits ; // issue 196
 	private String mixtureId;
 	private String createDate;
 	private List<String> aliquotList;
 	private List<String> aliquotNoAssayMultipleChoiceList;
+	private List<String> aliquotNoAssayMultipleChoiceListDry; // issue 196
 	private List<String> mixtureList;
 	private List<String> aliquotVolumeList;
 	private List<String> aliquotConcentrationList;
@@ -50,6 +52,11 @@ public class MixtureDTO implements Serializable
     private String volumeSolventToAdd; // issue 94
     private String desiredFinalVolume;
     private String mixtureName;  // issue 118
+    private String volumeAliquotUnits; //issue 196
+    private List <String> aliquotVolumeUnitList; // issue 196
+    private List<String> mixtureVolumeUnitList;  // issue 196
+    
+    
     // issue 123
     Map<String, List<String>> mixtureAliquotMap = new HashMap<String, List<String>>(); 
     Map<String, List<MixAliquotInfo>> mixtureAliquotInfoMap = new HashMap<String, List<MixAliquotInfo>>();
@@ -61,9 +68,21 @@ public class MixtureDTO implements Serializable
 		this.createdBy = createdBy;		
 		} 
 	
+	
+	
 	public MixtureDTO() { }	
+	
+	public List<String> getAliquotVolumeUnitList ()
+		{
+		return aliquotVolumeUnitList;
+		}
+
+	public void setAliquotVolumeUnitList (List<String> aliquotVolumeUnitList)
+		{
+		this.aliquotVolumeUnitList = aliquotVolumeUnitList;
+		}
 		
-	// issue 94
+	// issue 196
 	public String getAliquotsChoice()
 		{
 		return aliquotsChoice;
@@ -73,6 +92,18 @@ public class MixtureDTO implements Serializable
 	public void setAliquotsChoice(String aliquotsChoice)
 		{
 		this.aliquotsChoice= aliquotsChoice;
+		}
+		
+	// issue 196
+	public String getFinalVolumeUnits()
+		{
+		return finalVolumeUnits;
+		}
+
+	// issue 196
+	public void setFinalVolumeUnits(String finalVolumeUnits)
+		{
+		this.finalVolumeUnits= finalVolumeUnits;
 		}
 	
 	// issue 123
@@ -155,6 +186,12 @@ public class MixtureDTO implements Serializable
 		return aliquotNoAssayMultipleChoiceList;
 		}
 	
+	// issue 196
+	public List<String> getAliquotNoAssayMultipleChoiceListDry ()
+		{
+		return aliquotNoAssayMultipleChoiceListDry;
+		}
+	
 	public void setAliquotList (List<String> aliquotList)
 		{
 		this.aliquotList = aliquotList;
@@ -164,6 +201,12 @@ public class MixtureDTO implements Serializable
 	public void setAliquotNoAssayMultipleChoiceList(List<String> aliquotNoAssayMultipleChoiceList)
 		{
 		this.aliquotNoAssayMultipleChoiceList = aliquotNoAssayMultipleChoiceList;
+		}
+	
+	// issue 196
+	public void setAliquotNoAssayMultipleChoiceListDry(List<String> aliquotNoAssayMultipleChoiceListDry)
+		{
+		this.aliquotNoAssayMultipleChoiceListDry = aliquotNoAssayMultipleChoiceListDry;
 		}
 	
 	// issue 110
@@ -208,6 +251,18 @@ public class MixtureDTO implements Serializable
 		{
 		this.mixtureVolumeList = mixtureVolumeList;
 		}
+	
+	// issue 196
+	public List<String> getMixtureVolumeUnitList ()
+		{
+		return mixtureVolumeUnitList;
+		}
+
+	public void setMixtureVolumeUnitList (List<String> mixtureVolumeUnitList)
+		{
+		this.mixtureVolumeUnitList = mixtureVolumeUnitList;
+		}
+	
 	
 	// issue 110
 	public List<String> getMixtureConcentrationList ()

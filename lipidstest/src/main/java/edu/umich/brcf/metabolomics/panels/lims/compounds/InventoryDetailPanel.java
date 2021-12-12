@@ -61,6 +61,7 @@ public class InventoryDetailPanel extends Panel
         modal2.setHeightUnit("em");
         final InventoryDetailPanel detailPanel = this;
         detailPanel.setOutputMarkupId(true);
+        add(buildLinkToModalAliquot("addAliquot", modal2, detailPanel, (compound.getCid().equals(getCompound().getCid())), null));
         modal2.setWindowClosedCallback(new ModalWindow.WindowClosedCallback()
         	{
             public void onClose(AjaxRequestTarget target)
@@ -76,8 +77,7 @@ public class InventoryDetailPanel extends Panel
 			public void populateItem(final ListItem listItem) 
 				{
 				final Compound compound = (Compound) listItem.getModelObject();
-				listItem.add(new Label("cid", compound.getCid()));
-				listItem.add(buildLinkToModalAliquot("addAliquot", modal2, detailPanel, (compound.getCid().equals(getCompound().getCid())), null));				
+				listItem.add(new Label("cid", compound.getCid()));				
 				listItem.add(buildLinkToModalAliquot("viewDeletedAliquots", modal2, detailPanel, (compound.getCid().equals(getCompound().getCid())), null));				
 				listItem.add(new Label("priname",compound.getPrimaryName()));
 				ListView childListView = new ListView("invList",new PropertyModel(compound, "inventory")) 
@@ -111,9 +111,11 @@ public class InventoryDetailPanel extends Panel
 				listItem.add(new Label("aliquotId", new Model(alq.getAliquotId())));
 				listItem.add(buildLinkToModalAliquot("aliquotLink", modal2, detailPanel , true, alq)).setVisible(true);
 				listItem.add(new Label("aliquotLabel", new Model(alq.getAliquotLabel())));
-				listItem.add(new Label("location", new Model(alq.getLocation().getLocationId())));	
+				// issue 196
+				listItem.add(new Label("location", new Model(alq.getLocation() == null ? null : alq.getLocation().getLocationId())));	
 				listItem.add(new Label("aliquotNeatDilutionUnits",  new Model(alq.getNeat().equals('1') && alq.getDry().equals('1') ? (alq.getWeightedAmount() + " " + alq.getWeightedAmountUnits()) : (alq.getNeat().equals('1') ? alq.getDconc() : alq.getDcon()) + " " + (alq.getNeat().equals('1') ? alq.getDConcentrationUnits() : alq.getNeatSolVolUnits() ))));
-				listItem.add(new Label("parentInventory", new Model(alq.getInventory().getInventoryId())));	
+				listItem.add(new Label("parentInventory", new Model(alq.getInventory() == null ? "none" : alq.getInventory().getInventoryId())));	
+				listItem.add(new Label("compoundAliquot", new Model(alq.getCompound() == null ? "none" : alq.getCompound().getCid())));	
 				listItem.add(new Label("createDate", new Model(alq.getCreateDateString())));
 				listItem.add(new Label("createdBy", new Model(userService.getFullNameByUserId(alq.getCreatedBy()))));
 			    listItem.add(buildLinkToModalAliquot("editAliquot", modal2, detailPanel , true, alq)).setVisible(true);
@@ -159,12 +161,14 @@ public class InventoryDetailPanel extends Panel
 			@Override
 			public boolean isEnabled()
 				{
-				return (getCompound().getInventory().size() > 0);	
+				return true; // issue 196
+				//return (getCompound().getInventory().size() > 0);	
 				}
 			@Override
 			public boolean isVisible()
 				{
-				return aliqutButtonVisible;	
+				return true; // issue 196
+				//return aliqutButtonVisible;	
 				}
 			@Override
 			public void onClick(AjaxRequestTarget target)

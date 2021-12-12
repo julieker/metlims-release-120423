@@ -30,8 +30,24 @@ public class AliquotDAO extends BaseDAO
 		return aliquotList;
 		}
 	
+	// issue 196
+	public List<Object[]> tooltipsListForMap()
+		{
+		Query query = getEntityManager().createNativeQuery("select distinct aliquot_id, name, create_date, first_name || ' ' || last_name,"  +
+				" decode (neat, 1, desired_concentration_units, neat_sol_vol_units) units , " + 
+				"  decode (neat, 1, DESIRED_CONCENTRATION_NEAT, desired_concentration) concentration " + 
+				 " from aliquot t1, names t2, researcher t3"  + 
+				 " where t1.created_by = t3.researcher_id " +
+				 " and t1.cid = t2.cid " +
+				 " and type = 'pri' " + 
+				 " order by 1"
+				);
+		return query.getResultList();
+		}
+	  
+	
 	// issue 94
-	public List<String> allAliquotIds()
+ 	public List<String> allAliquotIds()
 		{
 		Query query = getEntityManager().createNativeQuery("select cast(aliquot_id as char(9)) from aliquot order by 1 "
 				);
@@ -203,6 +219,14 @@ public class AliquotDAO extends BaseDAO
 	public List<String> loadAliquotListNoAssay()
 		{
 		Query query = getEntityManager().createNativeQuery("select cast(t1.aliquot_id as VARCHAR2(9)) from aliquot t1 where dry = '0' and deleted is null order by 1 ");		
+		List<String> alqList = query.getResultList();	
+		return (alqList == null ? new ArrayList<String>() : alqList);
+		}
+	
+	// issue 196
+	public List<String> loadAliquotListDry()
+		{
+		Query query = getEntityManager().createNativeQuery("select cast(t1.aliquot_id as VARCHAR2(9)) from aliquot t1 where dry = '1' and deleted is null order by 1 ");		
 		List<String> alqList = query.getResultList();	
 		return (alqList == null ? new ArrayList<String>() : alqList);
 		}

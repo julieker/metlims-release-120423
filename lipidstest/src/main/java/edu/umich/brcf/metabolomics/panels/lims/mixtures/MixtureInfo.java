@@ -16,7 +16,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 
 
 import edu.umich.brcf.shared.layers.dao.MixtureDAO;
-
+import edu.umich.brcf.shared.layers.service.AliquotService;
 import edu.umich.brcf.shared.layers.service.MixtureService;
 
 
@@ -25,15 +25,31 @@ public class MixtureInfo implements Serializable
 	String mixtureId;
  	String mixtureVolumeTxt;
  	String mixtureConcentrationTxt;
+ 	String volumeMixtureUnits;
  	List <MixAliquotInfo> mAliquotList;
  	List <Object[]> listObject = new ArrayList <Object[]> ();
  	MixtureDAO mixtureDao;
  	List <MixAliquotInfo> listMixAliquotInfo = new ArrayList <MixAliquotInfo>();
  	@SpringBean
 	MixtureService mixtureService;
+ 	@SpringBean
+ 	AliquotService aliquotService;
+ 	List <String> aliquotDryList = new ArrayList <String> (); // issue 196
+ 	
  	List <String> listAliquots = new ArrayList <String> ();
  	String expandText = "+";
  	///////
+ 	
+ 	// issue 196
+ 	public List <String> getAliquotDryList ()
+ 		{
+ 		return this.aliquotDryList;
+ 		}
+ 	
+ 	public void setAliquotDryList (List <String> aliquotDryList)
+		{
+		this.aliquotDryList = aliquotDryList;
+		}
  	
  	public String getExpandText ()
 		{
@@ -44,6 +60,20 @@ public class MixtureInfo implements Serializable
 		{
 		this.expandText =expandText; ;
 		}
+ 	
+	// issue 196
+ 	public String getVolumeMixtureUnits ()
+		{
+		return this.volumeMixtureUnits;
+		}
+	
+ 	// issue 196
+	public void setVolumeMixtureUnits (String volumeMixtureUnits)
+		{
+		this.volumeMixtureUnits =volumeMixtureUnits; ;
+		}
+	
+	
  	
 	public List <Object[]> getListObject ()
 		{
@@ -83,6 +113,9 @@ public class MixtureInfo implements Serializable
  	public List<MixAliquotInfo> getMAliquotList ()
 		{
 		listAliquots.clear();
+		List <String> aliquotDryList = new ArrayList <String> ();
+	//	aliquotDryList =  aliquotService.loadAliquotListDry() ;
+		
 		if (listMixAliquotInfo.size() == 0)
 			{
 			for (Object[] result : listObject)
@@ -91,11 +124,22 @@ public class MixtureInfo implements Serializable
 				mAliquotInfo.setAliquotId ((String) result[2]);
 				mAliquotInfo.setMixtureId(result[0].toString());
 				mAliquotInfo.setMixAliquotConcentration ( result[3].toString());
-				mAliquotInfo.setMixAliquotConUnits(result[4].toString());
+				mAliquotInfo.setMixAliquotConUnits(result[4] == null ? "" : result[4].toString());
 				//System.out.println("..... setting listmixaliquot info:");
 				mAliquotInfo.setMixAliquotConcentrationFinal(" ");
+				System.out.println("here is mAliquotInfo aliquot id:" + mAliquotInfo.aliquotId);
+				
+				if (this.aliquotDryList.contains(mAliquotInfo.aliquotId))
+				    {   
+					mAliquotInfo.setWeightedAmountMix(result[7].toString());
+					
+					mAliquotInfo.setMolecularWeightMix(result[8].toString());
+					mAliquotInfo.setWeightedAmountMixUnit(result[10].toString());//issue 196
+				    }
+				System.out.println("here is maliquotinfo get weighted amoutn mix unit: " + mAliquotInfo.getWeightedAmountMixUnit());
+				
 				listMixAliquotInfo.add(mAliquotInfo);
-				listAliquots.add (mAliquotInfo.getAliquotId());
+				listAliquots.add (mAliquotInfo.getAliquotId());	
 			//	System.out.println("IN getMaliquotList:" + listAliquots);
 				}    
 		//mixAliquotInfoList.clear();
@@ -104,6 +148,11 @@ public class MixtureInfo implements Serializable
 			}
 		else
 			{
+			for (MixAliquotInfo mixali : listMixAliquotInfo)
+				{
+				System.out.println("here is the weighted amount unit:" + mixali.getWeightedAmountMixUnit() + " " + mixali.getWeightedAmountMix() );
+				}
+		
 		//	System.out.println("here is listmixaliquotinfo.count:" + listMixAliquotInfo.size());
 			return listMixAliquotInfo;
 			}

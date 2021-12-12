@@ -53,7 +53,6 @@ public class Mrc2MixtureDataService
 			}
 		catch (Exception e)
 			{
-			System.out.println("in exception ");
 			e.printStackTrace();
 			}			
 		return dtoList.size();
@@ -71,7 +70,8 @@ public class Mrc2MixtureDataService
 		try 
 			{			
 			user = userDao.loadById(((MedWorksSession) Session.get()).getCurrentUserId());
-			mixture = Mixture.instance (Calendar.getInstance(), user, StringUtils.isEmptyOrNull(dto.getVolumeSolventToAdd()) ? null : new BigDecimal (dto.getVolumeSolventToAdd()),        StringUtils.isEmptyOrNull(dto.getDesiredFinalVolume()) ? null : new BigDecimal (dto.getDesiredFinalVolume()), dto.getMixtureName()); // issue 118		
+			// issue 196
+			mixture = Mixture.instance (Calendar.getInstance(), user, StringUtils.isEmptyOrNull(dto.getVolumeSolventToAdd()) ? null : new BigDecimal (dto.getVolumeSolventToAdd()),        StringUtils.isEmptyOrNull(dto.getDesiredFinalVolume()) ? null : new BigDecimal (dto.getDesiredFinalVolume()), dto.getMixtureName(), dto.getFinalVolumeUnits()); // issue 118		
 			mixtureDao.createMixture(mixture);
 		    List<String> aliquotList = new ArrayList <String> ();
 		    if (dto.getAliquotList() == null)
@@ -80,13 +80,12 @@ public class Mrc2MixtureDataService
 			for (String aliquotStr : aliquotList) 
 			    {
 				// JAK do a wrapper for this
-		        Aliquot aliquot = aliquotDao.loadByIdForMixture(aliquotStr);
-		        mixtureDao.createMixtureAliquot(MixtureAliquot.instance(mixture, aliquot, dto.getAliquotVolumeList().get(index), dto.getAliquotConcentrationList().get(index)));
-				index++;
+				Aliquot aliquot = aliquotDao.loadByIdForMixture(aliquotStr);
+		        mixtureDao.createMixtureAliquot(MixtureAliquot.instance(mixture, aliquot, dto.getAliquotVolumeList().get(index), dto.getAliquotConcentrationList().get(index) , dto.getAliquotVolumeUnitList().get(index)));
+		        index++;
 				}
 			// issue 110
 			index= 0;
-			
 			if (dto.getMixtureList()  == null)
 				return mixture;
 			if (calledFromMetlimsInterface)
@@ -94,7 +93,7 @@ public class Mrc2MixtureDataService
 				for  (String mixtureStr : dto.getMixtureList()) 
 					{
 					Mixture childMixture = mixtureDao.loadById(mixtureStr);
-					mixtureDao.createMixtureChild(MixtureChildren.instance(childMixture,mixture,  dto.getMixtureVolumeList() == null ? null : dto.getMixtureVolumeList().get(index), dto.getMixtureConcentrationList() == null ? null :dto.getMixtureConcentrationList().get(index)));
+					mixtureDao.createMixtureChild(MixtureChildren.instance(childMixture,mixture,  dto.getMixtureVolumeList() == null ? null : dto.getMixtureVolumeList().get(index), dto.getMixtureConcentrationList() == null ? null :dto.getMixtureConcentrationList().get(index), dto.getMixtureVolumeUnitList() == null ? null : dto.getMixtureVolumeUnitList().get(index)));
 					////////////// null pointer error
 					for (MixAliquotInfo singleMixAliquotInfo : dto.getMixtureAliquotInfoMap().get(mixtureStr))
 						{
@@ -109,7 +108,7 @@ public class Mrc2MixtureDataService
 				for  (String mixtureStr : dto.getMixtureList()) 
 					{
 					Mixture childMixture = mixtureDao.loadById(mixtureStr);
-					mixtureDao.createMixtureChild(MixtureChildren.instance(childMixture,mixture,  dto.getMixtureVolumeList() == null ? null : dto.getMixtureVolumeList().get(index), dto.getMixtureConcentrationList() == null ? null :dto.getMixtureConcentrationList().get(index)));
+					mixtureDao.createMixtureChild(MixtureChildren.instance(childMixture,mixture,  dto.getMixtureVolumeList() == null ? null : dto.getMixtureVolumeList().get(index), dto.getMixtureConcentrationList() == null ? null :dto.getMixtureConcentrationList().get(index),   dto.getMixtureVolumeUnitList() == null ? null : dto.getMixtureVolumeUnitList().get(index)     ));
 					
 					List <Object []> aliquotObjects = mixtureDao.aliquotsForMixtureId(mixtureStr);
 					for (Object[] result : aliquotObjects)

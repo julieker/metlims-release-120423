@@ -72,7 +72,18 @@ public class MixtureDAO extends BaseDAO
 	// issue 94	
 	public void createMixtureAliquot(MixtureAliquot mixtureAliquot)
 		{
+		try
+		{
+		
 		getEntityManager().persist(mixtureAliquot);
+		}
+		catch (Exception e)
+		{
+	    e.printStackTrace();
+	    
+		}
+		
+		
 		}
 	
 	public MixtureAliquot loadMixtureAliquotById(MixtureAliquotPK mixtureAliquotPK)
@@ -165,23 +176,33 @@ public class MixtureDAO extends BaseDAO
 	
 	
 	// issue 123
+	// issue 196
 	public List<Object[]> aliquotsForMixtureId(String mId)
 		{
-		Query query = getEntityManager().createNativeQuery("select distinct t3.mixture_id, t3.mixture_name,  t1.aliquot_id, decode(neat,'1', desired_concentration_neat, desired_concentration) desired_concentration , decode(neat,'1',DESIRED_CONCENTRATION_UNITS, NEAT_SOL_VOL_UNITS), CONCENTRATION_ALIQUOT, volume_aliquot  from mixture_aliquot t1, aliquot t2, mixture t3 where t1.mixture_id = t3.mixture_id and t1.aliquot_id = t2.aliquot_id and t1.mixture_id = ?1 and dry= '0' order by 3").setParameter(1, mId);
+		// issue 196 include dry
+		Query query = getEntityManager().createNativeQuery("select distinct t3.mixture_id, t3.mixture_name,  t1.aliquot_id, decode(neat,'1', desired_concentration_neat, desired_concentration) desired_concentration , decode(neat,'1',DESIRED_CONCENTRATION_UNITS, NEAT_SOL_VOL_UNITS), CONCENTRATION_ALIQUOT, volume_aliquot , t2.WEIGHTED_AMOUNT, t2.MOLECULAR_WEIGHT, t1.VOLUME_ALIQUOT_UNITS, t2.WEIGHTED_AMOUNT_UNITS from mixture_aliquot t1, aliquot t2, mixture t3 where t1.mixture_id = t3.mixture_id and t1.aliquot_id = t2.aliquot_id and t1.mixture_id = ?1  order by 3").setParameter(1, mId);
+		return query.getResultList();
+		}
+	
+	// issue 196
+	public List<Object[]> tooltipsListForMixtureMap()
+		{
+		Query query = getEntityManager().createNativeQuery("select distinct mixture_id, mixture_name, first_name || ' ' || last_name, create_date from mixture t1," + 
+				"researcher t2 where t1.created_by = researcher_id order by 1");
 		return query.getResultList();
 		}
 	
 	// issue 138
 	public List<Object[]> secondaryMixturesForMixture (String mId)
 		{
-		Query query = getEntityManager().createNativeQuery("select t1.mixture_id , volume_mixture from mixture_children t1 where t1.parent_mixture_id = ?1 order by 1").setParameter(1, mId);
+		Query query = getEntityManager().createNativeQuery("select t1.mixture_id , volume_mixture, volume_mixture_units from mixture_children t1 where t1.parent_mixture_id = ?1 order by 1").setParameter(1, mId);
 		return query.getResultList();
 		}
 	
 	// issue 138
 	public List<Object[]> aliquotsForSecondaryMixtures(String secondaryMid,String mId )
 		{
-		Query query = getEntityManager().createNativeQuery("select t1.mixture_id , volume_mixture, t3.aliquot_id, concentration_final, decode(neat,'1', desired_concentration_neat, desired_concentration) desired_concentration , decode(neat,'1',DESIRED_CONCENTRATION_UNITS, NEAT_SOL_VOL_UNITS), t4.mixture_name from mixture_children t1,mixture_children_aliquot t2 , aliquot t3, mixture t4 where t1.mixture_id = t2.mixture_id and t1.mixture_id = ?1 and t4.mixture_id = t2.mixture_id and t1.parent_mixture_id = t2.parent_mixture_id and t1.parent_mixture_id = ?2 and t2.aliquot_id = t3.aliquot_id order by 3").setParameter(1, secondaryMid).setParameter(2, mId);
+		Query query = getEntityManager().createNativeQuery("select t1.mixture_id , volume_mixture, t3.aliquot_id, concentration_final, decode(neat,'1', desired_concentration_neat, desired_concentration) desired_concentration , decode(neat,'1',DESIRED_CONCENTRATION_UNITS, NEAT_SOL_VOL_UNITS), t4.mixture_name,t3.molecular_weight, t3.weighted_amount, t3.weighted_amount_units from mixture_children t1,mixture_children_aliquot t2 , aliquot t3, mixture t4 where t1.mixture_id = t2.mixture_id and t1.mixture_id = ?1 and t4.mixture_id = t2.mixture_id and t1.parent_mixture_id = t2.parent_mixture_id and t1.parent_mixture_id = ?2 and t2.aliquot_id = t3.aliquot_id order by 3").setParameter(1, secondaryMid).setParameter(2, mId);
 		return query.getResultList();
 		}
 	

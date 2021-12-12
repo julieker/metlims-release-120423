@@ -9,6 +9,42 @@ public class MixAliquotInfo implements Serializable
 	String aliquotName;
 	String mixAliquotConcentration;	
 	String mixAliquotConUnits;
+	String molecularWeightMix;
+	String weightedAmountMix;
+	String weightedAmountMixUnit;
+	
+	// issue 196
+	public String getMolecularWeightMix()
+		{
+		return this.molecularWeightMix;
+		}
+	
+	public void  setMolecularWeightMix(String molecularWeightMix)
+		{
+		this.molecularWeightMix = molecularWeightMix;
+		}
+	
+	// issue 196
+	public String getWeightedAmountMix()
+		{
+		return this.weightedAmountMix;
+		}
+
+	public void  setWeightedAmountMix(String weightedAmountMix)
+		{
+		this.weightedAmountMix = weightedAmountMix;
+		}
+	
+	// issue 196
+	public String getWeightedAmountMixUnit()
+		{
+		return this.weightedAmountMixUnit;
+		}
+
+	public void  setWeightedAmountMixUnit(String weightedAmountMixUnit)
+		{
+		this.weightedAmountMixUnit = weightedAmountMixUnit;
+		}
 	
 	public String  getMixtureId()
 		{

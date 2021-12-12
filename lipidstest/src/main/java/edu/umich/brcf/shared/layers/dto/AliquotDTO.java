@@ -38,10 +38,11 @@ public class AliquotDTO implements Serializable
 	    return new AliquotDTO(aliquotId, location,  parentId,replicate,dry,cid, solvent, aliquotLabel, notes, createdBy, neat, neatSolVolUnits, ivol, icon, dcon, weightedAmount, dConc, dvol, dConcentrationUnits, weightedAmountUnits, molecularWeight);
 		}
 	
-
+    // issue 196
 	public static AliquotDTO instance(Aliquot alq)
 		{
-		return new AliquotDTO(alq.getAliquotId(), alq.getLocation().getLocationId(),  alq.getInventory().getInventoryId(),alq.getReplicate(), alq.getDry(), alq.getCompound().getId(), alq.getSolvent(), alq.getAliquotLabel(),alq.getNotes(), alq.getCreatedBy(), alq.getNeat(),alq.getNeatSolVolUnits(), alq.getIvol().toString(), alq.getIcon().toString(), alq.getDcon().toString() , alq.getWeightedAmount().toString(), alq.getDconc().toString(), alq.getDvol() == null ? null :alq.getDvol().toString(), alq.getDConcentrationUnits(), alq.getWeightedAmountUnits(), alq.getMolecularWeight().toString());
+		// issue 196
+		return new AliquotDTO(alq.getAliquotId(), (alq.getLocation()== null ? "" :alq.getLocation().getLocationId()),  (alq.getInventory() == null ? null :alq.getInventory().getInventoryId()),alq.getReplicate(), alq.getDry(), alq.getCompound().getId(), alq.getSolvent(), alq.getAliquotLabel(),alq.getNotes(), alq.getCreatedBy(), alq.getNeat(),alq.getNeatSolVolUnits(), alq.getIvol().toString(), alq.getIcon().toString(), alq.getDcon().toString() , alq.getWeightedAmount().toString(), alq.getDconc().toString(), alq.getDvol() == null ? null :alq.getDvol().toString(), alq.getDConcentrationUnits(), alq.getWeightedAmountUnits(), alq.getMolecularWeight().toString());
 		}	
 	// issue 61 2020
 	private String aliquotId;

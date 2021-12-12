@@ -70,6 +70,13 @@ public class AliquotService
 		return aliquotDao.allAliquotIds();
 		}
 	
+	// issue 196
+	public List<Object[]> tooltipsListForMap()
+		{
+		return aliquotDao.tooltipsListForMap();
+		}
+	
+	
 	//issue 123
 	public List<String> loadAliquotListNoAssay ()
 		{
@@ -81,6 +88,12 @@ public class AliquotService
 		{
 		return aliquotDao.loadAliquotList(assayId);
 		}
+	
+	// issue 196
+	public List<String> loadAliquotListDry()
+	{
+	return aliquotDao.loadAliquotListDry();
+	}
 	
 	//issue 123
 	public String getCompoundIdFromAliquot (String aliquotId)
@@ -141,13 +154,18 @@ public class AliquotService
 		}
 		
 	// issue 61 2020
-	public List <Aliquot> save (AliquotDTO dto, String aliquotAssigned, boolean isAssayListUpdated)
+	public List <Aliquot> save (AliquotDTO dto, String aliquotAssigned, boolean isAssayListUpdated, boolean isNoInventory)
 	    {
+		Inventory inv;
 		List <Aliquot> aliquotList = new ArrayList <Aliquot> ();
 		Aliquot aliquot = null;		
 		Compound cmpd=compoundDao.loadCompoundById(dto.getCid());
-		Location loc = locationDao.loadById(dto.getLocation());
-		Inventory inv = inventoryDao.loadById(dto.getParentId());
+		Location loc = StringUtils.isEmptyOrNull(dto.getLocation()) ? null : locationDao.loadById(dto.getLocation());
+		// issue 196
+		if (!isNoInventory)
+		    inv = inventoryDao.loadById(dto.getParentId());
+		else
+			inv = null;
 		if (!StringUtils.isEmptyOrNull(aliquotAssigned))
 			dto.setAliquotId(aliquotAssigned);
 		if (dto.getAliquotId() != null && !"to be assigned".equals(dto.getAliquotId()))
@@ -348,9 +366,9 @@ public class AliquotService
 			if (!StringUtils.isEmptyOrNull(alq.getCompound().getPrimaryName()) && alq.getCompound().getPrimaryName().length() > 30)
 				i=i+4;
 			if (alq.getDry() != '1')
-				invDateStr = (StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" + alq.getInventory().getInventoryId() + "-" + alq.getCreateDateString() + "<br>" + (StringUtils.isEmptyOrNull(iname) ? "" : iname.substring(0,i).replace(" ", "-") + "<br>" ) + alq.getSolvent() + "-" + (alq.getNeat().equals('1') ? alq.getDconc() : alq.getDcon())  + "-" + (alq.getNeat().equals('1') ? alq.getDConcentrationUnits() : alq.getNeatSolVolUnits());	
+				invDateStr = (StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" +  (alq.getInventory() == null ? "" : alq.getInventory().getInventoryId()) + "-" + alq.getCreateDateString() + "<br>" + (StringUtils.isEmptyOrNull(iname) ? "" : iname.substring(0,i).replace(" ", "-") + "<br>" ) + alq.getSolvent() + "-" + (alq.getNeat().equals('1') ? alq.getDconc() : alq.getDcon())  + "-" + (alq.getNeat().equals('1') ? alq.getDConcentrationUnits() : alq.getNeatSolVolUnits());	
 			else
-				invDateStr = (StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" + alq.getInventory().getInventoryId() + "-" + alq.getCreateDateString() + "<br>" + (StringUtils.isEmptyOrNull(iname) ? "" : iname.substring(0,i).replace(" ", "-") + "<br>" )  + alq.getWeightedAmount()  + "-" + alq.getWeightedAmountUnits();
+				invDateStr = (StringUtils.isEmptyOrNull(alq.getAliquotLabel()) ? alq.getAliquotId() : alq.getAliquotLabel()) + "-" + (alq.getInventory() == null ? "" : alq.getInventory().getInventoryId()) + "-" + alq.getCreateDateString() + "<br>" + (StringUtils.isEmptyOrNull(iname) ? "" : iname.substring(0,i).replace(" ", "-") + "<br>" )  + alq.getWeightedAmount()  + "-" + alq.getWeightedAmountUnits();
 			aliquotIdListInvDate.add(invDateStr);
 			}
 		return aliquotIdListInvDate;
@@ -358,8 +376,9 @@ public class AliquotService
 	// issue 100 put deleteAssayAliquot outside of the loop
 	private void saveAssays (List <String> assayIds, Aliquot aliquot )
 		{
+		// issue 196
 		aliquotDao.deleteAssayAliquot(aliquot.getAliquotId());
-		if (assayIds.size() == 0 )
+		if (assayIds == null || assayIds.size() == 0 )
 		    return;
 		for (String assayId : assayIds) 
 			{

@@ -122,6 +122,8 @@ public class EditAliquot extends WebPage
 	boolean calculateOnly = true;
 	ListMultipleChoice<String> selectedAssays;
 	boolean isAssayListUpdated = false;
+	EditAliquotForm editAliquotForm;
+	
 	public AliquotDTO getAliquotDto() { return aliquotDto; }
 	public void setAliquotDto(AliquotDTO aliquotDto)  { this.aliquotDto = aliquotDto; }
 		
@@ -131,7 +133,7 @@ public class EditAliquot extends WebPage
 		aFeedback.setEscapeModelStrings(false);		
 		add(aFeedback);		
 		add(new Label("titleLabel", "Add Aliquot"));
-		add(new EditAliquotForm("editAliquotForm", "to be assigned", aliquotDto, backPage, detailPanel, window,editAliquot, null ));
+		add(editAliquotForm = new EditAliquotForm("editAliquotForm", "to be assigned", aliquotDto, backPage, detailPanel, window,editAliquot, null ));
 		}
 		
 	public EditAliquot(Page backPage, IModel cmpModel, InventoryDetailPanel detailPanel, final ModalWindow window) 
@@ -147,13 +149,17 @@ public class EditAliquot extends WebPage
 		add(aFeedback);	
 		add(new Label("titleLabel", isViewOnly || !(userService.isAliquotAdmin(((MedWorksSession) Session.get()).getCurrentUserId()) || alq.getCreatedBy().equals(((MedWorksSession) Session.get()).getCurrentUserId())) ? "View Aliquot" : "Edit Aliquot"));
 		setAliquotDto(AliquotDTO.instance(alq));
-		add(new EditAliquotForm("editAliquotForm", alq.getAliquotId(), aliquotDto, backPage, detailPanel, window, editAliquot, alq, isViewOnly));
+		// issue 196
+		add(editAliquotForm = new EditAliquotForm("editAliquotForm", alq.getAliquotId(), aliquotDto, backPage, detailPanel, window, editAliquot, alq, isViewOnly));
 		}
 	
 	public final class EditAliquotForm extends Form 
 		{
+		DropDownChoice selectedParentInventoryDD;
 		String aliquotIdAssigned = "";	
 		String unit= "";
+		boolean isNoInventory = false; // issue 196
+		AjaxCheckBox isNoInventoryCheckBox; // issue 196
 		public EditAliquotForm(final String id, final String aliquotId, final AliquotDTO aliquotDto, final Page backPage, final InventoryDetailPanel detailPanel, final ModalWindow window, final EditAliquot editAliquot, final Aliquot alq) // issue 27 2020
 			{
 			this (id, aliquotId, aliquotDto,backPage, detailPanel, window, editAliquot, alq, false);
@@ -162,6 +168,8 @@ public class EditAliquot extends WebPage
 		public EditAliquotForm(final String id, final String aliquotId, final AliquotDTO aliquotDto, final Page backPage, final InventoryDetailPanel detailPanel, final ModalWindow window, final EditAliquot editAliquot, final Aliquot alq, final boolean isViewOnly) // issue 27 2020
 			{
 			super(id, new CompoundPropertyModel(aliquotDto));
+			
+			
 			dilutionContainer = new WebMarkupContainer("dilutionContainer")
 				{
 				public boolean isVisible()
@@ -317,11 +325,25 @@ public class EditAliquot extends WebPage
 			add (solventLabel);
 			solventLabel.setOutputMarkupId(true);
 			solventLabel.setOutputMarkupPlaceholderTag(true) ;			
-			DropDownChoice selectedParentInventoryDD = new DropDownChoice("parentId", getListOfInvIds(detailPanel.getCompound().getInventory()) );			
+			selectedParentInventoryDD = new DropDownChoice("parentId", getListOfInvIds(detailPanel.getCompound().getInventory()))
+				{	
+					public boolean isEnabled()
+						{
+						return !getIsNoInventory();
+						}
+								
+				}
+			     ;			
 			add (selectedParentInventoryDD); 
+			selectedParentInventoryDD.setOutputMarkupId(true);
 			// issue 100
 			selectedAssays = new ListMultipleChoice ("assayIds",assayService.allAssayNames() )	
 			    {
+				// issue 196
+				public boolean isEnabled()
+					{
+					return !getIsNoInventory();
+					}				
 				@Override
 				protected void onComponentTag(ComponentTag tag)
 					{
@@ -550,7 +572,14 @@ public class EditAliquot extends WebPage
 		    dconTxt.setOutputMarkupPlaceholderTag(true) ;
 			dconTxt.setType(BigDecimal.class);			
 			List<String> locationChoices = new ArrayList<String>();	
-			locationsDD= new DropDownChoice("location",    locationChoices);			
+			locationsDD= new DropDownChoice("location",    locationChoices)
+			    {
+				public boolean isEnabled()
+					{
+					return !getIsNoInventory();
+					}
+				}
+				;			
 			locationsDD.setOutputMarkupId(true);
 			add(locationsDD);
 			if (alq != null)
@@ -665,12 +694,15 @@ public class EditAliquot extends WebPage
 					try 
 					    {	
 						aliquotDto.setCid(detailPanel.getCompound().getCid());							
-						aliquotDto.setLocationObj(locationService.loadById(aliquotDto.getLocation()));
-						aliquotDto.setInventoryObj(inventoryService.loadById(aliquotDto.getParentId()));
+						aliquotDto.setLocationObj(isNoInventory ? null  : locationService.loadById(aliquotDto.getLocation()));
+						if (!getIsNoInventory())
+							aliquotDto.setInventoryObj(inventoryService.loadById(aliquotDto.getParentId()));
+						else 
+							aliquotDto.setInventoryObj(null);
 						aliquotDto.setCompoundObj(compoundService.loadCompoundById(aliquotDto.getCid()));
 						if (aliquotDto.getReplicate() == null || aliquotDto.getReplicate() <= 0)
 							aliquotDto.setReplicate(1);	
-						List <Aliquot> aliquotList =  aliquotService.save(aliquotDto, aliquotIdAssigned, isAssayListUpdated);
+						List <Aliquot> aliquotList =  aliquotService.save(aliquotDto, aliquotIdAssigned, isAssayListUpdated, isNoInventory);
 						/// issue 100 
 						if  (!StringUtils.isNullOrEmpty(aliquotIdAssigned))
 							{
@@ -724,7 +756,14 @@ public class EditAliquot extends WebPage
 			add(this.buildIsDryChkBox(alq == null ? true : false));
 			dryCheckBox.add(buildStandardFormComponentUpdateBehavior("change", "updateDry", aliquotDto, detailPanel, editAliquot )); // issue 27 2020
 			dryCheckBox.setOutputMarkupId(true);
-			dryCheckBox.setOutputMarkupPlaceholderTag(true) ;			
+			dryCheckBox.setOutputMarkupPlaceholderTag(true) ;	
+			
+			// issue 196
+			add(isNoInventoryCheckBox = this.buildIsInventoryChkBox("isNoInventory"));
+			isNoInventoryCheckBox.add(buildStandardFormComponentUpdateBehavior("change", "updateIsNoInventory", aliquotDto, detailPanel, editAliquot )); // issue 27 2020
+			isNoInventoryCheckBox.setOutputMarkupId(true);
+			isNoInventoryCheckBox.setOutputMarkupPlaceholderTag(true) ;
+			
 			isDryLabel = new Label("isDryLabel", "Dry?")
 				{
 				@Override
@@ -767,6 +806,30 @@ public class EditAliquot extends WebPage
 				aliquotDto.setIsDry(true);
 		    return dryCheckBox;
 		    }
+		
+		//issue 196
+		protected AjaxCheckBox buildIsInventoryChkBox(String id )
+	    {
+	    isNoInventoryCheckBox = new AjaxCheckBox(id, new PropertyModel(this, id))
+		    {
+	    	@Override
+		    public boolean isVisible()
+			    {
+	    		return true;
+			    }
+	    	@Override
+		    public boolean isEnabled()
+			    {
+	    		return true;
+			    }
+		    @Override
+		    public void onUpdate(AjaxRequestTarget target)
+			    {
+			    }
+		    };
+	    return isNoInventoryCheckBox;
+	    }
+		
 			
 		// issue 61 2020
 		private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior(String event, final String response, final AliquotDTO aliquotDto, InventoryDetailPanel detailPanel , final EditAliquot editAliquot)
@@ -778,6 +841,13 @@ public class EditAliquot extends WebPage
 			    	{
 			    	switch (response)
 			        	{
+			        	case "updateIsNoInventory" :
+			    	    //	target.add(editAliquot.editAliquotForm.isNoInventoryCheckBox);
+			        	    target.add(editAliquot.locationsDD);
+			        	    target.add(editAliquot.selectedAssays);
+			    	    	target.add(editAliquot.editAliquotForm.selectedParentInventoryDD);
+			    	    	
+			    	    	break;
 			    	    case "updateAssays" :
 			    	    	isAssayListUpdated = true;
 			    	    	break;
@@ -1076,8 +1146,13 @@ public class EditAliquot extends WebPage
 		    aliquotDto.setCreateDate(createDateStr);
 		    aliquotDto.setNeatOrDilution(alq.getNeat());
 		    aliquotDto.setNeatOrDilutionText(alq.getNeat().equals('1') ? "Neat" : "Dilution");    	   
-	        aliquotDto.setParentId(alq.getInventory().getInventoryId());
-	        if (aliquotDto.getNeatOrDilutionText().equals("Neat"))
+	        // issue 196
+		    if (alq.getInventory() == null)
+		    	aliquotDto.setParentId("");
+		    else
+	        	aliquotDto.setParentId(alq.getInventory().getInventoryId());
+	        setIsNoInventory(alq.getInventory() == null ? true : false);
+		    if (aliquotDto.getNeatOrDilutionText().equals("Neat"))
 	        	aliquotNeatOrDilutionUnitsDD.setChoices(Arrays.asList(new String[] {"ug", "mg", "g" }));
 	        else
 	        	aliquotNeatOrDilutionUnitsDD.setChoices(Arrays.asList(new String[] {"uM", "mM", "M" }));
@@ -1124,12 +1199,12 @@ public class EditAliquot extends WebPage
 				EditAliquot.this.error("Please enter value for Create Date ");
 				return false;
 				}
-			if (StringUtils.isNullOrEmpty(aliquotDto.getParentId()))
+			if (StringUtils.isNullOrEmpty(aliquotDto.getParentId()) && !getIsNoInventory())
 				{
 				EditAliquot.this.error("Please enter value for Parent Inventory Id ");
 				return false;
 				}
-			if (StringUtils.isNullOrEmpty(aliquotDto.getLocation()))
+			if (StringUtils.isNullOrEmpty(aliquotDto.getLocation()) && !getIsNoInventory())
 				{
 				EditAliquot.this.error("Please enter value for Location ");
 				return false;	
@@ -1190,6 +1265,20 @@ public class EditAliquot extends WebPage
 				return false;
 			    }
 			return true;
-		    }	
+		    }
+		
+		//issue 196
+		public Boolean getIsNoInventory() 
+		    {
+			return isNoInventory;
+		    }
+
+		//issue 196
+		public void setIsNoInventory(Boolean isNoInventory )
+		    {
+			this.isNoInventory = isNoInventory;
+		    } 
+		
 		}
+	       
 	}

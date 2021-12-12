@@ -4,6 +4,7 @@
 	<wicket:panel>
 		<div><br><br></div>
 		<div wicket:id="modal2"></div>
+		<input wicket:id = "addAliquot" type = "button" value = "Add Aliquot"/>
 		<table wicket:id="itemList" style = "width: 100%" >
 		<tr  wicket:id = "parentageList">
 		<td>
@@ -12,7 +13,6 @@
 		  		<td><span wicket:id = "cid">Moes ID</span>:</td>
 		  		<td><span wicket:id = "priname">Moes ID</span></td>
 		  		<td>
-		  		    <td style = "text-align : center"> <input wicket:id = "addAliquot" type = "button" value = "Add Aliquot"/></td>
 		  		     <td style = "text-align : center"> <input wicket:id = "viewDeletedAliquots" type = "button" value = "View Deleted Aliquots"/></td>
 		  	    </td>
 		  	</tr>
@@ -71,7 +71,8 @@
 			  <th>Label</th>
 			   <th>Location</th>
 			  <th>Desired Amt/Units</th>
-			  <th>Parent</th>
+			  <th>Inventory</th>
+			  <th>Compound </th>
 			  <th>Date Created</th>
 			  <th>Created By</th>
 			  <th></th>
@@ -99,6 +100,10 @@
 			    
 			     <td>
 			      	<span wicket:id = "parentInventory">(123) 456-7890</span>
+			      </td>
+			      
+			       <td>
+			      	<span wicket:id = "compoundAliquot">(123) 456-7890</span>
 			      </td>
 			      
 			      <td>

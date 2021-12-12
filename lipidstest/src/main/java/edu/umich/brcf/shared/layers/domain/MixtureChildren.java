@@ -30,9 +30,9 @@ import javax.persistence.UniqueConstraint;
 		"MIXTURE_ID", "PARENT_MIXTURE_ID" }))
 public class MixtureChildren implements Serializable
 	{
-	public static MixtureChildren instance(Mixture mixture, Mixture parentMixture, String volumeMixtureStr, String concentrateAliquotStr)
+	public static MixtureChildren instance(Mixture mixture, Mixture parentMixture, String volumeMixtureStr, String concentrateAliquotStr, String volumeMixtureUnitStr)
 		{
-		return new MixtureChildren(mixture, parentMixture, volumeMixtureStr, concentrateAliquotStr);
+		return new MixtureChildren(mixture, parentMixture, volumeMixtureStr, concentrateAliquotStr, volumeMixtureUnitStr);
 		}
 	@EmbeddedId
 	protected MixtureChildrenPK id;
@@ -55,16 +55,22 @@ public class MixtureChildren implements Serializable
 	@Column(name = "CONCENTRATION_MIXTURE", columnDefinition = "NUMBER(15,7)")
 	private BigDecimal concentrationMixture;
 	
+	// issue 196
+	@Basic()
+	@Column(name = "VOLUME_MIXTURE_UNITS", columnDefinition = "VARCHAR2(10)")
+	private String volumeMixtureUnits;
+	
 	public MixtureChildren()
 		{
 		}
-	private MixtureChildren(Mixture mixture, Mixture parentMixture, String volumeMixtureStr, String concentrateAliquotStr)
+	private MixtureChildren(Mixture mixture, Mixture parentMixture, String volumeMixtureStr, String concentrateAliquotStr, String volumeMixtureUnits)
 		{
 		this.mixture = mixture;
 		this.parentMixture = parentMixture;
 		this.id = MixtureChildrenPK.instance(mixture, parentMixture);	
 		this.volumeMixture = new BigDecimal(volumeMixtureStr);
 		this.concentrationMixture = new BigDecimal(concentrateAliquotStr);
+		this.volumeMixtureUnits = volumeMixtureUnits; // issue 196
 		}
 	public MixtureChildrenPK getId()
 		{
@@ -85,6 +91,10 @@ public class MixtureChildren implements Serializable
 	public BigDecimal getConcentrationMixture()
 		{
 		return concentrationMixture;
+		}
+	public String getVolumeMixtureUnits()
+		{
+		return volumeMixtureUnits;
 		}
 	
 	}

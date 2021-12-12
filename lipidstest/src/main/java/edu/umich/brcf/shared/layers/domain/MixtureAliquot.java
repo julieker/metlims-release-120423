@@ -33,9 +33,9 @@ import edu.umich.brcf.metabolomics.panels.lims.mixtures.AliquotInfo;
 		"MIXTURE_ID", "ALIQUOT_ID" }))
 public class MixtureAliquot implements Serializable
 	{
-	public static MixtureAliquot instance(Mixture mixture, Aliquot aliquot, String volumeAliquotStr, String concentrateAliquotStr)
+	public static MixtureAliquot instance(Mixture mixture, Aliquot aliquot, String volumeAliquotStr, String concentrateAliquotStr, String volumeAliquotUnits)
 		{
-		return new MixtureAliquot(mixture, aliquot, volumeAliquotStr, concentrateAliquotStr);
+		return new MixtureAliquot(mixture, aliquot, volumeAliquotStr, concentrateAliquotStr, volumeAliquotUnits);
 		}
 	@EmbeddedId
 	protected MixtureAliquotPK id;
@@ -58,16 +58,23 @@ public class MixtureAliquot implements Serializable
 	@Column(name = "CONCENTRATION_ALIQUOT", columnDefinition = "NUMBER(15,7)")
 	private BigDecimal concentrationAliquot;
 	
+	@Basic()
+	@Column(name = "VOLUME_ALIQUOT_UNITS", columnDefinition = "VARCHAR2(10)")
+	private String volumeAliquotUnits;
+	
 	public MixtureAliquot()
 		{
 		}
-	private MixtureAliquot(Mixture mixture, Aliquot aliquot, String volumeAliquotStr, String concentrateAliquotStr)
+	private MixtureAliquot(Mixture mixture, Aliquot aliquot, String volumeAliquotStr, String concentrateAliquotStr, String volumeAliquotUnits)
 		{
 		this.aliquot = aliquot;
 		this.mixture = mixture;
 		this.id = MixtureAliquotPK.instance(mixture, aliquot);	
-		this.volumeAliquot = new BigDecimal(volumeAliquotStr);
+		this.volumeAliquot = new BigDecimal(org.h2.util.StringUtils.isNullOrEmpty(volumeAliquotStr) ? "0" :  volumeAliquotStr) ;// issue 196
+		
+		
 		this.concentrationAliquot = new BigDecimal(concentrateAliquotStr);
+		this.volumeAliquotUnits = volumeAliquotUnits; // issue 196
 		}
 	
 	public MixtureAliquotPK getId()
@@ -89,6 +96,11 @@ public class MixtureAliquot implements Serializable
 	public BigDecimal getConcentrationAliquot()
 		{
 		return concentrationAliquot;
+		}
+	// issue 196
+	public String getVolumeAliquotUnits()
+		{
+		return volumeAliquotUnits;
 		}
 	
 	}

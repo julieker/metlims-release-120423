@@ -44,6 +44,14 @@ public class MixtureService
 		return mixtureDao.aliquotsForMixtureId(mId);
 		}
 	
+
+	// issue 196
+	public List<Object[]> tooltipsListForMixtureMap()
+		{
+		return mixtureDao.tooltipsListForMixtureMap();
+		}
+	
+	
 	// issue 138
 	public boolean isMixturesSecondaryMixture(String mixtureId )
 		{
@@ -198,7 +206,8 @@ public class MixtureService
 		for (AliquotInfo lilAliquotInfo : aliquotInfoList)
 			{
 			Aliquot alq = aliquotDao.loadById(lilAliquotInfo.getAliquotId());
-		    mixtureDao.createMixtureAliquot(MixtureAliquot.instance(mix, alq, lilAliquotInfo.getVolumeTxt(), lilAliquotInfo.getConcentrationTxtFinal()));
+			// issue 196
+		    mixtureDao.createMixtureAliquot(MixtureAliquot.instance(mix, alq, lilAliquotInfo.getVolumeTxt(), lilAliquotInfo.getConcentrationTxtFinal(), lilAliquotInfo.getVolumeAliquotUnits()));
 			}
 	    }
 	
@@ -214,7 +223,8 @@ public class MixtureService
 	        for  (String mixtureStr : mixtureDto.getMixtureList()) 
 				{
 				Mixture childMixture = mixtureDao.loadById(mixtureStr);
-				mixtureDao.createMixtureChild(MixtureChildren.instance(childMixture,mix,  mixtureDto.getMixtureVolumeList() == null ? null : mixtureDto.getMixtureVolumeList().get(index), mixtureDto.getMixtureConcentrationList() == null ? null :mixtureDto.getMixtureConcentrationList().get(index)));
+				// issue 196
+				mixtureDao.createMixtureChild(MixtureChildren.instance(childMixture,mix,  mixtureDto.getMixtureVolumeList() == null ? null : mixtureDto.getMixtureVolumeList().get(index), mixtureDto.getMixtureConcentrationList() == null ? null :mixtureDto.getMixtureConcentrationList().get(index), mixtureDto.getMixtureVolumeUnitList().get(index)   ));
 				////////////// null pointer error
 				for (MixAliquotInfo singleMixAliquotInfo : mixtureDto.getMixtureAliquotInfoMap().get(mixtureStr))
 					{
