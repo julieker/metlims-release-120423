@@ -808,7 +808,6 @@ public class MixturesAdd extends WebPage
 					{
 					buildMixtureButtonPressed = true;
 					mixtureDto.getAliquotNoAssayMultipleChoiceList().addAll(aliquotForEditList);
-					// if (aliquotMap.size() == 0  && (mixtureDto.getMixtureList() != null &&  mixtureDto.getMixtureList().size() == 0) && aliquotMapDry.size() == 0)
 					if (aliquotMap.size() == 0  && (mixtureDto.getMixtureList() != null &&  mixtureDto.getMixtureList().size() == 0) )
 					    {
 						target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please choose either an aliquot or mixture."));
@@ -847,8 +846,8 @@ public class MixturesAdd extends WebPage
 					    }
 					if (setAliquotConcentrationInfo(target,  null ) == -1)
 						return;
-					sumOfVolumeAliquot = getSumVolumeList(volumeList);
-					sumOfVolumeMixture = calculateSecondaryMixtureAliquotInfo ( target );			
+					sumOfVolumeAliquot = sumOfVolumeAliquot = getSumVolumeList(volumeList, volumeUnitList, mixtureDto.getFinalVolumeUnits() );
+					sumOfVolumeMixture = calculateSecondaryMixtureAliquotInfo ( target, volumeMixtureUnitList , mixtureDto.getFinalVolumeUnits());			
 					calcSolventToAdd = Double.parseDouble(mixtureDto.getDesiredFinalVolume()) - sumOfVolumeAliquot - (sumOfVolumeMixture == null ? 0 : sumOfVolumeMixture);
 					mixtureDto.setVolumeSolventToAdd(calcSolventToAdd.toString());		
 					if (calcSolventToAdd < 0 )
@@ -899,7 +898,7 @@ public class MixturesAdd extends WebPage
 					if (setAliquotConcentrationInfo(target,  aliquotIdList) == -1)
 					    return;     
 					sumOfVolumeMixture = 0.0;
-					sumOfVolumeMixture = calculateSecondaryMixtureAliquotInfo ( target );
+					sumOfVolumeMixture = calculateSecondaryMixtureAliquotInfo ( target ,volumeMixtureUnitList , mixtureDto.getFinalVolumeUnits());
 					if (sumOfVolumeMixture == null)
 					    return;
 					mixtureDto.setMixtureName(mixtureNameText.getDefaultModelObjectAsString());														
@@ -915,7 +914,7 @@ public class MixturesAdd extends WebPage
 					// issue 123 recalculate volume solvent to add.....
 					Double solvToAddDec ;
 					solvToAddDec = new BigDecimal(mixtureDto.getDesiredFinalVolume()).doubleValue();
-					sumOfVolumeAliquot = getSumVolumeList(volumeList);
+					sumOfVolumeAliquot = getSumVolumeList(volumeList, volumeUnitList, mixtureDto.getFinalVolumeUnits() );
 					calcSolventToAdd = Double.parseDouble(mixtureDto.getDesiredFinalVolume()) - sumOfVolumeAliquot - (sumOfVolumeMixture == null ? 0 : sumOfVolumeMixture);
 					mixtureDto.setVolumeSolventToAdd(calcSolventToAdd.toString());
 					if (calcSolventToAdd < 0 )
@@ -986,6 +985,7 @@ public class MixturesAdd extends WebPage
 			    	    	break;
 			    	    case "updateVolumeMixtureUnits" :
 			    	    	//target.add(mixturesAddForm);
+			    	    	
 			    	        break;
 			    	    case "updateVolumeAliquotUnits" :
 			    	    	//aliquotInfo.setVolumeAliquotUnits(mixtureDto.getVolumeAliquotUnits());
@@ -1013,7 +1013,7 @@ public class MixturesAdd extends WebPage
 				    		aliquotMap.put("NoAssayDry" , newAliquotList);
 				    		if (aliquotMapBeforeDelete.size()> 0)
 				    			{
-				    			aliquotMapBeforeDelete.put(assayId , newAliquotList);
+				    			aliquotMapBeforeDelete.put("NoAssayDry" , newAliquotList);
 					    	    aliquotMapBeforeDelete = getDupFreeAliquotMap(aliquotMapBeforeDelete);
 				    			}
 				    		break;	
@@ -1110,8 +1110,10 @@ public class MixturesAdd extends WebPage
 						}
 					} 			 
 			     }
-			else 
+			else
+				{
 				updateAliquotList();
+				}
 			return aliquotInfoList;
 			}
 			
@@ -1121,7 +1123,7 @@ public class MixturesAdd extends WebPage
 		    newAliquotInfoList = new ArrayList<AliquotInfo> ();
 		    if (aliquotMapBeforeDelete.size() > 0 && buildMixtureButtonPressed && deleteAliquotPressed)	
 		    	copyChoicesBeforeDelete();	
-			for (Map.Entry<String,List<String>> entry : aliquotMap.entrySet()) 
+		    for (Map.Entry<String,List<String>> entry : aliquotMap.entrySet()) 
 			    {
 				for (String aliquotStr : entry.getValue())
 				    {	
@@ -1139,26 +1141,6 @@ public class MixturesAdd extends WebPage
 						}
 					}
 				}
-			
-			// issue 196
-		/*	for (Map.Entry<String,List<String>> entry : aliquotMapDry.entrySet()) 
-			    {
-				for (String aliquotStr : entry.getValue())
-				    {	
-					if (entry.getValue() != null)
-						{
-						AliquotInfo ainfo = new AliquotInfo("","");
-						ainfo = returnExistingAliquotInfo(aliquotStr);
-						if (ainfo.aliquotId == null)
-					    	{
-							ainfo.aliquotId = aliquotStr;
-						    newAliquotInfoList.add(ainfo);
-					    	}
-						else 
-							existingAliquotInfoList.add(ainfo);
-						}
-					}
-				}*/
 			aliquotInfoList.clear();
 			aliquotInfoList.addAll(existingAliquotInfoList);
 			if ( aliquotInfoList.size() > 0)
@@ -1278,7 +1260,7 @@ public class MixturesAdd extends WebPage
 			
 			}
 		
-		public Double calculateSecondaryMixtureAliquotInfo (AjaxRequestTarget target)
+		public Double calculateSecondaryMixtureAliquotInfo (AjaxRequestTarget target, List<String> volumeMixUnits, String volumeFinalUnit  )
 			{
 			String errCode = "";
 			Double conFinal ;
@@ -1287,6 +1269,11 @@ public class MixturesAdd extends WebPage
 			Double desiredWeighedAmountConverted;
 			Double desiredMixConConverted;
 			Double sumOfVolumeMixture = 0.0;	
+			Double conversion = 1.0;
+			Double conversionMixtureAliquot = 1.0;
+			int i = 0;
+			
+			
 			aliquotDryList =  aliquotService.loadAliquotListDry() ;
 			desiredVolConverted = Double.parseDouble(mixtureDto.getDesiredFinalVolume() ) * calculateConversion (mixtureDto.getFinalVolumeUnits());
 			errCode = getErrorCheckCode (mixtureDto.getMixtureName(), "mixture name", "string");
@@ -1302,7 +1289,12 @@ public class MixturesAdd extends WebPage
 				target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage(errCode));
 				return null;
 	        	}
-			
+			 if (volumeFinalUnit .equals("L") )
+			    	conversion = 1.0;
+			    else if (volumeFinalUnit .equals("mL") )
+			    	conversion = 1000.0;
+			    else
+			    	conversion = 1000000.0;
 			for (MixtureInfo singleMixtureInfo : (ArrayList<MixtureInfo>) mixtureInfoModel.getObject()) 
 				{
 				// issue 123
@@ -1329,18 +1321,18 @@ public class MixturesAdd extends WebPage
 			    	if (!singleMixtureInfo.getMixtureId().equals(singleMixAliquot.getMixtureId()))
 					    continue;
 			    	// issue 196
-			    	    if ((aliquotDryList.contains(singleMixAliquot.getAliquotId())))
-			    	    	{
-			    	    	desiredWeighedAmountConverted = Double.parseDouble(singleMixAliquot.getWeightedAmountMix()) * calculateConversion (singleMixAliquot.getWeightedAmountMixUnit());
-			    	    	conFinal = ((desiredWeighedAmountConverted)/( Double.parseDouble(singleMixAliquot.getMolecularWeightMix()) * desiredVolConverted   ));
-			    	    	}
-			    	    else	
-			    	    	{
-			    	    	desiredMixVolConverted = Double.parseDouble(singleMixtureInfo.getMixtureVolumeTxt() ) * calculateConversion (singleMixtureInfo.volumeMixtureUnits);
-			    	    	desiredMixConConverted = Double.parseDouble(singleMixAliquot.getMixAliquotConcentration()) * calculateConversion (singleMixAliquot.getMixAliquotConUnits());   	
-			    	   	    conFinal = (desiredMixVolConverted  * desiredMixConConverted)/desiredVolConverted;
-			    	    	}
-			    	   	    singleMixAliquot.setMixAliquotConcentrationFinal(conFinal.toString());		
+		    	    if ((aliquotDryList.contains(singleMixAliquot.getAliquotId())))
+		    	    	{
+		    	    	desiredWeighedAmountConverted = Double.parseDouble(singleMixAliquot.getWeightedAmountMix()) * calculateConversion (singleMixAliquot.getWeightedAmountMixUnit());
+		    	    	conFinal = ((desiredWeighedAmountConverted)/( Double.parseDouble(singleMixAliquot.getMolecularWeightMix()) * desiredVolConverted   ));
+		    	    	}
+		    	    else	
+		    	    	{
+		    	    	desiredMixVolConverted = Double.parseDouble(singleMixtureInfo.getMixtureVolumeTxt() ) * calculateConversion (singleMixtureInfo.volumeMixtureUnits);
+		    	    	desiredMixConConverted = Double.parseDouble(singleMixAliquot.getMixAliquotConcentration()) * calculateConversion (singleMixAliquot.getMixAliquotConUnits());   	
+		    	   	    conFinal = (desiredMixVolConverted  * desiredMixConConverted)/desiredVolConverted;
+		    	    	}
+			    	   	singleMixAliquot.setMixAliquotConcentrationFinal(conFinal.toString());		
 			        }
 			    mixtureAliquotMap.put(singleMixtureInfo.getMixtureId(), listOfAliquots);
 				mixtureAliquotInfoMap.put(singleMixtureInfo.getMixtureId(), listOfMixAliquots);
@@ -1354,7 +1346,7 @@ public class MixturesAdd extends WebPage
 				if (sumOfVolumeMixture == null)
 					sumOfVolumeMixture = 0.0;
 				
-				sumOfVolumeMixture += Double.parseDouble(singleMixtureInfo.getMixtureVolumeTxt());					
+			
 				if (!StringUtils.isNullOrEmpty(errCode))	
 					{
 					target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage(errCode));
@@ -1363,11 +1355,22 @@ public class MixturesAdd extends WebPage
 				volumeMixtureList.add(singleMixtureInfo.getMixtureVolumeTxt());
 				volumeMixtureUnitList.add(singleMixtureInfo.getVolumeMixtureUnits()); // issue 196
 				concentrationMixtureList.add(singleMixtureInfo.getMixtureConcentrationTxt());
+				// issue 196
+				///////////////////////
+
+				if (singleMixtureInfo.getVolumeMixtureUnits().equals("L"))
+					conversionMixtureAliquot = 1.0;
+					else if (singleMixtureInfo.getVolumeMixtureUnits().equals("mL"))
+					    conversionMixtureAliquot = 1000.0;
+					else
+						conversionMixtureAliquot = 1000000.0; 
+				sumOfVolumeMixture += Double.parseDouble(singleMixtureInfo.getMixtureVolumeTxt()) *(conversion/conversionMixtureAliquot);
+				i++;
+						
 				}	
 			return sumOfVolumeMixture;
 			}
-		
-		
+				
 		public String getTheblankinput ()
 			{
 			return theblankinput;
@@ -1437,7 +1440,21 @@ public class MixturesAdd extends WebPage
 					mixtureInfoList.add(minfo);
 					mixtureAliquotMap.put(mixtureIdStr, null);
 					}
-				}			
+				}
+			// issue 196
+			if (mixtureInfoList.size() == 0  && mixtureDto.getMixtureList() != null && mixtureAliquotMap.size() == 0)
+				{
+				for (String mixtureIdStr : mixtureDto.getMixtureList() ) 
+					{	
+					MixtureInfo minfo = new MixtureInfo();
+					minfo.mixtureId = mixtureIdStr;
+					minfo.mixtureVolumeTxt = "";
+					minfo.mixtureConcentrationTxt = "";
+					mixtureInfoList.add(minfo);
+					mixtureAliquotMap.put(mixtureIdStr, null);
+					}
+				}
+			// issue 196
 			}
 		return mixtureInfoList;
 		}
@@ -1474,14 +1491,32 @@ public class MixturesAdd extends WebPage
 	   this.concentrationTxt = concentrationTxt;
 	   }
 	
-	public double getSumVolumeList (List<String> volumeList)
+	public double getSumVolumeList (List<String> volumeList, List<String> volumeUnitList, String desiredFinalVolumeUnit )
 		{
 		double sumVolume = 0;
+	    Double conversion ;
+	    Double conversionVolumeAliquot;
+	    
+	    if (desiredFinalVolumeUnit.equals("L") )
+	    	conversion = 1.0;
+	    else if (desiredFinalVolumeUnit.equals("mL") )
+	    	conversion = 1000.0;
+	    else
+	    	conversion = 1000000.0;
+	    int i=0;
 		for (String volStr : volumeList)
 			{
-			sumVolume = sumVolume + Double.parseDouble(volStr == null ? "0" : volStr);
+			if (volumeUnitList.get(i).equals("L"))
+				conversionVolumeAliquot = 1.0;
+			else if (volumeUnitList.get(i).equals("mL"))
+				conversionVolumeAliquot = 1000.0;
+			else
+				conversionVolumeAliquot = 1000000.0;  
+			sumVolume = sumVolume + Double.parseDouble(volStr == null ? "0" : volStr) * (conversion/conversionVolumeAliquot);
+			i++;
 			}
-        return sumVolume;
+		
+	    return sumVolume;
 		}
 	
 	private Button buildClearButton (String id)
@@ -1532,6 +1567,7 @@ public class MixturesAdd extends WebPage
 			    	aliquotMap.put(pairs.getKey().toString(), taliquots);
 			    	}	
 			    allAliquots.addAll(taliquots);
+			    
 			    }
 			
 		    if (inEditMixture )
@@ -1539,7 +1575,6 @@ public class MixturesAdd extends WebPage
 		    	aliquotMap = new HashMap<String, List<String>>();
 		    	aliquotMap.put("NoAssay", allAliquots);
 		    	}
-            
 			}
 		catch (Exception e)
 			{
@@ -1736,17 +1771,19 @@ public class MixturesAdd extends WebPage
 		    try 
 		        { 	
 		    	deleteAliquotPressed = true;
-		    	buildMixtureButtonPressed = false;			    
+		    	buildMixtureButtonPressed = false;	
 		    	if (aliquotMapBeforeDelete.size() == 0)
 			    	{
-			        for (Map.Entry<String, List<String>> entry : aliquotMap.entrySet()) 
-			        	{
-			        	List <String> aliquotTestList = new ArrayList <String> ();			        	
-			        	for (String aStr : entry.getValue())	 
-			        		aliquotTestList.add(aStr);		        		
-			        	 aliquotMapBeforeDelete.put(entry.getKey(), aliquotTestList);		        	 
-			        	}	
-			    	}  		     
+		        	List <String> aliquotTestList = new ArrayList <String> ();		
+		        	List <String> aliquotTestListDry = new ArrayList <String> ();	
+		        	// issue 196
+		        	for (String aStr : aliquotMap.get("NoAssay"))
+		        		    aliquotTestList.add(aStr);	
+		        	for (String aStr : aliquotMap.get("NoAssayDry"))
+		        			aliquotTestListDry.add(aStr);	
+		        	aliquotMapBeforeDelete.put("NoAssay", aliquotTestList);
+		        	aliquotMapBeforeDelete.put("NoAssayDry", aliquotTestListDry);	
+			    	}  		  
 		    	deleteAndRebuildAliquotInfoMixture(gAliquotId);   
 		    	deleteAliquotMap(gAliquotId);    			    	
 		    	target.add(mixtureBuildContainer);
@@ -1791,9 +1828,10 @@ public class MixturesAdd extends WebPage
 	public void copyChoicesBeforeDelete()
 		{
 		aliquotMap = new HashMap<String, List<String>> ();
+		
 	        for (Map.Entry<String, List<String>> entry : aliquotMapBeforeDelete.entrySet()) 
 	            {
-	        	List <String> aliquotTestList = new ArrayList <String> ();		        	
+	        	List <String> aliquotTestList = new ArrayList <String> ();	
 	        	for (String aStr : entry.getValue())
 	        		aliquotTestList.add(aStr);		        			        		
 	        	aliquotMap.put(entry.getKey(), aliquotTestList);

@@ -34,11 +34,9 @@ public class MixtureInfo implements Serializable
 	MixtureService mixtureService;
  	@SpringBean
  	AliquotService aliquotService;
- 	List <String> aliquotDryList = new ArrayList <String> (); // issue 196
- 	
+ 	List <String> aliquotDryList = new ArrayList <String> (); // issue 196 	
  	List <String> listAliquots = new ArrayList <String> ();
  	String expandText = "+";
- 	///////
  	
  	// issue 196
  	public List <String> getAliquotDryList ()
@@ -114,8 +112,7 @@ public class MixtureInfo implements Serializable
 		{
 		listAliquots.clear();
 		List <String> aliquotDryList = new ArrayList <String> ();
-	//	aliquotDryList =  aliquotService.loadAliquotListDry() ;
-		
+	
 		if (listMixAliquotInfo.size() == 0)
 			{
 			for (Object[] result : listObject)
@@ -125,10 +122,7 @@ public class MixtureInfo implements Serializable
 				mAliquotInfo.setMixtureId(result[0].toString());
 				mAliquotInfo.setMixAliquotConcentration ( result[3].toString());
 				mAliquotInfo.setMixAliquotConUnits(result[4] == null ? "" : result[4].toString());
-				//System.out.println("..... setting listmixaliquot info:");
 				mAliquotInfo.setMixAliquotConcentrationFinal(" ");
-				System.out.println("here is mAliquotInfo aliquot id:" + mAliquotInfo.aliquotId);
-				
 				if (this.aliquotDryList.contains(mAliquotInfo.aliquotId))
 				    {   
 					mAliquotInfo.setWeightedAmountMix(result[7].toString());
@@ -136,24 +130,16 @@ public class MixtureInfo implements Serializable
 					mAliquotInfo.setMolecularWeightMix(result[8].toString());
 					mAliquotInfo.setWeightedAmountMixUnit(result[10].toString());//issue 196
 				    }
-				System.out.println("here is maliquotinfo get weighted amoutn mix unit: " + mAliquotInfo.getWeightedAmountMixUnit());
-				
 				listMixAliquotInfo.add(mAliquotInfo);
 				listAliquots.add (mAliquotInfo.getAliquotId());	
-			//	System.out.println("IN getMaliquotList:" + listAliquots);
 				}    
-		//mixAliquotInfoList.clear();
-			
 			return listMixAliquotInfo;
 			}
 		else
 			{
 			for (MixAliquotInfo mixali : listMixAliquotInfo)
 				{
-				System.out.println("here is the weighted amount unit:" + mixali.getWeightedAmountMixUnit() + " " + mixali.getWeightedAmountMix() );
 				}
-		
-		//	System.out.println("here is listmixaliquotinfo.count:" + listMixAliquotInfo.size());
 			return listMixAliquotInfo;
 			}
 		}
