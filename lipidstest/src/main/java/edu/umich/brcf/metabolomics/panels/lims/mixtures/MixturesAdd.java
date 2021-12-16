@@ -1566,10 +1566,8 @@ public class MixturesAdd extends WebPage
 			    	taliquots.remove(aliquotId);
 			    	aliquotMap.put(pairs.getKey().toString(), taliquots);
 			    	}	
-			    allAliquots.addAll(taliquots);
-			    
-			    }
-			
+			    allAliquots.addAll(taliquots);			    
+			    }			
 		    if (inEditMixture )
 		    	{
 		    	aliquotMap = new HashMap<String, List<String>>();
@@ -1638,37 +1636,6 @@ public class MixturesAdd extends WebPage
 		return toolTipsMap;
 		}
 	
-	
-	// issue 123
-	/*********
-    public Map <String, String> buildToolTipForAliquotsMap ()
-		{
-    	Map <String, String> toolTipsMap = new HashMap <String, String> ();
-    	List <String> allWetDryAliquotsList = aliquotService.loadAliquotListNoAssay();
-    	allWetDryAliquotsList.addAll(aliquotService.loadAliquotListDry());
-    	for (String aliquotStr : allWetDryAliquotsList)
-	    	{	
-    		Aliquot aliquot = aliquotService.loadById(aliquotStr);
-			String cId = aliquot.getCompound().getCid();
-			//    String aName = compoundNameService.getCompoundName(cId);
-			String aName = " ";
-			String dateStr = aliquot.getCreateDateString();
-		    //	  String createdBy = userService.getFullNameByUserId(aliquot.getCreatedBy());
-			String createdBy = " ";
-			//String unitStr = aliquot.getNeatSolVolUnits();
-			String unitStr = aliquot.getNeat().equals('1') ? aliquot.getDConcentrationUnits() :aliquot.getNeatSolVolUnits(); // issue 123
-			//String desiredConStr = aliquot.getDcon().toString();
-			String desiredConStr = aliquot.getNeat().equals('1') ? aliquot.getDconc().toString() : aliquot.getDcon().toString();
-			String toolTipStr = "Aliquot Id:" + aliquot.getAliquotId() + 
-					"\n" + "Aliquot Name:" + aName + "\n" + 
-					 "Date Created:" + dateStr + "\n" + 
-					"Created By: " + createdBy + "\n" + 
-					 "Concentration: " + desiredConStr  + " " + unitStr +  "\n" ;
-			toolTipsMap.put(aliquotStr, toolTipStr);			
-	    	}	 
-		return toolTipsMap;
-		}	
-		**********/	
     
     // issue 138
     
@@ -1777,10 +1744,16 @@ public class MixturesAdd extends WebPage
 		        	List <String> aliquotTestList = new ArrayList <String> ();		
 		        	List <String> aliquotTestListDry = new ArrayList <String> ();	
 		        	// issue 196
-		        	for (String aStr : aliquotMap.get("NoAssay"))
+		        	if ( aliquotMap.get("NoAssay") != null)
+		        		{
+		        		for (String aStr : aliquotMap.get("NoAssay"))
 		        		    aliquotTestList.add(aStr);	
-		        	for (String aStr : aliquotMap.get("NoAssayDry"))
+		        		}
+		        	if ( aliquotMap.get("NoAssayDry") != null)
+		        		{
+		        		for (String aStr : aliquotMap.get("NoAssayDry"))
 		        			aliquotTestListDry.add(aStr);	
+		        		}
 		        	aliquotMapBeforeDelete.put("NoAssay", aliquotTestList);
 		        	aliquotMapBeforeDelete.put("NoAssayDry", aliquotTestListDry);	
 			    	}  		  
@@ -1789,7 +1762,8 @@ public class MixturesAdd extends WebPage
 		    	target.add(mixtureBuildContainer);
 		        } 
 		    catch (Exception e) 
-		        { 				        
+		        { 	
+		    	e.printStackTrace();
 		        } 
 		     } 
 		 };
