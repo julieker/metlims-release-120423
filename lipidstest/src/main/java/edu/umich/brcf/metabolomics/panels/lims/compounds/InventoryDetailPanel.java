@@ -1,7 +1,10 @@
 package edu.umich.brcf.metabolomics.panels.lims.compounds;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -49,12 +52,14 @@ public class InventoryDetailPanel extends Panel
 	List<Compound> parentageList;	
 	ListView listViewAliquots; // issue 61
 	private List<Aliquot> aliquots; // issue 61
+	Map<String, String> aliquotRetiredMixtureMap = new HashMap<String, String>();	
 	// itemList
 	public InventoryDetailPanel(String id,  final Compound cmpd) 
 		{
 		super(id);
 		setCompound(cmpd);
 		final ModalWindow modal2= new ModalWindow("modal2");
+		aliquotRetiredMixtureMap = buildRetiredMixtureMap(aliquotRetiredMixtureMap);
 		modal2.setInitialWidth(650);
         modal2.setInitialHeight(450);
         modal2.setWidthUnit("em");
@@ -116,6 +121,8 @@ public class InventoryDetailPanel extends Panel
 				listItem.add(new Label("aliquotNeatDilutionUnits",  new Model(alq.getNeat().equals('1') && alq.getDry().equals('1') ? (alq.getWeightedAmount() + " " + alq.getWeightedAmountUnits()) : (alq.getNeat().equals('1') ? alq.getDconc() : alq.getDcon()) + " " + (alq.getNeat().equals('1') ? alq.getDConcentrationUnits() : alq.getNeatSolVolUnits() ))));
 				listItem.add(new Label("parentInventory", new Model(alq.getInventory() == null ? "none" : alq.getInventory().getInventoryId())));	
 				listItem.add(new Label("compoundAliquot", new Model(alq.getCompound() == null ? "none" : alq.getCompound().getCid())));	
+				listItem.add(new Label("isdry", new Model(alq.getDry().toString().equals("1") ? "Yes" : "No" )));	
+				listItem.add(new Label("retiredmixture", new Model(aliquotRetiredMixtureMap.get(alq.getAliquotId()))));	
 				listItem.add(new Label("createDate", new Model(alq.getCreateDateString())));
 				listItem.add(new Label("createdBy", new Model(userService.getFullNameByUserId(alq.getCreatedBy()))));
 			    listItem.add(buildLinkToModalAliquot("editAliquot", modal2, detailPanel , true, alq)).setVisible(true);
@@ -150,6 +157,19 @@ public class InventoryDetailPanel extends Panel
 		    return lnk;	
 		return lnk;
 		}
+	
+	
+	
+	// issue 199
+	public Map<String, String> buildRetiredMixtureMap (Map <String, String> aliquotRetiredMixtureMap)
+		{
+		List <Object []> retiredMixtureObjects = aliquotService.getRetiredToMixture();
+	
+		for (Object[] result : retiredMixtureObjects)
+			aliquotRetiredMixtureMap.put(result[0].toString(),result[1].toString());
+		return aliquotRetiredMixtureMap;
+		}
+	
 	
 	// issue 61
 	private AjaxLink buildLinkToModalAliquot(final String linkID, final ModalWindow modal1, final InventoryDetailPanel idp, final boolean aliqutButtonVisible, final Aliquot alq) 

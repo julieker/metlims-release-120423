@@ -33,9 +33,9 @@ import edu.umich.brcf.metabolomics.panels.lims.mixtures.AliquotInfo;
 		"MIXTURE_ID", "ALIQUOT_ID" }))
 public class MixtureAliquot implements Serializable
 	{
-	public static MixtureAliquot instance(Mixture mixture, Aliquot aliquot, String volumeAliquotStr, String concentrateAliquotStr, String volumeAliquotUnits)
+	public static MixtureAliquot instance(Mixture mixture, Aliquot aliquot, String volumeAliquotStr, String concentrateAliquotStr, String volumeAliquotUnits, Character dryRetired)
 		{
-		return new MixtureAliquot(mixture, aliquot, volumeAliquotStr, concentrateAliquotStr, volumeAliquotUnits);
+		return new MixtureAliquot(mixture, aliquot, volumeAliquotStr, concentrateAliquotStr, volumeAliquotUnits, dryRetired);
 		}
 	@EmbeddedId
 	protected MixtureAliquotPK id;
@@ -62,21 +62,44 @@ public class MixtureAliquot implements Serializable
 	@Column(name = "VOLUME_ALIQUOT_UNITS", columnDefinition = "VARCHAR2(10)")
 	private String volumeAliquotUnits;
 	
+	// issue 199
+	@Basic()
+	@Column(name = "DRY_ALIQUOT_RETIRED", columnDefinition = "CHAR(1)")
+	private Character dryAliquotRetired;
+	
+	
+	
 	public MixtureAliquot()
 		{
 		}
-	private MixtureAliquot(Mixture mixture, Aliquot aliquot, String volumeAliquotStr, String concentrateAliquotStr, String volumeAliquotUnits)
+	// issue 199
+	private MixtureAliquot(Mixture mixture, Aliquot aliquot, String volumeAliquotStr, String concentrateAliquotStr, String volumeAliquotUnits, Character dryRetired)
 		{
 		this.aliquot = aliquot;
 		this.mixture = mixture;
 		this.id = MixtureAliquotPK.instance(mixture, aliquot);	
 		this.volumeAliquot = new BigDecimal(org.h2.util.StringUtils.isNullOrEmpty(volumeAliquotStr) ? "0" :  volumeAliquotStr) ;// issue 196
 		
-		
+		this.dryAliquotRetired = dryRetired; // issue 199
 		this.concentrationAliquot = new BigDecimal(concentrateAliquotStr);
 		this.volumeAliquotUnits = volumeAliquotUnits; // issue 196
 		}
 	
+	// issue 199
+	public Character getDryAliquotRetired()
+		{
+		return this.dryAliquotRetired;
+		}
+
+	public void setDryAliquotRetired(Character dryAliquotRetired)
+		{
+		this.dryAliquotRetired = dryAliquotRetired;
+		}
+	// issue 199
+	public void updateToRetired(String dryAliquotRetired)
+		{
+		this.dryAliquotRetired = '1';
+		}
 	public MixtureAliquotPK getId()
 		{
 		return id;

@@ -101,6 +101,7 @@ public class MixturesAdd extends WebPage
 	List <MixAliquotInfo> mixAliquotInfoList = new ArrayList<MixAliquotInfo> (); 
 	List <MixAliquotInfo> gMixAliquotInfoList = new ArrayList<MixAliquotInfo> (); 
 	List <String> volumeList, volumeUnitList;
+	List <Character> dryRetiredList = new ArrayList<Character> ();
 	List <String> concentrationList = new ArrayList<String> ();
 	List <String> volumeMixtureList = new ArrayList<String> ();
 	List <String> volumeMixtureUnitList = new ArrayList<String> ();
@@ -210,7 +211,7 @@ public class MixturesAdd extends WebPage
 		inEditMixture = editingMixture;
 		if (editingMixture )
 		    {
-			aliquotDryList =  aliquotService.loadAliquotListDry() ;
+			aliquotDryList =  aliquotService.loadAliquotListDryKeepDryForEdit() ;
 			aliquotMap = buildAliquotMapAndAliquotInfoForEdit(mixture);
 			isBuildVisible = true;
 			mixtureButtonLabel = "Save Mixture";
@@ -350,10 +351,8 @@ public class MixturesAdd extends WebPage
 					
 				add (aliquotNoAssaysSelected);	
 				aliquotNoAssaysSelected.add(buildStandardFormComponentUpdateBehavior("change", "updateAliquotNoAssay", mixtureDto,  MixturesAdd , "NoAssay"));
-				aliquotDryList =  aliquotService.loadAliquotListDry() ;
-				
-				//////// issue 196
-				aliquotNoAssaysSelectedDry = new ListMultipleChoice ("aliquotNoAssayMultipleChoiceListDry",aliquotService.loadAliquotListDry() )	
+				aliquotDryList =  aliquotService.loadAliquotListDryKeepDryForEdit() ;
+				aliquotNoAssaysSelectedDry = new ListMultipleChoice ("aliquotNoAssayMultipleChoiceListDry",aliquotService.loadAliquotListDry(mixtureToEdit == null ? null :mixtureToEdit.getMixtureId()) )	
 				    {
 				     @Override
 					 protected void onComponentTag(ComponentTag tag)
@@ -889,6 +888,8 @@ public class MixturesAdd extends WebPage
 					   }
 					List <String> aliquotIdList = new ArrayList <String> ();
 					volumeList = new ArrayList <String> ();
+					
+					dryRetiredList = new ArrayList <Character> ();
 					volumeUnitList = new ArrayList <String> (); // issue 196
 					concentrationList = new ArrayList <String> ();
 					volumeMixtureList = new ArrayList <String> ();
@@ -904,6 +905,8 @@ public class MixturesAdd extends WebPage
 					mixtureDto.setMixtureName(mixtureNameText.getDefaultModelObjectAsString());														
 					mixtureDto.setAliquotList(aliquotIdList);
 					mixtureDto.setAliquotVolumeList(volumeList);
+					// issue 199
+					mixtureDto.setDryRetiredList(dryRetiredList);
 					mixtureDto.setAliquotVolumeUnitList(volumeUnitList);
 					mixtureDto.setAliquotConcentrationList(concentrationFinalList);
 					mixtureDto.setMixtureConcentrationList(concentrationMixtureList);
@@ -1198,11 +1201,13 @@ public class MixturesAdd extends WebPage
 				if (aliquotDryList.contains(singleAliquotInfo.aliquotId))
 					{
 					desiredWeighedAmountConverted = Double.parseDouble(singleAliquotInfo.getWeightedAmountTxt()) * calculateConversion (singleAliquotInfo.getWeightedAmountUnitsTxt());
+					dryRetiredList.add('1'); // issue 199
 					}
 				else
 					{					
 					desiredAliquotVolConverted = Double.parseDouble(singleAliquotInfo.getVolumeTxt()) * calculateConversion (singleAliquotInfo.getVolumeAliquotUnits());
 				    desiredConcentrationConverted = Double.parseDouble(singleAliquotInfo.getConcentrationTxt()) * calculateConversion(singleAliquotInfo.concentrationUnitsTxt);
+				    dryRetiredList.add('0'); // issue 199
 					}
 		
 				volumeList.add(StringUtils.isNullOrEmpty(singleAliquotInfo.getVolumeTxt()) ? "0" : singleAliquotInfo.getVolumeTxt());
@@ -1274,7 +1279,7 @@ public class MixturesAdd extends WebPage
 			int i = 0;
 			
 			
-			aliquotDryList =  aliquotService.loadAliquotListDry() ;
+			aliquotDryList =  aliquotService.loadAliquotListDryKeepDryForEdit() ;
 			desiredVolConverted = Double.parseDouble(mixtureDto.getDesiredFinalVolume() ) * calculateConversion (mixtureDto.getFinalVolumeUnits());
 			errCode = getErrorCheckCode (mixtureDto.getMixtureName(), "mixture name", "string");
 			if (!StringUtils.isNullOrEmpty(errCode))	

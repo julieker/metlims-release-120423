@@ -76,6 +76,12 @@ public class MixtureService
 		return mixtureDao.loadMixtureAliquotById(mixtureAliquotPK);
 		}
 	
+	// issue 199
+	public List<Object[]> loadRetiredDryAliquot(String mixtureId, String aliquotId)
+		{		
+		return mixtureDao.loadRetiredDryAliquot(mixtureId, aliquotId);
+		}
+	
 	public MixtureChildren loadMixtureChildrenById(MixtureChildrenPK mixtureChildrenPK)
 		{		
 		return mixtureDao.loadMixtureChildrenById(mixtureChildrenPK);
@@ -194,22 +200,19 @@ public class MixtureService
 	// issue 61
 	
 	// issue 138
+	// issue 199
 	public void updateMixtureAliquot (List <AliquotInfo> aliquotInfoList, Mixture mix)
 		{
+		int i = 0;
 		mixtureDao.removeMixtureAliquots(mix.getMixtureId());
+		List <String> aliquotBuildMixtureList = new ArrayList <String> ();
 		for (AliquotInfo lilAliquotInfo : aliquotInfoList)
-			{
+			{			
 			Aliquot alq = aliquotDao.loadById(lilAliquotInfo.getAliquotId());
-			MixtureAliquotPK mixtureAliquotPK   = MixtureAliquotPK.instance(mix, alq);
-			MixtureAliquot mixtureAliquot = loadMixtureAliquotById(mixtureAliquotPK);
+		    Character dryAliquotRetired =  alq.getDry();
+		    mixtureDao.createMixtureAliquot(MixtureAliquot.instance(mix, alq, lilAliquotInfo.getVolumeTxt(), lilAliquotInfo.getConcentrationTxtFinal(), lilAliquotInfo.getVolumeAliquotUnits(),dryAliquotRetired));		 
 			}
-		for (AliquotInfo lilAliquotInfo : aliquotInfoList)
-			{
-			Aliquot alq = aliquotDao.loadById(lilAliquotInfo.getAliquotId());
-			// issue 196
-		    mixtureDao.createMixtureAliquot(MixtureAliquot.instance(mix, alq, lilAliquotInfo.getVolumeTxt(), lilAliquotInfo.getConcentrationTxtFinal(), lilAliquotInfo.getVolumeAliquotUnits()));
-			}
-	    }
+		}
 	
 	// issue 138
 	    

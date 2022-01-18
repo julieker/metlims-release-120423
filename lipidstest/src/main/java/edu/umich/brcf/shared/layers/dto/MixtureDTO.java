@@ -55,6 +55,7 @@ public class MixtureDTO implements Serializable
     private String volumeAliquotUnits; //issue 196
     private List <String> aliquotVolumeUnitList; // issue 196
     private List<String> mixtureVolumeUnitList;  // issue 196
+    private List<Character> dryRetiredList; // issue 199
     
     
     // issue 123
@@ -72,6 +73,18 @@ public class MixtureDTO implements Serializable
 	
 	public MixtureDTO() { }	
 	
+	// issue 199
+	public List<Character> getDryRetiredList ()
+		{
+		return this.dryRetiredList;
+		}
+	
+	// issue 199
+	public void setDryRetiredList (List<Character> dryRetiredList)
+		{
+		this.dryRetiredList = dryRetiredList;
+		}
+		
 	public List<String> getAliquotVolumeUnitList ()
 		{
 		return aliquotVolumeUnitList;

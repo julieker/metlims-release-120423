@@ -261,7 +261,7 @@ public class EditAliquot extends WebPage
 			add(dateFld);	
 			// issue 79
 			solventDD = new DropDownChoice("solventText",  Arrays.asList(new String[] {"WATER", "ETHANOL", 
-					                       "METHANOL", "CHLOROFORM", "ISOPROPANOL", "ACETONITRILE", "ETHYL ACETEATE", "OTHER"}))
+					                       "METHANOL", "CHLOROFORM", "ISOPROPANOL", "ACETONITRILE", "ETHYL ACETEATE", "See Notes", "OTHER"})) // issue 199
 					{
 					@Override
 					public boolean isVisible()
@@ -739,6 +739,11 @@ public class EditAliquot extends WebPage
 							EditAliquot.this.info(saveMsg);
 						    }
 						} 
+					catch (RuntimeException r)
+						{
+						String errMsg =  "<span style=\"color:red;\">" + r.getMessage() +  "</span>";
+				        EditAliquot.this.error(errMsg);
+						}
 					catch(Exception e)
 						{ 
 						e.printStackTrace(); 

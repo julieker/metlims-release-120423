@@ -73,23 +73,40 @@ public class MixtureDAO extends BaseDAO
 	public void createMixtureAliquot(MixtureAliquot mixtureAliquot)
 		{
 		try
-		{
-		
-		getEntityManager().persist(mixtureAliquot);
+			{			
+			getEntityManager().persist(mixtureAliquot);
+			}
+			catch (Exception e)
+			{
+		    e.printStackTrace();		    
+			}		
 		}
-		catch (Exception e)
+	
+	// issue 199;
+	public List<Object[]> loadRetiredDryAliquot(String mixtureId, String aliquotId)
 		{
-	    e.printStackTrace();
-	    
-		}
+		//Query query = getEntityManager().createNativeQuery("select mixture_id, aliquot_id, dry_aliquot_retired from mixture_aliquot where mixture_id = ?1 and aliquot_id = ?2 ").setParameter(1, mixtureId).setParameter(2, aliquotId);
+		Query query = getEntityManager().createNativeQuery("select aliquot_id from mixture_aliquot where mixture_id ='" + mixtureId + "'"  + " and aliquot_id ='" +  aliquotId + "'");
+		List<Object[]> mixtureNameList = query.getResultList();
 		
-		
+		System.out.println("Here is the queryyyyy:" + "select mixture_id, aliquot_id, dry_aliquot_retired from mixture_aliquot where mixture_id ='" + mixtureId + "'"  + " and aliquot_id ='" +  aliquotId + "'");
+		System.out.println("here is the size of the query list:" + mixtureNameList.size());
+		System.out.println("here is the mixtureid:" +  "'" + mixtureId + "'" + " " + "here is aiquotid:" + "'" + aliquotId + "'");
+		return query.getResultList();
 		}
 	
 	public MixtureAliquot loadMixtureAliquotById(MixtureAliquotPK mixtureAliquotPK)
 		{
-		MixtureAliquot mixtureAliquot = getEntityManager().find(MixtureAliquot.class, mixtureAliquotPK	);
-		return mixtureAliquot;
+		try
+			{
+			MixtureAliquot mixtureAliquot = getEntityManager().find(MixtureAliquot.class, mixtureAliquotPK	);
+			return mixtureAliquot;
+			}
+		catch (Exception e)
+			{	
+			e.printStackTrace();
+			return null;
+			}
 		}
 	// issue 110
 	public void createMixtureChild(MixtureChildren mixtureChildren)
@@ -116,6 +133,12 @@ public class MixtureDAO extends BaseDAO
 		{
 		Query query = getEntityManager().createNativeQuery("delete mixture_aliquot where mixture_id = ?1").setParameter(1, mixtureId);
 		query.executeUpdate();
+		}
+	// issue 201
+	public void removeMixtureAliquots(MixtureAliquot ma)
+		{
+		getEntityManager().remove(ma);
+		//getEntityManager().getTransaction().commit();
 		}
 	
 	// issue 123

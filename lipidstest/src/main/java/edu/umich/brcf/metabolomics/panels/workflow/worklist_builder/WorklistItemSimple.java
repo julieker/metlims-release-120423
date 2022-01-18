@@ -313,8 +313,6 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 			Date date = DateUtils.dateFromDateStr(parent.getRunDate(), "mm/dd/yy");
 			String fullString = DateUtils.dateAsFullString(date);
 			dts = DateUtils.grabYYYYmmddString(fullString);
-			//System.out.println("In sample name rebuild" + dts);
-			//dts = DateUtils.grabYYYYmmddString(parent.getRunDate());
 			String sampleDescription = sid; // (representsControl ? sid :
 											// sampleService.sampleDescriptionForSampleId(sid));
 			setSampleWorklistLabel(parent.getSelectedPlatform().equals("absciex") ? (dts + "_" + sampleDescription) : sampleDescription);
@@ -548,7 +546,7 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	// issue 166
 	public String calcCommentContent (String theSampleId)
 		{
-		
+		// issue 201
 		if (!this.getRepresentsControl())
 			return this.getResearcherName();
 		else
@@ -559,11 +557,55 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 				{
 				// issue 179
 				if (wwg.getControlType() == null)
+					{
 					continue;
+					}
+				// issue 201
 				if (wwg.getControlType().contains(controlCode))
-					return wwg.getControlType().substring(0, wwg.getControlType().lastIndexOf("(")).replace(",", "");
+					{ 
+					String preControltype = controlCode.equals("CS00000MP-Pre") ? "Master Pool   (CS00000MP)" : wwg.getControlType();
+					switch (controlCode)
+						{
+						case "CS00000MP-Pre": preControltype = "Master Pool   (CS00000MP)";
+						     break;
+						case "R00CHRUR1-Pre": preControltype = "Reference 1 - urine  (R00CHRUR1)";
+						     break;
+						case "R00CHRPL1-Pre": preControltype = "Reference 1 - plasma (R00CHRPL1)"; 
+						     break;
+						case "CS000BPM1-Pre": preControltype = "Batch Pool.M1 (CS000BPM1)";
+					     	break;
+						case "CS000BPM2-Pre": preControltype = "Batch Pool.M2 (CS000BPM2)";
+				     		break;
+						case "CS000BPM3-Pre": preControltype = "Batch Pool.M3 (CS000BPM3)";
+				     		break;
+						case "CS000BPM4-Pre": preControltype = "Batch Pool.M4 (CS000BPM4)";
+				     		break;
+						case "CS000BPM5-Pre": preControltype = "Batch Pool.M5 (CS000BPM5)";
+				     		break;				     		
+						case "CS000BPM1": preControltype = "Batch Pool.M1 (CS000BPM1)";
+				     		break;
+						case "CS000BPM2": preControltype = "Batch Pool.M2 (CS000BPM2)";
+			     			break;
+						case "CS000BPM3": preControltype = "Batch Pool.M3 (CS000BPM3)";
+			     			break;
+						case "CS000BPM4": preControltype = "Batch Pool.M4 (CS000BPM4)";
+			     			break;
+						case "CS000BPM5": preControltype = "Batch Pool.M5 (CS000BPM5)";
+							break;	
+						case "CS00000MP": preControltype = "Master Pool   (CS00000MP)";
+				     		break;
+						case "R00CHRUR1": preControltype = "Reference 1 - urine  (R00CHRUR1)";
+					     	break;
+					    case "R00CHRPL1": preControltype = "Reference 1 - plasma (R00CHRPL1)"; 
+					     	break;     
+						default: preControltype =   wwg.getControlType();
+						     break;
+						}
+					//return wwg.getControlType().substring(0, wwg.getControlType().lastIndexOf("(")).replace(",", "");
+					return preControltype.substring(0, preControltype.lastIndexOf("(")).replace(",", "");	
+					}
 				}
-			return wg.getControlType().replace(",", "");			
+			return wg.getControlType().replace(",", "").replace("-Pre", "");		
 			}
 		}
 	public String writeInAgilentFormat(char separator)

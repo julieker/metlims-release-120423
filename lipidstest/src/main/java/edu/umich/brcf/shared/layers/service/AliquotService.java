@@ -58,6 +58,18 @@ public class AliquotService
 		return aliquotDao.loadByIdForMixture(id);
 		}
 	
+	// issue 199
+	public List<Object[]> getRetiredToMixture ()
+		{
+		return aliquotDao.getRetiredToMixture();
+		}
+	
+	// issue 199
+	public List<Object[]> getRetiredToMixtureForAliquot (String aliquotId)
+		{
+		return aliquotDao.getRetiredToMixtureForAliquot(aliquotId);
+		}
+	
 	// issue 79
 	public List<String> loadAllAliquotsNotChosen(String expId)
 		{
@@ -90,11 +102,17 @@ public class AliquotService
 		}
 	
 	// issue 196
-	public List<String> loadAliquotListDry()
-	{
-	return aliquotDao.loadAliquotListDry();
-	}
+	public List<String> loadAliquotListDry(String mixtureId)
+		{
+		return aliquotDao.loadAliquotListDry(mixtureId);
+		}
 	
+	// issue 199
+	public List<String> loadAliquotListDryKeepDryForEdit()
+		{
+		return aliquotDao.loadAliquotListDryKeepDryForEdit();
+		}
+
 	//issue 123
 	public String getCompoundIdFromAliquot (String aliquotId)
 		{
@@ -171,7 +189,16 @@ public class AliquotService
 		if (dto.getAliquotId() != null && !"to be assigned".equals(dto.getAliquotId()))
 			try 
 				{
+				String mix = "";
 				aliquot = aliquotDao.loadById(dto.getAliquotId());
+				if (!dto.getIsDry() && aliquot.getDry().equals('1'))
+					{
+					List <Object []> aliquotObjects = aliquotDao.getRetiredToMixtureForAliquot(aliquot.getAliquotId());
+					for (Object[] result : aliquotObjects)
+						mix = result[1].toString();
+					if (getRetiredToMixtureForAliquot(aliquot.getAliquotId()).size() > 0)
+						throw new RuntimeException ("Aliquot:" + aliquot.getAliquotId() + " is retired.  If you need to turn it into a wet aliquot please remove it from mixture:" + mix );
+					}
 				aliquot.update(dto);
 				aliquotList.add(aliquot);
 				
@@ -181,7 +208,10 @@ public class AliquotService
 				}
 		    catch (Exception e)
 		        {
+		    	System.out.println("here is exception e ... in aliquot service...." + e.getMessage());
 		    	e.printStackTrace();
+		    	throw new RuntimeException (e.getMessage());
+		    	
 		        }
 		else
 			try

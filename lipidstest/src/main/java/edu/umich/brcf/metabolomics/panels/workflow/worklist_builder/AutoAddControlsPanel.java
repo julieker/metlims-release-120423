@@ -68,6 +68,8 @@ public class AutoAddControlsPanel extends Panel
 	private WorklistSimple originalWorklist;
 	private ModalWindow modal1;
 	private List<String> availableStrQuantities = Arrays.asList(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" });
+	private List<String> availableInjectionQuantities = Arrays.asList(new String[] { "0 (NO INJECTIONS)", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" });
+	
 	private List availableSpacingQuantities = Arrays.asList(new String[] {"0 (NO POOLS)", "1", "2", "3", "4", "5", "6", "7",
 			"8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"}); // issue 315
 	private List<String> availableChearBlankTypes = Arrays.asList(new String[] {"Urine", "Plasma"});
@@ -77,10 +79,11 @@ public class AutoAddControlsPanel extends Panel
 	private String poolTypeB =  "Batch Pool.M1 (CS000QCMP)"; // issue 13
 	// issue 13 2020
 	private Integer nStandards = 1, nProcessBlanks = 1, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
-    private  Integer poolSpacingA = 0, poolSpacingB = 0;		   
+    private  Integer poolSpacingA = 0, poolSpacingB = 0, numberInjections = 0, numberInjectionsPool  ;	// issue 201	   
 	// Issue 302
-	private DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop, processBlanksDrop, qcDrop1, qcDrop2, chearBlankTypeDrop, poolTypeADrop, poolTypeBDrop;  // issue 13
-	private String nStandardsStr = "1", poolSpacingStrA = "0 (NO POOLS)", poolSpacingStrB = "0 (NO POOLS)", nBlanksStr = "1", nMatrixBlanksStr = "0", nChearBlanksStr= "0";
+	private DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop, processBlanksDrop, qcDrop1, qcDrop2, chearBlankTypeDrop, poolTypeADrop, poolTypeBDrop, numberInjectionsDrop, numberInjectionsDropPool;  // issue 13
+	private String numberInjectionsStr = "0 (NO INJECTIONS)", nStandardsStr = "1", poolSpacingStrA = "0 (NO POOLS)", poolSpacingStrB = "0 (NO POOLS)", nBlanksStr = "1", nMatrixBlanksStr = "0", nChearBlanksStr= "0";
+	private String numberInjectionsPoolStr = "0 (NO INJECTIONS)";
 	// issue 13 2020 
 	private String nProcessBlanksStr = "1";
 	private WebMarkupContainer container = new WebMarkupContainer("container");
@@ -106,7 +109,8 @@ public class AutoAddControlsPanel extends Panel
 		container.add(standardsDrop = buildQuantityDropdown("standardsDrop","nStandardsStr"));
 		container.add(poolsDropA = buildQuantityDropdown("poolsDropA","poolSpacingStrA"));
 		container.add(poolsDropB = buildQuantityDropdown("poolsDropB","poolSpacingStrB"));
-				
+		container.add(numberInjectionsDrop = buildQuantityDropdown("numberInjectionsDrop", "numberInjectionsStr")); // issue 201
+		container.add(numberInjectionsDropPool = buildQuantityDropdown("numberInjectionsDropPool", "numberInjectionsPoolStr")); // issue 201
 		container.add(blanksDrop = buildQuantityDropdown("blanksDrop","nBlanksStr"));
 		container.add(processBlanksDrop = buildQuantityDropdown("processBlanksDrop","nProcessBlanksStr")); // issue 13 2020
 		container.add(qcDrop1 = buildQuantityDropdown("qcDrop1","nMatrixBlanksStr"));
@@ -592,11 +596,14 @@ public class AutoAddControlsPanel extends Panel
 	    {
 	    LoadableDetachableModel<List<String>> quantityModel = new LoadableDetachableModel<List<String>>()
 		    {
+	    	// issue 201
 		    @Override
 		    protected List<String> load() 
 			    { 
 			    Boolean doPoolSpacing = (propertyName != null && propertyName.startsWith("poolSpacingStr"));			
-			    return doPoolSpacing ? availableSpacingQuantities : availableStrQuantities; 
+			    Boolean doInjections  = (propertyName != null && propertyName.startsWith("numberInjectionsStr"));
+			    Boolean doInjectionsPool = (propertyName != null && propertyName.startsWith("numberInjectionsPoolStr"));
+			    return doPoolSpacing ? availableSpacingQuantities : (doInjections ? availableInjectionQuantities : availableStrQuantities); 
 			    }
 		    };	
 	    DropDownChoice drp = new DropDownChoice(id, new PropertyModel(this, propertyName), quantityModel)
@@ -754,7 +761,44 @@ public class AutoAddControlsPanel extends Panel
 		String firstSample =  nItems <= 0 ? null : worklist.getItem(0).getSampleName();
 		String lastSample =  nItems <= 0 ? null : worklist.getItem(nItems -1).getSampleName();
 		worklist.setLastSample(lastSample); // issue 29
-		String id = "", finalLabel = "";	
+		String id = "", finalLabel = "";
+		
+		// issue 201
+		for (int i = 0; i < numberInjections; i++)
+			{
+			if ("Urine".equals(originalWorklist.getChearBlankType()))
+				id = controlService.controlIdForNameAndAgilent("Injection - urine");
+			else if ("Plasma".equals(originalWorklist.getChearBlankType()))
+				id = controlService.controlIdForNameAndAgilent("Injection - plasma");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
+		// issue 201
+		for (int i = 0; i < numberInjectionsPool; i++)
+			{	
+			if (originalWorklist.getPoolTypeA().indexOf("CS00000MP") > -1)
+				id = controlService.controlIdForNameAndAgilent("Injection - pool   (CS00000MP-Pre)");
+			else if (originalWorklist.getPoolTypeA().indexOf("CS000BPM1") > -1)
+				id = controlService.controlIdForNameAndAgilent("Injection - pool   (CS000BPM1-Pre)");
+			else if (originalWorklist.getPoolTypeA().indexOf("CS000BPM2") > -1)
+				id = controlService.controlIdForNameAndAgilent("Injection - pool   (CS000BPM2-Pre)");
+			else if (originalWorklist.getPoolTypeA().indexOf("CS000BPM3") > -1)
+				id = controlService.controlIdForNameAndAgilent("Injection - pool   (CS000BPM3-Pre)");
+			else if (originalWorklist.getPoolTypeA().indexOf("CS000BPM4") > -1)
+				id = controlService.controlIdForNameAndAgilent("Injection - pool   (CS000BPM4-Pre)");
+			else 
+				id = controlService.controlIdForNameAndAgilent("Injection - pool   (CS000BPM5-Pre)");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
+		
+		
 		// issue 191
 		if (nStandards > 0)
 			{
@@ -1522,7 +1566,11 @@ public class AutoAddControlsPanel extends Panel
 						if (!StringUtils.isEmptyOrNull(nMatrixBlanksStr))
 							nMatrixBlanks = Integer.parseInt(nMatrixBlanksStr);						
 						if (!StringUtils.isEmptyOrNull(nChearBlanksStr))
-							nChearBlanks = Integer.parseInt(nChearBlanksStr);	
+							nChearBlanks = Integer.parseInt(StringParser.parseName(nChearBlanksStr));
+						if (!StringUtils.isEmptyOrNull(numberInjectionsStr))
+							numberInjections = Integer.parseInt(StringParser.parseName(numberInjectionsStr));
+						if (!StringUtils.isEmptyOrNull(numberInjectionsPoolStr))
+							numberInjectionsPool = Integer.parseInt(StringParser.parseName(numberInjectionsPoolStr));
 						// issue 169
 						if (originalWorklist.getDefaultPool())
 							{

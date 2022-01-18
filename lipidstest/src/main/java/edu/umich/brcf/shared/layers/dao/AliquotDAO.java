@@ -10,6 +10,9 @@ import java.util.List;
 import javax.persistence.Query;
 //import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.stereotype.Repository;
+
+import com.mysql.jdbc.StringUtils;
+
 import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.AssayAliquot;
 import edu.umich.brcf.shared.layers.domain.ExperimentAliquot;
@@ -28,6 +31,24 @@ public class AliquotDAO extends BaseDAO
 				+ " order by  1 desc").setParameter(1, eid);
 		List<String> aliquotList = query.getResultList();
 		return aliquotList;
+		}
+	
+	// issue 199
+	public List<Object[]> getRetiredToMixture()
+		{
+		Query query = getEntityManager().createNativeQuery(" select  aliquot_id, mixture_id  from mixture_aliquot where  aliquot_id in (select aliquot_id from aliquot where dry = '1') "
+				+ " order by  1 desc");
+		List<Object[]> maliquotList = query.getResultList();
+		return maliquotList;
+		}
+	
+	// issue 199
+	public List<Object[]> getRetiredToMixtureForAliquot(String alq)
+		{
+		Query query = getEntityManager().createNativeQuery(" select  aliquot_id, mixture_id from mixture_aliquot where aliquot_id= ?1 and  aliquot_id in (select aliquot_id from aliquot where dry = '1') "
+				+ " order by  1 desc").setParameter(1, alq);
+		List<Object[]> maliquotList = query.getResultList();
+		return maliquotList;
 		}
 	
 	// issue 196
@@ -224,14 +245,28 @@ public class AliquotDAO extends BaseDAO
 		}
 	
 	// issue 196
-	public List<String> loadAliquotListDry()
+	// issue 199
+	public List<String> loadAliquotListDry(String mixtureId)
 		{
-		Query query = getEntityManager().createNativeQuery("select cast(t1.aliquot_id as VARCHAR2(9)) from aliquot t1 where dry = '1' and deleted is null order by 1 ");		
+		Query query;
+		if (StringUtils.isNullOrEmpty(mixtureId))
+			query = getEntityManager().createNativeQuery("select cast(t1.aliquot_id as VARCHAR2(9)) from aliquot t1 where dry = '1' and not exists (select * from mixture_aliquot t2 where rownum= 1 and t1.aliquot_id = t2.aliquot_id) and deleted is null order by 1 ");
+		else
+			query = getEntityManager().createNativeQuery("select cast(t1.aliquot_id as VARCHAR2(9)) from aliquot t1 where dry = '1' and not exists (select * from mixture_aliquot t2 where rownum= 1 and t1.aliquot_id = t2.aliquot_id and mixture_id != ?1) and deleted is null order by 1 ").setParameter(1, mixtureId);		
+		List<String> alqList = query.getResultList();	
+		return (alqList == null ? new ArrayList<String>() : alqList);
+		}
+	
+	// issue 199
+	public List<String> loadAliquotListDryKeepDryForEdit()
+		{
+		Query query = getEntityManager().createNativeQuery("select cast(t1.aliquot_id as VARCHAR2(9)) from aliquot t1 where dry = '1'  and deleted is null order by 1 ");		
 		List<String> alqList = query.getResultList();	
 		return (alqList == null ? new ArrayList<String>() : alqList);
 		}
 	
 	// issue 123 
+	// issue 199
 	public List<String> loadAliquotList(String assayId)
 		{
 		Query query = getEntityManager().createNativeQuery("select cast(t1.aliquot_id as VARCHAR2(9)) from assay_aliquot t1, aliquot t2 where t1.aliquot_id = t2.aliquot_id and dry = '0' and assay_id = ?1 and deleted is null order by 1 ").setParameter(1, assayId);		

@@ -81,7 +81,7 @@ public class Mrc2MixtureDataService
 			    {
 				// JAK do a wrapper for this
 				Aliquot aliquot = aliquotDao.loadByIdForMixture(aliquotStr);
-		        mixtureDao.createMixtureAliquot(MixtureAliquot.instance(mixture, aliquot, dto.getAliquotVolumeList().get(index), dto.getAliquotConcentrationList().get(index) , dto.getAliquotVolumeUnitList().get(index)));
+		        mixtureDao.createMixtureAliquot(MixtureAliquot.instance(mixture, aliquot, dto.getAliquotVolumeList().get(index), dto.getAliquotConcentrationList().get(index) , dto.getAliquotVolumeUnitList().get(index), dto.getDryRetiredList().get(index)));
 		        index++;
 				}
 			// issue 110

@@ -254,7 +254,16 @@ public class ControlDAO extends BaseDAO
 	tempArray.add("Reference 2 - urine  (R00CHRUR2)");
 	tempArray.add("Reference 1 - plasma (R00CHRPL1)");
 	tempArray.add("Reference 2 - plasma (R00CHRPL2)");
-
+    tempArray.add("Injection - urine   (R00CHRUR1-Pre)");
+    tempArray.add("Injection - plasma   (R00CHRPL1-Pre)");
+   
+    // issue 201
+    tempArray.add("Injection - pool   (CS00000MP-Pre)");
+    tempArray.add("Injection - pool   (CS000BPM1-Pre)");
+    tempArray.add("Injection - pool   (CS000BPM2-Pre)");
+    tempArray.add("Injection - pool   (CS000BPM3-Pre)");
+    tempArray.add("Injection - pool   (CS000BPM4-Pre)");
+    tempArray.add("Injection - pool   (CS000BPM5-Pre)");
 	return tempArray;
 	}
 	
