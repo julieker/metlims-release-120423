@@ -51,6 +51,15 @@ public class AliquotDAO extends BaseDAO
 		return maliquotList;
 		}
 	
+	// issue 199
+	public List<Object[]> getAliquotExistInMixtureInfo (String alq)
+		{
+		Query query = getEntityManager().createNativeQuery(" select  aliquot_id, mixture_id from mixture_aliquot where aliquot_id= ?1 "
+				+ " order by  1 desc").setParameter(1, alq);
+		List<Object[]> maliquotList = query.getResultList();
+		return maliquotList;
+		}
+	
 	// issue 196
 	public List<Object[]> tooltipsListForMap()
 		{

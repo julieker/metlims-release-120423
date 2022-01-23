@@ -89,9 +89,10 @@ public class AssayAliquotDetailPanel extends Panel
 				final Aliquot alq = (Aliquot) listItem.getModelObject();		
 				listItem.add(buildLinkToModalAliquot("aliquotLink", modal2,  true, alq)).setVisible(true);
 				listItem.add(new Label("aliquotLabel", new Model(alq.getAliquotLabel())));
-				listItem.add(new Label("location", new Model(alq.getLocation().getLocationId())));	
+				listItem.add(new Label("location", new Model(alq.getLocation()== null ? "" :alq.getLocation().getLocationId())));	
 				listItem.add(new Label("aliquotNeatDilutionUnits",  new Model(alq.getNeat().equals('1') && alq.getDry().equals('1') ? (alq.getWeightedAmount() + " " + alq.getWeightedAmountUnits()) : (alq.getNeat().equals('1') ? alq.getDconc() : alq.getDcon()) + " " + (alq.getNeat().equals('1') ? alq.getDConcentrationUnits() : alq.getNeatSolVolUnits() ))));
-				listItem.add(new Label("parentInventory", new Model(alq.getInventory().getInventoryId())));	
+				// issue 199
+				listItem.add(new Label("parentInventory", new Model(alq.getInventory()== null ? "" : alq.getInventory().getInventoryId())));	
 				listItem.add(new Label("createDate", new Model(alq.getCreateDateString())));
 				listItem.add(new Label("createdBy", new Model(userService.getFullNameByUserId(alq.getCreatedBy()))));
 				}
@@ -142,7 +143,7 @@ public class AssayAliquotDetailPanel extends Panel
 		{
 		switch(linkID)
 			{
-			case "aliquotLink" : return new EditAliquot(getPage(), new Model <Aliquot> (alq),idp, modal1, false);
+			case "aliquotLink" : return new EditAliquot(getPage(), new Model <Aliquot> (alq),idp, modal1, true); // issue 199
 			default :
 				return new EditAliquot(getPage(), idp, modal1);
 			}

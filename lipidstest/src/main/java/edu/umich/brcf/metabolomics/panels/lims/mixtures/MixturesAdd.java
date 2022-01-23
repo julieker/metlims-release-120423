@@ -806,7 +806,9 @@ public class MixturesAdd extends WebPage
 				public void onSubmit(AjaxRequestTarget target)
 					{
 					buildMixtureButtonPressed = true;
-					mixtureDto.getAliquotNoAssayMultipleChoiceList().addAll(aliquotForEditList);
+					mixtureDto.getAliquotNoAssayMultipleChoiceList().addAll(mixtureDto.getAliquotNoAssayMultipleChoiceListDry());				
+					if (mixtureDto.getAliquotNoAssayMultipleChoiceList().size()> 0)
+						aliquotMap.put("NoAssay", mixtureDto.getAliquotNoAssayMultipleChoiceList());
 					if (aliquotMap.size() == 0  && (mixtureDto.getMixtureList() != null &&  mixtureDto.getMixtureList().size() == 0) )
 					    {
 						target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please choose either an aliquot or mixture."));
@@ -1012,11 +1014,16 @@ public class MixturesAdd extends WebPage
 				    			}
 				    		break;
 				    	case "updateAliquotNoAssayDry": 
-				    		newAliquotList.addAll(mixtureDto.getAliquotNoAssayMultipleChoiceListDry());					    		
-				    		aliquotMap.put("NoAssayDry" , newAliquotList);
+				    		if (mixtureDto.getAliquotNoAssayMultipleChoiceListDry() != null)
+				    			newAliquotList.addAll(mixtureDto.getAliquotNoAssayMultipleChoiceListDry());	
+				    		if (mixtureDto.getAliquotNoAssayMultipleChoiceList() != null)
+				    		    newAliquotList.addAll(mixtureDto.getAliquotNoAssayMultipleChoiceList());	
+				    		aliquotMap.put("NoAssay" , newAliquotList);
+				    		//aliquotMap.put("NoAssay" , newAliquotList);
 				    		if (aliquotMapBeforeDelete.size()> 0)
 				    			{
 				    			aliquotMapBeforeDelete.put("NoAssayDry" , newAliquotList);
+				    			//aliquotMapBeforeDelete.put("NoAssay" , newAliquotList);
 					    	    aliquotMapBeforeDelete = getDupFreeAliquotMap(aliquotMapBeforeDelete);
 				    			}
 				    		break;	

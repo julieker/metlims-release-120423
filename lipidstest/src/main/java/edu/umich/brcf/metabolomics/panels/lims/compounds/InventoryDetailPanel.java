@@ -194,6 +194,19 @@ public class InventoryDetailPanel extends Panel
 			public void onClick(AjaxRequestTarget target)
 				{	
 				setModalDimensions(linkID, modal1);
+				
+				if (linkID.equals("editAliquot"))
+				    {
+					List <Object []> aliquotObjects = aliquotService.getAliquotExistInMixtureInfo(alq.getAliquotId());
+					String mixStr = "";
+					if (aliquotObjects.size() > 0)
+						{
+						for (Object[] result : aliquotObjects)
+							mixStr = mixStr + " " + result[1].toString();
+						target.appendJavaScript(StringUtils.makeAlertMessage("Aliquot:" + alq.getAliquotId() + " belongs to mixture(s):" + mixStr + " Please remove this aliquot from mixture(s):" + mixStr + " in order to edit it."));
+						return;
+						}
+				    }
 				modal1.setPageCreator(new ModalWindow.PageCreator()
 					{
 					public Page createPage() {   return setPage(linkID, modal1, idp, alq);   }

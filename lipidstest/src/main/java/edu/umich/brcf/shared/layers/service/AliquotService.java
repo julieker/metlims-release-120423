@@ -70,6 +70,12 @@ public class AliquotService
 		return aliquotDao.getRetiredToMixtureForAliquot(aliquotId);
 		}
 	
+	// issue 199
+	public List<Object[]> getAliquotExistInMixtureInfo (String aliquotId)
+		{
+		return aliquotDao.getAliquotExistInMixtureInfo(aliquotId);
+		}
+	
 	// issue 79
 	public List<String> loadAllAliquotsNotChosen(String expId)
 		{
