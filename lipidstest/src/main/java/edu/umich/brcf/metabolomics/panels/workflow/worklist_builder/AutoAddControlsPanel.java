@@ -79,7 +79,7 @@ public class AutoAddControlsPanel extends Panel
 	private String poolTypeB =  "Batch Pool.M1 (CS000QCMP)"; // issue 13
 	// issue 13 2020
 	private Integer nStandards = 1, nProcessBlanks = 1, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
-    private  Integer poolSpacingA = 0, poolSpacingB = 0, numberInjections = 0, numberInjectionsPool  ;	// issue 201	   
+    private  Integer poolSpacingA = 0, poolSpacingB = 0, numberInjections = 0, numberInjectionsPool = 0 ;	// issue 206 issue 201	   
 	// Issue 302
 	private DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop, processBlanksDrop, qcDrop1, qcDrop2, chearBlankTypeDrop, poolTypeADrop, poolTypeBDrop, numberInjectionsDrop, numberInjectionsDropPool;  // issue 13
 	private String numberInjectionsStr = "0 (NO INJECTIONS)", nStandardsStr = "1", poolSpacingStrA = "0 (NO POOLS)", poolSpacingStrB = "0 (NO POOLS)", nBlanksStr = "1", nMatrixBlanksStr = "0", nChearBlanksStr= "0";
