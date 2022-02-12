@@ -568,9 +568,9 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 						{
 						case "CS00000MP-Pre": preControltype = "Master Pool   (CS00000MP)";
 						     break;
-						case "R00CHRUR1-Pre": preControltype = "Reference 1 - urine  (R00CHRUR1)";
+						case "R00CHRUR1-Pre": preControltype = "Chear - urine  (R00CHRUR1)";
 						     break;
-						case "R00CHRPL1-Pre": preControltype = "Reference 1 - plasma (R00CHRPL1)"; 
+						case "R00CHRPL1-Pre": preControltype = "Chear - plasma (R00CHRPL1)"; 
 						     break;
 						case "CS000BPM1-Pre": preControltype = "Batch Pool.M1 (CS000BPM1)";
 					     	break;
@@ -581,7 +581,9 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 						case "CS000BPM4-Pre": preControltype = "Batch Pool.M4 (CS000BPM4)";
 				     		break;
 						case "CS000BPM5-Pre": preControltype = "Batch Pool.M5 (CS000BPM5)";
-				     		break;				     		
+				     		break;	
+						case "CS00000SB-Pre": preControltype = "Solvent Blank (CS00000SB)";
+			     			break;	
 						case "CS000BPM1": preControltype = "Batch Pool.M1 (CS000BPM1)";
 				     		break;
 						case "CS000BPM2": preControltype = "Batch Pool.M2 (CS000BPM2)";
@@ -594,10 +596,13 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 							break;	
 						case "CS00000MP": preControltype = "Master Pool   (CS00000MP)";
 				     		break;
-						case "R00CHRUR1": preControltype = "Reference 1 - urine  (R00CHRUR1)";
+						case "R00CHRUR1": preControltype = "Chear - urine  (R00CHRUR1)";
 					     	break;
-					    case "R00CHRPL1": preControltype = "Reference 1 - plasma (R00CHRPL1)"; 
-					     	break;     
+					    case "R00CHRPL1": preControltype = "Chear - plasma (R00CHRPL1)"; 
+					     	break;   
+					     	// issue 207
+					    case "CS00000SB": preControltype = "Solvent Blank (CS00000SB)";
+					    	break;
 						default: preControltype =   wwg.getControlType();
 						     break;
 						}

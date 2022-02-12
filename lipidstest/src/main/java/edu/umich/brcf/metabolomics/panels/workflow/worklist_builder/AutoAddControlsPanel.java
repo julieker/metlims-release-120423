@@ -79,11 +79,12 @@ public class AutoAddControlsPanel extends Panel
 	private String poolTypeB =  "Batch Pool.M1 (CS000QCMP)"; // issue 13
 	// issue 13 2020
 	private Integer nStandards = 1, nProcessBlanks = 1, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
-    private  Integer poolSpacingA = 0, poolSpacingB = 0, numberInjections = 0, numberInjectionsPool = 0 ;	// issue 206 issue 201	   
+    private  Integer poolSpacingA = 0, poolSpacingB = 0, numberInjections = 0, numberInjectionsSB = 0, numberInjectionsPool = 0 ; // issue 207 issue 201	   
 	// Issue 302
-	private DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop, processBlanksDrop, qcDrop1, qcDrop2, chearBlankTypeDrop, poolTypeADrop, poolTypeBDrop, numberInjectionsDrop, numberInjectionsDropPool;  // issue 13
+	private DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop, processBlanksDrop, qcDrop1, qcDrop2, chearBlankTypeDrop, poolTypeADrop, poolTypeBDrop, numberInjectionsDrop, numberInjectionsDropPool, numberInjectionsDropSB;// issue 13
 	private String numberInjectionsStr = "0 (NO INJECTIONS)", nStandardsStr = "1", poolSpacingStrA = "0 (NO POOLS)", poolSpacingStrB = "0 (NO POOLS)", nBlanksStr = "1", nMatrixBlanksStr = "0", nChearBlanksStr= "0";
 	private String numberInjectionsPoolStr = "0 (NO INJECTIONS)";
+	private String numberInjectionsSBStr = "0 (NO INJECTIONS)";
 	// issue 13 2020 
 	private String nProcessBlanksStr = "1";
 	private WebMarkupContainer container = new WebMarkupContainer("container");
@@ -111,6 +112,7 @@ public class AutoAddControlsPanel extends Panel
 		container.add(poolsDropB = buildQuantityDropdown("poolsDropB","poolSpacingStrB"));
 		container.add(numberInjectionsDrop = buildQuantityDropdown("numberInjectionsDrop", "numberInjectionsStr")); // issue 201
 		container.add(numberInjectionsDropPool = buildQuantityDropdown("numberInjectionsDropPool", "numberInjectionsPoolStr")); // issue 201
+		container.add(numberInjectionsDropSB = buildQuantityDropdown("numberInjectionsDropSB", "numberInjectionsSBStr")); // issue 207
 		container.add(blanksDrop = buildQuantityDropdown("blanksDrop","nBlanksStr"));
 		container.add(processBlanksDrop = buildQuantityDropdown("processBlanksDrop","nProcessBlanksStr")); // issue 13 2020
 		container.add(qcDrop1 = buildQuantityDropdown("qcDrop1","nMatrixBlanksStr"));
@@ -592,6 +594,7 @@ public class AutoAddControlsPanel extends Panel
 	    }
 	
 	// Issue 302
+	// issue 207
 	private DropDownChoice buildQuantityDropdown(final String id,  final String propertyName)
 	    {
 	    LoadableDetachableModel<List<String>> quantityModel = new LoadableDetachableModel<List<String>>()
@@ -603,7 +606,14 @@ public class AutoAddControlsPanel extends Panel
 			    Boolean doPoolSpacing = (propertyName != null && propertyName.startsWith("poolSpacingStr"));			
 			    Boolean doInjections  = (propertyName != null && propertyName.startsWith("numberInjectionsStr"));
 			    Boolean doInjectionsPool = (propertyName != null && propertyName.startsWith("numberInjectionsPoolStr"));
-			    return doPoolSpacing ? availableSpacingQuantities : (doInjections ? availableInjectionQuantities : availableStrQuantities); 
+			    Boolean doInjectionsSP = (propertyName != null && propertyName.startsWith("numberInjectionsSBStr"));
+			    // issue 207
+			    if (doPoolSpacing) 
+			    	return availableSpacingQuantities;
+			    else if (propertyName.contains("Injection"))
+			    	return availableInjectionQuantities;
+			    else
+			        return availableStrQuantities;
 			    }
 		    };	
 	    DropDownChoice drp = new DropDownChoice(id, new PropertyModel(this, propertyName), quantityModel)
@@ -762,7 +772,15 @@ public class AutoAddControlsPanel extends Panel
 		String lastSample =  nItems <= 0 ? null : worklist.getItem(nItems -1).getSampleName();
 		worklist.setLastSample(lastSample); // issue 29
 		String id = "", finalLabel = "";
-		
+		// issue 207
+		for (int i = 0; i < numberInjectionsSB; i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("Injection - Solvent Blank (CS00000SB-Pre)");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
 		// issue 201
 		for (int i = 0; i < numberInjections; i++)
 			{
@@ -796,8 +814,7 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-		
-		
+	
 		
 		// issue 191
 		if (nStandards > 0)
@@ -1571,6 +1588,8 @@ public class AutoAddControlsPanel extends Panel
 							numberInjections = Integer.parseInt(StringParser.parseName(numberInjectionsStr));
 						if (!StringUtils.isEmptyOrNull(numberInjectionsPoolStr))
 							numberInjectionsPool = Integer.parseInt(StringParser.parseName(numberInjectionsPoolStr));
+						if (!StringUtils.isEmptyOrNull(numberInjectionsPoolStr))
+							numberInjectionsSB = Integer.parseInt(StringParser.parseName(numberInjectionsSBStr));
 						// issue 169
 						if (originalWorklist.getDefaultPool())
 							{

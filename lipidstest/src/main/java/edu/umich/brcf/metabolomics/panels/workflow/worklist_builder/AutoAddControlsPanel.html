@@ -52,6 +52,16 @@
 								<select wicket:id = "blanksDrop" style = "width : 80px"><option>1</option><option>2</option><option>3</option><option>4</option></select>	
 							</td>
 							
+							<!-- issue 207 -->
+								<td nowrap style = "text-align : left; width : 0%"> 
+							  &nbsp;&nbsp;&nbsp;
+								<span style = "padding-left : 0px; width: 100%; text-align : left">Pre-Injections SB </span><br>
+								<select wicket:id = "numberInjectionsDropSB" style = "margin-left : 0px; width : 90px"><option>SB</option><option>SB</option><option>3</option><option>4</option></select>	
+							</td>
+							
+							
+							
+							
 							<td nowrap style = "text-align : left; width : 10%"> 
 								RC Plasma <br>
 								<select wicket:id = "qcDrop1" style = "width : 80px"><option>1</option><option>2</option><option>3</option><option>4</option></select>	
@@ -80,7 +90,7 @@
 								&nbsp;
 								&nbsp;
 								&nbsp;
-								Pre-Injections
+								Pre-Injections CHR
 								<br>
 								<select wicket:id = "qcDrop2" style = "width : 80px"><option>1</option><option>2</option><option>3</option><option>4</option></select>	
 								<select wicket:id = "chearBlankTypeDrop" style = "width : 80px"><option>Urine</option><option>Plasma</option><option>3</option><option>4</option></select>	
@@ -113,13 +123,13 @@
 							<!-- issue 201 -->
 														
 								<td nowrap style = "text-align : left; width : 0%"> 
-							  &nbsp;&nbsp;&nbsp;
-								<span style = "padding-left : 0px; width: 100%; text-align : left">Pre-Injections </span><br>
+							  &nbsp;
+								<span style = "padding-left : 0px; width: 100%; text-align : left">Pre-Injections POOL </span><br>
 								<select wicket:id = "numberInjectionsDropPool" style = "margin-left : 0px; width : 90px"><option>Master Pool</option><option>Batch Pool</option><option>3</option><option>4</option></select>	
 							</td>
 							
 							<td nowrap style = "text-align : left; width : 0%"> 
-							  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							  &nbsp;&nbsp;&nbsp;&nbsp;
 								<span style = "padding-left : 0px; width: 100%; text-align : left">Pool B: </span><br>
 								<select wicket:id = "poolTypeBDrop" style = "margin-left : 0px; width : 90px"><option>Master Pool</option><option>Batch Pool</option><option>3</option><option>4</option></select>	
 							</td>

@@ -6,8 +6,14 @@
 package edu.umich.brcf.shared.util.sheetwriters;
 
 import java.awt.Color;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -25,10 +31,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.wicket.Session;
 import org.apache.wicket.injection.Injector;
 
+import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.WorklistBuilderPanel;
 import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.WorklistItemSimple;
 import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.WorklistSimple;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheet;
+import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheetReturnStream;
+import edu.umich.brcf.shared.util.io.FileUtils;
 import edu.umich.brcf.shared.util.io.PoiUtils;
 import edu.umich.brcf.shared.util.io.StringUtils;
 
@@ -36,22 +45,27 @@ import edu.umich.brcf.shared.util.io.SpreadSheetWriter;
 
 
 
-public class MsWorklistWriter extends SpreadSheetWriter implements Serializable, IWriteableSpreadsheet
+public class MsWorklistWriter extends SpreadSheetWriter implements Serializable, IWriteableSpreadsheetReturnStream
 	{
 	private String selectedExperiment; 
 	protected WorklistSimple worklist;
+	public OutputStream joutput = null;
 	// issue 450
 	
 	// issue 179
     private final int CONTROLNAMECOL = 0;
 	private final int CONTROLPOSCOL = 1;// issue 166
 	private final int IDDADATAFILECOL = 3; // issue 166
-	
+	List <String> workListData = new ArrayList <String> ();
+    public OutputStream outputReportStream;
+    
+	WorklistBuilderPanel wpWriter;
 	// issue 450
-	public MsWorklistWriter( WorklistSimple worklist)
+	public MsWorklistWriter( WorklistSimple worklist, WorklistBuilderPanel wp)
 		{
 		this();
 		this.worklist = worklist;
+		wpWriter = wp;
 		}
 	
 	public MsWorklistWriter()
@@ -62,7 +76,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 
 
 	@Override
-	public void generateExcelReport(OutputStream output)
+	public List<String> generateExcelReport(OutputStream output)
 		{
 		Workbook workBook = new XSSFWorkbook();	
 		// issue 450
@@ -72,23 +86,28 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 			createWorklistSheet("Worklist Builder Sheet - Neg", workBook, worklist, worklist.isPlatformChosenAs("agilent"), "Negative");
 		    }
 		else
-		    createWorklistSheet("Worklist Builder Sheet", workBook, worklist, worklist.isPlatformChosenAs("agilent"), worklist.getSelectedMode());
+			createWorklistSheet("Worklist Builder Sheet", workBook, worklist, worklist.isPlatformChosenAs("agilent"), worklist.getSelectedMode());  		
 		try 
 			{
-			workBook.write(output);
+	
+			if (worklist.getSelectedMode().equals("Positive + Negative"))
+				workBook.write(output);
 			output.close();
+			if (!worklist.getSelectedMode().equals("Positive + Negative"))
+				return wpWriter.workListDataW;
+			else
+				return null;
 			} 
-		catch (Exception e)  {  e.printStackTrace(); }
+		catch (Exception e)  {  e.printStackTrace();  return null;}
+		
 		}
-		
-		
+				
 	@Override
 	public String getReportFileName()
 		{
-		return worklist.getWorklistName() + ".xlsx";
+		return worklist.getWorklistName() +  (worklist.getSelectedMode().equals("Positive + Negative") ? ".xlsx" : ".txt" ) ;
 		}
-		
-	
+			
 	private Boolean haveWorkbook()
 		{
 		return true;
@@ -136,6 +155,9 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 	public Sheet createWorklistSheet(String title, Workbook workBook, WorklistSimple worklist, boolean isPlatformAgilent, String strMode)
 		{
 		// issue 128
+		// issue 207
+		wpWriter.workListDataW.clear();
+		
 		try
 		    {
 		// issue 450
@@ -153,7 +175,11 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 			PoiUtils.createBlankRow(rowCt,  sheet);
 			for (int i = 0; i < headers.size(); i++)
 				// issue 179
+				{
 				PoiUtils.createRowEntry(rowCt, i, sheet, headers.get(i), grabStyleBlue(workBook));		
+				wpWriter.workListDataW.add(headers.get(i) + ",");
+				}
+			wpWriter.workListDataW.add("\n");
 			rowCt++;
 			for (WorklistItemSimple item : items)
 				{
@@ -165,6 +191,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 				    initializedOutputFileNameBase = true;
 					}			
 				String itemStr = item.toCharDelimited(",");	
+				wpWriter.workListDataW.add(itemStr + "\n"); // issue 207
 				String [] tokens = StringUtils.splitAndTrim(itemStr, ",", true);
 				PoiUtils.createBlankRow(rowCt,  sheet);
 				sheet.setColumnWidth(CONTROLNAMECOL, 28*256); // issue 179
@@ -233,6 +260,9 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
         
         PoiUtils.createBlankRow(rowCt++,  sheet);
         PoiUtils.createBlankRow(rowCt++,  sheet);
+        wpWriter.workListDataW.add("\n"); // issue 207
+        wpWriter.workListDataW.add("\n");
+        
         int startPoint = worklist.getStartingPoint() + 1;// issue 29
         String iddaPlatePos = grabPlatePosition() ;// issue 27
         // issue 128
@@ -254,8 +284,9 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 			else
 				fileStr = worklist.grabOutputFileNameIDDA() + "-" +iddaStr +  "-IDDA_ce10" + "_" + j + "-" + (strMode.contains("Positive") ? "P" : "N") +   ".d";
 		    PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
-            PoiUtils.createRowEntry(rowCt,CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
-            PoiUtils.createRowEntry(rowCt,IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
+		    PoiUtils.createRowEntry(rowCt,CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
+		    PoiUtils.createRowEntry(rowCt,IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
+		    wpWriter.workListDataW.add(iddaStr + "," + iddaPlatePos + ",," +fileNamePredicateWithIdda(outputFileBase,fileStr)  + "\n" );
 		    rowCt ++;
 		    }
 		// issue 38
@@ -274,7 +305,8 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 			PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
             PoiUtils.createRowEntry(rowCt, CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
             PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
-		    rowCt ++;
+            wpWriter.workListDataW.add(iddaStr + "," + iddaPlatePos + ",," +fileNamePredicateWithIdda(outputFileBase,fileStr)  + "\n");
+            rowCt ++;
 		    }
 		// issue 38
 		if (worklist.getNCE20Reps() > 0)
@@ -292,7 +324,8 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		    PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
             PoiUtils.createRowEntry(rowCt, CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
             PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
-		    rowCt ++;
+            wpWriter.workListDataW.add(iddaStr + "," + iddaPlatePos + ",," +fileNamePredicateWithIdda(outputFileBase,fileStr) + "\n");
+            rowCt ++;
 		    }			
 	    }
 	}

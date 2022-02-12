@@ -8,16 +8,12 @@ package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
@@ -27,11 +23,9 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -46,7 +40,7 @@ import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.panels.utilitypanels.ValidatingAjaxExcelDownloadLink;
 import edu.umich.brcf.shared.util.behavior.FocusOnLoadBehavior;
-import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheet;
+import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheetReturnStream;
 import edu.umich.brcf.shared.util.sheetwriters.MsWorklistWriter;
 import edu.umich.brcf.shared.util.utilpackages.DateUtils;
 import edu.umich.brcf.shared.util.utilpackages.StringUtils;
@@ -68,12 +62,13 @@ public class WorklistBuilderPanel extends Panel
 	private static final long serialVersionUID = -2719126649022550590L;
 	private WebPage backPage;
 	private FeedbackPanel feedback;
-	private String selectedRand = null;
     private int controlsLimit = 495;
 	static final String WORKLIST_DATE_FORMAT = "MM/dd/yy";
     AjaxCheckBox randomizationTypeBox ;
     AjaxCheckBox changeDefaultInjVolumeBox ;
     WorklistBuilderPanel worklistBuilder = this;
+    public List <String> workListDataW = new ArrayList <String> ();
+    WorklistBuilderPanel wp = this;
     
 	public WorklistBuilderPanel()  { this(""); }
 	
@@ -416,6 +411,7 @@ public class WorklistBuilderPanel extends Panel
 				};
 				
 			link.setOutputMarkupId(true);
+			
 			return link;
 			}
 		
@@ -932,7 +928,8 @@ public class WorklistBuilderPanel extends Panel
 		
 		protected ValidatingAjaxExcelDownloadLink buildExcelDownloadLink(String linkId, final WorklistSimple worklist)
 			{
-			IWriteableSpreadsheet writer = new MsWorklistWriter( worklist);// issue 450
+			String ii = "2";
+			IWriteableSpreadsheetReturnStream writer = new MsWorklistWriter( worklist, wp );// issue 450
 			// issue 39
 			ValidatingAjaxExcelDownloadLink link = new ValidatingAjaxExcelDownloadLink(linkId, writer)
 				{
@@ -944,7 +941,8 @@ public class WorklistBuilderPanel extends Panel
 
 				// Artifact of upgrade -- not called by validating button
 				@Override
-				public boolean validate(AjaxRequestTarget target, IWriteableSpreadsheet report)
+				// issue 207
+				public boolean validate(AjaxRequestTarget target, IWriteableSpreadsheetReturnStream report)
 					{
 				
 					if (worklist.getItems() == null || worklist.getItems().size() == 0)
@@ -960,6 +958,7 @@ public class WorklistBuilderPanel extends Panel
 					if (worklist.getItems() == null || worklist.getItems().size() == 0)
 						return false;
 					persistWorksheetToDatabase();
+					
 					return true;
 					}
 				};		

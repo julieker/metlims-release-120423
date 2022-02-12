@@ -55,7 +55,8 @@ public class PlateListHandler implements Serializable
 			"CS000BPM4-Pre",
 			"CS000BPM5-Pre",
 			"R00CHRPL1-Pre",
-			"R00CHRUR1-Pre",		
+			"R00CHRUR1-Pre",
+			"CS00000SB-Pre",   // issue 207		
 			"CS00000MP", 
 			"CS000QCMP", 
 			"CS000BPM1", "CS000BPM2", // issue 17
@@ -69,6 +70,7 @@ public class PlateListHandler implements Serializable
 	
 	public static List <String> POOL_CHEAR_CONTROL_TYPES = Arrays.asList(new String [] {
 			// issue 201
+			// issue 207
 			"CS00000MP-Pre",
 			"CS000BPM1-Pre", 
 			"CS000BPM2-Pre",
@@ -84,7 +86,7 @@ public class PlateListHandler implements Serializable
 			"CS0UMRG01", "CS0UMRL01", "CS0UMRA01","CS0UMRP01", "CSOUMHM03","CSMR80008","CSMR80009", "CSMR80010","CSMR80011", "CSMR80012","CSMR80013", 
 			"CSMR80014", "CSMR80015","CSMR80016","CSMR80017","CSMR80018","CSMR80019","CSMR80020","CSMR80021","CSMR80022", "CSMR80023","CSMR80024",
 			 "CSMR80025","CSMR81010", "CSMR81020","CSMR81040", "CSMR81030", // issue 193
-			"CS00000RC","CS00000PB", "CS00000SB","CS00000NB", "CS00000QC",  // issue 151 issue 179
+			"CS00000RC","CS00000PB", "CS00000SB-Pre", "CS00000SB","CS00000NB", "CS00000QC",  // issue 151 issue 179
 	 });
 	
 	PlateListHandler(int nRows, int nCols, boolean useCarousel)
@@ -278,9 +280,9 @@ public class PlateListHandler implements Serializable
 		Map<String, Integer> controlTypeToPositionIndexMap = new HashMap<String, Integer>();
 		Map<String, Integer> subtractInjectionCountMap = new HashMap<String, Integer>();
 		for (int i = 0; i < items.size(); i++)
-			{			
+			{	
 			WorklistItemSimple item = items.get(i);				
-			if (!item.getRepresentsControl()) continue;			
+			if (!item.getRepresentsControl()) continue;	
 			String controlType = (item.getRepresentsUserDefinedControl() ? item.getNameForUserControlGroup() : ((WorklistControlGroup) item.getGroup()).getControlType());
 			controlType = StringParser.parseId(controlType);
 			// issue 201
@@ -339,6 +341,13 @@ public class PlateListHandler implements Serializable
 			
 			// issue 201
 			if (controlType.indexOf("CS000BPM5-Pre") > -1 && bothPreinjectionsAndControl(items,"CS000BPM5-Pre-01", "CS000BPM5-01") )
+				{
+				subtractInjectionCountMap.put(controlType, 1);
+				continue;
+				}
+			
+			// issue 207
+			if (controlType.indexOf("CS00000SB-Pre") > -1 && bothPreinjectionsAndControl(items,"CS00000SB-Pre-01", "CS00000SB-01") )
 				{
 				subtractInjectionCountMap.put(controlType, 1);
 				continue;
@@ -404,7 +413,6 @@ public class PlateListHandler implements Serializable
 	 private int placeControlsByTypeOnPlate(WorklistSimple worklist,  Map<Integer, String> map, int plate) throws METWorksException 
 		{
 		List<WorklistItemSimple> items = worklist.getItems();
-		
 		Map<String, Integer> controlPositionIdxByTypeMap =  buildControlPositionIdxByTypeMap(items, worklist);
 		Map<String, String> foundControlTypesMap = new HashMap<String, String>();		
 		int  idx = 0, targetIdx = 0, spotsLeft  = nPositions;
@@ -503,6 +511,15 @@ public class PlateListHandler implements Serializable
 				continue;
 				}
 			
+			// issue 207
+			if (controlType.indexOf("CS00000SB-Pre") > -1 && bothPreinjectionsAndControl(items,"CS00000SB-Pre-01", "CS00000SB-01") )
+				{
+				targetIdx = controlPositionIdxByTypeMap.get("CS00000SB");
+				item.setSamplePosition(plateStr + "-" + map.get(targetIdx));
+				item.setRackPosition(plateStr + "-" + map.get(targetIdx));
+				continue;
+				}
+			
 			if (spotsLeft < 0) 
 				throw new METWorksException("Error while placing controls");			
 			if (!foundControlTypesMap.containsKey(controlType))
@@ -555,6 +572,7 @@ public class PlateListHandler implements Serializable
 			worklist.setStartPlateControls(Integer.parseInt(thePlateList.get(thePlateIdx-1 < 0 ? 0 : thePlateIdx-1)));
 			}
 		plate = Integer.parseInt(thePlateList.get(0));
+		
 		nSpotsLeft = placeControlsByTypeOnPlate(worklist, map, worklist.getStartPlateControls());
 		for (int i = 0; i < items.size(); i++)
 			{

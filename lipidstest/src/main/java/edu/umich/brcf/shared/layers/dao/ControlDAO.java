@@ -264,6 +264,10 @@ public class ControlDAO extends BaseDAO
     tempArray.add("Injection - pool   (CS000BPM3-Pre)");
     tempArray.add("Injection - pool   (CS000BPM4-Pre)");
     tempArray.add("Injection - pool   (CS000BPM5-Pre)");
+   
+    // Issue 207
+    tempArray.add("Injection - Solvent Blank (CS00000SB-Pre)");
+    
 	return tempArray;
 	}
 	
@@ -272,7 +276,7 @@ public class ControlDAO extends BaseDAO
 	public String controlIdForNameAndAgilent(String name)
 	    {
 	    List <String> allIds = this.allControlNamesAndIdsForExpIdAndAgilent(null);
-	    for (String id : allIds)	
+	    for (String id : allIds)
 	        if (id.startsWith(name))  
 	            {   
 	            if ("Pool.1".equals(name) && id.startsWith("Pool.1b"))

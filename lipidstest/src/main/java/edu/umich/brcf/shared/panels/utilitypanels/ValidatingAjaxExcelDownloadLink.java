@@ -7,30 +7,39 @@ package edu.umich.brcf.shared.panels.utilitypanels;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
+import org.apache.wicket.util.io.Streams;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.time.Duration;
 
 import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheet;
+import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheetReturnStream;
 
 
 
 public abstract class ValidatingAjaxExcelDownloadLink extends Link <Void> // issue 39
 	{
-	IWriteableSpreadsheet report;
+	IWriteableSpreadsheetReturnStream report;
+	ValidatingAjaxExcelDownloadLink validatingAjaxExcelDownloadLink = this;
+	OutputStream vOutputStream;
+	List <String> worklistDataFromGenerate = new ArrayList <String> ();
+	ResourceStreamRequestHandler handler;
 	
-	public ValidatingAjaxExcelDownloadLink(String id, IWriteableSpreadsheet report)
+	public ValidatingAjaxExcelDownloadLink(String id, IWriteableSpreadsheetReturnStream report)
 		{
 		super(id);
 		this.report = report;
 		}
 	
-	public void doClick(final IWriteableSpreadsheet report)
+	public void doClick(final IWriteableSpreadsheetReturnStream report)
+		
 		{
 		IResourceStream resourceStream = new AbstractResourceStreamWriter() 
 			{
@@ -41,12 +50,19 @@ public abstract class ValidatingAjaxExcelDownloadLink extends Link <Void> // iss
 				}
 
 			@Override
+			// issue 207
 			public void write(OutputStream output)
 				{
 				try {   
-					//OutputStream str = output.getOutputStream();
-						report.generateExcelReport(output); }
-					catch (Exception e) { }
+					    worklistDataFromGenerate = report.generateExcelReport(output); 
+					    if (worklistDataFromGenerate != null)
+					    	{
+					        for (String str : worklistDataFromGenerate)
+						        output.write(str.getBytes());
+					    	}
+					output.flush();
+					}
+					catch (Exception e) { e.printStackTrace();}
 				}
 
 			@Override
@@ -65,22 +81,18 @@ public abstract class ValidatingAjaxExcelDownloadLink extends Link <Void> // iss
 			public void setVariation(String arg0) { }
 			};
 			
-			String reportName = report.getReportFileName();
-			//getRequestCycle().setRequestTarget(new ResourceStreamRequest(resourceStream)
-			//	.setFileName(reportName));
-			
+			String reportName = report.getReportFileName();		
 			// issue 308
 			RequestCycle cycle = getRequestCycle();
 			ResourceStreamRequestHandler handler = new ResourceStreamRequestHandler(resourceStream).setCacheDuration(Duration.ONE_SECOND);
 			handler.setFileName(reportName);
-			//cycle.scheduleRequestHandlerAfterCurrent(handler);
 			RequestCycle.get().scheduleRequestHandlerAfterCurrent(handler);
 			handler.detach(cycle);
 			cycle.detach();
 			}
 
-
-	public void setReport(IWriteableSpreadsheet rpt)
+   
+	public void setReport(IWriteableSpreadsheetReturnStream rpt)
 		{
 		this.report = rpt;
 		}
@@ -96,7 +108,7 @@ public abstract class ValidatingAjaxExcelDownloadLink extends Link <Void> // iss
 
 	public abstract boolean validate();
 
-	public abstract boolean validate(AjaxRequestTarget target, IWriteableSpreadsheet report);
+	public abstract boolean validate(AjaxRequestTarget target, IWriteableSpreadsheetReturnStream report);
 	}
 
 	

@@ -49,8 +49,58 @@
 	</style>
 	
 </wicket:head>
+<script language="JavaScript">
 
-<wicket:panel>		
+//create CSV file data in an array
+
+  
+//create a user-defined function to download CSV file 
+
+function download_csv_file() {
+
+	var csvFileData = [
+		   ['Alan Walker', 'Singer'],
+		   ['Cristiano Ronaldo', 'Footballer'],
+		   ['Saina Nehwal', 'Badminton Player'],
+		   ['Arijit Singh', 'Singer'],
+		   ['Terence Lewis', 'Dancer']
+		];
+	
+  alert ('hi');
+  //define the heading for each row of the data
+  var csv = 'Name,Profession\n';
+
+  //merge the data with CSV
+  csvFileData.forEach(function(row) {
+          csv += row.join(',');
+          csv += "\n";
+  });
+
+  //display the created CSV data on the web browser 
+  document.write(csv);
+  var hiddenElement = document.createElement('a');
+  hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+  hiddenElement.target = '_blank';
+
+  //provide the name for the CSV file to be downloaded
+  hiddenElement.download = 'FamoussssPersonalities.csv';
+  hiddenElement.click();
+}
+
+
+
+
+
+
+
+
+
+</script>
+
+
+  
+<wicket:panel>	
+
 	<body>
 	
 		<div wicket:id = "feedback" class = "feedbackMsg" > </div>
@@ -204,7 +254,7 @@
 						<input   wicket:id = "randomizeButton" class = "buttonHeader"  type = "button" title = "4. Randomize =>" value = "4. Randomize =>"/>
 						<input  wicket:id = "platePreviewLink"  class = "buttonHeader"  type = "button" title = "5. Preview Plate...=>" value = "5. Preview Plate...=>"/>
 						<input  wicket:id = "downloadLink"  class = "buttonHeader"  type = "button" title = "6. Download List =>" value = "6. Download List =>"/>
-						
+							
 						<hr>
 					</td>
 				</tr>
@@ -240,4 +290,7 @@
 	
 		
 	</body>
+	
 </wicket:panel>
+	
+
