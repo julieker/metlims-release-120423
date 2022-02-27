@@ -1708,8 +1708,13 @@ public class WorklistSimple implements Serializable
 	// issue 179
 	private List<String> grabAgilentColTitles()
 		{
+		// issue 209
 		return Arrays.asList(new String [] { "Sample Name", "Sample Position", "Method", "Data File", "Sample Type", "Level Name",  "Injection Vol",
-				"Comment", "Barcode", "Sample Group", "Info."});
+					"Comment"});	
+	//	return Arrays.asList(new String [] { "Sample Name", "Sample Position", "Method", "Data File", "Sample Type", "Level Name",  "Inj Vol (" + "\u00B5"  + "l)",
+	//	"Comment"});
+	//	return Arrays.asList(new String [] { "Sample Name", "Sample Position", "Method", "Data File", "Sample Type", "Level Name",  "Injection Volume",
+	//	"Comment" , "Barcode", "Sample Group", "Info."});
 		}
 
 	//issue 126

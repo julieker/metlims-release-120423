@@ -643,10 +643,8 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		Integer endingIndex = Integer.parseInt(this.getGroup().getParent().getStartSequence()) + countOfSamples-1;
 		String endingIndexStr = endingIndex.toString();
 		String theIndex = this.getRepresentsControl() ? "" : String.format("%1$" + endingIndexStr.length() + "s" , calcPosIndicator(this)).replace(' ', '0');	
-		sb.append(theIndex +  (this.getRepresentsControl() ? "" : "_") + calcCommentContent(this.getSampleName()) +  separator);// issue 166
-		sb.append((" ") + separator);
-		sb.append((" ") + separator);
-		sb.append((" ") + separator);
+		//sb.append(theIndex +  (this.getRepresentsControl() ? "" : "_") + calcCommentContent(this.getSampleName()) +  separator);// issue 166		
+		sb.append(theIndex +  (this.getRepresentsControl() ? "" : "_") + calcCommentContent(this.getSampleName())  );// issue 166
 		// issue 25
 		// issue 32		
 		return sb.toString();
