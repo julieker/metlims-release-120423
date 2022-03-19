@@ -8,7 +8,10 @@ package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import edu.umich.brcf.shared.util.interfaces.ICommentObject;
 import edu.umich.brcf.shared.util.interfaces.IWriteConvertable;
 import edu.umich.brcf.shared.util.structures.SelectableObject;
@@ -45,6 +48,7 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	private Boolean isDeleted, isHandEdited;
 	int belongsToPlate;
 	private int direction;
+	private Integer customLoadOrder;
 	
 	// issue 29
 	public int getDirection ()
@@ -56,6 +60,18 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	public void setDirection (int vDirection)
 		{
 	    this.direction = vDirection;	
+		}
+	
+	// issue 212
+	public Integer getCustomLoadOrder ()
+		{
+		return this.customLoadOrder;	
+		}
+		
+	//issue 212
+	public void setCustomLoadOrder (Integer vcustomLoadOrder)
+		{
+	    this.customLoadOrder = vcustomLoadOrder	;
 		}
 
 	// issue 17
@@ -536,13 +552,25 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 
 	// issue 25
 	// issue 166
+	// issue 212
 	public String calcPosIndicator (WorklistItemSimple wI)
 		{
+		List <String> sampleNameListNoControls = new ArrayList <String> ();
+		int idxSamplePos = 0;
+		
 		if (wI.getRepresentsControl())
 			return "";
 		else
-			return String.valueOf(this.getSampleIndex());
+			{
+			for (String lSampleName : this.getGroup().getParent().getSampleNamesArray())
+				{
+				if (lSampleName.startsWith("S000"))
+					sampleNameListNoControls.add(lSampleName);
+				}
+			return String.valueOf(sampleNameListNoControls.indexOf(this.sampleName) + 1);
+			}
 		}
+
 	// issue 166
 	public String calcCommentContent (String theSampleId)
 		{
@@ -551,8 +579,8 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 			return this.getResearcherName();
 		else
 			{
-			WorklistControlGroup wg = this.getGroup().getParent().getControlGroupsList().get(0);
-			String controlCode = this.getSampleName().substring(0,this.getSampleName().lastIndexOf("-"));
+			WorklistControlGroup wg = this.getGroup().getParent().getControlGroupsList().get(0);					
+			String controlCode = this.getSampleName().indexOf("-") == -1 ? this.getSampleName() : this.getSampleName().substring(0,this.getSampleName().lastIndexOf("-"));
 			for (WorklistControlGroup wwg : this.getGroup().getParent().getControlGroupsList())
 				{
 				// issue 179

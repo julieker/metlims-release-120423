@@ -36,6 +36,7 @@ public abstract class CustomizeControlGroupPageDialog extends AbstractFormDialog
 	final List<Integer> countOptions = Arrays.asList(new Integer [] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15} );
     ExperimentRandomization gEr = null;
 	protected Form<?> form;
+	public DropDownChoice nce10, nce20, nce40, bpBefore, bpAfter ;
 	final KendoFeedbackPanel feedback = new KendoFeedbackPanel("feedback");
     public DialogButton submitButton = new DialogButton("submit", "Done");
     WorklistSimple originalWorklist;
@@ -50,11 +51,11 @@ public abstract class CustomizeControlGroupPageDialog extends AbstractFormDialog
 		form.setOutputMarkupId(true);
 		form.add(buildCountDropdown("masterPoolsBefore", "masterPoolsBefore")); 
 		form.add(buildCountDropdown("masterPoolsAfter", "masterPoolsAfter")); 
-		form.add(buildCountDropdown("batchPoolsBefore", "batchPoolsBefore")); 
-		form.add(buildCountDropdown("batchPoolsAfter", "batchPoolsAfter")); 
-		form.add(buildCountDropdown("nCE10Reps", "nCE10Reps")); 
-		form.add(buildCountDropdown("nCE20Reps", "nCE20Reps")); 
-		form.add(buildCountDropdown("nCE40Reps", "nCE40Reps"));
+		form.add(bpBefore = buildCountDropdown("batchPoolsBefore", "batchPoolsBefore")); 
+		form.add(bpAfter= buildCountDropdown("batchPoolsAfter", "batchPoolsAfter")); 
+		form.add(nce10 = buildCountDropdown("nCE10Reps", "nCE10Reps")); 
+		form.add(nce20 = buildCountDropdown("nCE20Reps", "nCE20Reps")); 
+		form.add(nce40 = buildCountDropdown("nCE40Reps", "nCE40Reps"));
 		this.form.add(this.feedback);	
 			// Buttons //
 		submitButton = 

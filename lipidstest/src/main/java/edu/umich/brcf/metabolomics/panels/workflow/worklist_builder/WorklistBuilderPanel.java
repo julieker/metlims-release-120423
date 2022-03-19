@@ -8,7 +8,7 @@ package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.wicket.Page;
@@ -34,11 +34,13 @@ import edu.umich.brcf.metabolomics.layers.dto.GeneratedWorklistDTO;
 import edu.umich.brcf.metabolomics.layers.dto.GeneratedWorklistItemDTO;
 import edu.umich.brcf.metabolomics.layers.service.GeneratedWorklistService;
 import edu.umich.brcf.metabolomics.layers.service.InstrumentService;
+import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.PlatePreviewPage.PlatePreviewForm;
 import edu.umich.brcf.shared.layers.service.SampleAssayService;
 import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.panels.utilitypanels.ValidatingAjaxExcelDownloadLink;
+import edu.umich.brcf.shared.util.METWorksException;
 import edu.umich.brcf.shared.util.behavior.FocusOnLoadBehavior;
 import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheetReturnStream;
 import edu.umich.brcf.shared.util.sheetwriters.MsWorklistWriter;
@@ -66,9 +68,14 @@ public class WorklistBuilderPanel extends Panel
 	static final String WORKLIST_DATE_FORMAT = "MM/dd/yy";
     AjaxCheckBox randomizationTypeBox ;
     AjaxCheckBox changeDefaultInjVolumeBox ;
+    AjaxCheckBox change96WellBox ;
     WorklistBuilderPanel worklistBuilder = this;
     public List <String> workListDataW = new ArrayList <String> ();
     WorklistBuilderPanel wp = this;
+    PlatePreviewForm pltPreviewForm;
+    List <WorklistItemSimple> lgetItems;
+    Map<String, String> idsVsReasearcherNameMap = new HashMap<String, String> ();
+    
     
 	public WorklistBuilderPanel()  { this(""); }
 	
@@ -146,7 +153,7 @@ public class WorklistBuilderPanel extends Panel
 			modal1 = ModalCreator.createModalWindow("modal1", 800, 320);
 			add(modal1);
 			
-			int nPlateRows = 6, nPlateCols = 9;
+			int nPlateRows = 8, nPlateCols = 12;
 			plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);
 			containerDefault = new WebMarkupContainer("containerDefault");
 
@@ -160,6 +167,9 @@ public class WorklistBuilderPanel extends Panel
 			containerDefault.add(startSequenceFld = buildStartSequenceFld("startSequence"));//issue 166
 			
 			containerDefault.add(randomizationTypeBox = buildRandomizeByPlate("randomizeByPlate"));// issue 416
+			containerDefault.add(change96WellBox = build96Well("96Well"));// issue 416
+			
+			
 			containerDefault.add(changeDefaultInjVolumeBox = buildChangeDefaultInjVolume("changeDefaultInjVolume"));// issue 179
 			
 			selectedPlatformDrop.add(new FocusOnLoadBehavior());
@@ -232,6 +242,9 @@ public class WorklistBuilderPanel extends Panel
 					//if ("controls".equals(property))
 					//	isOpen = !(worklist != null && worklist.countGroups(true) > 50);
 					
+					if ("controls".equals(property) && worklist.getIs96Well())	
+						return false;
+						
 					if ("groups".equals(property) && isPlatformChosenAs("absciex"))
 						isOpen = false;
 					if ("controls".equals(property) && isPlatformChosenAs("absciex"))
@@ -244,6 +257,7 @@ public class WorklistBuilderPanel extends Panel
 						isOpen = false;					
 					return isOpen;
 					}
+			        
 				
 				@Override 
 				public boolean isVisible() { return true; } 
@@ -360,6 +374,27 @@ public class WorklistBuilderPanel extends Panel
 		    return box;
 		    }
 		
+		// issue 212
+		protected AjaxCheckBox build96Well(String id)
+		    {
+		    AjaxCheckBox box = new AjaxCheckBox(id, new PropertyModel(worklist, "is96Well"))
+			    {
+			    @Override
+			    public void onUpdate(AjaxRequestTarget target)
+				    {
+				    }
+			    
+			    // issue 128
+				@Override
+				public boolean isEnabled() 
+				    { 
+					return  worklist.getOpenForUpdates() && worklist.getItems().size() > 0 && worklist.getSelectedPlatform().equals("agilent");
+				    }	
+			    };
+				box.add(this.buildStandardFormComponentUpdateBehavior("change", "update96Well"));
+		    return box;
+		    }
+		
 		// issue 179		
 		protected AjaxCheckBox buildChangeDefaultInjVolume(String id)
 		    {
@@ -403,7 +438,8 @@ public class WorklistBuilderPanel extends Panel
 					modal1.setPageCreator(new ModalWindow.PageCreator()
 						{
 						// issue 17
-						public Page createPage() { return ((Page) (new PlatePreviewPage(worklist.getBothQCMPandMP(), getPage(), worklist.getItems(), modal1, worklist.getUseCarousel()))); }
+						// issue 242
+						public Page createPage() { return ((Page) (new PlatePreviewPage(worklist.getIs96Well() ? false : worklist.getBothQCMPandMP(), getPage(), worklist.getItems(), modal1, worklist.getUseCarousel(),    wp))); }
 						});
 
 					modal1.show(target);
@@ -451,7 +487,7 @@ public class WorklistBuilderPanel extends Panel
 				@Override
 				public boolean isEnabled() 
 				    { 
-					return worklist.getOpenForUpdates(); 
+					return worklist.getOpenForUpdates() && !worklist.getIs96Well(); 
 				    }	
 								
 				};
@@ -700,16 +736,58 @@ public class WorklistBuilderPanel extends Panel
 				};
 			}
 
+		///////////////////////////////////////////
+		
+	
+		
+		
+		
+		
+		
+		///////////////////////////////////////
 		
 		private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior(final String event, final String response)
 			{
 			return new AjaxFormComponentUpdatingBehavior(event)
 				{
+				
+				// issue 212
 					@Override
 					protected void onUpdate(AjaxRequestTarget target)
 						{					    
 						switch (response)
 							{
+						// issue 212
+							case "update96Well" : 
+								target.add (change96WellBox);
+								target.add(addGroupsPanel.motrPacLink);
+								target.add(addGroupsPanel.blanksDrop);
+								target.add(addGroupsPanel.processBlanksDrop);
+								target.add(addGroupsPanel.poolTypeBDrop);
+								target.add(addGroupsPanel.standardsDrop);
+								target.add(addGroupsPanel.customLink);
+								target.add(addGroupsPanel.qcDrop1);
+								target.add(addGroupsPanel.poolsDropB);
+								target.add(addGroupsPanel.numberInjectionsDropSB);
+								target.add(controlsVisibleButton);					    
+							try 
+								{
+								plateListHandler.updatePlatePositionsForAgilent(worklist);
+								worklist.rebuildEverything();  // issue 212
+								} 
+							catch (METWorksException e1) 
+								{
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							    }
+							// issue 212 // issue 212
+							plateListHandler.check96WellsUpdate(worklist.getItems());								
+							// issue 212
+							Map<String, String> idsVsReasearcherNameMap =
+						    sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());								
+						    worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
+							break;
+								
 						    case "updateStartPlate":
 							    break;
 						    case "updateChangeDefaultInjVol" :
@@ -758,6 +836,8 @@ public class WorklistBuilderPanel extends Panel
 									{
 									availableModes   = Arrays.asList(new String[] { "Positive", "Negative" });
 									worklist.setSelectedMode("Positive");
+									worklist.setIs96Well(false);  // issue 212
+									target.add (change96WellBox); // issue 212
 									}
 								else 
 									availableModes = Arrays.asList(new String[] { "Positive", "Negative", "Positive + Negative" });
@@ -776,17 +856,25 @@ public class WorklistBuilderPanel extends Panel
 								if (worklist != null)
 									{
 									worklist.setSelectedInstrument(getSelectedInstrument());
-									worklist.setMaxItems(worklist.getUseCarousel() ? 100 : 54);
+									// JAK new preview
+									worklist.setMaxItems(worklist.getUseCarousel() ? 100 : 96);
 									worklist.updatePlatePositions();
 									worklist.updateIndices();
 									// worklist.setOpenForUpdates(true);
 									worklist.updateOutputFileNames();
+									// issue 242
+									if (worklist.getIs96Well())
+										{
+										int nPlateRows = 8, nPlateCols = 12;
+										plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);
+										plateListHandler.check96WellsUpdate(worklist.getItems());
+										}
 									}
 								break;
 								// issue 166	
 							case "updateStartSequence":
 							    target.add(startSequenceFld);
-								Map<String, String> idsVsReasearcherNameMap =
+							    idsVsReasearcherNameMap =
 								    sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());
 							    worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
 							    break;
@@ -868,7 +956,8 @@ public class WorklistBuilderPanel extends Panel
 					       target.appendJavaScript("if (confirm('Are you sure you want to randomize the injections for this study?" 
 							                           + "?')) { " +  confirmBehavior.getCallbackScript() + " }"  );							 
 					else
-						doRandomization(target);								
+						doRandomization(target);
+					target.add(change96WellBox);
 					}							
 				@Override
 				protected void onComponentTag(ComponentTag tag)
@@ -885,11 +974,21 @@ public class WorklistBuilderPanel extends Panel
 		
 		private void doRandomization(AjaxRequestTarget target) 
 		    {   
+			Map<String, String> idsVsReasearcherNameMap =
+				    sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());
 			if (worklist.getItems() == null || worklist.getItems().size() == 0)
-				return;			
+				return;		
+		
 			if (worklist.getOpenForUpdates())
 				{	
 				// issue 416
+				worklist.rebuildEverything();
+				// issue 166
+				plateListHandler.check96WellsUpdate(worklist.getItems());
+				idsVsReasearcherNameMap =
+				        sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());								
+				    worklist.populateSampleName(worklist,idsVsReasearcherNameMap );  
+				    
 				if (worklist.getRandomizeByPlate())
 				    PlateWiseRandomizer.randomizeByPlate(worklist.getItems());
 				else
@@ -918,11 +1017,16 @@ public class WorklistBuilderPanel extends Panel
 				
 				worklist.rebuildEverything();
 				// issue 166
-				Map<String, String> idsVsReasearcherNameMap =
-					    sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());
-				worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
+				plateListHandler.check96WellsUpdate(worklist.getItems());								
+				// issue 212
+				idsVsReasearcherNameMap =
+			        sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());								
+			    worklist.populateSampleName(worklist,idsVsReasearcherNameMap );   
 				worklist.setOpenForUpdates(true);
-				updatePage(target);
+				
+				// issue 212
+				
+				 updatePage(target);
 				}
 		    }
 		
@@ -955,6 +1059,10 @@ public class WorklistBuilderPanel extends Panel
 				@Override
 				public boolean validate()
 					{
+					// issue 212
+					idsVsReasearcherNameMap =
+					     sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());								
+					worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
 					if (worklist.getItems() == null || worklist.getItems().size() == 0)
 						return false;
 					persistWorksheetToDatabase();
@@ -993,7 +1101,6 @@ public class WorklistBuilderPanel extends Panel
 			{
 			worklist = w;
 			}
-
 		}
 
 	}

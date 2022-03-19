@@ -215,7 +215,8 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 			// issue 432
 			// issue 25		
 			// issue 209
-		       if (worklist.getControlGroupsList().size() > 1 && worklist.isPlatformChosenAs("agilent") && (worklist.getNCE10Reps()> 0 || worklist.getNCE20Reps()> 0 ||  worklist.getNCE40Reps()> 0   ))
+			// issue 212
+		       if (worklist.getControlGroupsList().size() > 1 && worklist.isPlatformChosenAs("agilent") && (worklist.getNCE10Reps()> 0 || worklist.getNCE20Reps()> 0 ||  worklist.getNCE40Reps()> 0   )  && !worklist.getIs96Well() )
 			       printOutIDDA  (workBook, sheet, rowCt, strMode, outputFileNameBase) ; 
 			   return sheet;
 		    }

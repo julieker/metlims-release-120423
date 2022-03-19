@@ -13,7 +13,7 @@
 		<style>
 			.plateHeader { width : 10%; text-align : center; border : groove thin white; background : #000055; color : white	 }
 			
-			.plateCell { width : 10%; text-align : center; border : grey solid 1px; background : white; text-align : center }
+			.plateCell { width : 140px; text-align : center; border : grey solid 1px; background : white; text-align : center }
 				
 			.plateTable { font-size: 80%; height : 75%; width : 90%; margin-left : 5%; margin-top : 1%; margin-right : 5%; border-bottom : thin solid grey;
 						 border-right : thin solid grey"}
@@ -32,23 +32,26 @@
 						<span wicket:id = "navigator"/> <br>
 	    		</center>
 	
+	<!-- // JAK new preview -->
 				<span style = "text-align : left; margin-left : 5%">
 					<table class = "plateTable">
 						<tr>
-							<th style = "width : 5%; background : white; border :none; height : 10%"></th>
-							<th class = "plateHeader" style = "width : 10%">1</th>
-							<th class = "plateHeader" style = "width : 10%">2</th>
-							<th class = "plateHeader" style = "width : 10%">3</th>
-							<th class = "plateHeader" style = "width : 10%">4</th>
-							<th class = "plateHeader" style = "width : 10%">5</th>
-							<th class = "plateHeader" style = "width : 10%">6</th>
-							<th class = "plateHeader" style = "width : 10%">7</th>
-							<th class = "plateHeader" style = "width : 10%">8</th>
-							<th class = "plateHeader" style = "width : 10%">9</th>
-							
+							<th style = "width : 140px; background : white; border :none; height : 10%"></th>
+							<th class = "plateHeader" style = "width : 140px">1</th>
+							<th class = "plateHeader" style = "width : 140px">2</th>
+							<th class = "plateHeader" style = "width : 140px">3</th>
+							<th class = "plateHeader" style = "width : 140px">4</th>
+							<th class = "plateHeader" style = "width : 140px">5</th>
+							<th class = "plateHeader" style = "width : 140px">6</th>
+							<th class = "plateHeader" style = "width : 140px">7</th>
+							<th class = "plateHeader" style = "width : 140px">8</th>
+							<th class = "plateHeader" style = "width : 140px">9</th>
+							<th class = "plateHeader" wicket:id= "plateHead10"  style = "width : 140px">10</th>
+							<th class = "plateHeader" wicket:id= "plateHead11" style = "width : 140px">11</th>
+							<th class = "plateHeader" wicket:id= "plateHead12" style = "width : 140px">12</th>
 						</tr>
 						<tr wicket:id = "plateRows">
-							<th class = "plateHeader" style = "width : 3%" ><span wicket:id = "rowTitle" style = "text-align : center">A</span></th>
+							<th class = "plateHeader" style = "width : 140px" ><span wicket:id = "rowTitle" style = "text-align : center">A</span></th>
 							<td wicket:id = "position1" class = "plateCell" ></td>
 							<td wicket:id = "position2" class = "plateCell" ></td>
 							<td wicket:id = "position3" class = "plateCell" ></td>
@@ -58,6 +61,9 @@
 							<td wicket:id = "position7" class = "plateCell" ></td>
 							<td wicket:id = "position8" class = "plateCell" ></td>
 							<td wicket:id = "position9" class = "plateCell" ></td>
+							<td wicket:id = "position10" class = "plateCell" ></td>
+						   <td wicket:id = "position11" class = "plateCell" ></td>
+						   <td wicket:id = "position12" class = "plateCell" ></td>
 						</tr>
 					</table>
 				</span>

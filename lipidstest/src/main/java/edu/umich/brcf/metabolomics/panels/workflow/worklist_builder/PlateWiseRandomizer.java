@@ -59,6 +59,12 @@ public class PlateWiseRandomizer
  	// issue 416
 	public static void randomizeByWorklist(List<WorklistItemSimple> original)
 		{
+		if (original.get(0).getGroup().getParent().getIs96Well())
+	    	{
+			int nPlateRows = 8, nPlateCols = 12;
+		    PlateListHandler plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);	
+		    plateListHandler.check96WellsUpdate(original);
+	    	}
 		List<WorklistItemSimple> block = original;	
 		List<WorklistItemSimple> randomizedBlock = randomizeBlockSamples(block);
 		List<WorklistItemSimple> randomizedList = new ArrayList<WorklistItemSimple>();		

@@ -479,6 +479,14 @@ public class AddSamplesPanel extends Panel
 				WorklistSampleGroup curr = sampleGroupsList.get(0);
 				refreshPage(target);// issue 464				
 				secondBuild = true;
+				
+			    if (originalWorklist.getIs96Well())
+					{
+			    	int nPlateRows = 8, nPlateCols = 12;
+					PlateListHandler plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);	
+			    	plateListHandler.check96WellsUpdate(originalWorklist.getItems());
+					} 
+								
 				}
 			protected void onComponentTag(final ComponentTag tag)
 				{
@@ -529,6 +537,7 @@ public class AddSamplesPanel extends Panel
 					{
 					case "updateForRandomDrop":                        
 						item.setIsRandomized(false);
+						originalWorklist.setIs96Well(false);// issue 212
 						originalWorklist.setChearBlankType("Plasma"); // issue 186
 						originalWorklist.setRandomizeByPlate(false);// issue 179
 						originalWorklist.setDefaultPool(true); // issue 169
@@ -553,6 +562,7 @@ public class AddSamplesPanel extends Panel
 						originalWorklist.clearControlGroups(); break;
 
 					case "updateForAssayDrop":
+						originalWorklist.setIs96Well(false);// issue 212
 						String val = item.getAssayType();
 						originalWorklist.setChearBlankType("Plasma"); // issue 186
 						originalWorklist.setRandomizeByPlate(false);// issue 179
@@ -587,6 +597,7 @@ public class AddSamplesPanel extends Panel
 						originalWorklist.setChearBlankType("Plasma"); // issue 186
 						originalWorklist.setRandomizeByPlate(false);// issue 179
 						item.setIsRandomized(false);
+						originalWorklist.setIs96Well(false);// issue 212
 						originalWorklist.setDefaultPool(true); // issue 169
 						if (originalWorklist == null)
 							return;

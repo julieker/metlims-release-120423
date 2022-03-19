@@ -51,7 +51,16 @@ public class WorklistSimple implements Serializable
 	private String startSequence = "1";
 	private String defaultMethodFileName = "";
 	private String defaultExperimentId = "", defaultAssayId = "";
-	private String maxItems = "54";
+	int maxSamples96Wells = 88;
+	
+	//private String maxItems = "54";
+	
+	// JAK new preview 
+	private String maxItems = "96";
+	
+	
+	
+	
 	private int cyclePlateLimit = 4;
 	private Boolean allSelected = false;
 	private Boolean openForUpdates = true;
@@ -69,6 +78,7 @@ public class WorklistSimple implements Serializable
 	int nPlates;	
 	int rowsPerPlate = 6, colsPerPlate = 9;
 	private boolean randomizeByPlate = false; // issue 416 issue 179
+	private boolean is96Well = false; // issue 212
 	private boolean defaultPool = true; // issue 169
     private boolean isCircularRelationship;
     private int lastPoolBlockNumber = 0;
@@ -191,9 +201,8 @@ public class WorklistSimple implements Serializable
 		{
 		this.nPlasmaHumanFemale = nPlasmaHumanFemale;	
 		}
+	// issue 212
 	
-	
-	// issue 126
 	public int getNMuscleHumanFemale ()
 		{
 		return nMuscleHumanFemale;
@@ -201,6 +210,18 @@ public class WorklistSimple implements Serializable
 	public void setNMuscleHumanFemale (int nMuscleHumanFemale)
 		{
 		this.nMuscleHumanFemale = nMuscleHumanFemale;
+		}
+	
+	
+	
+	// issue 212
+	public int getMaxSamples96Wells ()
+		{
+		return maxSamples96Wells;
+		}
+	public void setMaxSamples96Wells (int maxSamples96Wells)
+		{
+		this.maxSamples96Wells = maxSamples96Wells;
 		}
 	public boolean getChosenOtherSampleMotrPAC ()
 		{
@@ -881,8 +902,14 @@ public class WorklistSimple implements Serializable
 		clearAllItems();
         // issue 426
         List <WorklistItemSimple> controlItemsToAdd;
-        colsPerPlate = (isPlatformChosenAs("absciex") ? 9 : 9);
-        rowsPerPlate = (isPlatformChosenAs("absciex") ? 6 : 6);  
+     // JAK new preview
+       // colsPerPlate = (isPlatformChosenAs("absciex") ? 12 : 12);
+        //rowsPerPlate = (isPlatformChosenAs("absciex") ? 8 : 8);  
+        
+        colsPerPlate = (isPlatformChosenAs("absciex") ? 12 : ( is96Well ?   12 : 9));
+        rowsPerPlate = (isPlatformChosenAs("absciex") ? 8 : ( is96Well ?   8 : 6));
+        
+        
         Map <String, Integer> controlTypeMap = buildControlTypeMap();
         updateItemsFromSampleGroups();
        	       
@@ -1338,10 +1365,15 @@ public class WorklistSimple implements Serializable
 	
 
 // Error in default date field
-
+// issue 212 check 96well
 	public String getMaxItems()
 		{
-		return maxItems;
+		if (is96Well)
+			return "96";
+		else
+			return "54";
+				
+		//return maxItems;
 		}
 	
 	
@@ -1779,10 +1811,23 @@ public class WorklistSimple implements Serializable
  		{
  		return customDirectoryStructureName;
  		}
-    	
-	public void setRandomizeByPlate(Boolean rp) // issue 416
+     
+ 	public void setRandomizeByPlate(Boolean rp) // issue 416
 		{
 		randomizeByPlate= rp;		
+		}
+
+ 	
+	// issue 212
+	public Boolean getIs96Well() // issue 416
+		{
+		return is96Well;
+		}
+    	
+	// issue 212
+	public void setIs96Well(Boolean is96Well) // issue 416
+		{
+		this.is96Well= is96Well;		
 		}
 	
 	public Boolean getRandomizeByPlate() // issue 416

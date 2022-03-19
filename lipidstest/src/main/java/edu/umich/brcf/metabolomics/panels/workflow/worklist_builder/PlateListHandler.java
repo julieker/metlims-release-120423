@@ -14,9 +14,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import edu.umich.brcf.shared.util.METWorksException;
 import edu.umich.brcf.shared.util.StringParser;
+import edu.umich.brcf.shared.util.comparator.WorklistItemByCustomLoadOrderComparator;
 import edu.umich.brcf.shared.util.comparator.WorklistItemBySampleIdComparator;
 import edu.umich.brcf.shared.util.comparator.WorklistItemSimpleByPlatePosComparator;
 import edu.umich.brcf.shared.util.utilpackages.StringUtils;
@@ -24,14 +26,18 @@ import edu.umich.brcf.shared.util.utilpackages.StringUtils;
 public class PlateListHandler implements Serializable
 	{
 	int thePlateIdx = 0;
+	String plateStr = "P1";
+	int plateOn = 1;
 	boolean bothChearAndInjection = false;
+	int vStandards, vNextIdx ;
 	int nRows, nCols, nPositions;
 	String startPos = "A1", endPos = "A1";
-	Integer startIdx = 0, endIdx = 53;
+	Integer startIdx = 0, endIdx = 95;
 	Boolean useCarousel = false;
-	int startOfStandards = 45;
-	int startOfOtherControls = 36;
+	int startOfStandards = 85;
+	int startOfOtherControls = 72;
 	private int nPlates = 1;
+	int idxForSamples = 0;
 	String masterPoolMP = "Master Pool   (CS00000MP)"; // issue 146
     String masterPoolQCMP = "Master Pool.QCMP (CS000QCMP)"; // issue 146
 	List<String> possiblePlatePositions = new ArrayList<String>();
@@ -43,6 +49,9 @@ public class PlateListHandler implements Serializable
 	// issue 391 issue 403 issue 418
 	// issue 422
 	// issue 146
+	Map<String, String> namePositionMap = new HashMap<String, String> ();
+	
+	
 	public static List <String> STANDARD_CONTROL_TYPES = Arrays.asList(new String []{ "CS000STD0",   "CS000STD1", "CS000STD2", "CS000STD3",   "CS000STD4",
 			"CS000STD5",   "CS000STD6", "CS000STD7", "CS000STD8",   "CS000STD9",
 			"CS00STD10",   "CS00STD11", "CS00STD12",});
@@ -98,51 +107,230 @@ public class PlateListHandler implements Serializable
 		this.possiblePlatePositions = this.getPossiblePlatePositions();
 		setStartIdx(0);
 		setEndIdx(nPositions - 1);
+		
 		}
 	
 	public List<WorklistItemSimple> condenseSortAndSpace(List<WorklistItemSimple> items)
-		{
-		// Group list there's only one control item per unique type assumes items already labeled by plate up front..
-	   
+		{   
 		List <WorklistItemSimple> uniqueItems = grabUniqueItems(items); 
+		
 	    List <WorklistItemSimple> spacedItems = new ArrayList <WorklistItemSimple> ();
-		spacedItems = buildSpacedSortedList(uniqueItems);
+		if (items.get(0).getGroup().getParent().getIs96Well())
+			spacedItems = buildSpacedSortedList(uniqueItems);
+		else
+			spacedItems = buildSpacedSortedListOriginal(uniqueItems);
+	
 	    return spacedItems;
 		}
-		
+	
+	// issue 212
 	List<WorklistItemSimple> grabUniqueItems(List <WorklistItemSimple> items)
 		{
+		
 		List <WorklistItemSimple> uniqueItems = new ArrayList<WorklistItemSimple>();		
 		Map<String, WorklistItemSimple> plateMap = new HashMap<String, WorklistItemSimple>();
+		for (WorklistItemSimple item : items)
+			{
+			if (item.getRepresentsControl())
+				continue;
+			item.setCustomLoadOrder(items.get(0).getGroup().getParent().getSampleNamesArray().indexOf(item.getSampleName()));
+			uniqueItems.add(item);				
+			}
+		
 		for (int i = 0; i < items.size(); i++)
-			plateMap.put(items.get(i).getSamplePosition(), items.get(i));
+			// issue 242
+			plateMap.put(items.get(i).getSampleName().substring(0,9), items.get(i));
+		
 		Collection <WorklistItemSimple> col =  plateMap.values();
 		for (WorklistItemSimple item  : col)
 			{
 			if (item.getRepresentsControl())
 				{
 				String [] tokens= item.getSampleName().split("\\-");
-				if (tokens.length > 0)
-					item.setSampleName(tokens[0]);
-				}
-			uniqueItems.add(item);		
+				if (item.getSampleName().contains("CS000QCMP") && items.get(0).getGroup().getParent().getIs96Well())
+					continue;
+				item.setCustomLoadOrder(items.get(0).getGroup().getParent().getSampleNamesArray().indexOf(item.getSampleName()));
+				uniqueItems.add(item);	
+				}				
 			}
+		
+	/////	items.get(0).getGroup().getParent().rebuildEverything();
 		return uniqueItems;
 		}
 	
+	private String letterGivenNumeric (int numericIndex)
+		{
+		String rowLabel = "";
+		switch (numericIndex)
+			{
+			case 0 :  rowLabel = "A"; break;
+			case 1 :  rowLabel = "B"; break;
+			case 2 :  rowLabel = "C"; break;
+			case 3 :  rowLabel = "D"; break;
+			case 4 :  rowLabel = "E"; break;
+			case 5 :  rowLabel = "F"; break;
+			case 6 :  rowLabel = "G"; break;
+			case 7 :  rowLabel = "H"; break;
+			}
+		return rowLabel;
+		}
+	
+
+		private List<WorklistItemSimple> buildSpacedSortedListOriginal (List <WorklistItemSimple> uniqueItems)
+			{
+			int itemsAdded = 0, j = 0, whatPlate = 1;
+			String lastPlate = null, currPlate = null;			 
+			Collections.sort(uniqueItems, new WorklistItemSimpleByPlatePosComparator());
+			List<WorklistItemSimple> spacedList = new ArrayList<WorklistItemSimple>();
+			while (itemsAdded < uniqueItems.size())
+				{
+				WorklistItemSimple item = uniqueItems.get(itemsAdded);
+				
+				String samplePos = item.getSamplePosition();
+				if (!(samplePos == null || "".equals(samplePos)))
+					{
+					String [] tokens = samplePos.split("-");
+					if (tokens.length > 1) 
+						{
+						samplePos = tokens[1];
+				        currPlate = tokens[0];
+						}
+					}		
+				int calcit = calcNumericalPositionOriginal(samplePos, currPlate);
+				if (calcit == j)
+					spacedList.add(uniqueItems.get(itemsAdded++));
+				else
+				    {
+					while (j < calcit)					
+						{
+						spacedList.add(new WorklistItemSimple());
+						j++;
+						}
+					spacedList.add(uniqueItems.get(itemsAdded++)); 
+					} 
+				j++;
+				}
+			return spacedList;
+			}
+		
 	private List<WorklistItemSimple> buildSpacedSortedList (List <WorklistItemSimple> uniqueItems)
 		{
-		int itemsAdded = 0, j = 0, whatPlate = 1;
-		String lastPlate = null, currPlate = null;
-		 
-		Collections.sort(uniqueItems, new WorklistItemSimpleByPlatePosComparator());
+		int i = 0;
+		int idx = 0;
+		int iStandards  = 0;
+		int iSamples = 0;
+		int lastNumPos = 2;
+		int j=0;
 		List<WorklistItemSimple> spacedList = new ArrayList<WorklistItemSimple>();
-		while (itemsAdded < uniqueItems.size())
+		int maxSamplesFor96well = uniqueItems.get(0).getGroup().getParent().getMaxSamples96Wells();
+		while (i<= uniqueItems.size()-1)
 			{
-			WorklistItemSimple item = uniqueItems.get(itemsAdded);
+			if (uniqueItems.get(i).getSamplePosition().contains("10"))
+				uniqueItems.get(i).setSamplePosition(uniqueItems.get(i).getSamplePosition().replace("10",  "910"));
+			if (uniqueItems.get(i).getSamplePosition().contains("11"))
+				uniqueItems.get(i).setSamplePosition(uniqueItems.get(i).getSamplePosition().replace("11",  "911"));
+			if (uniqueItems.get(i).getSamplePosition().contains("12"))
+				uniqueItems.get(i).setSamplePosition(uniqueItems.get(i).getSamplePosition().replace("12",  "912"));
+			i++;
+			}
+		
+		/////////////////////////////////////////////////////
+		i=0;
+		idxForSamples = 0;
+		
+         
+		Collections.sort(uniqueItems, new WorklistItemByCustomLoadOrderComparator());
+		while (i<= uniqueItems.size()-1)
+			{	
+			if (uniqueItems.get(i).getSampleName().startsWith("S000"))
+				{
+				Double plateOn = Math.floor(idxForSamples/maxSamplesFor96well) + 1 ;
+				if (idxForSamples%maxSamplesFor96well == 0)
+					{
+					iSamples = 0;
+					lastNumPos = 2;
+					}
+
+				uniqueItems.get(i).setSamplePosition("P" + plateOn.intValue() + "-"  + letterGivenNumeric(iSamples) + (lastNumPos > 9 ? "9" + lastNumPos : lastNumPos) );				
+				namePositionMap.put(uniqueItems.get(i).getSampleName(), uniqueItems.get(i).getSamplePosition());
+				iSamples ++;
+				if (iSamples >= 8)
+					{
+					iSamples = 0;
+					lastNumPos ++;
+					}
+				spacedList.add(uniqueItems.get(i)) ;
+				idxForSamples++;
+				}
+			i++;
 			
-			String samplePos = item.getSamplePosition();
-			if (!(samplePos == null || "".equals(samplePos)))
+			}
+		
+	    i = 0;		
+		Collections.sort(uniqueItems, new WorklistItemSimpleByPlatePosComparator());
+		while (i<= uniqueItems.size()-1)
+			{
+			if (uniqueItems.get(i).getSampleName().contains("STD"))
+				{
+			     uniqueItems.get(i).setSamplePosition("P1-" + letterGivenNumeric(iStandards) + "1" );
+			     if (uniqueItems.get(i).getSampleName().indexOf("-") >= 0)
+			    	 namePositionMap.put(uniqueItems.get(i).getSampleName().substring(0, uniqueItems.get(i).getSampleName().lastIndexOf("-")), uniqueItems.get(i).getSamplePosition());
+			     else 
+			    	 namePositionMap.put(uniqueItems.get(i).getSampleName(), uniqueItems.get(i).getSamplePosition());
+			     spacedList.add(uniqueItems.get(i)) ;
+			     iStandards ++;
+				}
+			i++;
+			}
+		i = 0;	
+		// JAK new preview
+		// Load chear
+		boolean alreadyCHR = false;
+		boolean alreadyPool = false;
+				
+		while (i<= uniqueItems.size()-1)
+			{	
+			if (uniqueItems.get(i).getSampleName().contains("CHR") && !alreadyCHR)
+				{
+				uniqueItems.get(i).setSamplePosition("P1-G1");
+				if (uniqueItems.get(i).getSampleName().indexOf("-") >= 0)
+		    		namePositionMap.put(uniqueItems.get(i).getSampleName().substring(0, uniqueItems.get(i).getSampleName().lastIndexOf("-")), uniqueItems.get(i).getSamplePosition());
+		        else 
+		    	    namePositionMap.put(uniqueItems.get(i).getSampleName(), uniqueItems.get(i).getSamplePosition());
+				spacedList.add(uniqueItems.get(i)) ;
+				alreadyCHR = true;
+				}
+			else if (!alreadyPool && (uniqueItems.get(i).getSampleName().contains("MP") || uniqueItems.get(i).getSampleName().contains("BPM")))
+				{
+				uniqueItems.get(i).setSamplePosition("P1-H1");
+				if (uniqueItems.get(i).getSampleName().indexOf("-") >= 0)
+		    		namePositionMap.put(uniqueItems.get(i).getSampleName().substring(0, uniqueItems.get(i).getSampleName().lastIndexOf("-")), uniqueItems.get(i).getSamplePosition());
+		        else 
+		    	    namePositionMap.put(uniqueItems.get(i).getSampleName(), uniqueItems.get(i).getSamplePosition());
+				spacedList.add(uniqueItems.get(i)) ;
+				alreadyPool = true;
+				}	
+			i++;
+			}
+	
+	   i = 0;
+				
+		Collections.sort(spacedList, new WorklistItemSimpleByPlatePosComparator());
+		i = 0;
+		int sizeSpaced =  spacedList.size();
+		List <WorklistItemSimple> tspacedList = new ArrayList <WorklistItemSimple> ();
+		
+		while (i <= sizeSpaced -1)
+			{
+			tspacedList.add(spacedList.get(i));
+			i++;
+			}
+		i = 0;
+        while (i <= sizeSpaced -1 )
+       		{
+        	String samplePos = spacedList.get(i).getSamplePosition().replace("910", "10").replace("911",  "11").replace("912", "12");
+        	String currPlate = "";
+        	if (!(samplePos == null || "".equals(samplePos)))
 				{
 				String [] tokens = samplePos.split("-");
 				if (tokens.length > 1) 
@@ -151,36 +339,65 @@ public class PlateListHandler implements Serializable
 			        currPlate = tokens[0];
 					}
 				}
-			//// issue 153 add fillers where ever they need to be:
-			
-			int calcit = calcNumericalPosition(samplePos, currPlate);
-			if (calcit == j)
+        	int calcit = calcNumericalPosition(samplePos, currPlate);
+        	if (j == 0)
+        		j=i;
+        	while (j < calcit)
 				{
-				spacedList.add(uniqueItems.get(itemsAdded++));
-				}
-			else
-				{
-				while (j < calcit)
-					{
-					spacedList.add(new WorklistItemSimple());
-					j++;
-					}
-				continue;
-				}
-			j++;
-			}
-		return spacedList;
+        		tspacedList.add(j, new WorklistItemSimple());
+        		j++;
+				}   	
+    	    i++;
+    	    j++;
+       		}
+        spacedList.clear();
+        spacedList.addAll(tspacedList);
+        namePositionMap.put("R00CHRPL1-Pre", "P1-G1");
+        namePositionMap.put("R00CHRUR1-Pre", "P1-G1");
+        namePositionMap.put("CS00000MP-Pre", "P1-H1");
+        namePositionMap.put("CS000BPM1-Pre", "P1-H1");
+        namePositionMap.put("CS000BPM2-Pre", "P1-H1");
+        namePositionMap.put("CS000BPM3-Pre", "P1-H1");
+        namePositionMap.put("CS000BPM4-Pre", "P1-H1");
+        namePositionMap.put("CS000BPM5-Pre", "P1-H1");
+    	return spacedList;
 		}
 	
 	// issue 391
 	//issue 153
    
-	
-
-	///////////////
-	
 	int calcNumericalPosition(String pos, String plate)
 		{
+		String row;
+		row = pos.substring(0,1);
+		int rowInt = 0;
+		int posInt = 0;
+		int platePosInt = 0;
+		int calculatedNumericalPosition;	
+		switch (row)
+			{
+		// JAK new preview
+			case "A" : rowInt = 0; break;
+			case "B" : rowInt = 12; break;
+			case "C" : rowInt = 24; break;
+			case "D" : rowInt = 36; break;
+			case "E" : rowInt = 48; break;
+			case "F" : rowInt = 60; break;
+			case "G" : rowInt = 72; break;
+			case "H" : rowInt = 84; break;
+			}
+		platePosInt = (Integer.parseInt(plate.substring(1,2))) - 1;		
+	// issue 212
+		platePosInt = platePosInt*96;
+		
+		posInt = Integer.parseInt(pos.substring(1,pos.length()));
+		calculatedNumericalPosition = ((posInt + rowInt) - 1) + platePosInt;
+		return calculatedNumericalPosition;
+		}	
+	// issue 212
+
+	int calcNumericalPositionOriginal(String pos, String plate)
+	{
 		String row;
 		row = pos.substring(0,1);
 		int rowInt = 0;
@@ -195,14 +412,20 @@ public class PlateListHandler implements Serializable
 			case "D" : rowInt = 27; break;
 			case "E" : rowInt = 36; break;
 			case "F" : rowInt = 45; break;
+			default : rowInt = 45; break;
 			}
+		
 		platePosInt = (Integer.parseInt(plate.substring(1,2))) - 1;
 		platePosInt = platePosInt*54;
+		if (StringUtils.isEmptyOrNull(pos))
+			return 0;
+		if (pos.equals("null"))
+			return 0;
 		posInt = Integer.parseInt(pos.substring(1,2));
 		calculatedNumericalPosition = ((posInt + rowInt) - 1) + platePosInt;
 		return calculatedNumericalPosition;
-		}	
-
+	}	
+	
 	String getExpectedPosition(int i)
 		{
 		if (useCarousel)
@@ -276,6 +499,18 @@ public class PlateListHandler implements Serializable
 	    int nextIdx;
 	    boolean standardsExist = false;
 	    boolean startedAfterStandards = false;
+	    // issue 212
+	    if (worklist.getIs96Well())
+	    	{
+	    	vStandards = 12;
+	    	vNextIdx = 72;
+	    	}
+	    else 
+	    	{
+	    	vStandards = 9;
+	    	vNextIdx = 36;
+	    	}
+	    
 		Map<String, Integer> controlTypeCountsMap = new HashMap<String, Integer>();
 		Map<String, Integer> controlTypeToPositionIndexMap = new HashMap<String, Integer>();
 		Map<String, Integer> subtractInjectionCountMap = new HashMap<String, Integer>();
@@ -352,12 +587,13 @@ public class PlateListHandler implements Serializable
 				subtractInjectionCountMap.put(controlType, 1);
 				continue;
 				}
-			
+		
 			if (!controlTypeCountsMap.containsKey(controlType))
 				controlTypeCountsMap.put(controlType, 0);
 			int nOfType = controlTypeCountsMap.get(controlType);
+			
 			controlTypeCountsMap.put(controlType, ++nOfType);
-		
+		    
 			}		
 		prevIdx = nPositions - 1;
 		// issue 146
@@ -383,15 +619,17 @@ public class PlateListHandler implements Serializable
 			countControls--;
 		if (subtractInjectionCountMap.size() > 0)
 			countControls= countControls - subtractInjectionCountMap.size();
-		int indexForOtherControls = calculateOtherControlsStartIndex(countControls,standardsIndex);
+		int indexForOtherControls = calculateOtherControlsStartIndex(countControls,standardsIndex, worklist);
 		nextIdx = indexForOtherControls;
 		boolean movedPassStandards = false;
 		// issue 146 don't override standards slot if standards > 9
+		
+		// JAK 212 check 96well
 		for (int i = 0; i < POOL_CHEAR_CONTROL_TYPES.size(); i++)
 			{
-			if (standardsIndex > 9 && !startedAfterStandards && nextIdx == 36)
+			if (standardsIndex > vStandards && !startedAfterStandards && nextIdx == vNextIdx)
 				{
-				nextIdx = nextIdx + (standardsIndex - 9); 
+				nextIdx = nextIdx + (standardsIndex - vStandards); 
 				startedAfterStandards = true;
 				}
 			// issue 146 take care of case where you have to use standards slot last row
@@ -402,7 +640,9 @@ public class PlateListHandler implements Serializable
 				}
 			String controlType = PlateListHandler.POOL_CHEAR_CONTROL_TYPES.get(i);	
 			if (controlTypeCountsMap.get(controlType) != null) 
-				controlTypeToPositionIndexMap.put(controlType,  nextIdx++); 			
+				{
+				controlTypeToPositionIndexMap.put(controlType,  nextIdx++); 
+				}
 			}
 		return controlTypeToPositionIndexMap;
 		}
@@ -413,13 +653,10 @@ public class PlateListHandler implements Serializable
 	 private int placeControlsByTypeOnPlate(WorklistSimple worklist,  Map<Integer, String> map, int plate) throws METWorksException 
 		{
 		List<WorklistItemSimple> items = worklist.getItems();
-		Map<String, Integer> controlPositionIdxByTypeMap =  buildControlPositionIdxByTypeMap(items, worklist);
+		Map<String, Integer> controlPositionIdxByTypeMap = (worklist.getIs96Well() ? buildControlPositionIdxByTypeMap(items, worklist) : buildControlPositionIdxByTypeMapOriginal(items, worklist));
 		Map<String, String> foundControlTypesMap = new HashMap<String, String>();		
 		int  idx = 0, targetIdx = 0, spotsLeft  = nPositions;
 		String plateStr = "P" + plate; 	
-		// take care of injection 
-		//
-		
 		// issue 199
 		for (int i = 0; i < items.size(); i++)
 			{		
@@ -549,7 +786,7 @@ public class PlateListHandler implements Serializable
 		// issue 153
 		constructThePlateList(worklist);
 		Boolean orderWasUploaded = worklist.wasCustomOrdered();		
-		Map<Integer, String> map = buildPositionMap();	
+		Map<Integer, String> map = buildPositionMap(worklist.getIs96Well());	
 		int pIdx = 0;
 		//issue 153
 		int plate = 1;
@@ -630,12 +867,23 @@ public class PlateListHandler implements Serializable
 	    	    pageItemsArray.get(i).setSamplePosition(plateStr + map.get(i));
 		}
 
-	private Map<Integer, String> buildPositionMap()
+	private Map<Integer, String> buildPositionMap(boolean v96Well)
 		{
 		Map<Integer, String> map = new HashMap<Integer, String>();		
 		String rowLabel = "", colLabel = "";		
 		if (this.useCarousel)
-			return buildCarouselPositionMap();		
+			return buildCarouselPositionMap();	
+		if (v96Well)
+			{
+			this.nRows = 8;
+		    this.nCols = 12;
+			}
+		else
+			{
+			this.nRows = 6;
+		    this.nCols = 9;
+			}
+			
 		for (int row = 0; row < this.nRows; row++) 
 			{
 			for (int col = 0; col < nCols; col++)
@@ -648,6 +896,8 @@ public class PlateListHandler implements Serializable
 					case 3 :  rowLabel = "D"; break;
 					case 4 :  rowLabel = "E"; break;
 					case 5 :  rowLabel = "F"; break;
+					case 6 :  rowLabel = "G"; break;
+					case 7 :  rowLabel = "H"; break;
 					}
 				colLabel = "" + (col + 1);
 				Integer idx = row * nCols + col;
@@ -732,9 +982,12 @@ public class PlateListHandler implements Serializable
 		if (countSamples%maxItems  > 0)
 			nPlates ++;
 		double squaresLeft = (maxItems * nPlates) - countSamples;
-		squaresLeft = squaresLeft - (squaresLeft%9);
-		double rowsNeededControls = Math.floor((countControls-countStandards)/9) + ((countControls-countStandards)%9 > 0 ?1 : 0) + (countStandards > 0 ? 1 : 0) ;
-		double rowsLeft = squaresLeft/9;
+		// JAK new preview
+		//squaresLeft = squaresLeft - (squaresLeft%9);
+		squaresLeft = squaresLeft - (squaresLeft%12);
+		// JAK new preview
+		double rowsNeededControls = Math.floor((countControls-countStandards)/12) + ((countControls-countStandards)%12 > 0 ?1 : 0) + (countStandards > 0 ? 1 : 0) ;
+		double rowsLeft = squaresLeft/12;
 		if ((squaresLeft <  countControls) || (rowsLeft < rowsNeededControls))
 			nPlates ++;
 		return nPlates;		
@@ -755,7 +1008,69 @@ public class PlateListHandler implements Serializable
 		}
 
 	// issue 146
-	public int calculateOtherControlsStartIndex (int countControls, int countStandards)
+	public int calculateOtherControlsStartIndex (int countControls, int countStandards, WorklistSimple ws)
+		{
+		String doubleStr;
+		// JAK new preview
+		double rowsAboveStandards = Math.floor((countControls - (countStandards >12 ? 12 : countStandards))/12);
+		double remainder = countControls - (countStandards >12 ? 12 : countStandards)%12;
+		double countCalc = (countControls - (countStandards >12 ? 12 : countStandards));
+		remainder = countCalc%12;
+		if (remainder > 0 )
+			rowsAboveStandards ++;
+		// issue 146 take care of case where you have < 54 controls but have to use bottom standards row
+		// JAK new preview		
+		/*if (rowsAboveStandards > 5 && countControls <= 54)
+			rowsAboveStandards = 5;*/
+		if (ws.getIs96Well())
+			{
+			if (rowsAboveStandards > 7 && countControls <= 96)
+				rowsAboveStandards = 7;
+			return  (int) (countStandards == 0 ? (87 - (12*(rowsAboveStandards -1))) :   (87-(12*rowsAboveStandards))   );
+			}
+		
+		else
+			{
+			if (rowsAboveStandards > 5 && countControls <= 54)
+				rowsAboveStandards = 5;
+			return  (int) (countStandards == 0 ? (45 - (9*(rowsAboveStandards -1))) :   (45-(9*rowsAboveStandards))   );
+			} 
+		
+		}
+
+	///////////////////////////////  issue 212 Original routines.... //////////////////
+	List<WorklistItemSimple> grabUniqueItemsOriginal(List <WorklistItemSimple> items)
+		{
+		List <WorklistItemSimple> uniqueItems = new ArrayList<WorklistItemSimple>();		
+		Map<String, WorklistItemSimple> plateMap = new HashMap<String, WorklistItemSimple>();
+		for (int i = 0; i < items.size(); i++)
+			plateMap.put(items.get(i).getSamplePosition(), items.get(i));
+		Collection <WorklistItemSimple> col =  plateMap.values();
+		for (WorklistItemSimple item  : col)
+			{
+			if (item.getRepresentsControl())
+				{
+				String [] tokens= item.getSampleName().split("\\-");
+				if (tokens.length > 0)
+					item.setSampleName(tokens[0]);
+				}
+			uniqueItems.add(item);		
+			}
+		return uniqueItems;
+		}
+	
+	
+	public List<WorklistItemSimple> condenseSortAndSpaceOriginal(List<WorklistItemSimple> items)
+		{
+		// Group list there's only one control item per unique type assumes items already labeled by plate up front..
+	   
+		List <WorklistItemSimple> uniqueItems = grabUniqueItemsOriginal(items); 
+	    List <WorklistItemSimple> spacedItems = new ArrayList <WorklistItemSimple> ();
+		spacedItems = buildSpacedSortedListOriginal(uniqueItems);
+	    return spacedItems;
+		}
+	
+	public int calculateOtherControlsStartIndexOriginal (int countControls, int countStandards)
 		{
 		String doubleStr;
 		double rowsAboveStandards = Math.floor((countControls - (countStandards >9 ? 9 : countStandards))/9);
@@ -769,11 +1084,157 @@ public class PlateListHandler implements Serializable
 			rowsAboveStandards = 5;
 		return  (int) (countStandards == 0 ? (45 - (9*(rowsAboveStandards -1))) :   (45-(9*rowsAboveStandards))   );
 		}	
+	
+	
+	
+	Map<String, Integer> buildControlPositionIdxByTypeMapOriginal(List<WorklistItemSimple> items, WorklistSimple worklist) 
+		{
+		int standardsIndex = 0;
+	    int prevIdx;
+	    int nextIdx;
+	    boolean standardsExist = false;
+	    startOfStandards = 45; // 212
+	    boolean startedAfterStandards = false;
+		Map<String, Integer> controlTypeCountsMap = new HashMap<String, Integer>();
+		Map<String, Integer> controlTypeToPositionIndexMap = new HashMap<String, Integer>();
+		Map<String, Integer> subtractInjectionCountMap = new HashMap<String, Integer>();
+		for (int i = 0; i < items.size(); i++)
+			{	
+			WorklistItemSimple item = items.get(i);				
+			if (!item.getRepresentsControl()) continue;	
+			String controlType = (item.getRepresentsUserDefinedControl() ? item.getNameForUserControlGroup() : ((WorklistControlGroup) item.getGroup()).getControlType());
+			controlType = StringParser.parseId(controlType);
+			// issue 201
+			// issue 17
+			if (controlType.indexOf("CS000QCMP") > -1  && worklist.getBothQCMPandMP())
+				continue;
+			
+			// issue 201
+			if (controlType.indexOf("R00CHRPL1-Pre") > -1 &&  bothPreinjectionsAndControl(items,"R00CHRPL1-Pre-01", "R00CHRPL1-01") )
+				{
+				subtractInjectionCountMap.put(controlType, 1);
+				continue;
+				}
+			
+			// issue 201
+			if (controlType.indexOf("R00CHRUR1-Pre") > -1 && bothPreinjectionsAndControl(items,"R00CHRUR1-Pre-01", "R00CHRUR1-01") )
+				{
+				subtractInjectionCountMap.put(controlType, 1);
+				continue;
+				}
+					
+			// issue 201
+			if (controlType.indexOf("CS00000MP-Pre") > -1 && bothPreinjectionsAndControl(items,"CS00000MP-Pre-01", "CS00000MP-01") )
+				{
+				subtractInjectionCountMap.put(controlType, 1);
+				continue;
+				}
+			
+			// issue 201
+			if (controlType.indexOf("CS000BPM1-Pre") > -1 && bothPreinjectionsAndControl(items,"CS000BPM1-Pre-01", "CS000BPM1-01") )
+				{
+				subtractInjectionCountMap.put(controlType, 1);
+				continue;
+				}
+			
+			// issue 201
+			if (controlType.indexOf("CS000BPM2-Pre") > -1 && bothPreinjectionsAndControl(items,"CS000BPM2-Pre-01", "CS000BPM2-01") )
+				{
+				subtractInjectionCountMap.put(controlType, 1);
+				continue;
+				}
+			
+			// issue 201
+			if (controlType.indexOf("CS000BPM3-Pre") > -1 && bothPreinjectionsAndControl(items,"CS000BPM3-Pre-01", "CS000BPM3-01") )
+				{
+				subtractInjectionCountMap.put(controlType, 1);
+				continue;
+				}
+			
+			// issue 201
+			if (controlType.indexOf("CS000BPM4-Pre") > -1 && bothPreinjectionsAndControl(items,"CS000BPM4-Pre-01", "CS000BPM4-01") )
+				{
+				subtractInjectionCountMap.put(controlType, 1);
+				continue;
+				}
+			
+			// issue 201
+			if (controlType.indexOf("CS000BPM5-Pre") > -1 && bothPreinjectionsAndControl(items,"CS000BPM5-Pre-01", "CS000BPM5-01") )
+				{
+				subtractInjectionCountMap.put(controlType, 1);
+				continue;
+				}
+			
+			// issue 207
+			if (controlType.indexOf("CS00000SB-Pre") > -1 && bothPreinjectionsAndControl(items,"CS00000SB-Pre-01", "CS00000SB-01") )
+				{
+				subtractInjectionCountMap.put(controlType, 1);
+				continue;
+				}
+			
+			if (!controlTypeCountsMap.containsKey(controlType))
+				controlTypeCountsMap.put(controlType, 0);
+			int nOfType = controlTypeCountsMap.get(controlType);
+			controlTypeCountsMap.put(controlType, ++nOfType);
+		
+			}	
+		prevIdx = nPositions - 1;
+		// issue 146
+		nextIdx = startOfStandards;
+		for (int i = 0; i < STANDARD_CONTROL_TYPES.size(); i++)
+			{			
+			String controlType = PlateListHandler.STANDARD_CONTROL_TYPES.get(i);
+			if (nextIdx >= worklist.getMaxItemsAsInt())
+				nextIdx = startOfOtherControls;
+			if (controlTypeCountsMap.get(controlType) != null)
+			    {
+				standardsExist = true;
+				standardsIndex++;
+				controlTypeToPositionIndexMap.put(controlType,  nextIdx++); 
+			    }
+			}
+		// issue 146 take care of case where QCMP and MP need to be counted as 1 control to avoid skipping a row
+		int countControls = worklist.buildControlTypeMap().size();
+		if (worklist.buildControlTypeMap().get(masterPoolMP) != null && worklist.buildControlTypeMap().get(masterPoolQCMP) != null)
+			countControls--;
+		// issue 151
+		if (worklist.buildControlTypeMap().get(null) != null)
+			countControls--;
+		if (subtractInjectionCountMap.size() > 0)
+			countControls= countControls - subtractInjectionCountMap.size();
+		int indexForOtherControls = 0;;
+	    indexForOtherControls = calculateOtherControlsStartIndexOriginal(countControls,standardsIndex);
+		nextIdx = indexForOtherControls;
+		boolean movedPassStandards = false;
+		// issue 146 don't override standards slot if standards > 9
+		for (int i = 0; i < POOL_CHEAR_CONTROL_TYPES.size(); i++)
+			{
+			if (standardsIndex > 9 && !startedAfterStandards && nextIdx == 36)
+				{
+				nextIdx = nextIdx + (standardsIndex - 9); 
+				startedAfterStandards = true;
+				}
+			// issue 146 take care of case where you have to use standards slot last row
+			if (nextIdx >= 45 && standardsIndex > 0 && !movedPassStandards)
+				{
+				nextIdx = nextIdx + standardsIndex;
+				movedPassStandards= true;
+				}
+			String controlType = PlateListHandler.POOL_CHEAR_CONTROL_TYPES.get(i);	
+			if (controlTypeCountsMap.get(controlType) != null) 
+				{
+				controlTypeToPositionIndexMap.put(controlType,  nextIdx++); 
+				}
+			}
+		return controlTypeToPositionIndexMap;
+		}
+
     
     // issue 153
     public void constructThePlateList (WorklistSimple worklist)
     	{
     	double numPlates = 0;
+    	thePlateList = new ArrayList <String> (); // issue 212
     	if (worklist.countOfSamplesForItems(worklist.getItems())+  (worklist.buildControlTypeMap().get(null) != null ? worklist.buildControlTypeMap().size()-1 : worklist.buildControlTypeMap().size()  ) <= (worklist.getCyclePlateLimit() * worklist.getMaxItemsAsInt()))
     		{
 	    	if (worklist.getStartPlate().equals( "1" ))
@@ -787,14 +1248,35 @@ public class PlateListHandler implements Serializable
     		}
     	else 
     		{
-    		numPlates =  Math.floor( (worklist.countOfSamplesForItems(worklist.getItems()) + worklist.buildControlTypeMap().size())/54) ;
-    		if  ( (worklist.countOfSamplesForItems(worklist.getItems()) + worklist.buildControlTypeMap().size())%54 > 0)
-    			numPlates ++;
+    		//issue 212
+    		numPlates =  Math.floor( (worklist.countOfSamplesForItems(worklist.getItems()) + worklist.buildControlTypeMap().size())/worklist.getMaxItemsAsInt()) ;
+    		if  ( (worklist.countOfSamplesForItems(worklist.getItems()) + worklist.buildControlTypeMap().size())%worklist.getMaxItemsAsInt() > 0)
+    		    numPlates ++;
     		for (int i = 1;i<= numPlates; i++)
     			{
     			thePlateList.add(String.valueOf(i));
     			}
     		}
     	}
+    
+    
+    public void check96WellsUpdate(List <WorklistItemSimple> items)
+		{
+		if (items.get(0).getGroup().getParent().getIs96Well())
+			{
+			 List <WorklistItemSimple> lgetItems = new ArrayList <WorklistItemSimple>  ();
+			condenseSortAndSpace(items);
+			for (WorklistItemSimple lItemSimple : items.get(0).getGroup().getParent().getItems())
+	        	{
+	        	String sampleNamewoDash = lItemSimple.getSampleName().lastIndexOf("-" ) >= 0 ? lItemSimple.getSampleName().substring(0,lItemSimple.getSampleName().lastIndexOf("-" )) : lItemSimple.getSampleName() ;
+	           	if (namePositionMap.get(sampleNamewoDash) == null)
+	    	        lgetItems.add(lItemSimple);
+	        	else
+	        		lItemSimple.setSamplePosition(namePositionMap.get(sampleNamewoDash).replace("910",  "10").replace("911",  "11").replace("912",  "12"));
+	        	}
+			items.get(0).getGroup().getParent().getItems().removeAll(lgetItems);	
+			} 	
+		}
+
 	}
 		
