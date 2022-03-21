@@ -223,6 +223,7 @@ public class PlateListHandler implements Serializable
 		int j=0;
 		List<WorklistItemSimple> spacedList = new ArrayList<WorklistItemSimple>();
 		int maxSamplesFor96well = uniqueItems.get(0).getGroup().getParent().getMaxSamples96Wells();
+
 		while (i<= uniqueItems.size()-1)
 			{
 			if (uniqueItems.get(i).getSamplePosition().contains("10"))
@@ -272,6 +273,16 @@ public class PlateListHandler implements Serializable
 			{
 			if (uniqueItems.get(i).getSampleName().contains("STD"))
 				{
+				 int  dashIndex = uniqueItems.get(i).getSampleName().lastIndexOf("-");
+				 int stdIndex  =  uniqueItems.get(i).getSampleName().indexOf("STD") + 3;
+				 String stdIntString = uniqueItems.get(i).getSampleName().substring(stdIndex, dashIndex);
+				 
+				 if (Integer.valueOf(stdIntString) > 5)
+					 {
+					 i++;
+					 continue;
+					 }
+				 
 			     uniqueItems.get(i).setSamplePosition("P1-" + letterGivenNumeric(iStandards) + "1" );
 			     if (uniqueItems.get(i).getSampleName().indexOf("-") >= 0)
 			    	 namePositionMap.put(uniqueItems.get(i).getSampleName().substring(0, uniqueItems.get(i).getSampleName().lastIndexOf("-")), uniqueItems.get(i).getSamplePosition());
@@ -1094,6 +1105,10 @@ public class PlateListHandler implements Serializable
 	    int nextIdx;
 	    boolean standardsExist = false;
 	    startOfStandards = 45; // 212
+	    startOfOtherControls = 36;
+	    startIdx = 0;
+	    endIdx = 53;
+	    
 	    boolean startedAfterStandards = false;
 		Map<String, Integer> controlTypeCountsMap = new HashMap<String, Integer>();
 		Map<String, Integer> controlTypeToPositionIndexMap = new HashMap<String, Integer>();

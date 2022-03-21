@@ -74,6 +74,7 @@ public class WorklistBuilderPanel extends Panel
     WorklistBuilderPanel wp = this;
     PlatePreviewForm pltPreviewForm;
     List <WorklistItemSimple> lgetItems;
+    String prevStandardString = "";
     Map<String, String> idsVsReasearcherNameMap = new HashMap<String, String> ();
     
     
@@ -278,16 +279,20 @@ public class WorklistBuilderPanel extends Panel
 							    }
 							controlsVisible = true; samplesVisible = false; groupsVisible = false;
 							addControlsPanel.controlGroupsList = worklist.getControlGroupsList();
+							// issue 212
+							target.add(change96WellBox);
 							break;
 					
 						case "samples" : 
 							controlsVisible = false; samplesVisible = true; groupsVisible = false; 
 							addControlsPanel.controlGroupsList = worklist.getControlGroupsList();					
+							target.add(change96WellBox);
 							break;
 							
 						case "groups" :					
 							controlsVisible = false; samplesVisible = false; groupsVisible = true;
 							addControlsPanel.controlGroupsList = worklist.getControlGroupsList();
+							target.add(change96WellBox);
 							break;
 						
 						default :
@@ -388,7 +393,7 @@ public class WorklistBuilderPanel extends Panel
 				@Override
 				public boolean isEnabled() 
 				    { 
-					return  worklist.getOpenForUpdates() && worklist.getItems().size() > 0 && worklist.getSelectedPlatform().equals("agilent");
+					return  worklist.getOpenForUpdates() && worklist.getItems().size() > 0 && worklist.getSelectedPlatform().equals("agilent") && !controlsVisible ; // issue 212;
 				    }	
 			    };
 				box.add(this.buildStandardFormComponentUpdateBehavior("change", "update96Well"));
@@ -735,16 +740,6 @@ public class WorklistBuilderPanel extends Panel
 					}
 				};
 			}
-
-		///////////////////////////////////////////
-		
-	
-		
-		
-		
-		
-		
-		///////////////////////////////////////
 		
 		private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior(final String event, final String response)
 			{
@@ -759,6 +754,16 @@ public class WorklistBuilderPanel extends Panel
 							{
 						// issue 212
 							case "update96Well" : 
+								if (Integer.valueOf(addGroupsPanel.nStandardsStr) > 6 && worklist.getIs96Well())
+									{
+									prevStandardString = addGroupsPanel.nStandardsStr;
+									addGroupsPanel.nStandardsStr = "6";
+									}
+								if (!worklist.getIs96Well() && !StringUtils.isNullOrEmpty(prevStandardString ))
+									{
+									addGroupsPanel.nStandardsStr= prevStandardString;
+									prevStandardString = "";
+									}
 								target.add (change96WellBox);
 								target.add(addGroupsPanel.motrPacLink);
 								target.add(addGroupsPanel.blanksDrop);
@@ -770,23 +775,23 @@ public class WorklistBuilderPanel extends Panel
 								target.add(addGroupsPanel.poolsDropB);
 								target.add(addGroupsPanel.numberInjectionsDropSB);
 								target.add(controlsVisibleButton);					    
-							try 
-								{
-								plateListHandler.updatePlatePositionsForAgilent(worklist);
-								worklist.rebuildEverything();  // issue 212
-								} 
-							catch (METWorksException e1) 
-								{
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							    }
-							// issue 212 // issue 212
-							plateListHandler.check96WellsUpdate(worklist.getItems());								
-							// issue 212
-							Map<String, String> idsVsReasearcherNameMap =
-						    sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());								
-						    worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
-							break;
+								try 
+									{
+									plateListHandler.updatePlatePositionsForAgilent(worklist);
+									worklist.rebuildEverything();  // issue 212
+									} 
+								catch (METWorksException e1) 
+									{
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								    }
+								// issue 212 // issue 212
+								plateListHandler.check96WellsUpdate(worklist.getItems());								
+								// issue 212
+								Map<String, String> idsVsReasearcherNameMap =
+							    sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());								
+							    worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
+								break;
 								
 						    case "updateStartPlate":
 							    break;

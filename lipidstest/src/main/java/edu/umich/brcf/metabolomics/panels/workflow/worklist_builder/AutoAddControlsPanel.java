@@ -73,12 +73,9 @@ public class AutoAddControlsPanel extends Panel
 	private WorklistSimple originalWorklist;
 	private ModalWindow modal1;
 	private List<String> availableStrQuantities = Arrays.asList(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" });
-	private List<String> availableQ96StrQuantities = Arrays.asList(new String[] { "0", "1", "2", "3", "4", "5"});
-	
-	
-	
-	private List<String> availableInjectionQuantities = Arrays.asList(new String[] { "0 (NO INJECTIONS)", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" });
-	
+	// issue 212
+	private List<String> availableQ96StrQuantities = Arrays.asList(new String[] { "0", "1", "2", "3", "4", "5", "6"});
+	private List<String> availableInjectionQuantities = Arrays.asList(new String[] { "0 (NO INJECTIONS)", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" });	
 	private List availableSpacingQuantities = Arrays.asList(new String[] {"0 (NO POOLS)", "1", "2", "3", "4", "5", "6", "7",
 			"8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"}); // issue 315
 	private List<String> availableChearBlankTypes = Arrays.asList(new String[] {"Urine", "Plasma"});
