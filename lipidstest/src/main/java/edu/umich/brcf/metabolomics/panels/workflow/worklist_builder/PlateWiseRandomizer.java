@@ -12,19 +12,30 @@ import edu.umich.brcf.shared.layers.domain.Sample;
 import edu.umich.brcf.shared.util.FormatVerifier;
 
 
+
 public class PlateWiseRandomizer
 	{
+
 	
 	// issue 401
  	public static void randomizeByPlate(List<WorklistItemSimple> original)
 		{
+ 		// issue 212
+ 		if (original.get(0).getGroup().getParent().getIs96Well())
+	    	{
+			int nPlateRows = 8, nPlateCols = 12;
+		    PlateListHandler plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);	
+		    plateListHandler.check96WellsUpdate(original);
+		    // issue 212
+		    for (int i = 0 ; i < original.size() ; i++)
+				original.get(i).belongsToPlate = Integer.parseInt(   String.valueOf(original.get(i).getSamplePosition().charAt(1))  );	    
+	    	}
+ 		
 		List<Integer> plateMembershipSequence = buildPlateMembershipSequence(original); 
-		
 		int lastPlateIdx = original.get(0).belongsToPlate;
 		for (int i = 0; i < original.size(); i++)
 			lastPlateIdx = Math.max(lastPlateIdx, original.get(i).belongsToPlate);
-		
-	        Map<Integer, List<WorklistItemSimple>> randomizedSampleByPlateMap = new HashMap<Integer, List<WorklistItemSimple>>();	    
+	    Map<Integer, List<WorklistItemSimple>> randomizedSampleByPlateMap = new HashMap<Integer, List<WorklistItemSimple>>();	    
 		for (int plate = 0;  plate <= lastPlateIdx; plate++)
 			{
 	    	List<WorklistItemSimple> block = buildPageList(plate, original);
@@ -59,6 +70,7 @@ public class PlateWiseRandomizer
  	// issue 416
 	public static void randomizeByWorklist(List<WorklistItemSimple> original)
 		{
+		// issue 212
 		if (original.get(0).getGroup().getParent().getIs96Well())
 	    	{
 			int nPlateRows = 8, nPlateCols = 12;
@@ -96,7 +108,6 @@ public class PlateWiseRandomizer
 			if (original.get(i).belongsToPlate == target)
 				blockList.add(original.get(i));
 			}
-
 		return blockList;
 		}
 
