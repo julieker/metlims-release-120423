@@ -311,7 +311,7 @@ public class PlateListHandler implements Serializable
 				spacedList.add(uniqueItems.get(i)) ;
 				alreadyCHR = true;
 				}
-			else if (!alreadyPool && (uniqueItems.get(i).getSampleName().contains("MP") || uniqueItems.get(i).getSampleName().contains("BPM")))
+			else if (uniqueItems.get(0).getGroup().getParent().getPoolTypeA() != null && !alreadyPool && (uniqueItems.get(i).getSampleName().contains(uniqueItems.get(0).getGroup().getParent().getPoolTypeA())) && (uniqueItems.get(i).getSampleName().contains("MP") || uniqueItems.get(i).getSampleName().contains("BPM")))
 				{
 				uniqueItems.get(i).setSamplePosition("P1-H1");
 				if (uniqueItems.get(i).getSampleName().indexOf("-") >= 0)

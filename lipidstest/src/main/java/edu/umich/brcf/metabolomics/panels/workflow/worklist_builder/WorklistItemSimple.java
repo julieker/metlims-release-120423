@@ -567,7 +567,7 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 				if (lSampleName.startsWith("S000"))
 					sampleNameListNoControls.add(lSampleName);
 				}
-			return String.valueOf(sampleNameListNoControls.indexOf(this.sampleName) + 1);
+			return String.valueOf(sampleNameListNoControls.indexOf(this.sampleName) + 1 + Integer.valueOf(wI.getGroup().getParent().getStartSequence()) -1 );
 			}
 		}
 
