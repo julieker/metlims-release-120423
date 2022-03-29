@@ -553,7 +553,7 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	// issue 25
 	// issue 166
 	// issue 212
-	public String calcPosIndicator (WorklistItemSimple wI)
+	public String calcPosIndicator (WorklistItemSimple wI, WorklistSimple ws)
 		{
 		List <String> sampleNameListNoControls = new ArrayList <String> ();
 		int idxSamplePos = 0;
@@ -562,12 +562,14 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 			return "";
 		else
 			{
-			for (String lSampleName : this.getGroup().getParent().getSampleNamesArray())
+			//for (String lSampleName : this.getGroup().getParent().getSampleNamesArray())
+			for (String lSampleName : ws.getSampleNamesArray())
 				{
-				if (lSampleName.startsWith("S000"))
+				if (lSampleName.startsWith("S0"))
 					sampleNameListNoControls.add(lSampleName);
 				}
-			return String.valueOf(sampleNameListNoControls.indexOf(this.sampleName) + 1 + Integer.valueOf(wI.getGroup().getParent().getStartSequence()) -1 );
+			//return String.valueOf(sampleNameListNoControls.indexOf(this.sampleName) + 1 + Integer.valueOf(wI.getGroup().getParent().getStartSequence()) -1 );
+			return String.valueOf(sampleNameListNoControls.indexOf(this.sampleName) + 1 + Integer.valueOf(ws.getStartSequence()) -1 );
 			}
 		}
 
@@ -576,7 +578,10 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		{
 		// issue 201
 		if (!this.getRepresentsControl())
+			{
+		//	System.out.println("this is the researcher name:" + this.getResearcherName());
 			return this.getResearcherName();
+			}
 		else
 			{
 			WorklistControlGroup wg = this.getGroup().getParent().getControlGroupsList().get(0);					
@@ -670,7 +675,7 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	    Integer countOfSamples = this.getGroup().getParent().countOfSamplesForItems(this.getGroup().getParent().getItems());
 		Integer endingIndex = Integer.parseInt(this.getGroup().getParent().getStartSequence()) + countOfSamples-1;
 		String endingIndexStr = endingIndex.toString();
-		String theIndex = this.getRepresentsControl() ? "" : String.format("%1$" + endingIndexStr.length() + "s" , calcPosIndicator(this)).replace(' ', '0');	
+		String theIndex = this.getRepresentsControl() ? "" : String.format("%1$" + endingIndexStr.length() + "s" , calcPosIndicator(this, this.getGroup().getParent())).replace(' ', '0');	
 		//sb.append(theIndex +  (this.getRepresentsControl() ? "" : "_") + calcCommentContent(this.getSampleName()) +  separator);// issue 166		
 		sb.append(theIndex +  (this.getRepresentsControl() ? "" : "_") + calcCommentContent(this.getSampleName())  );// issue 166
 		// issue 25
@@ -715,5 +720,16 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		{
 		this.nameForUserControlGroup = nameForUserControlGroup;
 		}
+	
+	// issue 215
+		public String calcCommentToolTip (WorklistSimple ws, WorklistItemSimple wi)
+			{
+			Integer countOfSamples = ws.countOfSamplesForItems(ws.getItems());
+			Integer endingIndex = Integer.parseInt(ws.getStartSequence()) + countOfSamples-1;
+			String endingIndexStr = endingIndex.toString();
+			String theIndex = wi.getRepresentsControl() ? "" : String.format("%1$" + endingIndexStr.length() + "s" , calcPosIndicator(this, ws)).replace(' ', '0');	
+			String theComment = theIndex +  (wi.getRepresentsControl() ? "" : "_") + calcCommentContent(wi.getSampleName())  ;//			
+			return theComment;
+			}
 	
 	}

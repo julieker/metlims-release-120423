@@ -7,7 +7,9 @@
 package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -22,17 +24,23 @@ import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.util.widgets.AjaxCancelLink;
 
 
 public class PlatePreviewPage extends WebPage
 	{
+	@SpringBean
+	private SampleService sampleService;
+	
 	final int nItemsPerRow, nItemsPerCol;
 	boolean gBothQCMPandMP;
 	WorklistBuilderPanel workListBuilderPanel;
+	Map<String, String> idsVsReasearcherNameMap = new HashMap<String, String> ();
 	
-	public PlatePreviewPage(boolean bothQCMPandMP, Page backPage, List<WorklistItemSimple> items, ModalWindow modal1, boolean useCarousel, WorklistBuilderPanel wp)
+	public PlatePreviewPage(boolean bothQCMPandMP, Page backPage, List<WorklistItemSimple> items, ModalWindow modal1, boolean useCarousel, WorklistBuilderPanel wp, WorklistSimple ws)
 		{
 		super();
 		workListBuilderPanel = wp;
@@ -50,19 +58,18 @@ public class PlatePreviewPage extends WebPage
 			nItemsPerRow = useCarousel ? 10 : 9;
 			nItemsPerCol = useCarousel ? 10 : 6;
 			}
-
+        
 		PlatePreviewForm rlf = new PlatePreviewForm("platePreviewForm",
-				listCopy, modal1, useCarousel);
+				listCopy, modal1, useCarousel, ws);
 		add(rlf);
 		gBothQCMPandMP=bothQCMPandMP;
 		}
 
-	
 	public class PlatePreviewForm extends Form
 		{
 		boolean useCarousel = false;
 		List<WorklistItemSimple> sortedSpacedItems;
-		public PlatePreviewForm(final String id, List<WorklistItemSimple> items, final ModalWindow modal1, boolean useCarousel)
+		public PlatePreviewForm(final String id, List<WorklistItemSimple> items, final ModalWindow modal1, boolean useCarousel, WorklistSimple ws)
 			{
 			super(id);
 
@@ -79,19 +86,22 @@ public class PlatePreviewPage extends WebPage
 			else 
 				sortedSpacedItems = handler.condenseSortAndSpaceOriginal(items);
 			PageableListView plateListView;
-			add(plateListView = buildPlateListView(nItemsPerRow, nItemsPerCol, sortedSpacedItems));
+			add(plateListView = buildPlateListView(nItemsPerRow, nItemsPerCol, sortedSpacedItems, ws));
 			add(new AjaxPagingNavigator("navigator", plateListView));// Issue 283
 			
 			// issue 464
-			add(new AjaxCancelLink("cancelButton", modal1));	   
+			add(new AjaxCancelLink("cancelButton", modal1));
+			
 			}
 		
-		public PageableListView buildPlateListView(final int nItemsPerRow, final int nItemsPerCol, List<WorklistItemSimple> items)
+		public PageableListView buildPlateListView(final int nItemsPerRow, final int nItemsPerCol, List<WorklistItemSimple> items, WorklistSimple ws)
 			{
 			int nRowsNeeded = (int) Math.ceil(items.size() / (nItemsPerRow * 1.0));
 			int nPlatesNeeded = (int) Math.ceil(nRowsNeeded / (nItemsPerCol * 1.0));
 			int nRowsToCreate = nPlatesNeeded * nItemsPerCol;
-			
+			idsVsReasearcherNameMap =
+				     sampleService.sampleIdToResearcherNameMapForExpId(ws.getSampleGroup(0).getExperimentId());								
+			ws.populateSampleName(ws,idsVsReasearcherNameMap ); 
 			WorklistItemSimpleMatrix itemMatrix = new WorklistItemSimpleMatrix(nRowsToCreate, nItemsPerRow, items);
 			Label plateHead10, plateHead11, plateHead12;
 			add(plateHead10 = new Label("plateHead10", "10"));
@@ -114,18 +124,34 @@ public class PlatePreviewPage extends WebPage
 					Character cs = c;
 					String rowLabel = cs.toString();
 					listItem.add(new Label("rowTitle", rowLabel));
+					String commentString = "";
+					// issue 215
 					for (int i = 0; i < item.nItemsPerRow; i++)
-						{
+						{						
 						String property = "name." + i;
 						String label = "position" + (i + 1);
-						listItem.add(WorklistFieldBuilder.buildPlateLabelWorklistField(gBothQCMPandMP, label, item.getItem(i), "sampleName"));
+						if (!item.getItem(i).getRepresentsControl())
+							item.getItem(i).setResearcherName(idsVsReasearcherNameMap.get(item.getItem(i).getSampleName()));
+					    if (! item.getItem(i).getSampleName().contains("SB"))
+					    	{
+					   
+					    	// issue 212
+					    	listItem.add(WorklistFieldBuilder.buildPlateLabelWorklistField(gBothQCMPandMP, label, item.getItem(i), "sampleName", ws));
+					    	}
+						else // issue 215
+							{
+							if (workListBuilderPanel.change96WellBox.getDefaultModelObjectAsString().equals("true"))								
+								listItem.add(WorklistFieldBuilder.buildPlateLabelWorklistField(gBothQCMPandMP, label, new WorklistItemSimple(), "sampleName", ws));	
+							else 
+								listItem.add(WorklistFieldBuilder.buildPlateLabelWorklistField(gBothQCMPandMP, label, item.getItem(i), "sampleName", ws));
+							}
 						}
 					    if (workListBuilderPanel.change96WellBox.getDefaultModelObjectAsString().equals("false"))
 					    	{
 					    	Label lpos10, lpos11, lpos12;
-					    	listItem.add(lpos10 = WorklistFieldBuilder.buildPlateLabelWorklistField(gBothQCMPandMP, "position10", new WorklistItemSimple(), "sampleName"));
-							listItem.add(lpos11 =WorklistFieldBuilder.buildPlateLabelWorklistField(gBothQCMPandMP, "position11", new WorklistItemSimple(), "sampleName"));
-							listItem.add(lpos12 = WorklistFieldBuilder.buildPlateLabelWorklistField(gBothQCMPandMP, "position12", new WorklistItemSimple(), "sampleName"));
+					    	listItem.add(lpos10 = WorklistFieldBuilder.buildPlateLabelWorklistField(gBothQCMPandMP, "position10", new WorklistItemSimple(), "sampleName", ws));
+							listItem.add(lpos11 =WorklistFieldBuilder.buildPlateLabelWorklistField(gBothQCMPandMP, "position11", new WorklistItemSimple(), "sampleName", ws));
+							listItem.add(lpos12 = WorklistFieldBuilder.buildPlateLabelWorklistField(gBothQCMPandMP, "position12", new WorklistItemSimple(), "sampleName", ws));
 							lpos10.add(AttributeAppender.replace("style", "display:none"));
 							lpos11.add(AttributeAppender.replace("style", "display:none"));
 							lpos12.add(AttributeAppender.replace("style", "display:none"));

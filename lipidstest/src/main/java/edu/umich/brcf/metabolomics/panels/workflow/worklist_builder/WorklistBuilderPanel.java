@@ -444,7 +444,7 @@ public class WorklistBuilderPanel extends Panel
 						{
 						// issue 17
 						// issue 242
-						public Page createPage() { return ((Page) (new PlatePreviewPage(worklist.getIs96Well() ? false : worklist.getBothQCMPandMP(), getPage(), worklist.getItems(), modal1, worklist.getUseCarousel(),    wp))); }
+						public Page createPage() { return ((Page) (new PlatePreviewPage(worklist.getIs96Well() ? false : worklist.getBothQCMPandMP(), getPage(), worklist.getItems(), modal1, worklist.getUseCarousel(),    wp, worklist))); }
 						});
 
 					modal1.show(target);
@@ -758,13 +758,9 @@ public class WorklistBuilderPanel extends Panel
 									{
 									prevStandardString = addGroupsPanel.nStandardsStr;
 									addGroupsPanel.nStandardsStr = "6";
-									}
-								if (!worklist.getIs96Well() && !StringUtils.isNullOrEmpty(prevStandardString ))
-									{
-									addGroupsPanel.nStandardsStr= prevStandardString;
-									prevStandardString = "";
-									}
-								target.add (change96WellBox);
+									}	
+								addGroupsPanel.nStandards = Integer.valueOf(addGroupsPanel.nStandardsStr);
+								target.add (change96WellBox);								
 								target.add(addGroupsPanel.motrPacLink);
 								target.add(addGroupsPanel.blanksDrop);
 								target.add(addGroupsPanel.processBlanksDrop);
@@ -774,12 +770,14 @@ public class WorklistBuilderPanel extends Panel
 								target.add(addGroupsPanel.qcDrop1);
 								target.add(addGroupsPanel.poolsDropB);
 								target.add(addGroupsPanel.numberInjectionsDropSB);
-								target.add(controlsVisibleButton);					    
+								target.add(controlsVisibleButton);	
+								target.add(agPanel);
 								try 
 									{
 									plateListHandler.updatePlatePositionsForAgilent(worklist);
 									worklist.rebuildEverything();  // issue 212
 									} 
+								
 								catch (METWorksException e1) 
 									{
 									// TODO Auto-generated catch block

@@ -278,7 +278,7 @@ public abstract class BaseWorklistPanel extends Panel
 	// issue 32
 	protected Label buildCustomDirectoryLabel( final WebMarkupContainer container)
 	    {
-		Label customDirLabel = new Label("customDirectoryLabel", new Model("Custom Directory for IDDA:"))
+		Label customDirLabel = new Label("customDirectoryLabel", new Model("Custom Directory:"))
 	        {
 		    @Override
 		    public boolean isVisible()

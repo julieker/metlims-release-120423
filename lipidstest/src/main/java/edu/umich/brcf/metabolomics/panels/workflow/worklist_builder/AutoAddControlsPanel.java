@@ -81,11 +81,12 @@ public class AutoAddControlsPanel extends Panel
 	private List<String> availableChearBlankTypes = Arrays.asList(new String[] {"Urine", "Plasma"});
 	private List<String> poolTypes = Arrays.asList(new String[] {"Master Pool   (CS00000MP)", "Batch Pool.M1 (CS000BPM1)",  "Batch Pool.M2 (CS000BPM2)", "Batch Pool.M3 (CS000BPM3)", "Batch Pool.M4 (CS000BPM4)", "Batch Pool.M5 (CS000BPM5)"});
 	private List<String> poolTypesB = Arrays.asList(new String[] {"Master Pool.QCMP (CS000QCMP)", "Batch Pool.M1 (CS000BPM1)", "Batch Pool.M2 (CS000BPM2)", "Batch Pool.M3 (CS000BPM3)", "Batch Pool.M4 (CS000BPM4)", "Batch Pool.M5 (CS000BPM5)"});
-	private String poolTypeA =  "Master Pool   (CS00000MP)"; // issue 13
-	private String poolTypeB =  "Batch Pool.M1 (CS000QCMP)"; // issue 13
+	// issue 215
+	public String poolTypeA =  "Master Pool   (CS00000MP)"; // issue 13
+	public String poolTypeB =  "Batch Pool.M1 (CS000QCMP)"; // issue 13
 	// issue 13 2020
-	private Integer nStandards = 1, nProcessBlanks = 1, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
-    private  Integer poolSpacingA = 0, poolSpacingB = 0, numberInjections = 0, numberInjectionsSB = 0, numberInjectionsPool = 0 ; // issue 207 issue 201	   
+	public Integer nStandards = 1, nProcessBlanks = 1, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
+    public  Integer poolSpacingA = 0, poolSpacingB = 0, numberInjections = 0, numberInjectionsSB = 0, numberInjectionsPool = 0 ; // issue 207 issue 201	   
 	// Issue 302
     public String nBlanksStr = "1", nProcessBlanksStr = "1";
 	public DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop, processBlanksDrop, qcDrop1, qcDrop2, chearBlankTypeDrop, poolTypeADrop, poolTypeBDrop, numberInjectionsDrop, numberInjectionsDropPool, numberInjectionsDropSB;// issue 13
@@ -658,8 +659,8 @@ public class AutoAddControlsPanel extends Panel
 		    public boolean isEnabled()
 			    {
 			    if (!originalWorklist.getOpenForUpdates()) return false;
-			    
-			    if (id.equals("processBlanksDrop") || id.equals("blanksDrop") || id.equals("qcDrop1") || id.equals("numberInjectionsDropSB") || id.equals("poolsDropB"))
+			    // issue 215
+			    if (id.equals("processBlanksDrop") || id.equals("qcDrop1")  || id.equals("poolsDropB"))
 			       return (originalWorklist.getItems().size() > 0  && !originalWorklist.getIs96Well());		   
 			    else 
 			    	return originalWorklist.getItems().size() > 0;
@@ -819,7 +820,7 @@ public class AutoAddControlsPanel extends Panel
 	
 	
 	// issue 394 391 324
-    private void addStandardsToAgilentList(WorklistSimple worklist)
+    protected void addStandardsToAgilentList(WorklistSimple worklist)
 		{
     	originalWorklist.setPoolTypeA(StringParser.parseId(poolTypeA)); // issue 13
 		if (worklist.getItems().size() == 0)
@@ -876,20 +877,17 @@ public class AutoAddControlsPanel extends Panel
 		
 		// issue 191
 		// issue 212
-		if (!worklist.getIs96Well())
+		if (nStandards > 0)
 			{
-			if (nStandards > 0)
+			for (int i = 0; i < nBlanks; i++)
 				{
-				for (int i = 0; i < nBlanks; i++)
-					{
-					id = controlService.controlIdForNameAndAgilent("Solvent Blank");
-					finalLabel = controlService.dropStringForIdAndAgilent(id);
-					WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
-					group3.setStandardNotAddedControl(true);
-					originalWorklist.addControlGroup(group3);
-					}
+				id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+				finalLabel = controlService.dropStringForIdAndAgilent(id);
+				WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+				group3.setStandardNotAddedControl(true);
+				originalWorklist.addControlGroup(group3);
 				}
-			 }
+			}
 		for (int i = 0; i < nStandards ; i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("Standard." + i);
@@ -1708,7 +1706,7 @@ public class AutoAddControlsPanel extends Panel
 							numberInjections = Integer.parseInt(StringParser.parseName(numberInjectionsStr));
 						if (!StringUtils.isEmptyOrNull(numberInjectionsPoolStr))
 							numberInjectionsPool = Integer.parseInt(StringParser.parseName(numberInjectionsPoolStr));
-						if (!StringUtils.isEmptyOrNull(numberInjectionsPoolStr))
+						if (!StringUtils.isEmptyOrNull(numberInjectionsSBStr))
 							numberInjectionsSB = Integer.parseInt(StringParser.parseName(numberInjectionsSBStr));
 						// issue 169
 						if (originalWorklist.getDefaultPool())

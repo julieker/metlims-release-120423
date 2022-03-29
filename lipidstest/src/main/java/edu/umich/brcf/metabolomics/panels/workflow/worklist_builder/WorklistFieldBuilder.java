@@ -7,6 +7,8 @@
 package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -15,11 +17,23 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import edu.umich.brcf.shared.layers.service.SampleService;
+import edu.umich.brcf.shared.util.utilpackages.StringUtils;
+
 
 
 
 public class WorklistFieldBuilder implements Serializable
 	{
+
+/////////////////////////////////////
+	@SpringBean
+	private SampleService sampleService;
+	// issue 394
+	
+//////////////////////////////////////
 	public WorklistFieldBuilder()
 		{
 		}
@@ -28,7 +42,8 @@ public class WorklistFieldBuilder implements Serializable
 		{
 	    TextField wrkField = new TextField(id, new PropertyModel<String>(item, field));
 	    if (field.equals("sampleName"))
-	        wrkField.add(AttributeModifier.append("title", item.getSampleName()));
+	    	// issue 215
+	        wrkField.add(AttributeModifier.append("title", item.getSampleName().indexOf("-") >= 0 ? item.getSampleName().substring(0, item.getSampleName().lastIndexOf("-")) : item.getSampleName()));
 		// Issue 268
 	    if (field.equals("outputFileName"))
 	    	wrkField.add(AttributeModifier.append("title", item.getOutputFileName()));
@@ -91,8 +106,9 @@ public class WorklistFieldBuilder implements Serializable
 
 	
 	// onComponentTag
-	public static Label buildPlateLabelWorklistField(boolean bothQCMPandMP , final String id, final WorklistItemSimple item,  String field)
+	public static Label buildPlateLabelWorklistField(boolean bothQCMPandMP , final String id, final WorklistItemSimple item,  String field, WorklistSimple ws)
 		{
+
 		// Issue 268 
 		// issue 346
 		// issue 17
@@ -106,8 +122,18 @@ public class WorklistFieldBuilder implements Serializable
 			field = "shortNameForUserControlGroup";
 		else 
 			field = "shortSampleName";
+		
+		// issue 215 tool tip 
+
 		Label pLabel = WorklistFieldBuilder.buildPlateLabelField(id, item, field);
-		pLabel.add(AttributeModifier.append("title",item.getSampleName()));
+		String theCommentString = "";
+		if (!item.getRepresentsControl())
+			{
+			theCommentString = item.getSampleName() +  (StringUtils.isEmptyOrNull(item.getSampleName()) ? ""  : "\n" + item.calcCommentToolTip(ws, item));
+			pLabel.add(AttributeModifier.append("title",theCommentString));
+			}
+		else 
+			pLabel.add(AttributeModifier.append("title",item.getSampleName().indexOf("-") >= 0 ? item.getSampleName().substring(0, item.getSampleName().lastIndexOf("-")) : item.getSampleName()));
 		if (bothQCMPandMP)
 		    if (item.getShortSampleName().equals("CS00000MP\nCS000QCMP"))
 			    pLabel.add(AttributeModifier.replace("title",item.getMpQcmpName()));			  

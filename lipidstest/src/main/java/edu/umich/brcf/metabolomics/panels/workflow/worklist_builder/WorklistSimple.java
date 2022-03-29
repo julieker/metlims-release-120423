@@ -43,6 +43,8 @@ public class WorklistSimple implements Serializable
 	@SpringBean
 	private SampleService sampleService;
 	// issue 394
+	
+	Map<String, String> idsVsReasearcherNameMap = new HashMap<String, String> ();
 	private Integer masterPoolsBefore = 3, masterPoolsAfter = 1, batchPoolsBefore = 1, batchPoolsAfter = 1;	
 	String worklistName = "values";
 	private String selectedPlatform  = null, selectedInstrument = null, selectedMode =  "Positive";
@@ -1412,6 +1414,9 @@ public class WorklistSimple implements Serializable
 		{
 		return startSequence;
 		}
+	/////////////////////////////////////////////
+
+	////////////////////////////////////////////
 	
 	// issue 166
 	public void setStartSequence (String startSequence)
@@ -2084,6 +2089,7 @@ public class WorklistSimple implements Serializable
 	public void populateSampleName (WorklistSimple ws, Map<String, String> idsVsReasearcherNameMap)
 		{
 		int idx =Integer.parseInt(ws.getStartSequence());
+		
 		for (WorklistItemSimple item : ws.getItems())
 			{
 			if (item.getRepresentsControl())
