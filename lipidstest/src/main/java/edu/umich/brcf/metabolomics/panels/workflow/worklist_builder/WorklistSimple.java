@@ -54,15 +54,13 @@ public class WorklistSimple implements Serializable
 	private String defaultMethodFileName = "";
 	private String defaultExperimentId = "", defaultAssayId = "";
 	int maxSamples96Wells = 88;
+	// issue 217
+	private int maxStartPlate = 4;
 	
 	//private String maxItems = "54";
 	
 	// JAK new preview 
 	private String maxItems = "96";
-	
-	
-	
-	
 	private int cyclePlateLimit = 4;
 	private Boolean allSelected = false;
 	private Boolean openForUpdates = true;
@@ -158,6 +156,16 @@ public class WorklistSimple implements Serializable
 	public void setNHumanMuscleCntrl (int nHumanMuscleCntrl)
 		{
 		this.nHumanMuscleCntrl = nHumanMuscleCntrl;
+		}
+	
+	// issue 217
+	public int getMaxStartPlate ()
+		{
+		return maxStartPlate;
+		}
+	public void setMaxStartPlate (int maxStartPlate)
+		{
+		this.maxStartPlate = maxStartPlate;
 		}
 	
 	

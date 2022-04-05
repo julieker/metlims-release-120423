@@ -55,6 +55,7 @@ public class WorklistFieldBuilder implements Serializable
 	    return wrkField;
 		}
 
+	// issue 217
 	public static Label buildPlateLabelField(String id, final WorklistItemSimple item, String field)
 		{
 		return new Label(id, new PropertyModel<String>(item, field))
@@ -108,7 +109,9 @@ public class WorklistFieldBuilder implements Serializable
 	// onComponentTag
 	public static Label buildPlateLabelWorklistField(boolean bothQCMPandMP , final String id, final WorklistItemSimple item,  String field, WorklistSimple ws)
 		{
-
+		// issue 217
+        if (!item.getRepresentsControl())
+        	item.setCommentResearcherId(item.calcCommentToolTip(ws, item));
 		// Issue 268 
 		// issue 346
 		// issue 17
@@ -120,11 +123,17 @@ public class WorklistFieldBuilder implements Serializable
 			    }
 		if (!item.getNameForUserControlGroup().equals(""))
 			field = "shortNameForUserControlGroup";
+		// issue 217
 		else 
-			field = "shortSampleName";
+			{
+			if (!item.getRepresentsControl())
+				field = "commentResearcherId";
+			else
+				field = "shortSampleName";
+			}
 		
 		// issue 215 tool tip 
-
+        
 		Label pLabel = WorklistFieldBuilder.buildPlateLabelField(id, item, field);
 		String theCommentString = "";
 		if (!item.getRepresentsControl())

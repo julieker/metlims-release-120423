@@ -300,8 +300,9 @@ public class AutoAddControlsPanel extends Panel
 			private static final long serialVersionUID = 1L;
 		    @Override
 			public void onClick(AjaxRequestTarget target, DialogButton button)
-				{					
-				if ( ( worklist.getNCE10Reps() > 0  || worklist.getNCE20Reps() > 0 || worklist.getNCE40Reps() > 0 ) &&  worklist.getMasterPoolsAfter() == 0    )
+				{		
+		    	// issue 217
+				if ( ( worklist.getNCE10Reps() > 0  || worklist.getNCE20Reps() > 0 || worklist.getNCE40Reps() > 0 ) &&  (worklist.getMasterPoolsAfter() == 0 && !worklist.getIs96Well() )  )
 				    {
 					originalWorklist.setMasterPoolsBefore(this.masterPoolsBeforePrev);
 			    	originalWorklist.setMasterPoolsAfter(this.masterPoolsAfterPrev);

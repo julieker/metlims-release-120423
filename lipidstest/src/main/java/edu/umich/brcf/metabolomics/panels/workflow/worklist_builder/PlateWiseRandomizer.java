@@ -28,8 +28,13 @@ public class PlateWiseRandomizer
 		    plateListHandler.check96WellsUpdate(original);
 		    // issue 212
 		    for (int i = 0 ; i < original.size() ; i++)
+		    	{
+		    	// issue 217
+		    	if (original.get(i).getSamplePosition().equals("Vial 1"))
+		    	    continue;	
 				original.get(i).belongsToPlate = Integer.parseInt(   String.valueOf(original.get(i).getSamplePosition().charAt(1))  );	    
-	    	}
+		    	}
+		    }
  		
 		List<Integer> plateMembershipSequence = buildPlateMembershipSequence(original); 
 		int lastPlateIdx = original.get(0).belongsToPlate;

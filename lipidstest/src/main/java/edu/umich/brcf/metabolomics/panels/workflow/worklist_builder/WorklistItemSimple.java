@@ -49,6 +49,7 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	int belongsToPlate;
 	private int direction;
 	private Integer customLoadOrder;
+	public String commentResearcherId;
 	
 	// issue 29
 	public int getDirection ()
@@ -84,6 +85,18 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	public void setMpQcmpName (String vMpQcmpName)
 		{
 	    this.mpQcmpName = vMpQcmpName;	
+		}
+	
+	// issue 217	
+	public String getCommentResearcherId ()
+		{
+		return this.commentResearcherId;	
+		}
+	
+	//issue 217
+	public void setCommentResearcherId (String commentResearcherId)
+		{
+	    this.commentResearcherId = commentResearcherId;	
 		}
 	
 	public WorklistItemSimple()
@@ -518,15 +531,27 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		}
 
 	// issue 32
+	// issue 217
 	public String grabDataFileWithCustomDirectory()
 		{
+		String lastChar =     StringUtils.isNullOrEmpty(parent.getCustomDirectoryStructureName()) ? "" : parent.getCustomDirectoryStructureName().substring(parent.getCustomDirectoryStructureName().length()-1);
+		String customDirectoryWOSlash = lastChar.equals("\\") && parent.getCustomDirectoryStructureName().length() > 1 ? 
+		    parent.getCustomDirectoryStructureName().substring(0,parent.getCustomDirectoryStructureName().length()-1) :
+		   ( lastChar.equals("\\") ? "" :parent.getCustomDirectoryStructureName());	  
 		if (this.getOutputFileName().indexOf("\\") < 0 )
-	        return (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()) ? " " : parent.getCustomDirectoryStructureName()) + "\\" + this.getOutputFileName();
-		else
 			{
+			if (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()))
+				return this.getOutputFileName();
+			return (StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash) + "\\" + this.getOutputFileName();
+			}
+	        else
+			{
+	       
 			String [] fileNameArray = StringUtils.splitAndTrim(this.getOutputFileName(), "\\\\");	
 			String lastPartDataFile = fileNameArray[fileNameArray.length -1];
-			return (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()) ? " " : parent.getCustomDirectoryStructureName()) + "\\" + lastPartDataFile;
+			if (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()))
+				return lastPartDataFile;
+			return (StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash) + "\\" + lastPartDataFile;
 			}			
 	    }
 	
@@ -722,14 +747,17 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		}
 	
 	// issue 215
-		public String calcCommentToolTip (WorklistSimple ws, WorklistItemSimple wi)
-			{
-			Integer countOfSamples = ws.countOfSamplesForItems(ws.getItems());
-			Integer endingIndex = Integer.parseInt(ws.getStartSequence()) + countOfSamples-1;
-			String endingIndexStr = endingIndex.toString();
-			String theIndex = wi.getRepresentsControl() ? "" : String.format("%1$" + endingIndexStr.length() + "s" , calcPosIndicator(this, ws)).replace(' ', '0');	
-			String theComment = theIndex +  (wi.getRepresentsControl() ? "" : "_") + calcCommentContent(wi.getSampleName())  ;//			
-			return theComment;
-			}
+	public String calcCommentToolTip (WorklistSimple ws, WorklistItemSimple wi)
+		{
+		Integer countOfSamples = ws.countOfSamplesForItems(ws.getItems());
+		Integer endingIndex = Integer.parseInt(ws.getStartSequence()) + countOfSamples-1;
+		String endingIndexStr = endingIndex.toString();
+		String theIndex = wi.getRepresentsControl() ? "" : String.format("%1$" + endingIndexStr.length() + "s" , calcPosIndicator(this, ws)).replace(' ', '0');	
+		String theCommentPart = calcCommentContent(wi.getSampleName());
+		if ( StringUtils.isEmptyOrNull(theCommentPart))
+			return "";
+		String theComment = theIndex +  (wi.getRepresentsControl() ? "" : "_") + theCommentPart  ;//			
+		return theComment;
+		}
 	
 	}

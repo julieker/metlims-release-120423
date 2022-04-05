@@ -61,6 +61,7 @@ public class WorklistBuilderPanel extends Panel
 	@SpringBean
 	SampleService sampleService;
 	
+	String prevStartPlate;
 	private static final long serialVersionUID = -2719126649022550590L;
 	private WebPage backPage;
 	private FeedbackPanel feedback;
@@ -115,7 +116,10 @@ public class WorklistBuilderPanel extends Panel
 		// issue 153
 		DropDownChoice<String> selectedPlatformDrop, selectedInstrumentDrop, selectedModeDrop, startPlateDrop;
 		
-		List<String> availablePlates  = Arrays.asList(new String[] {"1", "2", "3", "4"});
+		//List<String> availablePlates  = Arrays.asList(new String[] {"1", "2", "3", "4"});
+		
+		
+		
 		List<String> availablePlatforms = Arrays.asList(new String[] {"Agilent", "ABSciex" });
 		List<String> availableModes = Arrays.asList(new String[] { "Positive", "Negative", "Positive + Negative" });
 		List<String> agilentInstruments,  absciexInstruments; 
@@ -136,7 +140,7 @@ public class WorklistBuilderPanel extends Panel
 		private IndicatingAjaxLink hideAllButton, controlsVisibleButton, samplesVisibleButton, groupsVisibleButton;
 		private IndicatingAjaxLink randomizeSamplesButton, previewPlateButton; 
 		private ValidatingAjaxExcelDownloadLink downloadListButton;
-		
+		String msg = "";
 		private ModalWindow modal1; 
 		
 		WorklistBuilderForm(String id, PrepData prepData)
@@ -393,7 +397,7 @@ public class WorklistBuilderPanel extends Panel
 				@Override
 				public boolean isEnabled() 
 				    { 
-					return  worklist.getOpenForUpdates() && worklist.getItems().size() > 0 && worklist.getSelectedPlatform().equals("agilent") && !controlsVisible ; // issue 212;
+					return  worklist.getOpenForUpdates() && worklist.getItems().size() > 0 && worklist.getSelectedPlatform().equals("agilent") && !controlsVisible && !worklist.getUseCarousel(); // issue 212;
 				    }	
 			    };
 				box.add(this.buildStandardFormComponentUpdateBehavior("change", "update96Well"));
@@ -439,7 +443,7 @@ public class WorklistBuilderPanel extends Panel
 					if (worklist.getItems() == null || worklist.getItems().size() == 0)
 						return;
 					
-					setPageDimensions(modal1, 0.7, 0.6);
+					setPageDimensions(modal1, .8, 0.6);
 					modal1.setPageCreator(new ModalWindow.PageCreator()
 						{
 						// issue 17
@@ -485,7 +489,7 @@ public class WorklistBuilderPanel extends Panel
 		// issue 153
 		private DropDownChoice buildStartPlateDropDown(String id)
 			{
-			DropDownChoice drp = new DropDownChoice(id, new PropertyModel(worklist, "startPlate"), availablePlates)
+			DropDownChoice drp = new DropDownChoice(id, new PropertyModel(worklist, "startPlate"), populateAvailablePlates())
 				{
 				// issue 128
 				//@Override
@@ -743,6 +747,7 @@ public class WorklistBuilderPanel extends Panel
 		
 		private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior(final String event, final String response)
 			{
+			
 			return new AjaxFormComponentUpdatingBehavior(event)
 				{
 				
@@ -792,7 +797,10 @@ public class WorklistBuilderPanel extends Panel
 								break;
 								
 						    case "updateStartPlate":
-							    break;
+						    	
+						    	System.out.println("here on update startplate" + worklist.getStartPlate());
+						    	prevStartPlate = worklist.getStartPlate();
+						    	break;
 						    case "updateChangeDefaultInjVol" :
 						    	target.add(defaultInjectionVolFld);
 							    target.add(changeDefaultInjVolumeBox);
@@ -857,7 +865,7 @@ public class WorklistBuilderPanel extends Panel
 
 							case "updateForInstrument":
 								if (worklist != null)
-									{
+									{	
 									worklist.setSelectedInstrument(getSelectedInstrument());
 									// JAK new preview
 									worklist.setMaxItems(worklist.getUseCarousel() ? 100 : 96);
@@ -872,7 +880,26 @@ public class WorklistBuilderPanel extends Panel
 										plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);
 										plateListHandler.check96WellsUpdate(worklist.getItems());
 										}
+									setupLC9LC10ForPlate ();// issue 217
+									List <String> seeit = populateAvailablePlates ();
+									startPlateDrop.setChoices(seeit);
+									target.add(startPlateDrop);
+									// issue 217
+									if (worklist.getUseCarousel())
+										{
+										worklist.setIs96Well(false);
+										change96WellBox.setDefaultModelObject(false);									
+										}	
+									target.add(change96WellBox);
+									if (prevStartPlate != null &&(Integer.parseInt(prevStartPlate) > 4) && !(selectedInstrument.contains("LC9") || selectedInstrument.contains("LC10")))
+										{
+										msg = "alert('Instrument: " + worklist.getSelectedInstrument() 
+												+ " has only 4 plates.  Please be sure to click update to update the worklist.')";
+										target.appendJavaScript(msg);
+										}
+									prevStartPlate = worklist.getStartPlate();
 									}
+								/// issue 217
 								break;
 								// issue 166	
 							case "updateStartSequence":
@@ -1104,6 +1131,35 @@ public class WorklistBuilderPanel extends Panel
 			{
 			worklist = w;
 			}
+		
+		// issue 217
+		public List <String> populateAvailablePlates ()
+			{
+			
+			List <String> availablePlates = new ArrayList <String> ();
+			for (int i = 1; i <= plateListHandler.maxStartPlate ; i++)
+				availablePlates.add(String.valueOf(i));
+			return availablePlates;
+			}
+		
+		public void setupLC9LC10ForPlate ()
+			{
+			// issue 217
+			if (!StringUtils.isNullOrEmpty(selectedInstrument) && (selectedInstrument.contains("LC9") || selectedInstrument.contains("LC10")))
+				{
+				plateListHandler.maxStartPlate= 6;
+				worklist.setMaxStartPlate(6);
+				}
+			else
+				{
+				plateListHandler.maxStartPlate= 4;
+				worklist.setMaxStartPlate(4);
+				if (Integer.parseInt(worklist.getStartPlate()) > 4)
+		            worklist.setStartPlate("1");			
+				}
+			}
+		
+		
 		}
 
 	}

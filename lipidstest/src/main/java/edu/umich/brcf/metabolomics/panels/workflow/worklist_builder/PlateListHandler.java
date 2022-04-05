@@ -25,6 +25,7 @@ import edu.umich.brcf.shared.util.utilpackages.StringUtils;
 
 public class PlateListHandler implements Serializable
 	{
+	public int maxStartPlate = 4;
 	int thePlateIdx = 0;
 	String plateStr = "P1";
 	int plateOn = 1;
@@ -809,7 +810,7 @@ public class PlateListHandler implements Serializable
 		List<WorklistItemSimple> pageItemsArray = new ArrayList<WorklistItemSimple>();
 		List<WorklistItemSimple> items = worklist.getItems();
 		// issue 153
-		constructThePlateList(worklist);
+		constructThePlateList(worklist, maxStartPlate);
 		Boolean orderWasUploaded = worklist.wasCustomOrdered();		
 		Map<Integer, String> map = buildPositionMap(worklist.getIs96Well());	
 		int pIdx = 0;
@@ -1260,20 +1261,24 @@ public class PlateListHandler implements Serializable
 
     
     // issue 153
-    public void constructThePlateList (WorklistSimple worklist)
+    public void constructThePlateList (WorklistSimple worklist, int maxStartPlate)
     	{
     	double numPlates = 0;
+    	int pltIdx = 0;
     	thePlateList = new ArrayList <String> (); // issue 212
+    	pltIdx = Integer.parseInt(worklist.getStartPlate());
+    	// issue 217
+    
     	if (worklist.countOfSamplesForItems(worklist.getItems())+  (worklist.buildControlTypeMap().get(null) != null ? worklist.buildControlTypeMap().size()-1 : worklist.buildControlTypeMap().size()  ) <= (worklist.getCyclePlateLimit() * worklist.getMaxItemsAsInt()))
     		{
-	    	if (worklist.getStartPlate().equals( "1" ))
-				thePlateList = Arrays.asList(new String[] {"1", "2", "3", "4"});
-			else if (worklist.getStartPlate().equals( "2" ))
-				thePlateList = Arrays.asList(new String[] { "2", "3", "4", "1"});
-			else if (worklist.getStartPlate().equals( "3" ))
-				thePlateList = Arrays.asList(new String[] { "3", "4", "1", "2"});
-			else 
-				thePlateList = Arrays.asList(new String[] { "4", "1", "2", "3"});
+    		pltIdx = Integer.parseInt(worklist.getStartPlate());
+    		for (int i = 0; i< worklist.getMaxStartPlate(); i++)
+	    		{
+	    		thePlateList.add(String.valueOf(pltIdx));
+	    		if (pltIdx== worklist.getMaxStartPlate())
+	    			pltIdx = 0;
+	    		pltIdx ++;
+	    		}
     		}
     	else 
     		{
@@ -1282,13 +1287,10 @@ public class PlateListHandler implements Serializable
     		if  ( (worklist.countOfSamplesForItems(worklist.getItems()) + worklist.buildControlTypeMap().size())%worklist.getMaxItemsAsInt() > 0)
     		    numPlates ++;
     		for (int i = 1;i<= numPlates; i++)
-    			{
     			thePlateList.add(String.valueOf(i));
-    			}
     		}
     	}
-    
-    
+     
     public void check96WellsUpdate(List <WorklistItemSimple> items)
 		{
 		if (items.get(0).getGroup().getParent().getIs96Well())
