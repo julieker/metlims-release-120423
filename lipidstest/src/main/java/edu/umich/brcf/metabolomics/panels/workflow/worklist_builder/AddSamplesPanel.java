@@ -455,9 +455,9 @@ public class AddSamplesPanel extends Panel
 				Map<String, String> idsVsReasearcherNameMap =
 				        sampleService.sampleIdToResearcherNameMapForExpId(originalWorklist.getSampleGroup(0).getExperimentId());								
 				originalWorklist.populateSampleName(originalWorklist,idsVsReasearcherNameMap );
-				if (originalWorklist.countOfSamplesForItems(originalWorklist.getItems())+  (originalWorklist.buildControlTypeMap().get(null) != null ? originalWorklist.buildControlTypeMap().size()-1 : originalWorklist.buildControlTypeMap().size()  ) > (originalWorklist.getCyclePlateLimit() * originalWorklist.getMaxItemsAsInt()))
+				if (originalWorklist.countOfSamplesForItems(originalWorklist.getItems())+  (originalWorklist.buildControlTypeMap().get(null) != null ? originalWorklist.buildControlTypeMap().size()-1 : originalWorklist.buildControlTypeMap().size()  ) > (originalWorklist.getMaxStartPlate() * originalWorklist.getMaxItemsAsInt()))
 					{
-					String msg =  "alert('This worklist currently contains more than:" + originalWorklist.getCyclePlateLimit() + " plates.  Therefore plate cycling will not be used." +  "')";
+					String msg =  "alert('This worklist currently contains more than:" + originalWorklist.getMaxStartPlate() + " plates.  Therefore plate cycling will not be used." +  "')";
 					target.appendJavaScript(msg); 
 					}
 				int excludedCount = originalWorklist.countExcludedSamples();

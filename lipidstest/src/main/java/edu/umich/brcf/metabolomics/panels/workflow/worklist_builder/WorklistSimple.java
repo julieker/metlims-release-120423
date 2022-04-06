@@ -12,23 +12,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import org.apache.wicket.Session;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 //import org.hibernate.mapping.Set;
-
 import edu.umich.brcf.shared.layers.domain.Sample;
 import edu.umich.brcf.shared.layers.service.SampleService;
-import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.util.FormatVerifier;
 import edu.umich.brcf.shared.util.METWorksException;
 import edu.umich.brcf.shared.util.StringParser;
@@ -42,8 +34,7 @@ public class WorklistSimple implements Serializable
 	// issue 287	
 	@SpringBean
 	private SampleService sampleService;
-	// issue 394
-	
+	// issue 394	
 	Map<String, String> idsVsReasearcherNameMap = new HashMap<String, String> ();
 	private Integer masterPoolsBefore = 3, masterPoolsAfter = 1, batchPoolsBefore = 1, batchPoolsAfter = 1;	
 	String worklistName = "values";
@@ -55,13 +46,9 @@ public class WorklistSimple implements Serializable
 	private String defaultExperimentId = "", defaultAssayId = "";
 	int maxSamples96Wells = 88;
 	// issue 217
-	private int maxStartPlate = 4;
-	
-	//private String maxItems = "54";
-	
+	private int maxStartPlate = 4;	
 	// JAK new preview 
 	private String maxItems = "96";
-	private int cyclePlateLimit = 4;
 	private Boolean allSelected = false;
 	private Boolean openForUpdates = true;
 	private boolean plateWarningGiven = false, plateWarningGivenTwice = false;
@@ -1919,16 +1906,6 @@ public class WorklistSimple implements Serializable
 		this.nPlates = nPlates;
 		}
 	
-	public int getCyclePlateLimit()
-		{
-		return cyclePlateLimit;
-		}
-
-	public void setCyclePlateLimit(int cyclePlateLimit)
-		{
-		this.cyclePlateLimit = cyclePlateLimit;
-		}
-
 	public void setOpenForUpdates(boolean open)
 		{
 		this.openForUpdates = open;

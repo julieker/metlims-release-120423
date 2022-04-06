@@ -827,7 +827,7 @@ public class PlateListHandler implements Serializable
 		//issue 153
 		
 		// issue 153 do not do plate cycling
-		if (worklist.countOfSamplesForItems(items) + (worklist.buildControlTypeMap().get(null) != null ? worklist.buildControlTypeMap().size()-1 : worklist.buildControlTypeMap().size()  )  > (worklist.getCyclePlateLimit() * worklist.getMaxItemsAsInt()))
+		if (worklist.countOfSamplesForItems(items) + (worklist.buildControlTypeMap().get(null) != null ? worklist.buildControlTypeMap().size()-1 : worklist.buildControlTypeMap().size()  )  > (worklist.getMaxStartPlate() * worklist.getMaxItemsAsInt()))
 			worklist.setStartPlateControls((int) calculatePlate  (worklist.countOfSamplesForItems(items), worklist.buildControlTypeMap() , worklist.getMaxItemsAsInt()   )); // issue 146
 		else 
 			{
@@ -1269,7 +1269,7 @@ public class PlateListHandler implements Serializable
     	pltIdx = Integer.parseInt(worklist.getStartPlate());
     	// issue 217
     
-    	if (worklist.countOfSamplesForItems(worklist.getItems())+  (worklist.buildControlTypeMap().get(null) != null ? worklist.buildControlTypeMap().size()-1 : worklist.buildControlTypeMap().size()  ) <= (worklist.getCyclePlateLimit() * worklist.getMaxItemsAsInt()))
+    	if (worklist.countOfSamplesForItems(worklist.getItems())+  (worklist.buildControlTypeMap().get(null) != null ? worklist.buildControlTypeMap().size()-1 : worklist.buildControlTypeMap().size()  ) <= (worklist.getMaxStartPlate() * worklist.getMaxItemsAsInt()))
     		{
     		pltIdx = Integer.parseInt(worklist.getStartPlate());
     		for (int i = 0; i< worklist.getMaxStartPlate(); i++)

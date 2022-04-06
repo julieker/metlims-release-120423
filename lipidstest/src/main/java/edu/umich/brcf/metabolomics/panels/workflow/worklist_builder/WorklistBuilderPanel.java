@@ -797,8 +797,6 @@ public class WorklistBuilderPanel extends Panel
 								break;
 								
 						    case "updateStartPlate":
-						    	
-						    	System.out.println("here on update startplate" + worklist.getStartPlate());
 						    	prevStartPlate = worklist.getStartPlate();
 						    	break;
 						    case "updateChangeDefaultInjVol" :
@@ -891,10 +889,18 @@ public class WorklistBuilderPanel extends Panel
 										change96WellBox.setDefaultModelObject(false);									
 										}	
 									target.add(change96WellBox);
+									// issue 217
 									if (prevStartPlate != null &&(Integer.parseInt(prevStartPlate) > 4) && !(selectedInstrument.contains("LC9") || selectedInstrument.contains("LC10")))
 										{
 										msg = "alert('Instrument: " + worklist.getSelectedInstrument() 
 												+ " has only 4 plates.  Please be sure to click update to update the worklist.')";
+										target.appendJavaScript(msg);
+										}
+									// issue 217
+									if (worklist.getUseCarousel())
+										{
+										msg = "alert('Instrument: " + worklist.getSelectedInstrument() 
+												+ " is a carousel.  Please be sure to click update to update the worklist.')";
 										target.appendJavaScript(msg);
 										}
 									prevStartPlate = worklist.getStartPlate();
