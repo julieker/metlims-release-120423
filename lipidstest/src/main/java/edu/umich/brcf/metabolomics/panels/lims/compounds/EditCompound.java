@@ -288,6 +288,25 @@ public class EditCompound extends WebPage
 									    cmpDto.setInchiKey(smilesInchiKeyList.get(2));
 									}
 							    }
+							// issue 219
+							else if (cmpDto.getCompoundIdentifier().equals("Don't Recalculate"))
+								{
+								if (!StringUtils.isNullOrEmpty(cmpDto.getSmiles()))
+									{
+									List <String> smilesInchiKeyList = CompoundIdUtils.grabSmilesFromCompoundId(cmpDto.getSmiles(), "smiles");
+									smilesOrSmilesFromCompoundIdStr = cmpDto.getSmiles();
+									}
+								else if (!StringUtils.isNullOrEmpty(cmpDto.getInchiKey()))
+									{
+									List <String> smilesInchiKeyList = CompoundIdUtils.grabSmilesFromCompoundId(cmpDto.getInchiKey(), "inchiKey");
+									smilesOrSmilesFromCompoundIdStr = smilesInchiKeyList.get(0);
+									}
+								else 
+									{
+									List <String> smilesInchiKeyList = CompoundIdUtils.grabSmilesFromCompoundId(cmpDto.getChem_abs_number(), "cas");
+									smilesOrSmilesFromCompoundIdStr = smilesInchiKeyList.get(0);
+									}
+								}
 							// issue 43
 							if (cmpDto.getCompoundIdentifier().equals("InchiKey") && StringUtils.isNullOrEmpty(smilesOrSmilesFromCompoundIdStr) && !StringUtils.isNullOrEmpty(cmpDto.getInchiKey()) )
 							    {	
@@ -326,7 +345,7 @@ public class EditCompound extends WebPage
 							String calcMolWeight = Double.toString(cmp.getMass(smilesOrSmilesFromCompoundIdStr));
 							if (StringUtils.isNullOrEmpty(cmpDto.getMolecular_weight()))
 							    cmpDto.setMolecular_weight(calcMolWeight);
-							if (!StringUtils.isNullOrEmpty(cmpDto.getMolecular_weight()) && !calcMolWeight.toString().equals(cmpDto.getMolecular_weight()) && !cmpDto.getCompoundIdentifier().equals("Don't Recalculate"))
+							if (!StringUtils.isNullOrEmpty(cmpDto.getMolecular_weight()) && !calcMolWeight.toString().equals(cmpDto.getMolecular_weight()) && cmpDto.getCompoundIdentifier().equals("Don't Recalculate"))
 								EditCompound.this.info("The molecular weight of " + cmpDto.getMolecular_weight() + " is different from the calculated molecular weight of: " + calcMolWeight.toString() + ".  Please double check the molecular weight.");			
 							}
 						catch(Exception e){ e.printStackTrace(); EditCompound.this.error("Save unsuccessful. Please make sure that smiles is valid."); }
@@ -395,7 +414,7 @@ public class EditCompound extends WebPage
 	        	cmpDto.setInchiKey(gInchiKey) ;
 	    		cmpDto.setChem_abs_number(gCas);
 	    		cmpDto.setSmiles(gSmiles );
-	    		cmpDto.setMolecular_weight(gMWeight);
+	    		//cmpDto.setMolecular_weight(gMWeight);
 	        	}
 			}
 		}

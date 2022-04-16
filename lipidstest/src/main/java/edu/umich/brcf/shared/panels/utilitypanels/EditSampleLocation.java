@@ -18,6 +18,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import edu.umich.brcf.shared.layers.domain.Location;
 import edu.umich.brcf.shared.layers.service.LocationService;
 import edu.umich.brcf.shared.util.widgets.AjaxCancelLink;
 
@@ -71,17 +72,20 @@ public abstract class EditSampleLocation extends WebPage
 			add(locationsDD);
 			
 			final DropDownChoice unitsDD=new DropDownChoice("unitsDD",  new PropertyModel(this, "unit"), locationService.getDistinctUnitsForSamples());
-
-			setUnit("-80 freezer");
+			// issue 219
+			setUnit("-80 freezer");			
 			locationsDD.setChoices(unit != null ? ((ArrayList <String>) locationService.getSampleLocationNamesByUnit(unit)) :  new ArrayList <String> ());
-			
+			List <String>  locChoicesList = new ArrayList <String> ();	
 			unitsDD.add(new AjaxFormComponentUpdatingBehavior("change")
 				{
 				@Override
 				protected void onUpdate(AjaxRequestTarget target)
 					{
 					String unit = getUnit();
-					locationsDD.setChoices(unit != null ? ((ArrayList <String>) locationService.getSampleLocationNamesByUnit(unit)) : new ArrayList <String> ());
+					for (Location loc : locationService.getLocationsByUnit(unit))
+						locChoicesList.add(loc.getLocationId());
+					locationsDD.setChoices(unit != null ? ((ArrayList <String>) locChoicesList) :  new ArrayList <String> ());				
+					//locationsDD.setChoices(unit != null ? ((ArrayList <String>) locationService.getSampleLocationNamesByUnit(unit)) : new ArrayList <String> ());
 					target.add(locationsDD);
 					}
 				});

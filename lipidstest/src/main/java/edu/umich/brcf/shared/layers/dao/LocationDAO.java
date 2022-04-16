@@ -57,11 +57,12 @@ public class LocationDAO extends BaseDAO
 		return query.getResultList();
 		}
 
-	
+	// issue 219
 	public List<String> getDistinctUnitsForSamples()
 		{
 		List<String> locList = new ArrayList<String>();
 		locList.add("-80 freezer"); // = query.getResultList();
+		locList.add("-20 freezer"); 
 		return locList;
 		}
 

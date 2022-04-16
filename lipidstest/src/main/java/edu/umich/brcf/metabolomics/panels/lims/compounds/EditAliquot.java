@@ -47,6 +47,7 @@ import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.metabolomics.layers.service.InventoryService;
 import edu.umich.brcf.shared.layers.domain.Aliquot;
 import edu.umich.brcf.shared.layers.domain.Inventory;
+import edu.umich.brcf.shared.layers.domain.Location;
 import edu.umich.brcf.shared.layers.service.AliquotService;
 import edu.umich.brcf.shared.layers.service.AssayService;
 import edu.umich.brcf.shared.layers.service.LocationService;
@@ -584,8 +585,17 @@ public class EditAliquot extends WebPage
 			add(locationsDD);
 			if (alq != null)
 				setValuesForEdit(alq);
-			setUnit("-80 freezer");
-			locationsDD.setChoices(unit != null ? ((ArrayList <String>) locationService.getSampleLocationNamesByUnit(unit)) :  new ArrayList <String> ());
+			//setUnit("-80 freezer");
+			// issue 219
+			List <String>  locChoicesList = new ArrayList <String> ();	
+			String unit = getUnit();
+			locChoicesList.add("LC0000");
+			for (Location loc : locationService.getLocationsByUnit("-80 freezer"))
+				locChoicesList.add(loc.getLocationId());
+			for (Location loc : locationService.getLocationsByUnit("-20 freezer"))
+				locChoicesList.add(loc.getLocationId());
+			locationsDD.setChoices(unit != null ? ((ArrayList <String>) locChoicesList) :  new ArrayList <String> ());
+			//locationsDD.setChoices(unit != null ? ((ArrayList <String>) locationService.getSampleLocationNamesByUnit(unit)) :  new ArrayList <String> ());
 					
 			add( new AjaxLink<Void>("close")
 				{

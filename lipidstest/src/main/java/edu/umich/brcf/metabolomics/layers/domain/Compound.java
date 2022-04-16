@@ -166,6 +166,10 @@ public class Compound implements IClusterable
 		this.inchiKey = dto.getInchiKey();
 		// issue 58
 		this.parent = parent;
+		// issue 219
+		if (!StringUtils.isEmptyOrNull(dto.getMolecular_weight()))
+			this.molecular_weight = new BigDecimal(dto.getMolecular_weight());
+		
 		this.additionalSolubility = dto.getAdditionalSolubility(); // issue 62
 		if ((smilesOrSmilesFromCompoundIdStr!=null)&& (smilesOrSmilesFromCompoundIdStr.trim().length()>0))
 			{

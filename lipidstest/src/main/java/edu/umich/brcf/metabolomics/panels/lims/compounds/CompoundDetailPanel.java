@@ -66,7 +66,10 @@ public class CompoundDetailPanel extends Panel
 	Model<String> strMdlMultipleSmilesForInchi = Model.of("");
 	Label msgMultipleSmiles = null;
 	CompoundDTO compoundDto = new CompoundDTO ();
-	Label msgMultipleSmilesForInchi = null;;
+	Label msgMultipleSmilesForInchi = null;
+	Label nominalMassWarning = null;
+	Label nominalMassAsDouble = null;
+	Label molecularWeightAsDouble = null;
 	List <String> smilesInchiKeyMultipleSmilesList = new ArrayList <String> (); // issue 31
 	Label chem_abs_number_label = null;	
 	private List<CompoundName> names;
@@ -90,12 +93,12 @@ public class CompoundDetailPanel extends Panel
 	
 	public CompoundDetailPanel(String id, String cid, final boolean insider)
 		{
-		super(id);		
+		super(id);	
 		setOutputMarkupId(true);
 		setCmpId(cid);
 		setDefaultModel(new CompoundPropertyModel(getCompoundModel(getCmpId())));		
 		final ModalWindow modal1= buildModalWindow("modal1", cdp);
-		add(modal1);
+		add(modal1);		
 		editCompoundDialog = new EditCompoundDialog ("editCompoundDialog", "Add Compound",  cdp, modal1, compoundDto)		
 		    { // NOSONAR
 			private static final long serialVersionUID = 1L;
@@ -181,7 +184,7 @@ public class CompoundDetailPanel extends Panel
 	    add (editCompoundDialog);
 		add(new Label("cid",new PropertyModel(this, "compound.cid")));
 		add(new Label("molecular_formula",new PropertyModel(this, "compound.molecular_formula")));
-		add(new Label("molecularWeightAsDouble",new PropertyModel(this, "compound.molecularWeightAsDouble")));
+		add(molecularWeightAsDouble = new Label("molecularWeightAsDouble",new PropertyModel(this, "compound.molecularWeightAsDouble")));
 		chem_abs_number_label = new Label("chem_abs_number",new PropertyModel(this, "compound.chem_abs_number"));
 		add (chem_abs_number_label);
 	    smilesInchiKeyMultipleSmilesList = new ArrayList <String> ();  
@@ -190,7 +193,14 @@ public class CompoundDetailPanel extends Panel
 		add(new Label("inchiKey",new PropertyModel(this, "compound.inchiKey")));// issue 27 2020
 		add(new Label("parent.cid",new PropertyModel(this, "compound.parent.cid")));
 		add(new Label("logpAsDouble",new PropertyModel(this, "compound.logpAsDouble")));
-		add(new Label("nominalMassAsDouble",new PropertyModel(this, "compound.nominalMassAsDouble")));
+		
+		
+		
+		
+		add(nominalMassAsDouble = new Label("nominalMassAsDouble",new PropertyModel(this, "compound.nominalMassAsDouble")));
+		add(nominalMassWarning = new Label("nominalMassWarning"," "));
+		nominalMassWarning.setOutputMarkupId(true);
+		nominalMassWarning.setEscapeModelStrings(false);		
 		add(new Label("pka",new PropertyModel(this, "compound.pka")));
 		// issue 58 get rid of human rel
 		add(new Label("solvent.name",new PropertyModel(this, "compound.solvent.name")));
@@ -385,6 +395,11 @@ public class CompoundDetailPanel extends Panel
 		{
 		setCmpId(cid);
 		setDefaultModel(new CompoundPropertyModel(getCompoundModel(cid)));
+		// issue 219
+		if (Math.abs(Double.parseDouble(molecularWeightAsDouble.getDefaultModelObjectAsString()) - Double.parseDouble(nominalMassAsDouble.getDefaultModelObjectAsString())) > 1)
+			nominalMassWarning.setDefaultModelObject("<span style=\"color:red;\">" + "The nominal mass may be incorrect" + "</span>");
+	    else 
+	    	nominalMassWarning.setDefaultModelObject(" ");
 		}
 	
 	public List<CompoundName> getNames()
@@ -544,13 +559,19 @@ public class CompoundDetailPanel extends Panel
 		}
 	
 	// issue 113
+	// issue 219
 	private void updateCompoundDetail (AjaxRequestTarget target,  CompoundDetailPanel cdp )
 		{
 		smilesInchiKeyMultipleSmilesList = new ArrayList <String> ();  
  	   	smilesInchiKeyMultipleSmilesList = getSmilesFromCompoundIdandSetTag(); 
  	   	strMdlMultipleSmiles.setObject("");
  	   	strMdlMultipleSmilesForInchi.setObject("");
- 	   	if (!StringUtils.isNullOrEmpty(getCompound().getInchiKey()))
+ 	    if (Math.abs(Double.parseDouble(molecularWeightAsDouble.getDefaultModelObjectAsString()) - Double.parseDouble(nominalMassAsDouble.getDefaultModelObjectAsString())) > 1)
+ 	    	nominalMassWarning.setDefaultModelObject("<span style=\"color:red;\">" + "The nominal mass may be incorrect" + "</span>");
+ 	    else 
+ 	    	nominalMassWarning.setDefaultModelObject(" ");
+ 	    target.add(nominalMassWarning);
+ 	    if (!StringUtils.isNullOrEmpty(getCompound().getInchiKey()))
  		    strMdlMultipleSmilesForInchi.setObject(smilesInchiKeyMultipleSmilesList.get(1));
  	    else if (!StringUtils.isNullOrEmpty(getCompound().getChem_abs_number()) && StringUtils.isNullOrEmpty(getCompound().getSmiles()))    		   
  	        strMdlMultipleSmiles.setObject(smilesInchiKeyMultipleSmilesList.get(1));
