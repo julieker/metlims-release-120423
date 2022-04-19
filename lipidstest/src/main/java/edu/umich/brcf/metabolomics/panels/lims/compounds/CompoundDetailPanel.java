@@ -395,11 +395,18 @@ public class CompoundDetailPanel extends Panel
 		{
 		setCmpId(cid);
 		setDefaultModel(new CompoundPropertyModel(getCompoundModel(cid)));
-		// issue 219
-		if (Math.abs(Double.parseDouble(molecularWeightAsDouble.getDefaultModelObjectAsString()) - Double.parseDouble(nominalMassAsDouble.getDefaultModelObjectAsString())) > 1)
+		// issue 222		
+		try
+			{
+			if (Math.abs(Double.parseDouble(molecularWeightAsDouble.getDefaultModelObjectAsString()) - Double.parseDouble(nominalMassAsDouble.getDefaultModelObjectAsString())) > 1)
+				nominalMassWarning.setDefaultModelObject("<span style=\"color:red;\">" + "The nominal mass may be incorrect" + "</span>");
+		    else 
+		    	nominalMassWarning.setDefaultModelObject(" ");
+			}
+		catch (NumberFormatException ignore)
+			{
 			nominalMassWarning.setDefaultModelObject("<span style=\"color:red;\">" + "The nominal mass may be incorrect" + "</span>");
-	    else 
-	    	nominalMassWarning.setDefaultModelObject(" ");
+			}		
 		}
 	
 	public List<CompoundName> getNames()
@@ -559,17 +566,25 @@ public class CompoundDetailPanel extends Panel
 		}
 	
 	// issue 113
-	// issue 219
+	// issue 222
 	private void updateCompoundDetail (AjaxRequestTarget target,  CompoundDetailPanel cdp )
 		{
 		smilesInchiKeyMultipleSmilesList = new ArrayList <String> ();  
  	   	smilesInchiKeyMultipleSmilesList = getSmilesFromCompoundIdandSetTag(); 
  	   	strMdlMultipleSmiles.setObject("");
- 	   	strMdlMultipleSmilesForInchi.setObject("");
- 	    if (Math.abs(Double.parseDouble(molecularWeightAsDouble.getDefaultModelObjectAsString()) - Double.parseDouble(nominalMassAsDouble.getDefaultModelObjectAsString())) > 1)
- 	    	nominalMassWarning.setDefaultModelObject("<span style=\"color:red;\">" + "The nominal mass may be incorrect" + "</span>");
- 	    else 
- 	    	nominalMassWarning.setDefaultModelObject(" ");
+ 	   	strMdlMultipleSmilesForInchi.setObject("");	 
+ 	   	// issue 222
+ 	   try
+			{
+			if (Math.abs(Double.parseDouble(molecularWeightAsDouble.getDefaultModelObjectAsString()) - Double.parseDouble(nominalMassAsDouble.getDefaultModelObjectAsString())) > 1)
+				nominalMassWarning.setDefaultModelObject("<span style=\"color:red;\">" + "The nominal mass may be incorrect" + "</span>");
+		    else 
+		    	nominalMassWarning.setDefaultModelObject(" ");
+			}
+ 	   catch (NumberFormatException ignore)
+			{
+			nominalMassWarning.setDefaultModelObject("<span style=\"color:red;\">" + "The nominal mass may be incorrect" + "</span>");
+			} 	
  	    target.add(nominalMassWarning);
  	    if (!StringUtils.isNullOrEmpty(getCompound().getInchiKey()))
  		    strMdlMultipleSmilesForInchi.setObject(smilesInchiKeyMultipleSmilesList.get(1));

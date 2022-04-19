@@ -95,7 +95,9 @@ public class CompoundService
 					{
 					compound.updateSolvent(null);
 					compound.setMolecular_formula(null);
-					compound.setMolecular_weight(null);
+					// issue 222
+					if (dto.getMolecular_weight() == null)
+						compound.setMolecular_weight(null);
 					// issue 45
 					compound.setNominalMass(null);					
 					compound.setLogP(null);
