@@ -450,7 +450,21 @@ public class CompoundDetailPanel extends Panel
 				smilesInchiKeyMultipleSmilesList = getSmilesFromCompoundIdandSetTag();
 				target.add(msgMultipleSmiles);
 	          	target.add(msgMultipleSmilesForInchi);
+	          	// issue 222
+	          	try
+					{
+					if (Math.abs(Double.parseDouble(molecularWeightAsDouble.getDefaultModelObjectAsString()) - Double.parseDouble(nominalMassAsDouble.getDefaultModelObjectAsString())) > 1)
+						nominalMassWarning.setDefaultModelObject("<span style=\"color:red;\">" + "The nominal mass may be incorrect" + "</span>");
+				    else 
+				    	nominalMassWarning.setDefaultModelObject(" ");
+					}
+	          	catch (NumberFormatException ignore)
+					{
+					nominalMassWarning.setDefaultModelObject("<span style=\"color:red;\">" + "The nominal mass may be incorrect" + "</span>");
+					} 
 				target.add(cdp);
+				
+				
 			    }			
 		    };
 		link.add(new Label(labelName, cid));

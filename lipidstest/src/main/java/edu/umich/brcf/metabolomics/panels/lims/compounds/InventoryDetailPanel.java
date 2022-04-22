@@ -5,10 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -52,6 +54,19 @@ public class InventoryDetailPanel extends Panel
 	List<Compound> parentageList;	
 	ListView listViewAliquots; // issue 61
 	private List<Aliquot> aliquots; // issue 61
+	Label invLabel ;
+	Label supLabel;
+	Label catnumLabel;
+	Label botsizeLabel;
+	Label locidLabel;
+	Label locdescLabel;
+	Label invdateLabel;
+	Label purityLabel;
+	Label priLabel;
+	Label cidLabel;
+	Label cidcLabel;
+	
+	
 	Map<String, String> aliquotRetiredMixtureMap = new HashMap<String, String>();	
 	// itemList
 	public InventoryDetailPanel(String id,  final Compound cmpd) 
@@ -81,28 +96,63 @@ public class InventoryDetailPanel extends Panel
 			{
 			public void populateItem(final ListItem listItem) 
 				{
+				
 				final Compound compound = (Compound) listItem.getModelObject();
-				listItem.add(new Label("cid", compound.getCid()));				
+				listItem.add(cidLabel = new Label("cid", compound.getCid()));				
 				listItem.add(buildLinkToModalAliquot("viewDeletedAliquots", modal2, detailPanel, (compound.getCid().equals(getCompound().getCid())), null));				
-				listItem.add(new Label("priname",compound.getPrimaryName()));
+				listItem.add(priLabel = new Label("priname",compound.getPrimaryName()));
+				listItem.add(cidcLabel = new Label("CIDC","<span style=\"color:red;\">" +    "* CIDC compound, check with Charles Evans.  See inventory in red." + "</span>"));
+				//cidcLabel.add(AttributeModifier.replace("style", "color: red;"));
+				// issue 224
+				cidcLabel.setEscapeModelStrings(false);
+				if (isCIDC(compound))
+					cidcLabel.add(AttributeAppender.replace("style", "display:block"));
+				else
+					cidcLabel.add(AttributeAppender.replace("style", "display:none"));
 				ListView childListView = new ListView("invList",new PropertyModel(compound, "inventory")) 
 					{
+					// issue 224
 					public void populateItem(final ListItem childListItem)
 						{
 						final Inventory inv = (Inventory) childListItem.getModelObject();
-						childListItem.add(new Label("invId", inv.getInventoryId()));
-						childListItem.add(new Label("sup", inv.getSupplier()));
-						childListItem.add(new Label("catnum",inv.getCatalogueNumber()));
-						childListItem.add(new Label("botsize", inv.getContainerSize()));				
-						childListItem.add(new Label("locid", inv.getLocation().getLocationId()));
-						childListItem.add(new Label("locDesc", inv.getLocation().getDescription()));
-						childListItem.add(new Label("invDate", inv.getInventoryDateStr()));
-						childListItem.add(new Label("purity", inv.getPurity().toString()));						
+						childListItem.add(invLabel = new Label("invId", inv.getInventoryId()));
+						childListItem.add(supLabel = new Label("sup", inv.getSupplier()));
+						childListItem.add(catnumLabel = new Label("catnum",inv.getCatalogueNumber()));
+						childListItem.add(botsizeLabel = new Label("botsize", inv.getContainerSize()));				
+						childListItem.add(locidLabel = new Label("locid", inv.getLocation().getLocationId()));
+						childListItem.add(locdescLabel = new Label("locDesc", inv.getLocation().getDescription()));
+						childListItem.add(invdateLabel = new Label("invDate", inv.getInventoryDateStr()));
+						childListItem.add(purityLabel = new Label("purity", inv.getPurity().toString()));						
 						childListItem.add(buildEditLink(inv, detailPanel, modal2));
 						childListItem.add(OddEvenAttributeModifier.create(childListItem));
+						if (inv.getLocation() != null && inv.getLocation().getLocationId().equals("LC1043"))
+							{						
+							invLabel.add(AttributeModifier.replace("style", "color: red;"));	
+							supLabel.add(AttributeModifier.replace("style", "color: red;"));	
+							catnumLabel.add(AttributeModifier.replace("style", "color: red;"));	
+							botsizeLabel.add(AttributeModifier.replace("style", "color: red;"));	
+							locidLabel.add(AttributeModifier.replace("style", "color: red;"));
+							locdescLabel.add(AttributeModifier.replace("style", "color: red;"));
+							invdateLabel.add(AttributeModifier.replace("style", "color: red;"));
+							purityLabel.add(AttributeModifier.replace("style", "color: red;"));
+	
+							}
+						
+						else
+							{
+							invLabel.add(AttributeModifier.replace("style", "color: black;"));	
+							supLabel.add(AttributeModifier.replace("style", "color: black;"));	
+							catnumLabel.add(AttributeModifier.replace("style", "color: black;"));	
+							botsizeLabel.add(AttributeModifier.replace("style", "color: black;"));	
+							locidLabel.add(AttributeModifier.replace("style", "color: black;"));
+							locdescLabel.add(AttributeModifier.replace("style", "color: black;"));
+							invdateLabel.add(AttributeModifier.replace("style", "color: black;"));
+							purityLabel.add(AttributeModifier.replace("style", "color: black;"));
+							}
 						}
 					};
-				listItem.add(childListView);
+				// issue 224
+				listItem.add(childListView);	
 				}
 			};			
 		listView.setOutputMarkupId(true);
@@ -380,6 +430,16 @@ public class InventoryDetailPanel extends Panel
 	public void setAliquots(List<Aliquot> aliquots)
 		{
 		this.aliquots= aliquots;
+		}
+	
+	public boolean isCIDC (Compound compound)
+		{
+		for (Inventory inv : compound.getInventory())
+			{
+			if (inv.getLocation() != null && inv.getLocation().getLocationId().equals("LC1043"))
+				return true;
+			}
+		return false;
 		}
 	
 	}
