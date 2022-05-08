@@ -449,7 +449,8 @@ public class AddSamplesPanel extends Panel
 
 			public void onClick(AjaxRequestTarget target)
 				{
-				//issue 166				
+				//issue 166			
+				PlateListHandler plateListHandler = null;
 				originalWorklist.getSampleGroup(0).setExpRandom(globalRand);
 				originalWorklist.rebuildEverything();
 				Map<String, String> idsVsReasearcherNameMap =
@@ -467,6 +468,19 @@ public class AddSamplesPanel extends Panel
 					buildWarningGiven = true;
 					String msg =  "alert('Warning : Rebuilding the worklist will remove all controls and samples. Please submit again to confirm.')";
 					target.appendJavaScript(msg); 
+					// issue 205
+				    if (originalWorklist.getIs96Well())
+						{
+				    	int nPlateRows = 8, nPlateCols = 12;
+				    	plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);	
+				    	plateListHandler.check96WellsUpdate(originalWorklist.getItems());
+						} 
+				    else
+				    	{
+				    	int nPlateRows = 6, nPlateCols = 9;
+				    	plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);	
+				    	}
+					plateListHandler.updateWorkListItemsMoved(originalWorklist);
 					return;
 					}				
 				if (excludedCount > 0 && !excludedSamplesWarningGiven)
@@ -483,10 +497,16 @@ public class AddSamplesPanel extends Panel
 			    if (originalWorklist.getIs96Well())
 					{
 			    	int nPlateRows = 8, nPlateCols = 12;
-					PlateListHandler plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);	
+			    	plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);	
 			    	plateListHandler.check96WellsUpdate(originalWorklist.getItems());
 					} 
-								
+			    else
+			    	{
+			    	int nPlateRows = 6, nPlateCols = 9;
+			    	plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);	
+			    	}
+			    	
+			    plateListHandler.updateWorkListItemsMoved(originalWorklist);				
 				}
 			protected void onComponentTag(final ComponentTag tag)
 				{
@@ -535,7 +555,8 @@ public class AddSamplesPanel extends Panel
 				{
 				switch (response)
 					{
-					case "updateForRandomDrop":                        
+					case "updateForRandomDrop":  
+						originalWorklist.controlsMovedMap.clear();
 						item.setIsRandomized(false);
 						originalWorklist.setIs96Well(false);// issue 212
 						originalWorklist.setChearBlankType("Plasma"); // issue 186
@@ -563,6 +584,7 @@ public class AddSamplesPanel extends Panel
 
 					case "updateForAssayDrop":
 						originalWorklist.setIs96Well(false);// issue 212
+						originalWorklist.controlsMovedMap.clear();
 						String val = item.getAssayType();
 						originalWorklist.setChearBlankType("Plasma"); // issue 186
 						originalWorklist.setRandomizeByPlate(false);// issue 179
@@ -594,6 +616,7 @@ public class AddSamplesPanel extends Panel
 						break;
 
 					case "updateForExperimentDrop":
+						originalWorklist.controlsMovedMap.clear();
 						originalWorklist.setChearBlankType("Plasma"); // issue 186
 						originalWorklist.setRandomizeByPlate(false);// issue 179
 						item.setIsRandomized(false);

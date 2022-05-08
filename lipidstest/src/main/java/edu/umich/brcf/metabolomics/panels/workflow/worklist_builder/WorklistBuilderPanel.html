@@ -104,11 +104,14 @@ function download_csv_file() {
 	<body>
 	
 		<div wicket:id = "feedback" class = "feedbackMsg" > </div>
-		<div wicket;id = "modal1"></div> 
+		
+		<!--  <div wicket;id = "modal1"></div> 
+		-->
 		<div style = "margin-bottom : 300px; width : 100%; overflow-x: hidden;">
 			<form wicket:id = "worklistForm" style = "margin-top : 0%">	
+			<!--  
 			<div wicket:id = "modal1"></div>
-			
+			-->
 			<center>
     			<div style = "margin-top : 10px; font-weight : 500; font-size : 130%; color : #0053CF">Metabolomics Core - Worklist Builder</div>
 			</center>
@@ -260,9 +263,11 @@ function download_csv_file() {
 						<input  wicket:id = "groupsVisibleButton"  class = "buttonHeader"  type = "button" title = "2. Add Control Groups =>" value = "2. Add Control Groups =>"/>
 						<input  wicket:id = "controlsVisibleButton"  class = "buttonHeader"  type = "button" title = "3. Add Controls =>" value = "3. Add Controls =>"/>
 						<input   wicket:id = "randomizeButton" class = "buttonHeader"  type = "button" title = "4. Randomize =>" value = "4. Randomize =>"/>
-						<input  wicket:id = "platePreviewLink"  class = "buttonHeader"  type = "button" title = "5. Preview Plate...=>" value = "5. Preview Plate...=>"/>
-						<input  wicket:id = "downloadLink"  class = "buttonHeader"  type = "button" title = "6. Download List =>" value = "6. Download List =>"/>
-							
+						<input  wicket:id = "openPreview"  class = "buttonHeader"  type = "button" title = "5. Preview Plate...=>" value = "5. Preview Plate...=>"/>
+						<input  wicket:id = "downloadLink"  class = "buttonHeader"  type = "button" title = "6. Download List =>" value = "6. Download List =>"/>				
+						
+						<div wicket:id="platePreviewPageDialog">[dialog]</div>
+						 
 						<hr>
 					</td>
 				</tr>

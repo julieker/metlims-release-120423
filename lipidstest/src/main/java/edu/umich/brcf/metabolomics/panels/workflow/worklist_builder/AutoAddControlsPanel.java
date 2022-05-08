@@ -101,6 +101,7 @@ public class AutoAddControlsPanel extends Panel
 	private List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
 	private String example = "";
 	private boolean prevDefaultPool = true ; // issue 169
+	PlateListHandler plateListHandler ;
     
 	public AutoAddControlsPanel(String id, final WorklistSimple worklist)
 		{
@@ -742,7 +743,9 @@ public class AutoAddControlsPanel extends Panel
 				    	originalWorklist.setBatchPoolsBefore(0);
 		    		}
 	        		// issue 17
-	        	worklist.setBothQCMPandMP (StringParser.parseId(poolTypeA).equals("CS00000MP") && StringParser.parseId(poolTypeB).equals("CS000QCMP") && poolSpacingA > 0 && poolSpacingB > 0);    		
+	        	
+	        	// issue 205 96wells
+	        	worklist.setBothQCMPandMP (StringParser.parseId(poolTypeA).equals("CS00000MP") && StringParser.parseId(poolTypeB).equals("CS000QCMP") && poolSpacingA > 0 && poolSpacingB > 0 && !worklist.getIs96Well());    		
 	        	if (StringParser.parseId(poolTypeA).equals(StringParser.parseId(poolTypeB)))
 	        		{
 	        		target.appendJavaScript(StringUtils.makeAlertMessage("Pool A and Pool B are both :" + StringParser.parseId(poolTypeB) + " Please make sure you choose a different pool for Pool A and Pool B"));
@@ -783,7 +786,7 @@ public class AutoAddControlsPanel extends Panel
 			    if (worklist.getIs96Well())
 					{
 				    int nPlateRows = 8, nPlateCols = 12;
-				    PlateListHandler plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);	
+				    plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);	
 					plateListHandler.condenseSortAndSpace(worklist.getItems());
 					lgetItems = new ArrayList <WorklistItemSimple>  ();
 					//lgetItems.addAll(worklist.getItems());
@@ -797,7 +800,12 @@ public class AutoAddControlsPanel extends Panel
 				    worklist.populateSampleName(worklist,idsVsReasearcherNameMap );						
 					////////////////////////////////		
 					} 
-			    
+			    else 
+			    	{
+			    	int nPlateRows = 6, nPlateCols = 9;
+				    plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);
+			    	}
+			    plateListHandler.updateWorkListItemsMoved(worklist);
 			    refreshPage(target);	        	
 		        }
 	        };
@@ -1837,5 +1845,5 @@ public class AutoAddControlsPanel extends Panel
 		for (i=start;i<=end;i++)
 			htmlStr = htmlStr + "document.getElementById(" + "\"" + Integer.toString(i) + "\""+ ").selectedIndex =" + valStr  + ";";
 		return htmlStr;
-		}		
+		} 
 	}

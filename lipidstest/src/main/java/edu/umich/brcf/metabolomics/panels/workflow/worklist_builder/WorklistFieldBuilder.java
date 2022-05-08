@@ -220,7 +220,7 @@ public class WorklistFieldBuilder implements Serializable
 		}
 
 	
-	private static String assembleStyleTag(WorklistItemSimple item, boolean forTable)
+	static String assembleStyleTag(WorklistItemSimple item, boolean forTable)
 		{
 		String style = forTable ? "" : "width : 100%;";
 	

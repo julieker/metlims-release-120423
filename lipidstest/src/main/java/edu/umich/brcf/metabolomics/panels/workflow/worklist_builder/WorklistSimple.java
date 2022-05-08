@@ -107,10 +107,38 @@ public class WorklistSimple implements Serializable
 	public int nPlasmaHumanMale  = 0;
 	private int startPlateControls = 0;
 	private String startPlate = "1";
+	List <WorklistItemSimple> itemsMovedNewPositions = new ArrayList <WorklistItemSimple> ();
+	Map<String, String> controlsMovedMap = new HashMap<String, String> ();
+	
 	// issue 179
 	
 	private boolean changeDefaultInjVolume = false;
 	// issue 186
+	
+
+	// issue 205
+	public Map<String, String> getControlsMovedMap()
+		{
+		return controlsMovedMap;
+		}
+	
+	// issue 205
+	public void setControlsMovedMap (Map<String, String> controlsMovedMap) 
+		{
+		this.controlsMovedMap = controlsMovedMap;
+		}
+	
+	// issue 205
+	public List <WorklistItemSimple>  getItemsMovedNewPositions ()
+		{
+		return itemsMovedNewPositions;
+		}
+	
+	// issue 205
+	public void setItemsMovedNewPositions (List <WorklistItemSimple> itemsMovedNewPositions)
+		{
+		this.itemsMovedNewPositions = itemsMovedNewPositions;
+		}
 	
 	
 	// issue 153
@@ -1186,7 +1214,8 @@ public class WorklistSimple implements Serializable
 	
 	public WorklistSampleGroup getSampleGroup(int i)
 		{
-		return sampleGroupsList.get(i);
+		// issue 205
+		return sampleGroupsList.size() > 0 ? sampleGroupsList.get(i) : new WorklistSampleGroup();
 		}
 	
 	

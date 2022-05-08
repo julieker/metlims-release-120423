@@ -442,7 +442,10 @@ public class AddControlsPanel extends Panel
 					target.appendJavaScript("alert('There is a circular relationship "
 					+ " Starting with sample: " +  circularSample +  "');");
 				originalWorklist.updateSampleNamesArray();
-				refreshPage(target);
+				int nPlateRows = 6, nPlateCols = 9;
+		    	PlateListHandler plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);
+		    	plateListHandler.updateWorkListItemsMoved(originalWorklist);	
+		    	refreshPage(target);
 				}
 			};
 		}

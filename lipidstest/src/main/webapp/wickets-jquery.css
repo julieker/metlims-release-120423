@@ -761,7 +761,7 @@ button.ui-button::-moz-focus-inner {
     overflow-y: auto;
     autoFocus: false;
 	position: absolute;
-    max-height: 300px;
+    max-height: 500px;
     scrollTop : 0;
 	top: 0;
 
@@ -861,7 +861,7 @@ button.ui-button::-moz-focus-inner {
 
 	width: 12px;
 
-	height: 12px;
+	height: 300px;
 
 	right: -5px;
 

@@ -116,12 +116,12 @@ public class PlateListHandler implements Serializable
 		List <WorklistItemSimple> uniqueItems = grabUniqueItems(items); 
 		
 	    List <WorklistItemSimple> spacedItems = new ArrayList <WorklistItemSimple> ();
-		if (items.get(0).getGroup().getParent().getIs96Well())
+		if (items.size() > 0  && items.get(0).getGroup().getParent().getIs96Well())
 			spacedItems = buildSpacedSortedList(uniqueItems);
 		else
 			spacedItems = buildSpacedSortedListOriginal(uniqueItems);
-	
-	    return spacedItems;
+		spacedItems = updateWorkListItemsMovedSpacedg(items.get(0).getGroup().getParent(), spacedItems);
+		return spacedItems;
 		}
 	
 	// issue 212
@@ -223,6 +223,7 @@ public class PlateListHandler implements Serializable
 		int iSamples = 0;
 		int lastNumPos = 2;
 		int j=0;
+		String namePart;
 		List<WorklistItemSimple> spacedList = new ArrayList<WorklistItemSimple>();
 		int maxSamplesFor96well = uniqueItems.get(0).getGroup().getParent().getMaxSamples96Wells();
 
@@ -285,7 +286,15 @@ public class PlateListHandler implements Serializable
 					 continue;
 					 }
 				 
-			     uniqueItems.get(i).setSamplePosition("P1-" + letterGivenNumeric(iStandards) + "1" );
+				 if (uniqueItems.get(i).getSampleName().indexOf("-") != -1)
+				     namePart =  uniqueItems.get(i).getSampleName().substring(0,uniqueItems.get(i).getSampleName().lastIndexOf("-"));
+				 else
+					 namePart = uniqueItems.get(i).getSampleName();
+				 
+				 if (uniqueItems.get(i).getGroup().getParent().getControlsMovedMap().get(namePart) != null)
+					 uniqueItems.get(i).setSamplePosition(uniqueItems.get(i).getGroup().getParent().getControlsMovedMap().get(namePart));
+				 else
+					 uniqueItems.get(i).setSamplePosition("P1-" + letterGivenNumeric(iStandards) + "1" );
 			     if (uniqueItems.get(i).getSampleName().indexOf("-") >= 0)
 			    	 namePositionMap.put(uniqueItems.get(i).getSampleName().substring(0, uniqueItems.get(i).getSampleName().lastIndexOf("-")), uniqueItems.get(i).getSamplePosition());
 			     else 
@@ -303,14 +312,23 @@ public class PlateListHandler implements Serializable
 				
 		while (i<= uniqueItems.size()-1)
 			{	
-			//System.out.println(".....OKAY HERE we go here is pool type a and unique items i and alreadypool:" +  uniqueItems.get(0).getGroup().getParent().getPoolTypeA() + " " +  uniqueItems.get(i).getSampleName() + " " + alreadyPool);
 			if (uniqueItems.get(i).getSampleName().contains("CHR") && !alreadyCHR)
 				{
-				uniqueItems.get(i).setSamplePosition("P1-G1");
-				if (uniqueItems.get(i).getSampleName().indexOf("-") >= 0)
-		    		namePositionMap.put(uniqueItems.get(i).getSampleName().substring(0, uniqueItems.get(i).getSampleName().lastIndexOf("-")), uniqueItems.get(i).getSamplePosition());
-		        else 
-		    	    namePositionMap.put(uniqueItems.get(i).getSampleName(), uniqueItems.get(i).getSamplePosition());
+				
+				 if (uniqueItems.get(i).getSampleName().indexOf("-") != -1)
+				     namePart =  uniqueItems.get(i).getSampleName().substring(0,uniqueItems.get(i).getSampleName().lastIndexOf("-"));
+				 else
+					 namePart = uniqueItems.get(i).getSampleName();
+				 
+				 if (uniqueItems.get(i).getGroup().getParent().getControlsMovedMap().get(namePart) != null)
+					 uniqueItems.get(i).setSamplePosition(uniqueItems.get(i).getGroup().getParent().getControlsMovedMap().get(namePart));			
+				 else 
+					 uniqueItems.get(i).setSamplePosition("P1-G1");
+				 
+				 if (uniqueItems.get(i).getSampleName().indexOf("-") >= 0)
+		    		 namePositionMap.put(uniqueItems.get(i).getSampleName().substring(0, uniqueItems.get(i).getSampleName().lastIndexOf("-")), uniqueItems.get(i).getSamplePosition());
+		         else 
+		    	     namePositionMap.put(uniqueItems.get(i).getSampleName(), uniqueItems.get(i).getSamplePosition());
 				spacedList.add(uniqueItems.get(i)) ;
 				alreadyCHR = true;
 				}
@@ -325,7 +343,14 @@ public class PlateListHandler implements Serializable
 				}
 			else if (uniqueItems.get(0).getGroup().getParent().getPoolTypeA() != null && !alreadyPool && (uniqueItems.get(i).getSampleName().contains(uniqueItems.get(0).getGroup().getParent().getPoolTypeA())) && (uniqueItems.get(i).getSampleName().contains("MP") || uniqueItems.get(i).getSampleName().contains("BPM")))
 				{
-				uniqueItems.get(i).setSamplePosition("P1-H1");
+				 if (uniqueItems.get(i).getSampleName().indexOf("-") != -1)
+				     namePart =  uniqueItems.get(i).getSampleName().substring(0,uniqueItems.get(i).getSampleName().lastIndexOf("-"));
+				 else
+					 namePart = uniqueItems.get(i).getSampleName();
+				 if (uniqueItems.get(i).getGroup().getParent().getControlsMovedMap().get(namePart) != null)
+					 uniqueItems.get(i).setSamplePosition(uniqueItems.get(i).getGroup().getParent().getControlsMovedMap().get(namePart));
+				 else
+				    uniqueItems.get(i).setSamplePosition("P1-H1");
 				if (uniqueItems.get(i).getSampleName().indexOf("-") >= 0)
 		    		namePositionMap.put(uniqueItems.get(i).getSampleName().substring(0, uniqueItems.get(i).getSampleName().lastIndexOf("-")), uniqueItems.get(i).getSamplePosition());
 		        else 
@@ -337,7 +362,8 @@ public class PlateListHandler implements Serializable
 			}
 	
 	   i = 0;
-				
+			
+	    spacedList = replaceDoubleDigitPos(spacedList);
 		Collections.sort(spacedList, new WorklistItemSimpleByPlatePosComparator());
 		i = 0;
 		int sizeSpaced =  spacedList.size();
@@ -365,8 +391,6 @@ public class PlateListHandler implements Serializable
         	int calcit = calcNumericalPosition(samplePos, currPlate);
         	if (j == 0)
         		j=i;
-        	
-        			
         	while (j < calcit )
 				{
         		tspacedList.add(j, new WorklistItemSimple());
@@ -374,6 +398,7 @@ public class PlateListHandler implements Serializable
 				}   	
     	    i++;
     	    j++;
+    	    
        		}
         spacedList.clear();
         spacedList.addAll(tspacedList);
@@ -386,6 +411,7 @@ public class PlateListHandler implements Serializable
         namePositionMap.put("CS000BPM4-Pre", "P1-H1");
         namePositionMap.put("CS000BPM5-Pre", "P1-H1");
         namePositionMap.put("CS00000SB-Pre", "Vial 1"); // issue 215
+     
     	return spacedList;
 		}
 	
@@ -1093,6 +1119,8 @@ public class PlateListHandler implements Serializable
 		List <WorklistItemSimple> uniqueItems = grabUniqueItemsOriginal(items); 
 	    List <WorklistItemSimple> spacedItems = new ArrayList <WorklistItemSimple> ();
 		spacedItems = buildSpacedSortedListOriginal(uniqueItems);
+		if (spacedItems.size() > 0)
+			spacedItems = updateWorkListItemsMovedSpacedg(items.get(0).getGroup().getParent(), spacedItems);
 	    return spacedItems;
 		}
 	
@@ -1305,9 +1333,62 @@ public class PlateListHandler implements Serializable
 	        	else
 	        		lItemSimple.setSamplePosition(namePositionMap.get(sampleNamewoDash).replace("910",  "10").replace("911",  "11").replace("912",  "12"));
 	        	}
-			items.get(0).getGroup().getParent().getItems().removeAll(lgetItems);	
+			items.get(0).getGroup().getParent().getItems().removeAll(lgetItems);
+			// issue 205
+			updateWorkListItemsMovedSpacedg(items.get(0).getGroup().getParent(), items);
 			} 	
 		}
-
+    
+    public List <WorklistItemSimple> updateWorkListItemsMoved (WorklistSimple ws)
+    	{
+    	for (Map.Entry<String, String> entry : ws.controlsMovedMap.entrySet()) 
+			{
+	    		{	
+	    		for (WorklistItemSimple wiO : ws.getItems())
+	    			{
+	    			if (wiO.getSampleName().contains(entry.getKey().toString()))
+	    				wiO.setSamplePosition(entry.getValue().toString());
+	    			if ((wiO.getSampleName().contains("CS00000MP") 
+	             			   || wiO.getSampleName().contains("CS000QCMP")) 
+	             			   && entry.getKey().toString()
+	             			   .equals("CS00000MPCS000QCMP"))
+	    		    	wiO.setSamplePosition(entry.getValue().toString());
+	    			}
+	    		}
+	    	
+	    	}
+    	return ws.getItems();
+    	}
+    
+    public List <WorklistItemSimple> updateWorkListItemsMovedSpacedg (WorklistSimple ws, List <WorklistItemSimple> spacedg)
+		{
+		for (Map.Entry<String, String> entry : ws.controlsMovedMap.entrySet()) 
+			{
+	    		{	
+	    		for (WorklistItemSimple wiO : spacedg)	    			
+	    			{
+	    			if (StringUtils.isNullOrEmpty(wiO.getSampleName()))
+	    			    continue;		
+	    			if (wiO.getSampleName().contains(entry.getKey().toString()))
+	    				wiO.setSamplePosition(entry.getValue().toString());
+	    		    if ((wiO.getSampleName().contains("CS00000MP") 
+	             			   || wiO.getSampleName().contains("CS000QCMP")) 
+	             			   && entry.getKey().toString()
+	             			   .equals("CS00000MPCS000QCMP"))
+	    		    		wiO.setSamplePosition(entry.getValue().toString());	    			
+	    			}
+	    		}	    	
+	    	}
+		return spacedg;
+		}
+    public List <WorklistItemSimple > replaceDoubleDigitPos ( List <WorklistItemSimple> spacedlist)
+	    {
+        for (WorklistItemSimple wi: spacedlist)
+        	{
+        	if (wi.getRepresentsControl())
+        		wi.setSamplePosition(wi.getSamplePosition().replace("10", "910").replace("11",  "911").replace("12",  "912"));
+        	}
+	    return spacedlist;	
+	    }
 	}
 		

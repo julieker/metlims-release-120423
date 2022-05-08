@@ -16,6 +16,8 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
+import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
+import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.ComponentTag;
@@ -24,11 +26,16 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import com.googlecode.wicket.jquery.core.JQueryBehavior;
+import com.googlecode.wicket.jquery.core.Options;
+import com.googlecode.wicket.jquery.ui.widget.dialog.DialogButton;
 
 import edu.umich.brcf.metabolomics.layers.dto.GeneratedWorklistDTO;
 import edu.umich.brcf.metabolomics.layers.dto.GeneratedWorklistItemDTO;
@@ -41,6 +48,7 @@ import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.panels.utilitypanels.ValidatingAjaxExcelDownloadLink;
 import edu.umich.brcf.shared.util.METWorksException;
+import edu.umich.brcf.shared.util.StringParser;
 import edu.umich.brcf.shared.util.behavior.FocusOnLoadBehavior;
 import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheetReturnStream;
 import edu.umich.brcf.shared.util.sheetwriters.MsWorklistWriter;
@@ -76,8 +84,15 @@ public class WorklistBuilderPanel extends Panel
     PlatePreviewForm pltPreviewForm;
     List <WorklistItemSimple> lgetItems;
     String prevStandardString = "";
+    public WorklistSimple worklistg;
+    public WorklistSimple worklist;
+	public List <WorklistItemSimple> lilmovedlist = new ArrayList<WorklistItemSimple> ();
     Map<String, String> idsVsReasearcherNameMap = new HashMap<String, String> ();
-    
+   // PlatePreviewPage plateListView;
+    PlatePreviewPage platePreviewPage;
+   // PageableListView plateListViewWorkList;
+    AjaxPagingNavigator ajaxPagingNavigatorWorkList;
+    WorklistBuilderForm form;
     
 	public WorklistBuilderPanel()  { this(""); }
 	
@@ -99,16 +114,16 @@ public class WorklistBuilderPanel extends Panel
 		feedback = new FeedbackPanel("feedback");
 		feedback.setOutputMarkupId(true);
 		add(feedback);
-
-		WorklistBuilderForm form = new WorklistBuilderForm("worklistForm", prepData);
-
+        
+		form = new WorklistBuilderForm("worklistForm", prepData);
+		
 		add(form);
 		}
 
 
 	public final class WorklistBuilderForm extends Form
 		{
-		WorklistSimple worklist;
+		
 		
 		// issue 416
 		String selectedPlatform = null, selectedInstrument = null ;
@@ -138,13 +153,15 @@ public class WorklistBuilderPanel extends Panel
 		WebMarkupContainer containerDefault, containerOther;
 		private Boolean  controlsVisible = false, samplesVisible = false, groupsVisible = false; 
 		private IndicatingAjaxLink hideAllButton, controlsVisibleButton, samplesVisibleButton, groupsVisibleButton;
-		private IndicatingAjaxLink randomizeSamplesButton, previewPlateButton; 
+		private IndicatingAjaxLink randomizeSamplesButton;
 		private ValidatingAjaxExcelDownloadLink downloadListButton;
 		String msg = "";
 		private ModalWindow modal1; 
+		final PlatePreviewPage platePreviewPageDialog;
 		
 		WorklistBuilderForm(String id, PrepData prepData)
 			{
+			
 			super(id);
 			setMultiPart(true);
 			setOutputMarkupId(true);
@@ -154,9 +171,204 @@ public class WorklistBuilderPanel extends Panel
 			// DO NOT MOVE THESE
 			worklist = prepData == null ? new WorklistSimple("Mock Worklist", "ABSciex") : prepData.grabAsWorklist();
 			setSelectedPlatform("");
-
-			modal1 = ModalCreator.createModalWindow("modal1", 800, 320);
-			add(modal1);
+			///////////////////////////////
+			
+			 platePreviewPageDialog = new PlatePreviewPage (worklist.getBothQCMPandMP(),  worklist.getItems(),  worklist.getUseCarousel(), wp, "platePreviewPageDialog", "Plate Preview", worklist)		
+			    { // NOSONAR
+				private static final long serialVersionUID = 1L;	
+			    @Override
+				public void onClick(AjaxRequestTarget target, DialogButton button)
+					{	
+			    	// issue 205
+			    	if (button.getName().equals("submit2") )
+			    		{
+			    		worklist.getControlsMovedMap().clear();
+			    		plateListHandler.updateWorkListItemsMoved(worklist);
+			    		if (worklist.getIs96Well())
+			    			plateListHandler.check96WellsUpdate(worklist.getItems());
+			    		else
+			    			worklist.rebuildEverything();	
+			    		}	    		
+			    	super.close(target, button);
+					}    		    
+				@Override
+				public Form<?> getForm() 
+					{
+					// TODO Auto-generated method stub
+				    form.setMultiPart(true);
+					return this.form;
+					}
+			    @Override
+				public DialogButton getSubmitButton() 
+			    	{
+					// TODO Auto-generated method stub
+					return this.submitButton;
+			    	}	 
+				  
+				@Override
+				protected void onOpen(IPartialPageRequestHandler handler)
+					{ 	
+					colorMap.clear();
+					rlf.setMultiPart(true);
+					worklistg = worklist;		    
+					AjaxRequestTarget target = (AjaxRequestTarget) handler;
+					/* nRowsNeeded = (int) Math.ceil(worklist.getItems().size() / (nItemsPerRow * 1.0));
+					nPlatesNeeded = (int) Math.ceil(nRowsNeeded / (nItemsPerCol * 1.0));			
+					nRowsToCreate = nPlatesNeeded * nItemsPerCol;*/
+					
+					
+					nRowsNeeded = (int) Math.ceil((spacedg.size() > 0 ? spacedg.size() : worklist.getItems().size()) / (nItemsPerRow * 1.0));
+					nPlatesNeeded = (int) Math.ceil(nRowsNeeded / (nItemsPerCol * 1.0));
+					nRowsToCreate = nPlatesNeeded * nItemsPerCol;
+					
+					itemMatrix = null;
+					
+					itemMatrix = new WorklistItemSimpleMatrix(nRowsToCreate, nItemsPerRow, spacedg); 
+					itemMatrix.rows.clear();
+					target.add(this.form);
+					target.add(this);
+					// issue 205
+				
+					if (worklist.getIs96Well())
+						{
+						nItemsPerRow = worklist.getUseCarousel() ? 10 : 12;
+						nItemsPerCol = worklist.getUseCarousel() ? 10 : 8;
+						}
+					else
+						{
+						nItemsPerRow = worklist.getUseCarousel() ? 10 : 9;
+						nItemsPerCol = worklist.getUseCarousel() ? 10 : 6;
+						}
+					if (plateListView == null)
+						{					
+						try
+							{
+							plateListView.remove();
+							}
+						catch (Exception e)
+							{
+							}
+						
+						rlf.buildPlateListView(nItemsPerRow, nItemsPerCol, worklist.getItems(), worklist);
+						//plateListViewWorkList = this.rlf.buildPlateListView(nItemsPerRow, nItemsPerCol, worklist.getItems(), worklist);
+						rlf.add (plateListView);
+						plateListView.setOutputMarkupId(true);						
+						try
+							{
+							rlf.add(ajaxPagingNavigator = new AjaxPagingNavigator("navigator", plateListView));// Issue 283
+							}
+						catch (Exception e)
+							{
+							rlf.replace(ajaxPagingNavigator = new AjaxPagingNavigator("navigator", plateListView));
+							}
+						}
+					else 
+						{	
+						try
+							{
+							plateListView.remove();				
+							}
+						catch (Exception e)
+							{
+							}
+						rlf.buildPlateListView(nItemsPerRow, nItemsPerCol, worklist.getItems(), worklist);
+						rlf.add  (plateListView);
+						plateListView.setOutputMarkupId(true);
+						try
+							{
+							rlf.add(ajaxPagingNavigator = new AjaxPagingNavigator("navigator", plateListView));// Issue 283
+							}
+						catch (Exception e)
+							{
+							rlf.remove(ajaxPagingNavigator);				        
+							rlf.add(ajaxPagingNavigator = new AjaxPagingNavigator("navigator", plateListView));
+							}
+						}
+	
+					target.add(this.form);				
+					target.add(this);
+					hasBeenOpened = true;
+					} 
+				@Override
+				public void onClose(IPartialPageRequestHandler handler, DialogButton button) 
+				    {
+					setMultiPart(true);
+				    AjaxRequestTarget target = (AjaxRequestTarget) handler;
+				    target.add(wpMain);
+				    if (!worklist.getIs96Well())
+				    	{
+				    	worklist.rebuildEverything();
+				    	plateListHandler.updateWorkListItemsMoved(worklist);
+				    	}
+				    // issue 205 get rid of 910 911 and 912
+				    else 
+				    	plateListHandler.check96WellsUpdate(worklist.getItems());
+				    }
+					
+				@Override
+				public void onConfigure(JQueryBehavior behavior)
+				    {
+					// class options //
+					behavior.setOption("autoOpen", false);
+					behavior.setOption("modal", this.isModal());
+					behavior.setOption("resizable", this.isResizable());
+					behavior.setOption("width", 1000);
+					behavior.setOption("title", Options.asString(this.getTitle().getObject()));
+					behavior.setOption("height", 590);
+					//behavior.setOption("height", 1000);
+				    behavior.setOption("autofocus", false);
+				    }	
+			    @Override
+				protected void onSubmit(AjaxRequestTarget target, DialogButton button) 
+				    {
+			    	// TODO Auto-generated method stub	
+			    	target.add(feedback);
+			    	target.add(this);
+			    	target.add(this.form);
+				    }
+				@Override
+				protected void onError(AjaxRequestTarget target, DialogButton button) 
+				    {
+					// TODO Auto-generated method stub				
+				    }			
+				@Override
+				protected List<DialogButton> getButtons()
+				    {
+					List <DialogButton> dialogButtonList = new ArrayList <DialogButton> ();
+					dialogButtonList.add( new DialogButton("submit2", "ResetDefault")
+							{
+							@Override
+							public boolean isEnabled()
+								{
+								return worklist.getOpenForUpdates();
+								}						
+							}
+							) ;
+					dialogButtonList.add( new DialogButton("submit3", "Done")) ;
+					//dialogButtonList.get(0).setEnabled(worklist.getOpenForUpdates());
+					return dialogButtonList;
+				    }	
+			
+			    };			
+		    add(platePreviewPageDialog);	
+				
+		    add(new IndicatingAjaxLink <Void>("openPreview") 
+			    {			
+				private static final long serialVersionUID = 1L; 
+				@Override
+				public boolean isEnabled()
+					{
+					return (worklist.getItems().size()> 0);
+					}
+				@Override
+				public void onClick(AjaxRequestTarget target) 			     
+				    {	
+					platePreviewPageDialog.open(target);
+				    }
+			    });
+			
+			//modal1 = ModalCreator.createModalWindow("modal1", 800, 320);
+			//add(modal1);
 			
 			int nPlateRows = 8, nPlateCols = 12;
 			plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);
@@ -226,7 +438,6 @@ public class WorklistBuilderPanel extends Panel
 			add(groupsVisibleButton = buildVisibilityButton("groupsVisibleButton", "groups"));
 			add(randomizeSamplesButton = buildRandomizeButton("randomizeButton"));
 			add(downloadListButton = buildExcelDownloadLink("downloadLink", worklist));
-			add(previewPlateButton = buildLinkToPlatePreview("platePreviewLink",  modal1));	
 			addGroupsPanel.addSibContainer(controlsVisibleButton);			
 			agPanel.addSibContainer(addControlsPanel);
 			abPanel.addSibContainer(addControlsPanel);	
@@ -244,9 +455,6 @@ public class WorklistBuilderPanel extends Panel
 					{
 					Boolean isOpen = ((isPlatformChosenAs("agilent") && worklist.getOpenForUpdates()) || "samples".equals(property));
 					// Issue 285
-					//if ("controls".equals(property))
-					//	isOpen = !(worklist != null && worklist.countGroups(true) > 50);
-					
 					if ("controls".equals(property) && worklist.getIs96Well())	
 						return false;
 						
@@ -426,41 +634,6 @@ public class WorklistBuilderPanel extends Panel
 		    }
 		
 			// Issue 464
-		private IndicatingAjaxLink buildLinkToPlatePreview(final String linkID, final ModalWindow modal1)
-			{
-			// issue 39
-			IndicatingAjaxLink link = new IndicatingAjaxLink <Void>(linkID)
-				{
-				@Override
-				public boolean isEnabled()
-					{
-					return worklist.isPlatformChosenAs("agilent") && !worklist.getUseCarousel();
-					}
-
-				@Override
-				public void onClick(final AjaxRequestTarget target)
-					{
-					if (worklist.getItems() == null || worklist.getItems().size() == 0)
-						return;
-					
-					setPageDimensions(modal1, .8, 0.6);
-					modal1.setPageCreator(new ModalWindow.PageCreator()
-						{
-						// issue 17
-						// issue 242
-						public Page createPage() { return ((Page) (new PlatePreviewPage(worklist.getIs96Well() ? false : worklist.getBothQCMPandMP(), getPage(), worklist.getItems(), modal1, worklist.getUseCarousel(),    wp, worklist))); }
-						});
-
-					modal1.show(target);
-					}
-				};
-				
-			link.setOutputMarkupId(true);
-			
-			return link;
-			}
-		
-		
 		private void setPageDimensions(ModalWindow modal1, double pctWidth, double pctHeight)
 			{
 			int pageHeight = ((MedWorksSession) getSession()).getClientProperties().getBrowserHeight();
@@ -764,6 +937,11 @@ public class WorklistBuilderPanel extends Panel
 									prevStandardString = addGroupsPanel.nStandardsStr;
 									addGroupsPanel.nStandardsStr = "6";
 									}	
+								// issue 205 96wells
+								if (worklist.getIs96Well())
+									worklist.setBothQCMPandMP(false);
+								else
+								    worklist.setBothQCMPandMP ((StringParser.parseId(worklist.getPoolTypeA()).equals("CS00000MP")  || worklist.getPoolTypeA().equals("CS00000MP")) && StringParser.parseId(addGroupsPanel.poolTypeB).equals("CS000QCMP") && addGroupsPanel.poolSpacingA > 0 && addGroupsPanel.poolSpacingB > 0);
 								addGroupsPanel.nStandards = Integer.valueOf(addGroupsPanel.nStandardsStr);
 								target.add (change96WellBox);								
 								target.add(addGroupsPanel.motrPacLink);
@@ -779,8 +957,11 @@ public class WorklistBuilderPanel extends Panel
 								target.add(agPanel);
 								try 
 									{
+									worklist.controlsMovedMap.clear();
 									plateListHandler.updatePlatePositionsForAgilent(worklist);
 									worklist.rebuildEverything();  // issue 212
+									if (worklist.getIs96Well())
+										plateListHandler.check96WellsUpdate(worklist.getItems());
 									} 
 								
 								catch (METWorksException e1) 
@@ -904,6 +1085,8 @@ public class WorklistBuilderPanel extends Panel
 										target.appendJavaScript(msg);
 										}
 									prevStartPlate = worklist.getStartPlate();
+									// issue 205 instruments
+									plateListHandler.updateWorkListItemsMoved(worklist);
 									}
 								/// issue 217
 								break;
@@ -940,7 +1123,6 @@ public class WorklistBuilderPanel extends Panel
 			target.add(groupsVisibleButton);
 			target.add(randomizeSamplesButton);
 			target.add(downloadListButton);
-			target.add(previewPlateButton);
 			// issue 128
 			target.add(selectedPlatformDrop);
 			target.add(selectedInstrumentDrop); 
@@ -964,6 +1146,7 @@ public class WorklistBuilderPanel extends Panel
 				    try 
 				        { 
 				        doRandomization(target);
+				        plateListHandler.updateWorkListItemsMoved(worklist);
 				        } 
 				    catch (Exception e) 
 				        { 				        
@@ -986,13 +1169,15 @@ public class WorklistBuilderPanel extends Panel
 				@Override
 				public void onClick(final AjaxRequestTarget target)
 					{	
-				
+				    setMultiPart(true);
 					// Issue 268 issue 311 take out disabling of randomization after customized upload
 					if (addSamplesPanel.originalWorklist.getSampleGroupsList().get(0).expRandom != null && worklist.getOpenForUpdates() && worklist.getItems() != null  && worklist.getItems().size() > 0) 
 					       target.appendJavaScript("if (confirm('Are you sure you want to randomize the injections for this study?" 
 							                           + "?')) { " +  confirmBehavior.getCallbackScript() + " }"  );							 
 					else
 						doRandomization(target);
+					// issue 205
+					plateListHandler.updateWorkListItemsMoved(worklist);
 					target.add(change96WellBox);
 					}							
 				@Override
@@ -1113,7 +1298,7 @@ public class WorklistBuilderPanel extends Panel
 		protected void persistWorksheetToDatabase()
 			{
 			GeneratedWorklistItemDTO a;
-			GeneratedWorklistDTO listDto = GeneratedWorklistDTO.instance(this.worklist);
+			GeneratedWorklistDTO listDto = GeneratedWorklistDTO.instance(worklist);
 			List<GeneratedWorklistItemDTO> itemDtos = new ArrayList<GeneratedWorklistItemDTO>();
 
 			for (int i = 0; i < worklist.getItems().size(); i++)
@@ -1163,9 +1348,7 @@ public class WorklistBuilderPanel extends Panel
 				if (Integer.parseInt(worklist.getStartPlate()) > 4)
 		            worklist.setStartPlate("1");			
 				}
-			}
-		
-		
+			}		
 		}
 
 	}
