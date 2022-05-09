@@ -73,7 +73,7 @@ public class WorklistSimple implements Serializable
 	private List<Integer> largestPadding = new ArrayList <Integer>();
 	private String poolTypeA; //issue 13
 	private boolean bothQCMPandMP = false; // issue 17
-	private int amountToPad = 2; // issue 16
+	public int amountToPad = 2; // issue 16
 	private int limitNumberControls = 99;
 	private String lastSample ; // issue 29
 	private int startingPoint ; // issue 29

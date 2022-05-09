@@ -207,7 +207,8 @@ public class WorklistBuilderPanel extends Panel
 				  
 				@Override
 				protected void onOpen(IPartialPageRequestHandler handler)
-					{ 	
+					{ 
+					
 					colorMap.clear();
 					rlf.setMultiPart(true);
 					worklistg = worklist;		    
@@ -215,7 +216,7 @@ public class WorklistBuilderPanel extends Panel
 					/* nRowsNeeded = (int) Math.ceil(worklist.getItems().size() / (nItemsPerRow * 1.0));
 					nPlatesNeeded = (int) Math.ceil(nRowsNeeded / (nItemsPerCol * 1.0));			
 					nRowsToCreate = nPlatesNeeded * nItemsPerCol;*/
-					
+				
 					
 					nRowsNeeded = (int) Math.ceil((spacedg.size() > 0 ? spacedg.size() : worklist.getItems().size()) / (nItemsPerRow * 1.0));
 					nPlatesNeeded = (int) Math.ceil(nRowsNeeded / (nItemsPerCol * 1.0));
@@ -240,7 +241,8 @@ public class WorklistBuilderPanel extends Panel
 						nItemsPerCol = worklist.getUseCarousel() ? 10 : 6;
 						}
 					if (plateListView == null)
-						{					
+						{	
+						
 						try
 							{
 							plateListView.remove();
@@ -251,7 +253,7 @@ public class WorklistBuilderPanel extends Panel
 						
 						rlf.buildPlateListView(nItemsPerRow, nItemsPerCol, worklist.getItems(), worklist);
 						//plateListViewWorkList = this.rlf.buildPlateListView(nItemsPerRow, nItemsPerCol, worklist.getItems(), worklist);
-						rlf.add (plateListView);
+						rlf.add (plateListView);					
 						plateListView.setOutputMarkupId(true);						
 						try
 							{
@@ -283,11 +285,15 @@ public class WorklistBuilderPanel extends Panel
 							rlf.remove(ajaxPagingNavigator);				        
 							rlf.add(ajaxPagingNavigator = new AjaxPagingNavigator("navigator", plateListView));
 							}
+						
+						
+						
 						}
 	
 					target.add(this.form);				
 					target.add(this);
 					hasBeenOpened = true;
+					
 					} 
 				@Override
 				public void onClose(IPartialPageRequestHandler handler, DialogButton button) 
@@ -297,7 +303,7 @@ public class WorklistBuilderPanel extends Panel
 				    target.add(wpMain);
 				    if (!worklist.getIs96Well())
 				    	{
-				    	worklist.rebuildEverything();
+				    	plateListHandler.addLastControlRepeater(worklist);
 				    	plateListHandler.updateWorkListItemsMoved(worklist);
 				    	}
 				    // issue 205 get rid of 910 911 and 912
@@ -941,7 +947,12 @@ public class WorklistBuilderPanel extends Panel
 								if (worklist.getIs96Well())
 									worklist.setBothQCMPandMP(false);
 								else
-								    worklist.setBothQCMPandMP ((StringParser.parseId(worklist.getPoolTypeA()).equals("CS00000MP")  || worklist.getPoolTypeA().equals("CS00000MP")) && StringParser.parseId(addGroupsPanel.poolTypeB).equals("CS000QCMP") && addGroupsPanel.poolSpacingA > 0 && addGroupsPanel.poolSpacingB > 0);
+									{
+									if (worklist.getPoolTypeA() == null || addGroupsPanel == null || addGroupsPanel.getPoolTypeA() == null || addGroupsPanel.poolTypeB  == null || addGroupsPanel.poolSpacingA == null || addGroupsPanel.poolSpacingB == null )
+										worklist.setBothQCMPandMP(false);
+									else
+										worklist.setBothQCMPandMP ((StringParser.parseId(addGroupsPanel.getPoolTypeA()).equals("CS00000MP")  || worklist.getPoolTypeA().equals("CS00000MP")) && StringParser.parseId(addGroupsPanel.poolTypeB).equals("CS000QCMP") && addGroupsPanel.poolSpacingA > 0 && addGroupsPanel.poolSpacingB > 0);
+									}
 								addGroupsPanel.nStandards = Integer.valueOf(addGroupsPanel.nStandardsStr);
 								target.add (change96WellBox);								
 								target.add(addGroupsPanel.motrPacLink);
@@ -979,6 +990,8 @@ public class WorklistBuilderPanel extends Panel
 								
 						    case "updateStartPlate":
 						    	prevStartPlate = worklist.getStartPlate();
+						    	// issue 205 clear anything that is moved when starting from a new plate
+						    	worklist.getControlsMovedMap().clear();
 						    	break;
 						    case "updateChangeDefaultInjVol" :
 						    	target.add(defaultInjectionVolFld);

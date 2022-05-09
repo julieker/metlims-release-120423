@@ -226,7 +226,6 @@ public class PlateListHandler implements Serializable
 		String namePart;
 		List<WorklistItemSimple> spacedList = new ArrayList<WorklistItemSimple>();
 		int maxSamplesFor96well = uniqueItems.get(0).getGroup().getParent().getMaxSamples96Wells();
-
 		while (i<= uniqueItems.size()-1)
 			{
 			if (uniqueItems.get(i).getSamplePosition().contains("10"))
@@ -294,7 +293,8 @@ public class PlateListHandler implements Serializable
 				 if (uniqueItems.get(i).getGroup().getParent().getControlsMovedMap().get(namePart) != null)
 					 uniqueItems.get(i).setSamplePosition(uniqueItems.get(i).getGroup().getParent().getControlsMovedMap().get(namePart));
 				 else
-					 uniqueItems.get(i).setSamplePosition("P1-" + letterGivenNumeric(iStandards) + "1" );
+					// issue 205 fix standards use stdIntString instead of iStandards
+					 uniqueItems.get(i).setSamplePosition("P1-" + letterGivenNumeric(Integer.valueOf(stdIntString)) + "1" ); 
 			     if (uniqueItems.get(i).getSampleName().indexOf("-") >= 0)
 			    	 namePositionMap.put(uniqueItems.get(i).getSampleName().substring(0, uniqueItems.get(i).getSampleName().lastIndexOf("-")), uniqueItems.get(i).getSamplePosition());
 			     else 
@@ -1390,5 +1390,36 @@ public class PlateListHandler implements Serializable
         	}
 	    return spacedlist;	
 	    }
+    
+    // issue 205
+    public  void addLastControlRepeater (WorklistSimple ws)
+    	{
+        Map <String, Integer> ctrlTypeToRunningTotal = new HashMap<String, Integer>();	               
+        ctrlTypeToRunningTotal = ws.populateRunningTotalMap(ctrlTypeToRunningTotal) ; 
+        int iSuffix;
+        String samplewoDash = null;
+        for (WorklistItemSimple item : ws.getItems())
+        	{ 
+        	int indexOfDash = item.getSampleName().indexOf("-") > -1 ? item.getSampleName().lastIndexOf("-") : -1;
+        	
+        	if (item.getRepresentsControl())
+        	    {
+             	samplewoDash = indexOfDash >= 0 ? item.getSampleName().substring(0,indexOfDash) : item.getSampleName();
+             	iSuffix = ctrlTypeToRunningTotal.get(samplewoDash);
+             	ctrlTypeToRunningTotal.put(samplewoDash, ++iSuffix);	
+        		}
+        	}
+        
+        for (WorklistItemSimple item : ws.getItems())
+	    	{ 
+        	if (item.getRepresentsControl() && item.getSampleName().indexOf("-") == -1 )
+        		{
+        		String iSuffixStr = item.getSampleName();
+        		iSuffixStr =  String.format("%0" + ws.amountToPad + "d", ctrlTypeToRunningTotal.get(item.getSampleName())-1);   		
+        		item.setSampleName(item.getSampleName() +  "-" + (iSuffixStr));
+        		}
+	    	}
+    
+    	}	
 	}
 		
