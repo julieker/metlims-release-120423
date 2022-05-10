@@ -1400,26 +1400,48 @@ public class PlateListHandler implements Serializable
         String samplewoDash = null;
         for (WorklistItemSimple item : ws.getItems())
         	{ 
-        	int indexOfDash = item.getSampleName().indexOf("-") > -1 ? item.getSampleName().lastIndexOf("-") : -1;
-        	
+        	int indexOfDash = item.getSampleName().indexOf("-") > -1 ? item.getSampleName().lastIndexOf("-") : -1;       	
         	if (item.getRepresentsControl())
         	    {
              	samplewoDash = indexOfDash >= 0 ? item.getSampleName().substring(0,indexOfDash) : item.getSampleName();
-             	iSuffix = ctrlTypeToRunningTotal.get(samplewoDash);
-             	ctrlTypeToRunningTotal.put(samplewoDash, ++iSuffix);	
+             // issue 205 fix null pointer error with preinject
+             	if (ctrlTypeToRunningTotal.get(samplewoDash) == null)  
+             	    {	
+             		if (ctrlTypeToRunningTotal.get(item.getSampleName() + "-Pre") == null)
+        		        continue;
+             		iSuffix = ctrlTypeToRunningTotal.get(samplewoDash + "-Pre");
+             		ctrlTypeToRunningTotal.put(samplewoDash + "-Pre" , ++iSuffix);
+             	    }
+             	else
+             		{
+             		iSuffix = ctrlTypeToRunningTotal.get(samplewoDash);
+             		ctrlTypeToRunningTotal.put(samplewoDash, ++iSuffix);
+             		}
         		}
         	}
-        
+         
         for (WorklistItemSimple item : ws.getItems())
 	    	{ 
         	if (item.getRepresentsControl() && item.getSampleName().indexOf("-") == -1 )
         		{
         		String iSuffixStr = item.getSampleName();
-        		iSuffixStr =  String.format("%0" + ws.amountToPad + "d", ctrlTypeToRunningTotal.get(item.getSampleName())-1);   		
-        		item.setSampleName(item.getSampleName() +  "-" + (iSuffixStr));
+        		// issue 205 fix null pointer error with preinjections
+        		if (ctrlTypeToRunningTotal.get(item.getSampleName()) == null)
+        			{
+        			if (ctrlTypeToRunningTotal.get(item.getSampleName() + "-Pre") == null)
+        		        continue;
+        			iSuffixStr =  String.format("%0" + ws.amountToPad + "d", ctrlTypeToRunningTotal.get(item.getSampleName() + "-Pre")-1);   
+        			item.setSampleName(item.getSampleName() +  "-Pre" +  "-" + (iSuffixStr));
+        			}	
+        		else 
+        			{
+        			iSuffixStr =  String.format("%0" + ws.amountToPad + "d", ctrlTypeToRunningTotal.get(item.getSampleName())-1);
+        			item.setSampleName(item.getSampleName() +  "-" + (iSuffixStr));
+        			}
         		}
 	    	}
     
     	}	
+   
 	}
 		
