@@ -260,6 +260,7 @@ public class AddControlsPanel extends Panel
 					if (! doBothQCMPandMPExist(originalWorklist))
 						originalWorklist.setBothQCMPandMP(false);
 					originalWorklist.rebuildEverything();
+					
 					// issue 169
 				    Map<String, String> idsVsReasearcherNameMap =
 					     sampleService.sampleIdToResearcherNameMapForExpId(originalWorklist.getSampleGroup(0).getExperimentId());								
@@ -271,6 +272,10 @@ public class AddControlsPanel extends Panel
 					originalWorklist.clearControlGroups();
 
 				originalWorklist.updateSampleNamesArray();
+				// issue 205 make sure move is updated
+				int nPlateRows = 6, nPlateCols = 9;
+		    	PlateListHandler plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);
+		    	plateListHandler.updateWorkListItemsMoved(originalWorklist);
 				refreshPage(target);
 				}
 			};
