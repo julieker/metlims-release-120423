@@ -734,7 +734,11 @@ public class WorklistSimple implements Serializable
 			String sampleResearcherId = this.isPlatformChosenAs("absciex") || !this.getIncludeResearcherId() ? "" : idsVsReasearcherNameMap.get(item.getSampleName());
 			sampleResearcherId = sampleResearcherId == null ? "" : StringUtils.stripNonAlpha(sampleResearcherId);
 			String outname = grabOutputFileName(sampleResearcherId.equals("") ? item.getSampleName(): item.getSampleName() + "-" + sampleResearcherId, item); 
-			item.setOutputFileName(outname);			
+		//	System.out.println("here is outname:" + outname + " here is outputname:" + item.getOutputFileName() + " " + item.getOutputFileDir());
+		//	System.out.println("here is outnamewithdir:" + item.getO;
+			item.setOutputFileNameWithDir(item.getGroup().getParent().getIsCustomDirectoryStructure() ?  item.grabDataFileWithCustomDirectory() : outname);
+			item.setOutputFileName(outname);	
+		//	System.out.println("Here is outname:" + outname + " here is outputfilenamwithdir:" + item.getOutputFileNameWithDir());
 			}
 		}
 

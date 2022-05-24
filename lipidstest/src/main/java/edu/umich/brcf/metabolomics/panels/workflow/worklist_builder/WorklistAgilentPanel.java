@@ -31,18 +31,20 @@ public class WorklistAgilentPanel extends BaseWorklistPanel
 		}
 
 	@Override
+	// issue 229
 	protected void initListItem(ListItem listItem, WorklistItemSimple item)
 		{
 		listItem.add(buildRedoCheckbox("selected", listItem, getContainer()));
-		
 		//issue 410
-		//listItem.add(WorklistFieldBuilder.buildIntegerWorklistField("randomIdx", item, "randomIdx"));
+		item.setOutputFileNameWithDir(item.getGroup().getParent().getIsCustomDirectoryStructure() ?  item.grabDataFileWithCustomDirectory() : item.getOutputFileNameWithDir());
 		listItem.add(WorklistFieldBuilder.buildStringWorklistField("sampleName", item, "sampleName"));
 		listItem.add(WorklistFieldBuilder.buildStringWorklistField("samplePosition", item, "samplePosition"));
 		listItem.add(WorklistFieldBuilder.buildDoubleWorklistFieldAgilent("injectionVolume", item, "injectionVolume"));
 		listItem.add(WorklistFieldBuilder.buildStringWorklistField("methodFileName", item, "methodFileName"));
 		listItem.add(WorklistFieldBuilder.buildStringWorklistField("overrideMethod", item, "overrideMethod"));
-		listItem.add(WorklistFieldBuilder.buildStringWorklistField("outputFileName", item, "outputFileName"));
+		// issue 229 
+		listItem.add(WorklistFieldBuilder.buildStringWorklistField("outputFileName", item, "outputFileNameWithDir"));
+		listItem.add(WorklistFieldBuilder.buildStringWorklistField("commentDisplay", item, "comments"));
 		listItem.add(buildCommentsButton("notes", item));
 		}
 	}

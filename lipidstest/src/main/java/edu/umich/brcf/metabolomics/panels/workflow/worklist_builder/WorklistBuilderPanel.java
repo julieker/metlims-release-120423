@@ -120,25 +120,16 @@ public class WorklistBuilderPanel extends Panel
 		add(form);
 		}
 
-
 	public final class WorklistBuilderForm extends Form
-		{
-		
-		
+		{		
 		// issue 416
-		String selectedPlatform = null, selectedInstrument = null ;
-		
+		String selectedPlatform = null, selectedInstrument = null ;		
 		// issue 153
 		DropDownChoice<String> selectedPlatformDrop, selectedInstrumentDrop, selectedModeDrop, startPlateDrop;
-		
 		//List<String> availablePlates  = Arrays.asList(new String[] {"1", "2", "3", "4"});
-		
-		
-		
 		List<String> availablePlatforms = Arrays.asList(new String[] {"Agilent", "ABSciex" });
 		List<String> availableModes = Arrays.asList(new String[] { "Positive", "Negative", "Positive + Negative" });
-		List<String> agilentInstruments,  absciexInstruments; 
-		
+		List<String> agilentInstruments,  absciexInstruments; 		
 		METWorksAjaxUpdatingDateTextField dateFld;
 		TextField <String> defaultMethodFld, defaultItemsPerListFld;
 		TextField <Integer> defaultInjectionVolFld;
@@ -157,22 +148,18 @@ public class WorklistBuilderPanel extends Panel
 		private ValidatingAjaxExcelDownloadLink downloadListButton;
 		String msg = "";
 		private ModalWindow modal1; 
-		final PlatePreviewPage platePreviewPageDialog;
-		
+		final PlatePreviewPage platePreviewPageDialog;		
 		WorklistBuilderForm(String id, PrepData prepData)
-			{
-			
+			{			
 			super(id);
 			setMultiPart(true);
 			setOutputMarkupId(true);
 			agilentInstruments = instrumentService.getLabelledListOfAnalyticalForAgilent();
-			absciexInstruments = instrumentService.getLabelledListOfAnalyticalForAbsciex();
-			
+			absciexInstruments = instrumentService.getLabelledListOfAnalyticalForAbsciex();			
 			// DO NOT MOVE THESE
 			worklist = prepData == null ? new WorklistSimple("Mock Worklist", "ABSciex") : prepData.grabAsWorklist();
 			setSelectedPlatform("");
-			///////////////////////////////
-			
+			///////////////////////////////			
 			 platePreviewPageDialog = new PlatePreviewPage (worklist.getBothQCMPandMP(),  worklist.getItems(),  worklist.getUseCarousel(), wp, "platePreviewPageDialog", "Plate Preview", worklist)		
 			    { // NOSONAR
 				private static final long serialVersionUID = 1L;	
@@ -207,29 +194,20 @@ public class WorklistBuilderPanel extends Panel
 				  
 				@Override
 				protected void onOpen(IPartialPageRequestHandler handler)
-					{ 
-					
+					{ 					
 					colorMap.clear();
 					rlf.setMultiPart(true);
 					worklistg = worklist;		    
 					AjaxRequestTarget target = (AjaxRequestTarget) handler;
-					/* nRowsNeeded = (int) Math.ceil(worklist.getItems().size() / (nItemsPerRow * 1.0));
-					nPlatesNeeded = (int) Math.ceil(nRowsNeeded / (nItemsPerCol * 1.0));			
-					nRowsToCreate = nPlatesNeeded * nItemsPerCol;*/
-				
-					
 					nRowsNeeded = (int) Math.ceil((spacedg.size() > 0 ? spacedg.size() : worklist.getItems().size()) / (nItemsPerRow * 1.0));
 					nPlatesNeeded = (int) Math.ceil(nRowsNeeded / (nItemsPerCol * 1.0));
-					nRowsToCreate = nPlatesNeeded * nItemsPerCol;
-					
+					nRowsToCreate = nPlatesNeeded * nItemsPerCol;					
 					itemMatrix = null;
-					
 					itemMatrix = new WorklistItemSimpleMatrix(nRowsToCreate, nItemsPerRow, spacedg); 
 					itemMatrix.rows.clear();
 					target.add(this.form);
 					target.add(this);
-					// issue 205
-				
+					// issue 205				
 					if (worklist.getIs96Well())
 						{
 						nItemsPerRow = worklist.getUseCarousel() ? 10 : 12;
@@ -241,8 +219,7 @@ public class WorklistBuilderPanel extends Panel
 						nItemsPerCol = worklist.getUseCarousel() ? 10 : 6;
 						}
 					if (plateListView == null)
-						{	
-						
+						{							
 						try
 							{
 							plateListView.remove();
@@ -250,7 +227,6 @@ public class WorklistBuilderPanel extends Panel
 						catch (Exception e)
 							{
 							}
-						
 						rlf.buildPlateListView(nItemsPerRow, nItemsPerCol, worklist.getItems(), worklist);
 						//plateListViewWorkList = this.rlf.buildPlateListView(nItemsPerRow, nItemsPerCol, worklist.getItems(), worklist);
 						rlf.add (plateListView);					
@@ -285,11 +261,8 @@ public class WorklistBuilderPanel extends Panel
 							rlf.remove(ajaxPagingNavigator);				        
 							rlf.add(ajaxPagingNavigator = new AjaxPagingNavigator("navigator", plateListView));
 							}
-						
-						
-						
+												
 						}
-	
 					target.add(this.form);				
 					target.add(this);
 					hasBeenOpened = true;
@@ -353,8 +326,7 @@ public class WorklistBuilderPanel extends Panel
 					dialogButtonList.add( new DialogButton("submit3", "Done")) ;
 					//dialogButtonList.get(0).setEnabled(worklist.getOpenForUpdates());
 					return dialogButtonList;
-				    }	
-			
+				    }				
 			    };			
 		    add(platePreviewPageDialog);	
 				
@@ -387,22 +359,16 @@ public class WorklistBuilderPanel extends Panel
 			containerDefault.add(buildPlatePosDropdown("startPos", "startPos"));
 			containerDefault.add(buildPlatePosDropdown("endPos", "endPos"));
 			containerDefault.add(startPlateDrop = buildStartPlateDropDown("selectedStartPlateDropDown"));
-			containerDefault.add(startSequenceFld = buildStartSequenceFld("startSequence"));//issue 166
-			
+			containerDefault.add(startSequenceFld = buildStartSequenceFld("startSequence"));//issue 166			
 			containerDefault.add(randomizationTypeBox = buildRandomizeByPlate("randomizeByPlate"));// issue 416
-			containerDefault.add(change96WellBox = build96Well("96Well"));// issue 416
-			
-			
-			containerDefault.add(changeDefaultInjVolumeBox = buildChangeDefaultInjVolume("changeDefaultInjVolume"));// issue 179
-			
+			containerDefault.add(change96WellBox = build96Well("96Well"));// issue 416			
+			containerDefault.add(changeDefaultInjVolumeBox = buildChangeDefaultInjVolume("changeDefaultInjVolume"));// issue 179			
 			selectedPlatformDrop.add(new FocusOnLoadBehavior());
-
 			// Default fields
 			containerDefault.add(defaultInjectionVolFld = buildDefaultInjectionVolFld("defaultInjectionVol"));
 			containerDefault.add(defaultMethodFld = buildDefaultMethodFld("defaultMethod"));
 			containerDefault.add(dateFld = buildDateField("runDate"));
 			dateFld.setRequired(true);
-
 			add(containerDefault);
 			containerDefault.setOutputMarkupId(true);
 			
@@ -433,11 +399,9 @@ public class WorklistBuilderPanel extends Panel
 			addGroupsPanel.addSibContainer(agPanel.getContainer());
 			addGroupsPanel.addSibContainer(addControlsPanel);
 			addGroupsPanel.addSibContainer(addControlsPanel.getContainer());
-			addSamplesPanel.addSibContainer(addControlsPanel.getContainer());
-			
+			addSamplesPanel.addSibContainer(addControlsPanel.getContainer());			
 			add(containerOther);
-			containerOther.setOutputMarkupId(true);
-			
+			containerOther.setOutputMarkupId(true);			
 			add(hideAllButton = buildVisibilityButton("hideAllButton", "hideall"));
 			add(samplesVisibleButton = buildVisibilityButton("samplesVisibleButton", "samples"));
 			add(controlsVisibleButton = buildVisibilityButton("controlsVisibleButton", "controls"));
@@ -476,8 +440,7 @@ public class WorklistBuilderPanel extends Panel
 						isOpen = false;					
 					return isOpen;
 					}
-			        
-				
+			        				
 				@Override 
 				public boolean isVisible() { return true; } 
 				//return (isPlatformChosenAs("agilent") || "controls".equals(property)  
@@ -525,13 +488,11 @@ public class WorklistBuilderPanel extends Panel
 					target.add(hideAllButton);
 					target.add(containerOther);
 					}
-				
-				
+								
 				@Override
 				protected void onComponentTag(ComponentTag tag)
 					{
-					super.onComponentTag(tag);
-					
+					super.onComponentTag(tag);					
 					Boolean isOpen = ((isPlatformChosenAs("agilent") && worklist.getOpenForUpdates()));
 					if ("groups".equals(property) && isPlatformChosenAs("absciex"))
 						isOpen = false;
@@ -692,19 +653,16 @@ public class WorklistBuilderPanel extends Panel
 				if (isPlatformChosenAs("absciex")) setSelectedInstrument("IN0024 (LIPIDS)");
 				}
 			}
-
-		
+	
 		public String getSelectedPlatform()
 			{
 			return selectedPlatform;
 			}
-
 		
 		private boolean isPlatformChosen()
 			{
 			return (isPlatformChosenAs("absciex") || isPlatformChosenAs("agilent"));
 			}
-
 		
 		private boolean isPlatformChosenAs(String platform)
 			{
@@ -741,13 +699,11 @@ public class WorklistBuilderPanel extends Panel
 			drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForMode"));
 			return drp;
 			}
-
 		
 		public List<String> getAvailableInstruments()
 			{
 			return (isPlatformChosenAs("agilent") ? agilentInstruments : absciexInstruments);
 			}
-
 		
 		private boolean isInstrumentChosen()
 			{
@@ -809,20 +765,19 @@ public class WorklistBuilderPanel extends Panel
 		
 		// issue 166
 		private TextField<Integer> buildStartSequenceFld(String id)
-		{
-		// issue 128
-		TextField<Integer> fld = new TextField<Integer>(id, new PropertyModel<Integer>(worklist, "startSequence"))
-		    {
-			@Override
-			public boolean isEnabled() 
-			    { 
-				return worklist.getOpenForUpdates(); 
-			    }				
-			};
-		fld.add(this.buildStandardFormComponentUpdateBehavior("change", "updateStartSequence"));
-		return fld;
-		
-		}
+			{
+			// issue 128
+			TextField<Integer> fld = new TextField<Integer>(id, new PropertyModel<Integer>(worklist, "startSequence"))
+			    {
+				@Override
+				public boolean isEnabled() 
+				    { 
+					return worklist.getOpenForUpdates(); 
+				    }				
+				};
+			fld.add(this.buildStandardFormComponentUpdateBehavior("change", "updateStartSequence"));
+			return fld;		
+			}
 	
 		private TextField<String> buildDefaultMaxItemsFld(String id)
 			{
@@ -855,7 +810,6 @@ public class WorklistBuilderPanel extends Panel
 			return drp;
 			}
 
-	
 		private WorklistABSciexPanel buildABSciexPanel(String id)
 			{
 			return new WorklistABSciexPanel(id, worklist)
@@ -907,7 +861,6 @@ public class WorklistBuilderPanel extends Panel
 				public boolean isEnabled() { return isPlatformChosen(); }
 				};
 			}
-
 		
 		private AddControlsPanel buildAddControlsPanel(String id)
 			{
@@ -1065,6 +1018,7 @@ public class WorklistBuilderPanel extends Panel
 									worklist.updateIndices();
 									// worklist.setOpenForUpdates(true);
 									worklist.updateOutputFileNames();
+									
 									// issue 242
 									if (worklist.getIs96Well())
 										{
@@ -1324,7 +1278,6 @@ public class WorklistBuilderPanel extends Panel
 			// JAK fix issue 155 and 159
 			sampleAssayService.updateStatusForExpAndAssayIdEfficiently(worklist.getDefaultExperimentId(), worklist.getDefaultAssayId(), "P");
 			}
-		
 		
 		public WorklistSimple getWorklist()
 			{

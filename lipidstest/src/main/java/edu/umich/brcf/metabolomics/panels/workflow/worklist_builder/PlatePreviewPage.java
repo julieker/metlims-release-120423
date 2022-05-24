@@ -246,7 +246,8 @@ public class PlatePreviewPage extends AbstractFormDialog
 				};
 			}
 /////////////////////////////////////////////////////////////////////
-// issue 205		
+// issue 205	
+//
 		public   Label  buildPlateLabelWorklistFieldNonStatic (boolean bothQCMPandMP , final String id, final WorklistItemSimple item,  String field, int colPos, int rowPos, WorklistSimple ws)
 			{
 			// Issue 268 
@@ -254,8 +255,13 @@ public class PlatePreviewPage extends AbstractFormDialog
 			// issue 17	
 			// issue 217
 	        if (!item.getRepresentsControl())
-	        	item.setCommentResearcherId(item.calcCommentToolTip(ws, item));
-			// Issue 268 
+	        	//item.setCommentResearcherId(item.calcCommentToolTip(ws, item));
+	        	item.setCommentResearcherId(StringUtils.isEmptyOrNull(item.getComments()) ? item.calcCommentToolTip(ws, item) : item.getComments()   );
+	        // issue 227
+	       // else 
+	        	//item.setCommentResearcherId(StringUtils.isEmptyOrNull(item.getComments()) ? item.getShortSampleName() : item.getComments()   );
+			
+	        // Issue 268 
 			// issue 346
 			// issue 17
 	       
@@ -271,6 +277,8 @@ public class PlatePreviewPage extends AbstractFormDialog
 				field = "shortNameForUserControlGroup";
 			// issue 217
 			// issue 205
+			// issue 229 
+			
 			else 
 				{
 				if (!item.getRepresentsControl())
@@ -285,11 +293,11 @@ public class PlatePreviewPage extends AbstractFormDialog
 			String theCommentString = "";
 			if (!item.getRepresentsControl())
 				{
-				theCommentString = item.getSampleName() +  (StringUtils.isEmptyOrNull(item.getSampleName()) ? ""  : "\n" + item.calcCommentToolTip(ws, item));
+				theCommentString = item.getSampleName() +  (StringUtils.isEmptyOrNull(item.getSampleName()) ? ""  : "\n" +  (  StringUtils.isEmptyOrNull(item.getComments()) ? item.calcCommentToolTip(ws, item) : item.getComments() )   );
 				pLabel.add(AttributeModifier.append("title",theCommentString));
 				}
 			else 
-				pLabel.add(AttributeModifier.append("title",item.getSampleName().indexOf("-") >= 0 ? item.getSampleName().substring(0, item.getSampleName().lastIndexOf("-")) : item.getSampleName()));
+				pLabel.add(AttributeModifier.append("title",item.getSampleName().indexOf("-") >= 0 ? item.getSampleName().substring(0, item.getSampleName().lastIndexOf("-")) : item.getSampleName()  ));
 			if (bothQCMPandMP)
 			    if (item.getShortSampleName().equals("CS00000MP\nCS000QCMP"))
 				    pLabel.add(AttributeModifier.replace("title",item.getMpQcmpName()));

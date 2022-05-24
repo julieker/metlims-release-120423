@@ -23,19 +23,24 @@
 				<wicket:extend>
 				<tr style = "background : #0053CF; color : white; border : solid black 1px"> 							
 					<!-- <th class = "blueTableHeader" style = "width : 2%">+/-</th> -->
-					<th class = "blueTableHeader" style = "width : 4%">Redo
+					<th class = "blueTableHeader" style = "width : 1%">Redo
 						<input wicket:id = "allSelected" type = "checkbox" /> 
 					</th>	
+					<!-- 
 					<th class = "blueTableHeader" style = "width : 3%">Order</th>
+					 
 					<th class = "blueTableHeader" style = "width : 23%; ">Sample Name</th>
-					<th class = "blueTableHeader" style = "width : 2%">Sample Pos</th>
+					-->
+					<th class = "blueTableHeader" style = "width : 1%; ">Sample Name</th>
+					<th class = "blueTableHeader" style = "width : 1%">Sample Pos</th>
 					<th class = "blueTableHeader" style = "width : 5%;  ">Inj Vol (&micro;l)</th> 
 					<th class = "blueTableHeader" title = "Method" style = "width : 1%">M</th> 
 					<th class = "blueTableHeader" title = "Override" style = "width: 1%">O</th> 
 					<!-- issue 292 -->
 					<!--  issue 215  -->
-					<th class = "blueTableHeader" style = "width:42%; "  >Data File   <span style="float:left;"><input wicket:id = "includeResearcherId"  type = "checkbox" /> Include Researcher ID  </span>&nbsp;&nbsp;&nbsp;  <span style="float:right;"><input wicket:id = "customDirectoryStructure"  type = "checkbox" /> Custom directory structure:</span></th>
-					<th class = "blueTableHeader" style = "width : 7% "></th> 									
+					<th class = "blueTableHeader" style = "width:18%; ">Data File   <span style="float:left;"><input wicket:id = "includeResearcherId"  type = "checkbox" /> Include Researcher ID  </span>&nbsp;&nbsp;&nbsp;  <span style="float:right;"><input wicket:id = "customDirectoryStructure"  type = "checkbox" /> Custom directory structure:</span></th>
+					<th class = "blueTableHeader" title = "Comments" style = "width: 10%">Comments</th> 
+					<th class = "blueTableHeader" title="Edit" style = "width : 2% ">Edit</th> 									
 				</tr>
 				
 				<tr wicket:id = "worklist">
@@ -61,9 +66,11 @@
 					  <input wicket:id="selected" type="checkbox"/>
 					</td>
 					
+					<!--  
 					<td>
     					<input  class = "tableField" disabled type = "text"/>
 					</td>
+					-->
 					
 					<td> <input wicket:id = "sampleName" class = "tableField" disabled style = "padding-left : 10px" type = "text"/></td>
 					<td> <input wicket:id = "samplePosition" disabled class = "tableField" type = "text"/></td>
@@ -71,10 +78,11 @@
 					<td> <input wicket:id = "methodFileName"  disabled class = "tableField" type = "text"/></td>
 					<td> <input wicket:id = "overrideMethod" disabled class = "tableField" type = "text"/></td>
 					<td> <input wicket:id = "outputFileName" disabled class = "tableField" type = "text"/></td>
+					<td> <input wicket:id = "commentDisplay" disabled class = "tableField" type = "text"/></td>
 					<td style = "text-align : center; background : white"> 
 						<span style="cursor:not-allowed">
 							<input wicket:id = "notes" value = "Comment..."  style =  "background : #F4GGF4; text-align: center;
-							 padding-right :4px; width : 80%"   type = "button"/>
+							 padding-right :2px; width : 50%"   type = "button"/>
 						 </span>
 					</td>	
 				</tr>

@@ -11,12 +11,15 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.validation.validator.StringValidator;
 
 import edu.umich.brcf.shared.util.widgets.AjaxCancelLink;
 
 
 public abstract class AddNotesPage extends WebPage
 	{
+	TextArea notesTextArea ;
+	int maxLength =  60;
 	public AddNotesPage(Page backPage)
 		{
 		add(new NotesForm("notesForm", null, new Model(""), ""));
@@ -28,16 +31,18 @@ public abstract class AddNotesPage extends WebPage
 		add(new NotesForm("notesForm", modal1, oldNotes, pageTitle));
 		}
 	
-
+// issue 229
 	public final class NotesForm extends Form 
 		{
 		public NotesForm(final String id, final ModalWindow modal1, IModel <String> oldNotes, String pageTitle)
 			{
+			
 			super(id);
 			add(new FeedbackPanel("feedback"));
 			
 			add(new Label("pageTitle", pageTitle));
-			add(new TextArea("notes", oldNotes));
+			add(notesTextArea = new TextArea("notes", oldNotes));
+			notesTextArea.add(StringValidator.maximumLength(maxLength));
 			
 			add(new Button("save")
 				{

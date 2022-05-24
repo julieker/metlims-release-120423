@@ -18,6 +18,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.validation.validator.StringValidator;
 
 import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.util.utilpackages.StringUtils;
@@ -27,7 +28,6 @@ import edu.umich.brcf.shared.util.utilpackages.StringUtils;
 
 public class WorklistFieldBuilder implements Serializable
 	{
-
 /////////////////////////////////////
 	@SpringBean
 	private SampleService sampleService;
@@ -38,10 +38,17 @@ public class WorklistFieldBuilder implements Serializable
 		{
 		}
 	
+	// issue 229
 	public static TextField buildStringTextField(String id, WorklistItemSimple item, String field)
 		{
-	    TextField wrkField = new TextField(id, new PropertyModel<String>(item, field));
-	    if (field.equals("sampleName"))
+		TextField wrkField = new TextField(id, new PropertyModel<String>(item, field));
+		// issue 229
+		if (field.equals("outputFileNameWithDir"))
+			{
+			item.setOutputFileNameWithDir(item.getGroup().getParent().getIsCustomDirectoryStructure() ?  item.grabDataFileWithCustomDirectory() : item.getOutputFileName());
+			wrkField.add(StringValidator.maximumLength(250));
+			}
+		if (field.equals("sampleName"))
 	    	// issue 215
 	        wrkField.add(AttributeModifier.append("title", item.getSampleName().indexOf("-") >= 0 ? item.getSampleName().substring(0, item.getSampleName().lastIndexOf("-")) : item.getSampleName()));
 		// Issue 268
@@ -71,7 +78,6 @@ public class WorklistFieldBuilder implements Serializable
 				}
 			};
 		}
-
 	
 	public static TextField buildIntegerTextField(String id, final WorklistItemSimple item, final String field)
 		{
@@ -84,19 +90,16 @@ public class WorklistFieldBuilder implements Serializable
 			};
 		}
 
-	
 	public static TextField buildDoubleTextField(String id, WorklistItemSimple item, String field)
 		{
 		return new TextField(id, new PropertyModel<Double>(item, field));
 		}
-
 	
 	public static TextField buildFillDoubleTextField(String id, WorklistItemSimple item, String field)
 		{
 		return new TextField(id, new PropertyModel<Double>(item, field));
 		}
 
-	
 	public static TextField buildStringWorklistField(final String id, final WorklistItemSimple item, final String field)
 		{
 		TextField txt = WorklistFieldBuilder.buildStringTextField(id, item, field);
@@ -104,7 +107,6 @@ public class WorklistFieldBuilder implements Serializable
 		txt.add(buildChangeRegistrationBehavior(id, item, field));
 		return txt;
 		}
-
 	
 	// onComponentTag
 	public static Label buildPlateLabelWorklistField(boolean bothQCMPandMP , final String id, final WorklistItemSimple item,  String field, WorklistSimple ws)
@@ -124,16 +126,10 @@ public class WorklistFieldBuilder implements Serializable
 		if (!item.getNameForUserControlGroup().equals(""))
 			field = "shortNameForUserControlGroup";
 		// issue 217
+		// issue 229
 		else 
-			{
-			if (!item.getRepresentsControl())
-				field = "commentResearcherId";
-			else
-				field = "shortSampleName";
-			}
-		
-		// issue 215 tool tip 
-        
+			field = "commentResearcherId";	
+		// issue 215 tool tip         
 		Label pLabel = WorklistFieldBuilder.buildPlateLabelField(id, item, field);
 		String theCommentString = "";
 		if (!item.getRepresentsControl())

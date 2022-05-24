@@ -63,7 +63,7 @@ public abstract class BaseWorklistPanel extends Panel
 	protected ModalWindow modal1;
 	protected List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
     protected ICommentObject commentObject;
-    private int maxLength = 90;
+    private int maxLength = 84; // issue 227
 	public BaseWorklistPanel(String id)
 		{
 		this(id, null);
@@ -88,6 +88,7 @@ public abstract class BaseWorklistPanel extends Panel
 				{
 				String notes = (String) ((MedWorksSession) Session.get()).getSaveValue();
 				commentObject.setComments(notes);
+				target.add(container);
 				}
 			});
 		

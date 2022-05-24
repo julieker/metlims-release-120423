@@ -31,7 +31,7 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	private WorklistSimple parent;
 	private WorklistGroup group;
 	private String workListName;
-	private String methodFileName, outputFileName, outputFileDir;
+	private String methodFileName, outputFileName, outputFileDir, outputFileNameWithDir ; // issue 229;
 	private String overrideMethod;
     private String relatedSample;
 	private String randomIdx;
@@ -75,6 +75,18 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	    this.customLoadOrder = vcustomLoadOrder	;
 		}
 
+	// issue 229 	
+	public String getOutputFileNameWithDir ()
+		{
+		return this.outputFileNameWithDir;
+		}
+	
+	// issue 229 	
+	public void setOutputFileNameWithDir (String outputFileNameWithDir)
+		{
+		this.outputFileNameWithDir = outputFileNameWithDir ;
+		}
+	
 	// issue 17
 	public String getMpQcmpName ()
 		{
@@ -355,17 +367,8 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	public String getSampleOrControlId()
 		{
 		return "";
-		
-		/*if (StringUtils.isEmptyOrNull(getSampleWorklistLabel())) return "";
-		
-		String [] ids = StringUtils.splitAndTrim(getSampleWorklistLabel(), "_");
-		if (ids.length > 1)
-			return ids[1];
-		
-		return ""; */
 		}
 
-	
 	public void setSampleWorklistLabel(String sn)
 		{
 		sampleWorklistLabel = sn + (representsControl ? "(" + ")" : "");
@@ -500,13 +503,20 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		isHandEdited = ihe;
 		}
 
+	// issue 229
 	public String getComments()
 		{
+	    if (StringUtils.isEmptyOrNull(comments))
+			{
+			comments = calcCommentToolTip(parent, this);
+			}
 		return comments;
 		}
 
 	public void setComments(String comments)
 		{
+		if (StringUtils.isEmptyOrNull(comments))
+			comments = calcCommentToolTip(this.getGroup().getParent(), this);
 		this.comments = comments;
 		}
 
@@ -532,21 +542,26 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 
 	// issue 32
 	// issue 217
+	// issue 229
 	public String grabDataFileWithCustomDirectory()
 		{
+		if ( StringUtils.isNullOrEmpty( parent.getCustomDirectoryStructureName()) ||     parent.getCustomDirectoryStructureName().equals("<custom directory>" ) ||  !parent.getIsCustomDirectoryStructure())
+			{
+			parent.setCustomDirectoryStructureName("");
+			return this.getOutputFileName();
+			}
 		String lastChar =     StringUtils.isNullOrEmpty(parent.getCustomDirectoryStructureName()) ? "" : parent.getCustomDirectoryStructureName().substring(parent.getCustomDirectoryStructureName().length()-1);
 		String customDirectoryWOSlash = lastChar.equals("\\") && parent.getCustomDirectoryStructureName().length() > 1 ? 
 		    parent.getCustomDirectoryStructureName().substring(0,parent.getCustomDirectoryStructureName().length()-1) :
 		   ( lastChar.equals("\\") ? "" :parent.getCustomDirectoryStructureName());	  
 		if (this.getOutputFileName().indexOf("\\") < 0 )
 			{
-			if (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()))
+			if (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()) || parent.getCustomDirectoryStructureName().equals("<custom directory>"))
 				return this.getOutputFileName();
 			return (StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash) + "\\" + this.getOutputFileName();
 			}
-	        else
-			{
-	       
+	    else
+			{	       
 			String [] fileNameArray = StringUtils.splitAndTrim(this.getOutputFileName(), "\\\\");	
 			String lastPartDataFile = fileNameArray[fileNameArray.length -1];
 			if (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()))
@@ -602,11 +617,10 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	public String calcCommentContent (String theSampleId)
 		{
 		// issue 201
+		int dashIndex, stdIndex = 0;
+		String stdIntString  = "";
 		if (!this.getRepresentsControl())
-			{
-		//	System.out.println("this is the researcher name:" + this.getResearcherName());
 			return this.getResearcherName();
-			}
 		else
 			{
 			WorklistControlGroup wg = this.getGroup().getParent().getControlGroupsList().get(0);					
@@ -665,7 +679,16 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 						     break;
 						}
 					//return wwg.getControlType().substring(0, wwg.getControlType().lastIndexOf("(")).replace(",", "");
-					return preControltype.substring(0, preControltype.lastIndexOf("(")).replace(",", "");	
+					// issue 229
+					if (controlCode.contains("CS000STD") || controlCode.contains("CS00STD"))
+						{
+						dashIndex = this.getSampleName().lastIndexOf("-");
+						stdIndex  =  this.getSampleName().indexOf("STD") + 3;
+						stdIntString = this.getSampleName().substring(stdIndex, dashIndex);						
+						return "STD" + stdIntString + "- uM";
+						}						
+					else	
+						return preControltype.substring(0, preControltype.lastIndexOf("(")).replace(",", "");	
 					}
 				}
 			return wg.getControlType().replace(",", "").replace("-Pre", "");		
@@ -683,7 +706,7 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		sb.append(this.getSamplePosition() + separator);
 		// issue 181
 		sb.append((StringUtils.isNullOrEmpty(this.getMethodFileName()) ? " " : this.getMethodFileName())  + separator); 
-		sb.append((parent.getIsCustomDirectoryStructure() ? this.grabDataFileWithCustomDirectory() : this.getOutputFileName()  )+ separator);  
+		sb.append((parent.getIsCustomDirectoryStructure() ? this.grabDataFileWithCustomDirectory() : this.getOutputFileName()  )+ separator);  		
 		sb.append(((this.getSampleName().contains("CS000STD") || this.getSampleName().contains("CS00STD")) ? "Calibration" : "Sample") + separator);
 		
 		if ((this.getSampleName().contains("CS000STD") || this.getSampleName().contains("CS00STD")) && this.getSampleName().contains("-"))
@@ -702,7 +725,9 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		String endingIndexStr = endingIndex.toString();
 		String theIndex = this.getRepresentsControl() ? "" : String.format("%1$" + endingIndexStr.length() + "s" , calcPosIndicator(this, this.getGroup().getParent())).replace(' ', '0');	
 		//sb.append(theIndex +  (this.getRepresentsControl() ? "" : "_") + calcCommentContent(this.getSampleName()) +  separator);// issue 166		
-		sb.append(theIndex +  (this.getRepresentsControl() ? "" : "_") + calcCommentContent(this.getSampleName())  );// issue 166
+	    // issue 229
+		/////// put it back 	sb.append(theIndex +  (this.getRepresentsControl() ? "" : "_") + calcCommentContent(this.getSampleName())  );// issue 166
+		sb.append(StringUtils.isNullOrEmpty(comments) ? calcCommentToolTip(this.parent, this) : comments );// issue 166
 		// issue 25
 		// issue 32		
 		return sb.toString();
@@ -749,6 +774,8 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	// issue 215
 	public String calcCommentToolTip (WorklistSimple ws, WorklistItemSimple wi)
 		{
+		if (ws == null || ws.getItems() == null )
+			return "";
 		Integer countOfSamples = ws.countOfSamplesForItems(ws.getItems());
 		Integer endingIndex = Integer.parseInt(ws.getStartSequence()) + countOfSamples-1;
 		String endingIndexStr = endingIndex.toString();
