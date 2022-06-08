@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -25,7 +23,6 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -56,8 +53,8 @@ public class AddControlsPanel extends Panel
 	private Boolean needsRebuild = false,  controlTypeChangeWarningShownOnce = false, controlTypeChangeWarningShownTwice = false;
 	WebMarkupContainer container = new WebMarkupContainer("container");
 	List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
-    
-	public AddControlsPanel(String id, WorklistSimple worklist)
+	
+	public AddControlsPanel(String id, WorklistSimple worklist, WorklistBuilderPanel wp)
 		{
 		super(id);
 		modal1 = ModalCreator.createModalWindow("modal1", 800, 320);
@@ -72,15 +69,15 @@ public class AddControlsPanel extends Panel
 			public void populateItem(ListItem listItem)
 				{
 				final WorklistControlGroup item = (WorklistControlGroup) listItem.getModelObject();
-				listItem.add(deleteButton = buildDeleteButton("deleteButton", item, container));
+				listItem.add(deleteButton = buildDeleteButton("deleteButton", item, container, wp));
 				listItem.add(addButton = buildAddButton("addButton", item, container));
 				listItem.add(controlTypeDrop = buildControlTypeDropdown("controlTypeDrop", item, "controlType"));
 				listItem.add(quantityDrop = buildQuantityDropdown("quantityDrop", item, "quantity"));
 				listItem.add(directionDrop = buildDirectionDropdown("directionDrop", item, "direction"));
 				listItem.add(relatedSampleDrop = buildRelatedSampleDropdown("relatedSampleDrop", item, "relatedSample"));
 				listItem.add(buildLinkToInfoModal("questionButton", item, modal1));
-				listItem.add(buildButton = buildBuildButton("buildButton", item, container));
-				listItem.add(clearButton = buildClearButton("clearButton", item, container));
+				listItem.add(buildButton = buildBuildButton("buildButton", item, container, wp));
+				listItem.add(clearButton = buildClearButton("clearButton", item, container, wp));
 				}
 			});
 		controlGroupsListView.setOutputMarkupId(true);
@@ -231,7 +228,7 @@ public class AddControlsPanel extends Panel
 		return false;
 	    }
 	
-	private AjaxLink buildDeleteButton(String id, final WorklistControlGroup item, final WebMarkupContainer container)
+	private AjaxLink buildDeleteButton(String id, final WorklistControlGroup item, final WebMarkupContainer container, WorklistBuilderPanel wp)
 		{
 		return new AjaxLink <Void> (id)
 			{
@@ -276,6 +273,7 @@ public class AddControlsPanel extends Panel
 				int nPlateRows = 6, nPlateCols = 9;
 		    	PlateListHandler plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);
 		    	plateListHandler.updateWorkListItemsMoved(originalWorklist);
+		    	wp.form.agPanel.updateIddaList ();
 				refreshPage(target);
 				}
 			};
@@ -359,7 +357,7 @@ public class AddControlsPanel extends Panel
 		}
 
 	
-	private IndicatingAjaxLink buildBuildButton(String id, final WorklistControlGroup item, final WebMarkupContainer container)
+	private IndicatingAjaxLink buildBuildButton(String id, final WorklistControlGroup item, final WebMarkupContainer container, WorklistBuilderPanel wp)
 		{
 		return new IndicatingAjaxLink <Void> (id)
 			{
@@ -450,6 +448,7 @@ public class AddControlsPanel extends Panel
 				int nPlateRows = 6, nPlateCols = 9;
 		    	PlateListHandler plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);
 		    	plateListHandler.updateWorkListItemsMoved(originalWorklist);	
+		    	wp.form.agPanel.updateIddaList ();
 		    	refreshPage(target);
 				}
 			};
@@ -462,7 +461,7 @@ public class AddControlsPanel extends Panel
 		}
 
 	// issue 39
-	private IndicatingAjaxLink buildClearButton(String id, final WorklistControlGroup item, final WebMarkupContainer container)
+	private IndicatingAjaxLink buildClearButton(String id, final WorklistControlGroup item, final WebMarkupContainer container, WorklistBuilderPanel wp)
 		{
 		return new IndicatingAjaxLink <Void>(id)
 			{
@@ -483,7 +482,12 @@ public class AddControlsPanel extends Panel
 				originalWorklist.updateSampleNamesArray();
 				originalWorklist.setOpenForUpdates(true);
 				originalWorklist.updatePlatePositions(); // issue 417 issue 409
+				originalWorklist.getIddaStrList().clear();
+				wp.form.agPanel.getContainer().remove(wp.form.agPanel.textAreaIdda);
+				wp.form.agPanel.getContainer().add( wp.form.agPanel.textAreaIdda = wp.form.agPanel.initIDDA(originalWorklist.getIddaStrList()));
+				wp.form.agPanel.textAreaIdda.setOutputMarkupId(true);
 				refreshPage(target);
+				target.add(wp.form.agPanel.textAreaIdda);
 				}
 			};
 		}

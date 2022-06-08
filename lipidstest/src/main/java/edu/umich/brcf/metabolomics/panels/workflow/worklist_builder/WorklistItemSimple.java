@@ -777,13 +777,17 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		if (ws == null || ws.getItems() == null )
 			return "";
 		Integer countOfSamples = ws.countOfSamplesForItems(ws.getItems());
+		//System.out.println("AH HA here is the start sequence:" + ws.getStartSequence());
 		Integer endingIndex = Integer.parseInt(ws.getStartSequence()) + countOfSamples-1;
 		String endingIndexStr = endingIndex.toString();
+		//System.out.println("here is the ending index string:" + endingIndexStr);
 		String theIndex = wi.getRepresentsControl() ? "" : String.format("%1$" + endingIndexStr.length() + "s" , calcPosIndicator(this, ws)).replace(' ', '0');	
+		//System.out.println("here is the index:" + theIndex);
 		String theCommentPart = calcCommentContent(wi.getSampleName());
 		if ( StringUtils.isEmptyOrNull(theCommentPart))
 			return "";
 		String theComment = theIndex +  (wi.getRepresentsControl() ? "" : "_") + theCommentPart  ;//			
+		//System.out.println("HERE IS THE COMMENT:" + theComment);
 		return theComment;
 		}
 	

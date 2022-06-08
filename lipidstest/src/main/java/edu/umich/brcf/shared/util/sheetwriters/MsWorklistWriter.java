@@ -5,39 +5,22 @@
 
 package edu.umich.brcf.shared.util.sheetwriters;
 
-import java.awt.Color;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.wicket.Session;
 import org.apache.wicket.injection.Injector;
-
 import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.WorklistBuilderPanel;
 import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.WorklistItemSimple;
 import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.WorklistSimple;
-import edu.umich.brcf.shared.panels.login.MedWorksSession;
-import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheet;
 import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheetReturnStream;
-import edu.umich.brcf.shared.util.io.FileUtils;
 import edu.umich.brcf.shared.util.io.PoiUtils;
 import edu.umich.brcf.shared.util.io.StringUtils;
 
@@ -94,7 +77,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 				workBook.write(output);
 			output.close();
 			if (!worklist.getSelectedMode().equals("Positive + Negative"))
-				return wpWriter.workListDataW;
+				return worklist.getIddaStrList();
 			else
 				return null;
 			} 
@@ -157,8 +140,8 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		{
 		// issue 128
 		// issue 207
-		wpWriter.workListDataW.clear();
-		
+		///// put back worklist.getIddaStrList().clear();
+		worklist.getIddaStrList().clear();
 		try
 		    {
 		// issue 450
@@ -180,11 +163,11 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 				PoiUtils.createRowEntry(rowCt, i, sheet, headers.get(i), grabStyleBlue(workBook));		
 				///////
 				if (i < headers.size() -1)
-					wpWriter.workListDataW.add(headers.get(i) + "\t");
+					worklist.getIddaStrList().add(headers.get(i) + "\t");
 				else
-					wpWriter.workListDataW.add(headers.get(i));
+					worklist.getIddaStrList().add(headers.get(i));
 				}
-			wpWriter.workListDataW.add("\r\n");
+			worklist.getIddaStrList().add("\r\n");
 			rowCt++;
 			for (WorklistItemSimple item : items)
 				{
@@ -195,7 +178,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 				    initializedOutputFileNameBase = true;
 					}			
 				String itemStr = item.toCharDelimited((worklist.getSelectedMode().equals("Positive + Negative") ? "," : "\t" ));	
-				wpWriter.workListDataW.add(itemStr + "\r\n"); // issue 207
+				worklist.getIddaStrList().add(itemStr + "\r\n"); // issue 207
 				String [] tokens = StringUtils.splitAndTrim(itemStr, (worklist.getSelectedMode().equals("Positive + Negative") ? "," : "\t" ), true);
 				PoiUtils.createBlankRow(rowCt,  sheet);
 				sheet.setColumnWidth(CONTROLNAMECOL, 28*256); // issue 179
@@ -217,15 +200,14 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 			// issue 209
 			// issue 212
 		       if (worklist.getControlGroupsList().size() > 1 && worklist.isPlatformChosenAs("agilent") && (worklist.getNCE10Reps()> 0 || worklist.getNCE20Reps()> 0 ||  worklist.getNCE40Reps()> 0   )  && !worklist.getIs96Well() )
-			       printOutIDDA  (workBook, sheet, rowCt, strMode, outputFileNameBase) ; 
+		    	   printOutIDDA  (workBook, sheet, rowCt, strMode, outputFileNameBase) ; 
 			   return sheet;
 		    }
 	    catch (Exception e)
 		    {
 			e.printStackTrace();
 			return null;
-		    }
-		
+		    }		
 		}
 	
 	// issue 432
@@ -245,30 +227,54 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 	
 	// issue 432
 // issue 56
+	// issue 229
 	public void printOutIDDA(Workbook workBook, Sheet sheet, int rowCt, String strMode, String outputFileBase)
 		{
-		Font font = workBook.createFont();
-	    XSSFCellStyle styleColorBlue = grabStyleWhite(workBook, true);
-        styleColorBlue.setAlignment(HorizontalAlignment.LEFT);
-		styleColorBlue.setIndention((short) 2);
-        styleColorBlue.setFillForegroundColor((IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex()));
-        styleColorBlue.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
-        styleColorBlue.setFont(font);
-            
-        XSSFCellStyle styleStandard = grabStyleWhite(workBook, true);
-        styleStandard.setAlignment(HorizontalAlignment.LEFT);
-        styleStandard.setIndention((short) 2);
-            
-        XSSFCellStyle styleItalic = grabStyleWhite(workBook, true);
-        styleItalic.setAlignment(HorizontalAlignment.LEFT);
-        styleItalic.setIndention((short) 2);
-        styleItalic.setFont(font);
-        
-        PoiUtils.createBlankRow(rowCt++,  sheet);
-        PoiUtils.createBlankRow(rowCt++,  sheet);
-        wpWriter.workListDataW.add("\r\n"); // issue 207
-        wpWriter.workListDataW.add("\r\n");
-        
+		printOutIDDA(workBook, sheet, rowCt,  strMode, outputFileBase, true);
+		}
+	
+	public void printOutIDDA(Workbook workBook, Sheet sheet, int rowCt, String strMode, String outputFileBase, boolean includeSpreadsheet)
+		{	
+		Font font = null;
+		//worklist.getIddaStrList().clear();
+		XSSFCellStyle styleColorBlue = null;
+		XSSFCellStyle styleStandard = null;
+		XSSFCellStyle styleItalic = null;
+	    if (includeSpreadsheet)
+		    {
+	    	font = workBook.createFont();
+		    styleColorBlue = grabStyleWhite(workBook, true);
+	        styleColorBlue.setAlignment(HorizontalAlignment.LEFT);
+			styleColorBlue.setIndention((short) 2);
+	        styleColorBlue.setFillForegroundColor((IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex()));
+	        styleColorBlue.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+	        styleColorBlue.setFont(font);
+		    }
+          
+        if (includeSpreadsheet)
+        	{
+        	styleStandard = grabStyleWhite(workBook, true);
+	        styleStandard.setAlignment(HorizontalAlignment.LEFT);
+	        styleStandard.setIndention((short) 2);
+        	}
+           
+        if (includeSpreadsheet)
+    		{
+        	styleItalic = grabStyleWhite(workBook, true);
+	        styleItalic.setAlignment(HorizontalAlignment.LEFT);
+	        styleItalic.setIndention((short) 2);
+	        styleItalic.setFont(font);
+    		}
+        if (includeSpreadsheet)
+			{
+	        PoiUtils.createBlankRow(rowCt++,  sheet);
+	        PoiUtils.createBlankRow(rowCt++,  sheet);
+			}    
+        if ((worklist.getNCE10Reps()> 0 || worklist.getNCE20Reps()> 0 ||  worklist.getNCE40Reps()> 0   )  && !worklist.getIs96Well())
+	        {
+	        worklist.getIddaStrList().add("\r\n"); // issue 207
+	        worklist.getIddaStrList().add("\r\n");
+	        }
         int startPoint = worklist.getStartingPoint() + 1;// issue 29
         String iddaPlatePos = grabPlatePosition() ;// issue 27
         // issue 128
@@ -284,16 +290,20 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		    {
 			if (worklist.getNCE10Reps() == 0)
 				continue;
-			PoiUtils.createBlankRow(rowCt,  sheet);
+			if (includeSpreadsheet)
+				PoiUtils.createBlankRow(rowCt,  sheet);			
 			if (j==0) // issue 453
 				fileStr = worklist.grabOutputFileNameIDDA() + "-"  + iddaStr + "-" + (strMode.contains("Positive") ? "P" : "N") + ".d"  ;
 			else
 				fileStr = worklist.grabOutputFileNameIDDA() + "-" +iddaStr +  "-IDDA_ce10" + "_" + j + "-" + (strMode.contains("Positive") ? "P" : "N") +   ".d";
-		    PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
-		    PoiUtils.createRowEntry(rowCt,CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
-		    PoiUtils.createRowEntry(rowCt,IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
-		   //issue 209
-		    wpWriter.workListDataW.add(iddaStr + (worklist.getSelectedMode().equals("Positive + Negative") ? "," : "\t" ) + iddaPlatePos + "\t\t" +fileNamePredicateWithIdda(outputFileBase,fileStr)  + "\t\t\t\t\r\n" );
+			 if (includeSpreadsheet)
+	    		{
+				PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
+			    PoiUtils.createRowEntry(rowCt,CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
+			    PoiUtils.createRowEntry(rowCt,IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
+	    		}
+			    //issue 209
+		    worklist.getIddaStrList().add(iddaStr + (worklist.getSelectedMode().equals("Positive + Negative") ? "," : "\t" ) + iddaPlatePos + "\t\t" +fileNamePredicateWithIdda(outputFileBase,fileStr)  + "\t\t\t\t\r\n" );
 		    rowCt ++;
 		    }
 		// issue 38
@@ -304,16 +314,20 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		    {
 			if (worklist.getNCE20Reps() == 0)
 				continue;
-			PoiUtils.createBlankRow(rowCt,  sheet);
+			if (includeSpreadsheet)
+				PoiUtils.createBlankRow(rowCt,  sheet);	
 			if (j==0) // issue 453
 				fileStr = worklist.grabOutputFileNameIDDA() + "-"  + iddaStr + "-" + (strMode.contains("Positive") ? "P" : "N") + ".d"  ;
 			else
 		        fileStr = worklist.grabOutputFileNameIDDA() + "-" +iddaStr +  "-IDDA_ce20" + "_" + j + "-" + (strMode.contains("Positive") ? "P" : "N") +   ".d";
-			PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
-            PoiUtils.createRowEntry(rowCt, CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
-            PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
-           // issue 209
-            wpWriter.workListDataW.add(iddaStr + "\t" + iddaPlatePos + "\t\t" +fileNamePredicateWithIdda(outputFileBase,fileStr)  + "\t\t\t\t\r\n");
+			if (includeSpreadsheet)
+	    		{
+				PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
+	            PoiUtils.createRowEntry(rowCt, CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
+	            PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
+	    		}
+	            // issue 209
+            worklist.getIddaStrList().add(iddaStr + "\t" + iddaPlatePos + "\t\t" +fileNamePredicateWithIdda(outputFileBase,fileStr)  + "\t\t\t\t\r\n");
             rowCt ++;
 		    }
 		// issue 38
@@ -324,19 +338,23 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		    { 
 			if (worklist.getNCE40Reps() == 0)
 				continue;
-			PoiUtils.createBlankRow(rowCt,  sheet);
+			if (includeSpreadsheet)
+				PoiUtils.createBlankRow(rowCt,  sheet);	
 		    if (j==0) // issue 453
 				fileStr = worklist.grabOutputFileNameIDDA() + "-"  + iddaStr + "-" + (strMode.contains("Positive") ? "P" : "N") + ".d"  ;
 			else
 				fileStr = worklist.grabOutputFileNameIDDA() + "-" +iddaStr +  "-IDDA_ce40" + "_" + j + "-" + (strMode.contains("Positive") ? "P" : "N") +   ".d";
-		    PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
-            PoiUtils.createRowEntry(rowCt, CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
-            PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
+		    if (includeSpreadsheet)
+	    		{
+			    PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
+	            PoiUtils.createRowEntry(rowCt, CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
+	            PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
+	    		}
             // issue 209
-            wpWriter.workListDataW.add(iddaStr + (worklist.getSelectedMode().equals("Positive + Negative") ? "," : "\t" ) + iddaPlatePos + "\t\t" +fileNamePredicateWithIdda(outputFileBase,fileStr) + "\t\t\t\t\r\n");
+            worklist.getIddaStrList().add(iddaStr + (worklist.getSelectedMode().equals("Positive + Negative") ? "," : "\t" ) + iddaPlatePos + "\t\t" +fileNamePredicateWithIdda(outputFileBase,fileStr) + "\t\t\t\t\r\n");
             rowCt ++;
-		    }			
-	    }
+		    }
+		}
 	}
 
 

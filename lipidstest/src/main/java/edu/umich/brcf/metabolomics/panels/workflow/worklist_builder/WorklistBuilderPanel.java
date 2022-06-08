@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -26,7 +25,6 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
@@ -45,7 +43,6 @@ import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.PlatePreview
 import edu.umich.brcf.shared.layers.service.SampleAssayService;
 import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
-import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.panels.utilitypanels.ValidatingAjaxExcelDownloadLink;
 import edu.umich.brcf.shared.util.METWorksException;
 import edu.umich.brcf.shared.util.StringParser;
@@ -93,6 +90,7 @@ public class WorklistBuilderPanel extends Panel
    // PageableListView plateListViewWorkList;
     AjaxPagingNavigator ajaxPagingNavigatorWorkList;
     WorklistBuilderForm form;
+    IndicatingAjaxLink pPreview;
     
 	public WorklistBuilderPanel()  { this(""); }
 	
@@ -109,12 +107,10 @@ public class WorklistBuilderPanel extends Panel
 	public WorklistBuilderPanel(String id, WebPage pg, PrepData prepData)
 		{
 		super(id);
-
 		backPage = pg;
 		feedback = new FeedbackPanel("feedback");
 		feedback.setOutputMarkupId(true);
 		add(feedback);
-        
 		form = new WorklistBuilderForm("worklistForm", prepData);
 		
 		add(form);
@@ -319,7 +315,8 @@ public class WorklistBuilderPanel extends Panel
 							@Override
 							public boolean isEnabled()
 								{
-								return worklist.getOpenForUpdates();
+								// issue 229
+								return worklist.getOpenForUpdates() && isPlatformChosenAs("agilent");
 								}						
 							}
 							) ;
@@ -330,13 +327,14 @@ public class WorklistBuilderPanel extends Panel
 			    };			
 		    add(platePreviewPageDialog);	
 				
-		    add(new IndicatingAjaxLink <Void>("openPreview") 
+		    add(pPreview = new IndicatingAjaxLink <Void>("openPreview") 
 			    {			
 				private static final long serialVersionUID = 1L; 
 				@Override
 				public boolean isEnabled()
 					{
-					return (worklist.getItems().size()> 0);
+					// issue 229
+					return (worklist.getItems().size()> 0) && isPlatformChosenAs("agilent");
 					}
 				@Override
 				public void onClick(AjaxRequestTarget target) 			     
@@ -344,7 +342,7 @@ public class WorklistBuilderPanel extends Panel
 					platePreviewPageDialog.open(target);
 				    }
 			    });
-			
+		    pPreview.setOutputMarkupId(true);
 			//modal1 = ModalCreator.createModalWindow("modal1", 800, 320);
 			//add(modal1);
 			
@@ -836,7 +834,7 @@ public class WorklistBuilderPanel extends Panel
 
 		private AddSamplesPanel buildAddSamplesPanel(String id)
 			{	
-			return new AddSamplesPanel(id, worklist)
+			return new AddSamplesPanel(id, worklist,wp)
 				{
 				@Override
 				public boolean isVisible() { return isPlatformChosen() && samplesVisible; }
@@ -852,7 +850,7 @@ public class WorklistBuilderPanel extends Panel
 	
 		private AutoAddControlsPanel buildAddControlGroupsPanel(String id)
 			{
-			return new AutoAddControlsPanel(id, worklist)
+			return new AutoAddControlsPanel(id, worklist, wp )
 				{
 				@Override
 				public boolean isVisible() { return isPlatformChosen() && groupsVisible; }
@@ -864,7 +862,7 @@ public class WorklistBuilderPanel extends Panel
 		
 		private AddControlsPanel buildAddControlsPanel(String id)
 			{
-			return new AddControlsPanel(id, worklist)
+			return new AddControlsPanel(id, worklist, wp)
 				{
 				@Override
 				public boolean isVisible()  {  return isPlatformChosen() && controlsVisible; }
@@ -939,7 +937,9 @@ public class WorklistBuilderPanel extends Panel
 								Map<String, String> idsVsReasearcherNameMap =
 							    sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());								
 							    worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
-								break;
+							    agPanel.updateIddaList();
+							    target.add(agPanel.textAreaIdda);
+							    break;
 								
 						    case "updateStartPlate":
 						    	prevStartPlate = worklist.getStartPlate();
@@ -954,7 +954,9 @@ public class WorklistBuilderPanel extends Panel
 								if (worklist != null)
 									worklist.rebuildEverything();
 								//		worklist.updateOutputFileNames();
-								worklist.updateSampleNamesArray();								
+								worklist.updateSampleNamesArray();	
+							    agPanel.updateIddaList();
+							    target.add(agPanel.textAreaIdda);
 								break;
 
 							case "updateForInjectionVol":
@@ -1006,6 +1008,9 @@ public class WorklistBuilderPanel extends Panel
 								target.add(selectedInstrumentDrop);
 								target.add(selectedModeDrop);
 								target.add(addGroupsPanel);// issue 458
+								agPanel.updateIddaList();
+								target.add(agPanel.textAreaIdda);
+								target.add(pPreview);
 								break;
 
 							case "updateForInstrument":
@@ -1055,6 +1060,8 @@ public class WorklistBuilderPanel extends Panel
 									// issue 205 instruments
 									plateListHandler.updateWorkListItemsMoved(worklist);
 									}
+								agPanel.updateIddaList();
+							    target.add(agPanel.textAreaIdda);
 								/// issue 217
 								break;
 								// issue 166	
@@ -1063,12 +1070,19 @@ public class WorklistBuilderPanel extends Panel
 							    idsVsReasearcherNameMap =
 								    sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());
 							    worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
+							   // issue 229 
+							    for (WorklistItemSimple wi : worklist.getItems())
+							    	wi.setComments(wi.calcCommentToolTip(worklist, wi));					    
 							    break;
 							case "updateForMode":
 								if (worklist != null)
 									worklist.updateOutputFileNames();
+								agPanel.updateIddaList();
+							    target.add(agPanel.textAreaIdda);
 								break;
 							case "updateForPlatePos":
+								agPanel.updateIddaList();
+							    target.add(agPanel.textAreaIdda);
 								break;
 							}
 						
@@ -1314,7 +1328,7 @@ public class WorklistBuilderPanel extends Panel
 				if (Integer.parseInt(worklist.getStartPlate()) > 4)
 		            worklist.setStartPlate("1");			
 				}
-			}		
+			}			
 		}
 
 	}

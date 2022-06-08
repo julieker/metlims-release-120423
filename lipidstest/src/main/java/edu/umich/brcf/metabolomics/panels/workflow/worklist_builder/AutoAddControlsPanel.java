@@ -6,22 +6,14 @@
 ////////////////////////////////////////////////////
 package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 
-import java.awt.Event;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import edu.umich.brcf.shared.panels.login.MedWorksSession;
-
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.Page;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
@@ -30,15 +22,10 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.request.Request;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-
 import edu.umich.brcf.shared.layers.domain.Sample;
 import edu.umich.brcf.shared.layers.service.ControlService;
 import edu.umich.brcf.shared.layers.service.SampleService;
@@ -46,10 +33,9 @@ import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.util.FormatVerifier;
 import edu.umich.brcf.shared.util.StringParser;
 import edu.umich.brcf.shared.util.io.StringUtils;
-
+import edu.umich.brcf.shared.util.sheetwriters.MsWorklistWriter;
 import com.googlecode.wicket.jquery.core.JQueryBehavior;
 import com.googlecode.wicket.jquery.core.Options;
-import com.googlecode.wicket.jquery.ui.form.button.AjaxButton;
 import com.googlecode.wicket.jquery.ui.widget.dialog.DialogButton;
 
 
@@ -102,8 +88,9 @@ public class AutoAddControlsPanel extends Panel
 	private String example = "";
 	private boolean prevDefaultPool = true ; // issue 169
 	PlateListHandler plateListHandler ;
+	MsWorklistWriter msWorklistWriter; 
     
-	public AutoAddControlsPanel(String id, final WorklistSimple worklist)
+	public AutoAddControlsPanel(String id, final WorklistSimple worklist, WorklistBuilderPanel wp)
 		{
 		super(id);
 		IndicatingAjaxLink buildButton,clearButton;	
@@ -133,8 +120,8 @@ public class AutoAddControlsPanel extends Panel
 		// issue 13
 		container.add(poolTypeADrop = buildPoolTypeDropdownA("poolTypeADrop","poolTypeA"));
 		container.add(poolTypeBDrop = buildPoolTypeDropdownB("poolTypeBDrop","poolTypeB"));
-		container.add(buildButton = buildBuildButton("buildButton",container, worklist));
-		container.add(clearButton = buildClearButton("clearButton",container));
+		container.add(buildButton = buildBuildButton("buildButton",container, worklist, wp));
+		container.add(clearButton = buildClearButton("clearButton",container, wp));
 		// issue 56
 	
 		
@@ -673,7 +660,7 @@ public class AutoAddControlsPanel extends Panel
 	    }
 	
 	// issue 394
-	private IndicatingAjaxLink buildBuildButton(String id, final WebMarkupContainer container , final WorklistSimple worklist )
+	private IndicatingAjaxLink buildBuildButton(String id, final WebMarkupContainer container , final WorklistSimple worklist , WorklistBuilderPanel wp)
 	    {
 	    return new IndicatingAjaxLink <Void> (id)
 		    {
@@ -695,6 +682,8 @@ public class AutoAddControlsPanel extends Panel
 	        @Override
 	        public void onClick(AjaxRequestTarget target)
 		        {
+	            originalWorklist.getControlCommentsMap().clear();
+	        	worklist.getIddaStrList().clear();
 	    		// issue 509
 	        	if (!(poolSpacingA > 0) &&  ( worklist.getMasterPoolsAfter() > 0  ||  worklist.getMasterPoolsBefore()  > 0))	        		
 	        		{
@@ -750,9 +739,16 @@ public class AutoAddControlsPanel extends Panel
 	        		{
 	        		target.appendJavaScript(StringUtils.makeAlertMessage("Pool A and Pool B are both :" + StringParser.parseId(poolTypeB) + " Please make sure you choose a different pool for Pool A and Pool B"));
 	        		return;
-	        		}	
+	        		}
+	        	// issue 229
+	        	for (WorklistItemSimple wi : originalWorklist.getItems())
+	        		{
+	        		if (wi.getRepresentsControl())
+	        			originalWorklist.getControlCommentsMap().put(wi.getSampleName(), wi.getComments());
+	        		}
 	        	originalWorklist.clearControlGroups(); // issue 431
 			    addStandardsToAgilentList(worklist);
+			    		   
 	        	// issue 22
 	        	Map<String, Integer> controlTypeMap = worklist.buildControlTypeMap();
 	        	int numberDistinctControls = controlTypeMap.size()  ;
@@ -771,8 +767,15 @@ public class AutoAddControlsPanel extends Panel
 		        		originalWorklist.clearOutPoolIDDAControls();
 		        		refreshPage(target);
 		        		return;	
-			        	}	
-		        worklist.rebuildEverything();
+			        	}		
+		        worklist.rebuildEverything();		    
+		   	 // issue 229
+			    for (WorklistItemSimple wi : originalWorklist.getItems())
+	        		{
+	        		if (wi.getRepresentsControl())
+	        			wi.setComments(originalWorklist.getControlCommentsMap().get(wi.getSampleName()));
+	        		}
+		        		        
 		        // issue 166
 		      	// issue 153
 	        	if (originalWorklist.countOfSamplesForItems(originalWorklist.getItems())+  (originalWorklist.buildControlTypeMap().get(null) != null ? originalWorklist.buildControlTypeMap().size()-1 : originalWorklist.buildControlTypeMap().size()  ) > (originalWorklist.getMaxStartPlate() * originalWorklist.getMaxItemsAsInt()))
@@ -806,12 +809,18 @@ public class AutoAddControlsPanel extends Panel
 				    plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);
 			    	}
 			    plateListHandler.updateWorkListItemsMoved(worklist);
-			    refreshPage(target);	        	
+			    msWorklistWriter = new MsWorklistWriter (worklist, null);
+			    worklist.getIddaStrList().clear();
+			    if (!worklist.getIs96Well())
+					msWorklistWriter.printOutIDDA(null, null, 0, worklist.getSelectedMode(), worklist.getItems().get(0).getOutputFileName(), false ); 
+			    wp.form.agPanel.updateIddaList();
+			    refreshPage(target);	
+			    target.add(wp.form.agPanel.textAreaIdda);
 		        }
 	        };
         }
 	
-	private IndicatingAjaxLink buildClearButton(String id, final WebMarkupContainer container)
+	private IndicatingAjaxLink buildClearButton(String id, final WebMarkupContainer container, WorklistBuilderPanel wp)
 		{
 		return new IndicatingAjaxLink<Void>(id)
 			{
@@ -822,11 +831,14 @@ public class AutoAddControlsPanel extends Panel
 				originalWorklist.updateSampleNamesArray();
 				originalWorklist.setOpenForUpdates(true);
 				originalWorklist.updatePlatePositions(); // issue 417 and 409
+				originalWorklist.getIddaStrList().clear();
+				wp.form.agPanel.getContainer().remove(wp.form.agPanel.textAreaIdda);
+				wp.form.agPanel.getContainer().add( wp.form.agPanel.textAreaIdda = wp.form.agPanel.initIDDA(originalWorklist.getIddaStrList()));
+				wp.form.agPanel.textAreaIdda.setOutputMarkupId(true);
 				refreshPage(target);
 				}
 			};
 		}
-	
 	
 	// issue 394 391 324
     protected void addStandardsToAgilentList(WorklistSimple worklist)
@@ -1757,6 +1769,7 @@ public class AutoAddControlsPanel extends Panel
 				target.add(sibContainers.get(i));
 	     if (container != null)
 			target.add(container);
+	     target.add();
 		}
 
 	public Integer getNStandards()

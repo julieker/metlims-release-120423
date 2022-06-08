@@ -109,9 +109,26 @@ public class WorklistSimple implements Serializable
 	private String startPlate = "1";
 	List <WorklistItemSimple> itemsMovedNewPositions = new ArrayList <WorklistItemSimple> ();
 	Map<String, String> controlsMovedMap = new HashMap<String, String> ();
+	// issue 229 
+    private List <String> iddaStrList = new ArrayList <String> ();
+ // issue 229 
+    Map<String, String> controlCommentsMap = new HashMap<String, String> ();
+    
+    
+    
+    // issue 229
+	public List<String> getIddaStrList()
+		{
+		return iddaStrList;
+		}
 	
-	// issue 179
+    // issue 229
+	public void setIddaStrList(List <String> iddaStrList )
+		{
+		this.iddaStrList =  iddaStrList;
+		}
 	
+	// issue 179	
 	private boolean changeDefaultInjVolume = false;
 	// issue 186
 	
@@ -126,6 +143,18 @@ public class WorklistSimple implements Serializable
 	public void setControlsMovedMap (Map<String, String> controlsMovedMap) 
 		{
 		this.controlsMovedMap = controlsMovedMap;
+		}
+	
+	// issue 205
+	public Map<String, String> getControlCommentsMap()
+		{
+		return controlCommentsMap;
+		}
+	
+	// issue 205
+	public void setControlCommentsMapp (Map<String, String> controlCommentsMap) 
+		{
+		this.controlCommentsMap = controlCommentsMap;
 		}
 	
 	// issue 205

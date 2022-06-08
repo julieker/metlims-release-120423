@@ -8,9 +8,6 @@ package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -27,23 +24,18 @@ import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.markup.html.navigation.paging.IPagingLabelProvider;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.validation.validator.StringValidator;
-
 import edu.umich.brcf.metabolomics.layers.service.GeneratedWorklistService;
-import edu.umich.brcf.metabolomics.panels.admin.accounts.UserRegistrationPage;
 import edu.umich.brcf.shared.layers.service.SampleAssayService;
 import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.panels.utilitypanels.AddNotesPage;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.util.interfaces.ICommentObject;
-import edu.umich.brcf.shared.util.io.StringUtils;
-
-
+import edu.umich.brcf.shared.util.sheetwriters.MsWorklistWriter;
 
 public abstract class BaseWorklistPanel extends Panel
 	{
@@ -59,11 +51,15 @@ public abstract class BaseWorklistPanel extends Panel
 	protected WorklistSimple worklist;
 	private   WebMarkupContainer container;
 	protected PageableListView worklistView;
+	protected PageableListView iddalistView;
 	protected PagingNavigator pagingNavigator;
 	protected ModalWindow modal1;
 	protected List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
     protected ICommentObject commentObject;
     private int maxLength = 84; // issue 227
+    WebMarkupContainer iddaInfo;;
+    TextArea textAreaIdda;
+    
 	public BaseWorklistPanel(String id)
 		{
 		this(id, null);
@@ -71,18 +67,13 @@ public abstract class BaseWorklistPanel extends Panel
 
 	public BaseWorklistPanel(String id, WorklistSimple w)
 		{
-		super(id);
-		
-		
+		super(id);		
 		container = new WebMarkupContainer("container");
 		add(container);
-
 		modal1 = ModalCreator.createModalWindow("modal1", 800, 320);
 		add(modal1);
-
 		modal1.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() 
-			{
-		
+			{		
 			@Override
 			public void onClose(AjaxRequestTarget target)  
 				{
@@ -93,7 +84,6 @@ public abstract class BaseWorklistPanel extends Panel
 			});
 		
 		this.worklist = w;
-
 		container.add(this.buildSelectAllBox(id, container));
 		container.add(this.buildIncludeSampleName(id, container));// issue 288
 		// issue 32 
@@ -101,15 +91,32 @@ public abstract class BaseWorklistPanel extends Panel
 	    // issue 32	
 		container.add(this.buildCustomDirectoryName( container));
 		container.add(this.buildCustomDirectoryLabel( container));
-		
-		
 		container.add(worklistView = buildListView());
 		worklistView.setOutputMarkupId(true);
 		container.add(new Label("tableLabel", new Model("Worklist Preview")));
 		container.add(pagingNavigator = buildPagingNavigator("navigator",worklistView));
 		pagingNavigator.setOutputMarkupId(true);
-
-		container.setOutputMarkupId(true);
+		container.setOutputMarkupId(true);			
+		try 
+			{				
+			container.add(textAreaIdda = initIDDA(worklist.getIddaStrList()));
+			textAreaIdda.setOutputMarkupId(true);
+			Label iddaLabel =  new Label("iddaLabel",Model.of("IDDA"))
+				{
+				public boolean isVisible() 
+					{
+					// return worklist.getStartingPoint() > 0 &&  worklist.getIddaStrList().size() > 0 && worklist.getControlGroupsList().size() > 0 && doControlTypesContainMP ();// item.getRepresentsControl()
+					return worklist.getStartingPoint() > 0 &&  worklist.getIddaStrList().size() > 0 && worklist.getControlGroupsList().size() > 0;
+					}
+				};
+			container.add(iddaLabel);	
+			}
+		catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		
+		//iddalistView.setOutputMarkupId(true);		
 		}
 	
 	public PageableListView buildListView()
@@ -123,7 +130,7 @@ public abstract class BaseWorklistPanel extends Panel
 				}
 			};
 		}
-	
+		
 	protected AjaxLink buildCommentsButton(String id, final WorklistItemSimple item)
 		{
 		return new AjaxLink <Void>(id)
@@ -301,6 +308,8 @@ public abstract class BaseWorklistPanel extends Panel
 	    		switch (response)
 					{
 					case "updateCustomDirectory":
+						/////////////////////////////
+						updateIddaList ();						
 						target.add(container);
 						break;
 					}
@@ -336,18 +345,15 @@ public abstract class BaseWorklistPanel extends Panel
 			});
 		}
 
-
 	public WebMarkupContainer getContainer()
 		{
 		return container;
 		}
-
 	
 	public PageableListView getWorklistView()
 		{
 		return worklistView;
 		}
-
 
 	// TO DO : Move to resizable dialog box
 	private void setPageDimensions(ModalWindow modal1, double pctWidth, double pctHeight)
@@ -358,13 +364,45 @@ public abstract class BaseWorklistPanel extends Panel
 		modal1.setInitialWidth(((int) Math.round(pageWidth * pctWidth)));
 		}
 
-	
 	public void addSibContainer(WebMarkupContainer c)
 		{
 		sibContainers.add(c);
 		}
-
-	
+	protected TextArea initIDDA(List <String> iddaStrValue)
+		{
+		//issue 410
+		String iddaFormattedStr = "";
+		if (worklist == null)
+			return new TextArea("iddastr",Model.of (" "));
+		for (String str : worklist.getIddaStrList())
+			{
+			iddaFormattedStr = iddaFormattedStr + str ;
+			}
+		TextArea iddaField =  new TextArea("iddastr",Model.of(iddaFormattedStr))
+			{
+			public boolean isVisible() 
+				{
+				return worklist.getStartingPoint() > 0 &&  worklist.getIddaStrList().size() > 0 && worklist.getControlGroupsList().size() > 0;
+				}
+			};
+					
+		return iddaField;			
+		}
+	    
+	// issue 229
+	public void updateIddaList ()
+		{
+		MsWorklistWriter  msWorklistWriter = new MsWorklistWriter (worklist, null);
+		worklist.getIddaStrList().clear();
+		if (!worklist.getIs96Well())
+			{
+		    if (worklist.getItems() != null && worklist.getItems().size()> 0 )
+			msWorklistWriter.printOutIDDA(null, null, 0, worklist.getSelectedMode(), worklist.getItems().get(0).getOutputFileName(), false );
+			}
+		getContainer().remove(textAreaIdda);
+	    getContainer().add( textAreaIdda = initIDDA(worklist.getIddaStrList()));
+	    textAreaIdda.setOutputMarkupId(true);
+		}
 	abstract void initListItem(ListItem listItem, WorklistItemSimple item);
 	}
 

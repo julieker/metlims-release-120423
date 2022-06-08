@@ -31,8 +31,8 @@
 					 
 					<th class = "blueTableHeader" style = "width : 23%; ">Sample Name</th>
 					-->
-					<th class = "blueTableHeader" style = "width : 1%; ">Sample Name</th>
-					<th class = "blueTableHeader" style = "width : 1%">Sample Pos</th>
+					<th class = "blueTableHeader" style = "width : 2%; ">Sample Name</th>
+					<th class = "blueTableHeader" style = "width : 1%">Pos</th>
 					<th class = "blueTableHeader" style = "width : 5%;  ">Inj Vol (&micro;l)</th> 
 					<th class = "blueTableHeader" title = "Method" style = "width : 1%">M</th> 
 					<th class = "blueTableHeader" title = "Override" style = "width: 1%">O</th> 
@@ -82,11 +82,26 @@
 					<td style = "text-align : center; background : white"> 
 						<span style="cursor:not-allowed">
 							<input wicket:id = "notes" value = "Comment..."  style =  "background : #F4GGF4; text-align: center;
-							 padding-right :2px; width : 50%"   type = "button"/>
+							 padding-right :2px; width : 60%"   type = "button"/>
 						 </span>
 					</td>	
 				</tr>
-				</wicket:extend>
+				<table>
+			    
+			    <tr>
+				<td style = "text-align : left; width : 33%">
+					<span wicket:id = "iddaLabel" style = "padding-left : 1%; color : #0000cc; font-weight : 400; font-size : 110%">IDDA:</span>
+				</td>
+				</tr>
+			   		    
+				<tr>
+				<td><textarea wicket:id = "iddastr" style = "overflow: scroll; width : 1000px;  height : 300px; background:#E4E4E4" cols = "40" rows = "7" ></textarea></td>
+                <!--  
+                <td> <input wicket:id = "iddastr" disabled  class = "tableField" disabled type = "text"/></td>
+				-->
+				</tr>
+				</table>
+			</wicket:extend>	
 			</table>
 	
 			</div>

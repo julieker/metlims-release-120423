@@ -10,65 +10,37 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.Page;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-
-import edu.umich.brcf.metabolomics.layers.domain.GCDerivatizationMethod;
-import edu.umich.brcf.metabolomics.layers.dto.GCDerivatizationDTO;
-import edu.umich.brcf.metabolomics.panels.lims.prep.EditGCPrep;
 import edu.umich.brcf.shared.layers.service.AssayService;
 import edu.umich.brcf.shared.layers.service.ControlService;
 import edu.umich.brcf.shared.layers.service.ExperimentService;
 import edu.umich.brcf.shared.layers.service.SampleService;
-import edu.umich.brcf.shared.panels.login.MedWorksSession;
-import edu.umich.brcf.shared.panels.utilitypanels.ConfirmBox;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.util.io.StringUtils;
 import edu.umich.brcf.shared.util.utilpackages.ListUtils;
-import edu.umich.brcf.shared.layers.dto.ExperimentDTO;
-
 import com.googlecode.wicket.jquery.core.JQueryBehavior;
 import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.form.button.AjaxButton;
 import com.googlecode.wicket.jquery.ui.panel.JQueryFeedbackPanel;
-import com.googlecode.wicket.jquery.ui.widget.dialog.AbstractDialog;
-import com.googlecode.wicket.jquery.ui.widget.dialog.AbstractFormDialog;
 import com.googlecode.wicket.jquery.ui.widget.dialog.DialogButton;
-import com.googlecode.wicket.jquery.ui.widget.dialog.DialogButtons;
-import com.googlecode.wicket.jquery.ui.widget.dialog.DialogIcon;
-import com.googlecode.wicket.jquery.ui.widget.dialog.InputDialog;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
-import com.googlecode.wicket.jquery.ui.form.button.AjaxButton;
-import com.googlecode.wicket.jquery.ui.panel.JQueryFeedbackPanel;
-import com.googlecode.wicket.jquery.ui.widget.dialog.DialogButton;
-import com.googlecode.wicket.jquery.ui.form.button.IndicatingAjaxButton;
 
 public class AddSamplesPanel extends Panel
 	{
@@ -89,7 +61,7 @@ public class AddSamplesPanel extends Panel
 	final Form<Void> form = new Form<Void>("form");
 	final FeedbackPanel feedback = new JQueryFeedbackPanel("feedback");
 	String buttonString = "";
-
+	
 	public final class AddSamplesRandomizationLoaderForm extends Form
 	    {
 		public AddSamplesRandomizationLoaderForm (String id)
@@ -127,7 +99,7 @@ public class AddSamplesPanel extends Panel
 		super(id);
 		}
 
-	public AddSamplesPanel(String id, WorklistSimple worklist)
+	public AddSamplesPanel(String id, WorklistSimple worklist, WorklistBuilderPanel wp)
 		{
 		super(id);	
 		// issue 46
@@ -271,8 +243,7 @@ public class AddSamplesPanel extends Panel
 			protected void onSubmit(AjaxRequestTarget target, DialogButton button) {
 				// TODO Auto-generated method stub			
 			    }
-		    };		
-			
+		    };					
 		sampleGroupsList = originalWorklist.getSampleGroupsList();
 		for (int i = 0; i < 1; i++)
 			sampleGroupsList.add(new WorklistSampleGroup(getDefaultAssay(), originalWorklist));
@@ -282,20 +253,19 @@ public class AddSamplesPanel extends Panel
 		// issue 46
 		container.add(dialogUpload);
 		container.add(modalRandom);
-		container.add(dialogUserDefinedControls);
-		
+		container.add(dialogUserDefinedControls);		
 		container.add(feedback.setOutputMarkupId(true));	
 		container.add(sampleGroupsListView = new ListView("sampleGroupsListView", new PropertyModel(worklist, "sampleGroupsList"))
 			{
 			public void populateItem(ListItem listItem)
 				{
 				WorklistSampleGroup item = (WorklistSampleGroup) listItem.getModelObject();
-				listItem.add(selectedExperimentDrop = buildExperimentDropdown("experimentDropdown", item, "experimentId"));
-				listItem.add(buildAssayDropdown("assayDropdown", item, "assayType"));
-				listItem.add(randomizationDrop = buildRandomizationDropdown( "randomizationDropdown", item, "randomizationType", availableRandomizations));
+				listItem.add(selectedExperimentDrop = buildExperimentDropdown("experimentDropdown", item, "experimentId", wp));
+				listItem.add(buildAssayDropdown("assayDropdown", item, "assayType", wp));
+				listItem.add(randomizationDrop = buildRandomizationDropdown( "randomizationDropdown", item, "randomizationType", availableRandomizations, wp));
 				listItem.add(buildDeleteButton("deleteButton", item,container));
 				listItem.add(buildAddButton("addButton", item, container));
-				listItem.add(buildBuildButton("buildButton", item, container));
+				listItem.add(buildBuildButton("buildButton", item, container, wp));
 				listItem.add(buildClearButton("clearButton", item, container));
 				listItem.add(buildRandomizationLabel("randomizationLabel"));
 				listItem.add(new AjaxButton("openUpload") {			
@@ -333,7 +303,7 @@ public class AddSamplesPanel extends Panel
 			};
 		}
 	
-	private DropDownChoice buildAssayDropdown(final String id, final WorklistSampleGroup item, String propertyName)
+	private DropDownChoice buildAssayDropdown(final String id, final WorklistSampleGroup item, String propertyName, WorklistBuilderPanel wp)
 		{
 		DropDownChoice drp = new DropDownChoice(id, new PropertyModel(item, propertyName), new LoadableDetachableModel<List<String>>()
 			{
@@ -345,13 +315,13 @@ public class AddSamplesPanel extends Panel
 				}
 			});
         // issue 464
-		drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForAssayDrop", item));
+		drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForAssayDrop", item, wp));
 		return drp;
 		}
 
 	// issue 307
 	private DropDownChoice buildRandomizationDropdown(final String id, final WorklistSampleGroup item, String propertyName,
-		List<String> choices)
+		List<String> choices, WorklistBuilderPanel wp)
 		{
 		DropDownChoice drp = new DropDownChoice(id, new PropertyModel(item, propertyName), choices)
 			{
@@ -359,11 +329,11 @@ public class AddSamplesPanel extends Panel
 			};
 		drp.setOutputMarkupId(true);
 		// Issue 464
-		drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForRandomDrop", item));
+		drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForRandomDrop", item, wp));
 		return drp;
 		}
 	
-	private DropDownChoice buildExperimentDropdown(final String id, final WorklistSampleGroup item, String propertyName)
+	private DropDownChoice buildExperimentDropdown(final String id, final WorklistSampleGroup item, String propertyName, WorklistBuilderPanel wp)
 		{
 		selectedExperimentDrop = new DropDownChoice(id, new PropertyModel(item, propertyName), new LoadableDetachableModel<List<String>>()
 			{
@@ -374,7 +344,7 @@ public class AddSamplesPanel extends Panel
 				}
 			});
         // issue 464
-		selectedExperimentDrop.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForExperimentDrop", item));
+		selectedExperimentDrop.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForExperimentDrop", item, wp));
 		return selectedExperimentDrop;
 		}
 
@@ -414,7 +384,7 @@ public class AddSamplesPanel extends Panel
 		}
 
 	// issue 464
-	private IndicatingAjaxLink buildBuildButton(String id, final WorklistSampleGroup item, final WebMarkupContainer container)
+	private IndicatingAjaxLink buildBuildButton(String id, final WorklistSampleGroup item, final WebMarkupContainer container, WorklistBuilderPanel wp)
 		{
 		return new IndicatingAjaxLink <Void> (id)
 			{
@@ -506,7 +476,8 @@ public class AddSamplesPanel extends Panel
 			    	plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);	
 			    	}
 			    	
-			    plateListHandler.updateWorkListItemsMoved(originalWorklist);				
+			    plateListHandler.updateWorkListItemsMoved(originalWorklist);	
+			    wp.form.agPanel.updateIddaList();
 				}
 			protected void onComponentTag(final ComponentTag tag)
 				{
@@ -544,9 +515,8 @@ public class AddSamplesPanel extends Panel
 			};
 		}
 
-	
 	private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior(final String event, final String response,
-	final WorklistSampleGroup item)
+	final WorklistSampleGroup item, WorklistBuilderPanel wp)
 		{
 		return new AjaxFormComponentUpdatingBehavior(event)
 			{
@@ -555,7 +525,7 @@ public class AddSamplesPanel extends Panel
 				{
 				switch (response)
 					{
-					case "updateForRandomDrop":  
+					case "updateForRandomDrop": 
 						originalWorklist.controlsMovedMap.clear();
 						item.setIsRandomized(false);
 						originalWorklist.setIs96Well(false);// issue 212
@@ -580,7 +550,9 @@ public class AddSamplesPanel extends Panel
 									+ "will be randomized. If your experiment requires multiple batches, please be sure to save and use this worklist for all of them.  If you re-randomize, you may run some samples twice and miss others entirely.')");
 							}	
 						item.setExpRandom(null);
-						originalWorklist.clearControlGroups(); break;
+						originalWorklist.clearControlGroups(); 
+						wp.form.agPanel.updateIddaList();
+						break;
 
 					case "updateForAssayDrop":
 						originalWorklist.setIs96Well(false);// issue 212
@@ -613,6 +585,7 @@ public class AddSamplesPanel extends Panel
 						// issue 32
 						originalWorklist.setCustomDirectoryStructureName("<custom directory>");
 						originalWorklist.setIsCustomDirectoryStructure(false);
+						wp.form.agPanel.updateIddaList();
 						break;
 
 					case "updateForExperimentDrop":
@@ -645,9 +618,11 @@ public class AddSamplesPanel extends Panel
 							// issue 32
 							originalWorklist.setCustomDirectoryStructureName("<custom directory>");
 							originalWorklist.setIsCustomDirectoryStructure(false);
+							wp.form.agPanel.updateIddaList();
 							} 
 						catch (Exception e)
 							{
+							e.printStackTrace();
 							target.appendJavaScript("alert('Experiment " + eid + " has missing information and cannot be accessed at this time');");
 							}
 
@@ -680,13 +655,11 @@ public class AddSamplesPanel extends Panel
 		return defaultAssay;
 		}
 
-	
 	public void setDefaultAssay(String s)
 		{
 		defaultAssay = s;
 		}
 
-	
 	private void refreshPage(AjaxRequestTarget target)
 		{
 		originalWorklist.updateIndices();
