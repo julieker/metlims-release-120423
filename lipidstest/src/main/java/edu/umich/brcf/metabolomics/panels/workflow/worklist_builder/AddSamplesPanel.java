@@ -423,8 +423,19 @@ public class AddSamplesPanel extends Panel
 				PlateListHandler plateListHandler = null;
 				originalWorklist.getSampleGroup(0).setExpRandom(globalRand);
 				originalWorklist.rebuildEverything();
+				if (originalWorklist.countOfSamplesForItems(originalWorklist.getItems())+  (originalWorklist.buildControlTypeMap().get(null) != null ? originalWorklist.buildControlTypeMap().size()-1 : originalWorklist.buildControlTypeMap().size()  ) > (originalWorklist.getMaxNumberSupportedPlates () * originalWorklist.getMaxItemsAsInt()))
+					{
+					//originalWorklist.setOpenForUpdates(false);
+					originalWorklist.getItems().clear();
+					String msg =  "alert('This worklist currently contains more than:" + originalWorklist.getMaxNumberSupportedPlates() + " plates.  This is more than the maximum supported number of plates.  Please choose another experiment or do a custom subset upload." +  "')";
+					target.appendJavaScript(msg); 
+					target.add(wp);
+					return;
+				    }
+				
 				Map<String, String> idsVsReasearcherNameMap =
 				        sampleService.sampleIdToResearcherNameMapForExpId(originalWorklist.getSampleGroup(0).getExperimentId());								
+				
 				originalWorklist.populateSampleName(originalWorklist,idsVsReasearcherNameMap );
 				if (originalWorklist.countOfSamplesForItems(originalWorklist.getItems())+  (originalWorklist.buildControlTypeMap().get(null) != null ? originalWorklist.buildControlTypeMap().size()-1 : originalWorklist.buildControlTypeMap().size()  ) > (originalWorklist.getMaxStartPlate() * originalWorklist.getMaxItemsAsInt()))
 					{

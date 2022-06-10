@@ -47,6 +47,7 @@ public class WorklistSimple implements Serializable
 	int maxSamples96Wells = 88;
 	// issue 217
 	private int maxStartPlate = 4;	
+	private int maxNumberSupportedPlates = 6;
 	// JAK new preview 
 	private String maxItems = "96";
 	private Boolean allSelected = false;
@@ -210,9 +211,16 @@ public class WorklistSimple implements Serializable
 	public void setMaxStartPlate (int maxStartPlate)
 		{
 		this.maxStartPlate = maxStartPlate;
+		}	
+	// issue 229
+	public int getMaxNumberSupportedPlates ()
+		{
+		return maxNumberSupportedPlates;
 		}
-	
-	
+	public void setmaxNumberSupportedPlates (int maxNumberSupportedPlates)
+		{
+		this.maxNumberSupportedPlates = maxNumberSupportedPlates;
+		}	
 	// issue 6
 	public boolean getChosenOtherSample ()
 		{
