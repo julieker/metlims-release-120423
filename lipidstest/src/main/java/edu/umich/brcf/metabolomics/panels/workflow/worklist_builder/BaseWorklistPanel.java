@@ -57,7 +57,7 @@ public abstract class BaseWorklistPanel extends Panel
 	protected List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
     protected ICommentObject commentObject;
     private int maxLength = 84; // issue 227
-    WebMarkupContainer iddaInfo;;
+    WebMarkupContainer iddaInfo;
     TextArea textAreaIdda;
     
 	public BaseWorklistPanel(String id)
@@ -106,14 +106,14 @@ public abstract class BaseWorklistPanel extends Panel
 				public boolean isVisible() 
 					{
 					// return worklist.getStartingPoint() > 0 &&  worklist.getIddaStrList().size() > 0 && worklist.getControlGroupsList().size() > 0 && doControlTypesContainMP ();// item.getRepresentsControl()
-					return worklist.getStartingPoint() > 0 &&  worklist.getIddaStrList().size() > 0 && worklist.getControlGroupsList().size() > 0;
+					return !worklist.getIs96Well() && worklist.getStartingPoint() > 0 &&  worklist.getIddaStrList().size() > 0 && worklist.getControlGroupsList().size() > 0;
 					}
 				};
 			container.add(iddaLabel);	
 			}
 		catch (Exception e)
 			{
-				e.printStackTrace();
+			e.printStackTrace();
 			}
 		
 		//iddalistView.setOutputMarkupId(true);		
@@ -382,7 +382,8 @@ public abstract class BaseWorklistPanel extends Panel
 			{
 			public boolean isVisible() 
 				{
-				return worklist.getStartingPoint() > 0 &&  worklist.getIddaStrList().size() > 0 && worklist.getControlGroupsList().size() > 0;
+				// issue 229
+				return !worklist.getIs96Well() && worklist.getStartingPoint() > 0 &&  worklist.getIddaStrList().size() > 0 && worklist.getControlGroupsList().size() > 0;
 				}
 			};
 					
