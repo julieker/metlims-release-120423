@@ -150,10 +150,7 @@ public class PlatePreviewPage extends AbstractFormDialog
 		 		replace(lhead10 = new Label("plateHead10", "10"));
 			    replace(lhead11 = new Label("plateHead11", "11"));
 			    replace(lhead12 = new Label("plateHead12", "12"));
-		 		}
-			
-			
-			
+		 		}			
 			for (int i = 0; i < items.size(); i++)
 				{
 				listCopy.add(items.get(i).makeCopy());
@@ -163,14 +160,11 @@ public class PlatePreviewPage extends AbstractFormDialog
 				items.clear();
 				for (int i = 0; i < listCopy.size(); i++)
 					items.add(listCopy.get(i));
-				}
-						
+				}						
 	    	int nRowsNeeded = (int) Math.ceil((spacedg.size() > 0 ? spacedg.size() : items.size()) / (nItemsPerRow * 1.0));
 			int nPlatesNeeded = (int) Math.ceil(nRowsNeeded / (nItemsPerCol * 1.0));
-			int nRowsToCreate = nPlatesNeeded * nItemsPerCol;	
-				
-			// issue 205
-		    
+			int nRowsToCreate = nPlatesNeeded * nItemsPerCol;					
+			// issue 205		    
 			idsVsReasearcherNameMap =
 				     sampleService.sampleIdToResearcherNameMapForExpId(ws.getSampleGroup(0).getExperimentId());								
 			ws.populateSampleName(ws,idsVsReasearcherNameMap ); 
@@ -215,8 +209,7 @@ public class PlatePreviewPage extends AbstractFormDialog
 								listItem.add(buildPlateLabelWorklistFieldNonStatic(gBothQCMPandMP, label, item.getItem(i), "sampleName",i, item.getRowIndex(), ws));
 								}	
 							}
-						}	
-										    
+						}											    
 					    if (workListBuilderPanel.change96WellBox.getDefaultModelObjectAsString().equals("false"))
 					       try
 						   		{
@@ -229,9 +222,7 @@ public class PlatePreviewPage extends AbstractFormDialog
 						        listItem.replace(lpos10 = buildPlateLabelWorklistFieldNonStatic(gBothQCMPandMP, "position10", new WorklistItemSimple(), "sampleName", 0, item.getRowIndex(), ws));
 						        listItem.replace(lpos11 =buildPlateLabelWorklistFieldNonStatic(gBothQCMPandMP, "position11", new WorklistItemSimple(), "sampleName", 0, item.getRowIndex(), ws));
 						    	listItem.replace(lpos12 = buildPlateLabelWorklistFieldNonStatic(gBothQCMPandMP, "position12", new WorklistItemSimple(), "sampleName", 0, item.getRowIndex(),ws));
-						    	}
-					    
-					    
+						    	}				    
 						if (workListBuilderPanel.change96WellBox.getDefaultModelObjectAsString().equals("false"))
 						    {
 							lpos10.add(AttributeAppender.replace("style", "display:none"));
@@ -241,8 +232,7 @@ public class PlatePreviewPage extends AbstractFormDialog
 							lhead11.add(AttributeAppender.replace("style", "display:none"));
 							lhead12.add(AttributeAppender.replace("style", "display:none"));						
 						    }
-				    }
-				
+				    }				
 				};
 			}
 /////////////////////////////////////////////////////////////////////

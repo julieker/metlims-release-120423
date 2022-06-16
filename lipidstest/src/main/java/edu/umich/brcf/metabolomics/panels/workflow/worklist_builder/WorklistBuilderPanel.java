@@ -39,7 +39,6 @@ import edu.umich.brcf.metabolomics.layers.dto.GeneratedWorklistDTO;
 import edu.umich.brcf.metabolomics.layers.dto.GeneratedWorklistItemDTO;
 import edu.umich.brcf.metabolomics.layers.service.GeneratedWorklistService;
 import edu.umich.brcf.metabolomics.layers.service.InstrumentService;
-import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.PlatePreviewPage.PlatePreviewForm;
 import edu.umich.brcf.shared.layers.service.SampleAssayService;
 import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
@@ -68,7 +67,6 @@ public class WorklistBuilderPanel extends Panel
 	
 	String prevStartPlate;
 	private static final long serialVersionUID = -2719126649022550590L;
-	private WebPage backPage;
 	private FeedbackPanel feedback;
     private int controlsLimit = 495;
 	static final String WORKLIST_DATE_FORMAT = "MM/dd/yy";
@@ -78,7 +76,6 @@ public class WorklistBuilderPanel extends Panel
     WorklistBuilderPanel worklistBuilder = this;
     public List <String> workListDataW = new ArrayList <String> ();
     WorklistBuilderPanel wp = this;
-    PlatePreviewForm pltPreviewForm;
     List <WorklistItemSimple> lgetItems;
     String prevStandardString = "";
     public WorklistSimple worklistg;
@@ -91,7 +88,6 @@ public class WorklistBuilderPanel extends Panel
     AjaxPagingNavigator ajaxPagingNavigatorWorkList;
     WorklistBuilderForm form;
     IndicatingAjaxLink pPreview;
-    
 	public WorklistBuilderPanel()  { this(""); }
 	
 	public WorklistBuilderPanel(String id)
@@ -107,7 +103,6 @@ public class WorklistBuilderPanel extends Panel
 	public WorklistBuilderPanel(String id, WebPage pg, PrepData prepData)
 		{
 		super(id);
-		backPage = pg;
 		feedback = new FeedbackPanel("feedback");
 		feedback.setOutputMarkupId(true);
 		add(feedback);
@@ -223,7 +218,8 @@ public class WorklistBuilderPanel extends Panel
 						catch (Exception e)
 							{
 							}
-						rlf.buildPlateListView(nItemsPerRow, nItemsPerCol, worklist.getItems(), worklist);
+						
+
 						//plateListViewWorkList = this.rlf.buildPlateListView(nItemsPerRow, nItemsPerCol, worklist.getItems(), worklist);
 						rlf.add (plateListView);					
 						plateListView.setOutputMarkupId(true);						
@@ -262,7 +258,6 @@ public class WorklistBuilderPanel extends Panel
 					target.add(this.form);				
 					target.add(this);
 					hasBeenOpened = true;
-					
 					} 
 				@Override
 				public void onClose(IPartialPageRequestHandler handler, DialogButton button) 
@@ -882,6 +877,9 @@ public class WorklistBuilderPanel extends Panel
 				{
 				
 				// issue 212
+					/* (non-Javadoc)
+					 * @see org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior#onUpdate(org.apache.wicket.ajax.AjaxRequestTarget)
+					 */
 					@Override
 					protected void onUpdate(AjaxRequestTarget target)
 						{					    
@@ -939,6 +937,15 @@ public class WorklistBuilderPanel extends Panel
 							    worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
 							    agPanel.updateIddaList();
 							    target.add(agPanel.textAreaIdda);
+							    // issue 229
+							    try
+								    {
+								    redoPlatePListView ();
+								    }
+							    catch (Exception e)
+							    	{
+							    	e.printStackTrace();
+							    	}
 							    break;
 								
 						    case "updateStartPlate":
@@ -1049,6 +1056,14 @@ public class WorklistBuilderPanel extends Panel
 												+ " has only 4 plates.  Please be sure to click update to update the worklist.')";
 										target.appendJavaScript(msg);
 										}
+									// issue 229
+									if ( worklist.getItems().size() > 0 &&  (doesContainP5orP6(worklist.getItems())  &&  !(selectedInstrument.contains("LC9") || selectedInstrument.contains("LC10"))))
+										{
+										msg = "alert('Instrument: " + worklist.getSelectedInstrument() 
+										+ " has only 4 plates.  Please be sure to click update so that the worklist only uses up to plate 4.')";
+										target.appendJavaScript(msg);	
+										}
+									
 									// issue 217
 									if (worklist.getUseCarousel())
 										{
@@ -1328,7 +1343,41 @@ public class WorklistBuilderPanel extends Panel
 				if (Integer.parseInt(worklist.getStartPlate()) > 4)
 		            worklist.setStartPlate("1");			
 				}
-			}			
+			}	
+		
+		// issue 229
+		public boolean doesContainP5orP6 (List <WorklistItemSimple> wiList)
+			{
+			for (WorklistItemSimple wi : wiList)
+				{
+				if (!StringUtils.isEmptyOrNull(wi.getSamplePosition()) && (wi.getSamplePosition().contains("P5") || wi.getSamplePosition().contains("P6")))
+                     return true;
+				}
+			return false;
+			}
+		
+		/// issue 229 
+		public void redoPlatePListView ()
+			{
+			int nItemsPerRow,  nItemsPerCol;
+		    if (platePreviewPageDialog.plateListView != null &&  worklist.getItems().size() > 0 ) 
+				{
+				platePreviewPageDialog.plateListView.remove();
+				if (worklist.getIs96Well())
+					{
+					nItemsPerRow = worklist.getUseCarousel() ? 10 : 12;
+					nItemsPerCol = worklist.getUseCarousel() ? 10 : 8;
+					}
+				else
+					{
+					nItemsPerRow = worklist.getUseCarousel() ? 10 : 9;
+					nItemsPerCol = worklist.getUseCarousel() ? 10 : 6;
+					}	              
+				form.platePreviewPageDialog.rlf.buildPlateListView(nItemsPerRow, nItemsPerCol,worklist.getItems(), worklist);
+				form.platePreviewPageDialog.rlf.add  (form.platePreviewPageDialog.plateListView);
+				}		
+			}
+		
 		}
 
 	}
