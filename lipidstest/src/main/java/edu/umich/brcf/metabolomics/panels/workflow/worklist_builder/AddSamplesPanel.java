@@ -489,6 +489,18 @@ public class AddSamplesPanel extends Panel
 			    	
 			    plateListHandler.updateWorkListItemsMoved(originalWorklist);	
 			    wp.form.agPanel.updateIddaList();
+			    if (originalWorklist.getIs96Well())
+				    {
+				    try
+					    {
+					    wp.form.redoPlatePListView ();
+					    plateListHandler.check96WellsUpdate(originalWorklist.getItems());
+					    }
+				    catch (Exception e)
+				    	{
+				    	e.printStackTrace();
+				    	}
+				    }
 				}
 			protected void onComponentTag(final ComponentTag tag)
 				{

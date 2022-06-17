@@ -269,6 +269,8 @@ public class WorklistBuilderPanel extends Panel
 				    	{
 				    	plateListHandler.addLastControlRepeater(worklist);
 				    	plateListHandler.updateWorkListItemsMoved(worklist);
+				    	// issue 229
+				    	agPanel.updateIddaList();
 				    	}
 				    // issue 205 get rid of 910 911 and 912
 				    else 
@@ -938,7 +940,7 @@ public class WorklistBuilderPanel extends Panel
 							    agPanel.updateIddaList();
 							    target.add(agPanel.textAreaIdda);
 							    // issue 229
-							    try
+							   /* try
 								    {
 								    redoPlatePListView ();
 								    }
@@ -946,7 +948,9 @@ public class WorklistBuilderPanel extends Panel
 							    	{
 							    	e.printStackTrace();
 							    	}
-							    break;
+							    break; */
+							    
+							    
 								
 						    case "updateStartPlate":
 						    	prevStartPlate = worklist.getStartPlate();
@@ -1057,7 +1061,7 @@ public class WorklistBuilderPanel extends Panel
 										target.appendJavaScript(msg);
 										}
 									// issue 229
-									if ( worklist.getItems().size() > 0 &&  (doesContainP5orP6(worklist.getItems())  &&  !(selectedInstrument.contains("LC9") || selectedInstrument.contains("LC10"))))
+									else if ( worklist.getItems().size() > 0 &&  (doesContainP5orP6(worklist.getItems())  &&  !(selectedInstrument.contains("LC9") || selectedInstrument.contains("LC10"))))
 										{
 										msg = "alert('Instrument: " + worklist.getSelectedInstrument() 
 										+ " has only 4 plates.  Please be sure to click update so that the worklist only uses up to plate 4.')";
