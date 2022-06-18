@@ -256,7 +256,14 @@ public class AddControlsPanel extends Panel
 					originalWorklist.deleteControlItem(item);
 					if (! doBothQCMPandMPExist(originalWorklist))
 						originalWorklist.setBothQCMPandMP(false);
-					originalWorklist.rebuildEverything();
+				      try
+			        	{
+			        	originalWorklist.rebuildEverything();	
+			        	}
+			        catch (Exception e)
+			        	{
+			        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  Please clear controls and start over using fewer controls"));
+			        	}
 					
 					// issue 169
 				    Map<String, String> idsVsReasearcherNameMap =
@@ -433,7 +440,15 @@ public class AddControlsPanel extends Panel
 		        		target.appendJavaScript(StringUtils.makeAlertMessage("There are currently: " + numberDistinctControls + " total User Defined and standard controls.  Please add fewer standard controls to keep this number at " + originalWorklist.getMaxItemsAsInt() +  " or less") );
 		        		return;
 		        	    }
-				originalWorklist.rebuildEverything();
+			    try
+		        	{
+		        	originalWorklist.rebuildEverything();	
+		        	}
+		        catch (Exception e)
+		        	{
+		        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  Please clear controls and start over using fewer controls"));
+		        	}
+							
 				// issue 166
 				Map<String, String> idsVsReasearcherNameMap =
 				        sampleService.sampleIdToResearcherNameMapForExpId(originalWorklist.getSampleGroup(0).getExperimentId());								

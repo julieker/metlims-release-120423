@@ -422,7 +422,16 @@ public class AddSamplesPanel extends Panel
 				//issue 166			
 				PlateListHandler plateListHandler = null;
 				originalWorklist.getSampleGroup(0).setExpRandom(globalRand);
-				originalWorklist.rebuildEverything();
+			
+				try
+		        	{
+		        	originalWorklist.rebuildEverything();	
+		        	}
+				catch (Exception e)
+		        	{
+		        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  Please clear controls and start over using fewer controls"));
+		        	}
+				
 				if (originalWorklist.countOfSamplesForItems(originalWorklist.getItems())+  (originalWorklist.buildControlTypeMap().get(null) != null ? originalWorklist.buildControlTypeMap().size()-1 : originalWorklist.buildControlTypeMap().size()  ) > (originalWorklist.getMaxNumberSupportedPlates () * originalWorklist.getMaxItemsAsInt()))
 					{
 					//originalWorklist.setOpenForUpdates(false);

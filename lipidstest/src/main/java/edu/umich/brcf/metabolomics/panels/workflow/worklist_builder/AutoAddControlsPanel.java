@@ -767,8 +767,15 @@ public class AutoAddControlsPanel extends Panel
 		        		originalWorklist.clearOutPoolIDDAControls();
 		        		refreshPage(target);
 		        		return;	
-			        	}		
-		        worklist.rebuildEverything();		    
+			        	}	
+		        try
+		        	{
+		        	worklist.rebuildEverything();	
+		        	}
+		        catch (Exception e)
+		        	{
+		        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  Please clear controls and start over using fewer controls"));
+		        	}
 		   	 // issue 229
 			    for (WorklistItemSimple wi : originalWorklist.getItems())
 	        		{
