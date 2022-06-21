@@ -53,6 +53,7 @@ public class AddControlsPanel extends Panel
 	private Boolean needsRebuild = false,  controlTypeChangeWarningShownOnce = false, controlTypeChangeWarningShownTwice = false;
 	WebMarkupContainer container = new WebMarkupContainer("container");
 	List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
+	AddControlsPanel addControlsPanel = this;
 	
 	public AddControlsPanel(String id, WorklistSimple worklist, WorklistBuilderPanel wp)
 		{
@@ -256,13 +257,34 @@ public class AddControlsPanel extends Panel
 					originalWorklist.deleteControlItem(item);
 					if (! doBothQCMPandMPExist(originalWorklist))
 						originalWorklist.setBothQCMPandMP(false);
-				      try
+					List <WorklistItemSimple> tWI = new ArrayList <WorklistItemSimple> ();
+				    try
 			        	{
+				    	for (WorklistItemSimple wi : originalWorklist.getItems())
+			        		{
+			        		if (!wi.getRepresentsControl())
+			        			tWI.add(wi);
+			        		}
 			        	originalWorklist.rebuildEverything();	
 			        	}
 			        catch (Exception e)
 			        	{
-			        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  Please clear controls and start over using fewer controls"));
+			        	originalWorklist.getItems().clear();
+			        	originalWorklist.clearControlGroups();
+			        	originalWorklist.getItems().addAll(tWI);
+			        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  Controls have been cleared. Please start over using fewer controls"));
+			        	refreshPage(target);
+			        	return;
+			        	}
+				    
+				    if (wp.form.doesContainGivenPosition(originalWorklist.getItems(), "P7"))
+		       	        {     
+			        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  The controls have been cleared. Please start over using fewer controls"));
+			        	originalWorklist.clearControlGroups();
+			        	originalWorklist.getItems().clear();
+			        	originalWorklist.getItems().addAll(tWI);
+			        	refreshPage(target);
+			        	return;
 			        	}
 					
 					// issue 169
@@ -440,15 +462,36 @@ public class AddControlsPanel extends Panel
 		        		target.appendJavaScript(StringUtils.makeAlertMessage("There are currently: " + numberDistinctControls + " total User Defined and standard controls.  Please add fewer standard controls to keep this number at " + originalWorklist.getMaxItemsAsInt() +  " or less") );
 		        		return;
 		        	    }
+		        List <WorklistItemSimple> tWI = new ArrayList <WorklistItemSimple> ();	
 			    try
 		        	{
-		        	originalWorklist.rebuildEverything();	
+			      	for (WorklistItemSimple wi : originalWorklist.getItems())
+		        		{
+		        		if (!wi.getRepresentsControl())
+		        			tWI.add(wi);
+		        		}
+		        	originalWorklist.rebuildEverything();
 		        	}
 		        catch (Exception e)
 		        	{
-		        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  Please clear controls and start over using fewer controls"));
+		        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  Controls have been cleared. Please start over using fewer controls"));
+		        	originalWorklist.clearControlGroups();		      
+		           	originalWorklist.getItems().clear();
+		        	originalWorklist.getItems().addAll(tWI);
+		        	refreshPage(target);
+		        	return;
 		        	}
-							
+	
+			    if (wp.form.doesContainGivenPosition(originalWorklist.getItems(), "P7"))
+	       	        {     
+		        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  The controls have been cleared. Please start over using fewer controls"));
+		        	originalWorklist.clearControlGroups();
+		        	originalWorklist.getItems().clear();
+		        	originalWorklist.getItems().addAll(tWI);
+		        	refreshPage(target);
+		        	return;
+		        	}  
+			    
 				// issue 166
 				Map<String, String> idsVsReasearcherNameMap =
 				        sampleService.sampleIdToResearcherNameMapForExpId(originalWorklist.getSampleGroup(0).getExperimentId());								

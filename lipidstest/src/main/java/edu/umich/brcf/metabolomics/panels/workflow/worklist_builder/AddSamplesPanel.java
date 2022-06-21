@@ -422,14 +422,33 @@ public class AddSamplesPanel extends Panel
 				//issue 166			
 				PlateListHandler plateListHandler = null;
 				originalWorklist.getSampleGroup(0).setExpRandom(globalRand);
-			
+				List <WorklistItemSimple> tWI = new ArrayList <WorklistItemSimple> ();
 				try
 		        	{
+					for (WorklistItemSimple wi : originalWorklist.getItems())
+		        		{
+		        		if (!wi.getRepresentsControl())
+		        			tWI.add(wi);
+		        		}
 		        	originalWorklist.rebuildEverything();	
 		        	}
 				catch (Exception e)
 		        	{
-		        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  Please clear controls and start over using fewer controls"));
+					originalWorklist.getItems().clear();
+		        	originalWorklist.getItems().addAll(tWI);
+		        	originalWorklist.clearControlGroups();
+		        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  The controls have been cleared. Please start over using fewer controls"));		        	
+		        	refreshPage(target);
+		        	return;
+		        	}
+				
+			    if (wp.form.doesContainGivenPosition(originalWorklist.getItems(), "P7"))
+	       	        {  
+			    	originalWorklist.getItems().clear();
+		        	originalWorklist.getItems().addAll(tWI);
+		        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  Controls have been cleared. Please start over using fewer controls"));
+		        	refreshPage(target);
+		        	return;
 		        	}
 				
 				if (originalWorklist.countOfSamplesForItems(originalWorklist.getItems())+  (originalWorklist.buildControlTypeMap().get(null) != null ? originalWorklist.buildControlTypeMap().size()-1 : originalWorklist.buildControlTypeMap().size()  ) > (originalWorklist.getMaxNumberSupportedPlates () * originalWorklist.getMaxItemsAsInt()))
@@ -498,18 +517,19 @@ public class AddSamplesPanel extends Panel
 			    	
 			    plateListHandler.updateWorkListItemsMoved(originalWorklist);	
 			    wp.form.agPanel.updateIddaList();
-			    if (originalWorklist.getIs96Well())
-				    {
+			  //  if (originalWorklist.getIs96Well())
+			//	    {
 				    try
 					    {
 					    wp.form.redoPlatePListView ();
 					    plateListHandler.check96WellsUpdate(originalWorklist.getItems());
+					    plateListHandler.addLastControlRepeater(originalWorklist);
 					    }
 				    catch (Exception e)
 				    	{
 				    	e.printStackTrace();
 				    	}
-				    }
+				//    }
 				}
 			protected void onComponentTag(final ComponentTag tag)
 				{

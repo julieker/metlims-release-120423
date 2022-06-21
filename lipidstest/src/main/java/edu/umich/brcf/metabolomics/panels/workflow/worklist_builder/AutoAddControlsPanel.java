@@ -761,21 +761,41 @@ public class AutoAddControlsPanel extends Panel
 	        	// issue 19
 	        	CountPair countPair = originalWorklist.getLargestControlTypeTotal();
 	        	// issue 16
-		        	if (countPair.getCount() > 99)
-			        	{
-		        		target.appendJavaScript(StringUtils.makeAlertMessage("The control type:" + countPair.getTag() + " has " + countPair.getCount() + " entries. Please redo the controls and limit this to " + originalWorklist.getLimitNumberControls()));
-		        		originalWorklist.clearOutPoolIDDAControls();
-		        		refreshPage(target);
-		        		return;	
-			        	}	
+	        	if (countPair.getCount() > 99)
+		        	{
+	        		target.appendJavaScript(StringUtils.makeAlertMessage("The control type:" + countPair.getTag() + " has " + countPair.getCount() + " entries. Please redo the controls and limit this to " + originalWorklist.getLimitNumberControls()));
+	        		originalWorklist.clearOutPoolIDDAControls();
+	        		refreshPage(target);
+	        		return;	
+		        	}
+	        	List <WorklistItemSimple> tWI = new ArrayList <WorklistItemSimple> ();
 		        try
 		        	{
-		        	worklist.rebuildEverything();	
+		           	for (WorklistItemSimple wi : originalWorklist.getItems())
+		        		{
+		        		if (!wi.getRepresentsControl())
+		        			tWI.add(wi);
+		        		}
+		           	originalWorklist.rebuildEverything();	
 		        	}
 		        catch (Exception e)
 		        	{
-		        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  Please clear controls and start over using fewer controls"));
+		        	originalWorklist.getItems().clear();
+		        	originalWorklist.clearControlGroups();
+		        	originalWorklist.getItems().addAll(tWI);
+		        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  Controls have been cleared. Please start over using fewer controls"));
+		        	refreshPage(target);
+		        	return;
 		        	}
+		        
+               if (wp.form.doesContainGivenPosition(worklist.getItems(), "P7"))
+           	        {   
+            		originalWorklist.getItems().clear();
+		        	originalWorklist.getItems().addAll(tWI);
+		        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  The controls have been cleared. Please start over using fewer controls"));
+		        	refreshPage(target);
+		        	return;
+		        	}   
 		   	 // issue 229
 			    for (WorklistItemSimple wi : originalWorklist.getItems())
 	        		{

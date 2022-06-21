@@ -271,6 +271,7 @@ public class WorklistBuilderPanel extends Panel
 				    	plateListHandler.updateWorkListItemsMoved(worklist);
 				    	// issue 229
 				    	agPanel.updateIddaList();
+				    	
 				    	}
 				    // issue 205 get rid of 910 911 and 912
 				    else 
@@ -1199,11 +1200,37 @@ public class WorklistBuilderPanel extends Panel
 				    sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());
 			if (worklist.getItems() == null || worklist.getItems().size() == 0)
 				return;		
-		
+		    List <WorklistItemSimple> tWI = new ArrayList <WorklistItemSimple> ();	
 			if (worklist.getOpenForUpdates())
 				{	
 				// issue 416
-				worklist.rebuildEverything();
+				try 
+					{
+					for (WorklistItemSimple wi : worklist.getItems())
+		        		{
+		        		if (!wi.getRepresentsControl())
+		        			tWI.add(wi);
+		        		}
+					worklist.rebuildEverything();
+					}
+				catch (Exception e)
+					{
+					target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  Controls have been cleared. Please start over using fewer controls"));
+		        	worklist.clearControlGroups();		      
+		        	worklist.getItems().clear();
+		        	worklist.getItems().addAll(tWI);
+		        	updatePage(target);
+		        	return;
+					}
+			    if (doesContainGivenPosition(worklist.getItems(), "P7"))
+	       	        {     
+		        	//target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  The controls have been cleared. Please start over using fewer controls"));
+		        	worklist.clearControlGroups();
+		        	worklist.getItems().clear();
+		        	worklist.getItems().addAll(tWI);
+		        	updatePage(target);
+		        	//return;
+		        	}
 				// issue 166
 				plateListHandler.check96WellsUpdate(worklist.getItems());
 				idsVsReasearcherNameMap =
@@ -1356,6 +1383,16 @@ public class WorklistBuilderPanel extends Panel
 				{
 				if (!StringUtils.isEmptyOrNull(wi.getSamplePosition()) && (wi.getSamplePosition().contains("P5") || wi.getSamplePosition().contains("P6")))
                      return true;
+				}
+			return false;
+			}
+		
+		public boolean doesContainGivenPosition (List <WorklistItemSimple> wiList, String givenPosition )
+			{
+			for (WorklistItemSimple wi : wiList)
+				{
+				if (!StringUtils.isEmptyOrNull(wi.getSamplePosition()) && (wi.getSamplePosition().contains(givenPosition) ))
+	                 return true;
 				}
 			return false;
 			}
