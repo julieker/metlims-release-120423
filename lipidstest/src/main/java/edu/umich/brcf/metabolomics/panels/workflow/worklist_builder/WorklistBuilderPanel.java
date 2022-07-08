@@ -187,6 +187,8 @@ public class WorklistBuilderPanel extends Panel
 				protected void onOpen(IPartialPageRequestHandler handler)
 					{ 					
 					colorMap.clear();
+				    this.rlf.clearHolding ();               	
+					firstTimeOpening = true;
 					rlf.setMultiPart(true);
 					worklistg = worklist;		    
 					AjaxRequestTarget target = (AjaxRequestTarget) handler;
@@ -284,10 +286,11 @@ public class WorklistBuilderPanel extends Panel
 					// class options //
 					behavior.setOption("autoOpen", false);
 					behavior.setOption("modal", this.isModal());
-					behavior.setOption("resizable", this.isResizable());
+					//behavior.setOption("resizable", this.isResizable());
+					behavior.setOption("resizable", true);
 					behavior.setOption("width", 1000);
 					behavior.setOption("title", Options.asString(this.getTitle().getObject()));
-					behavior.setOption("height", 590);
+					behavior.setOption("height", 610);
 					//behavior.setOption("height", 1000);
 				    behavior.setOption("autofocus", false);
 				    }	
@@ -890,6 +893,13 @@ public class WorklistBuilderPanel extends Panel
 							{
 						// issue 212
 							case "update96Well" : 
+								List <WorklistItemSimple> tWI = new ArrayList <WorklistItemSimple> ();	
+								for (WorklistItemSimple wi : worklist.getItems())
+					        		{
+					        		if (!wi.getRepresentsControl())
+					        			tWI.add(wi);
+					        		}
+								
 								if (Integer.valueOf(addGroupsPanel.nStandardsStr) > 6 && worklist.getIs96Well())
 									{
 									prevStandardString = addGroupsPanel.nStandardsStr;
@@ -940,19 +950,18 @@ public class WorklistBuilderPanel extends Panel
 							    worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
 							    agPanel.updateIddaList();
 							    target.add(agPanel.textAreaIdda);
-							    // issue 229
-							   /* try
-								    {
-								    redoPlatePListView ();
-								    }
-							    catch (Exception e)
-							    	{
-							    	e.printStackTrace();
-							    	}
-							    break; */
 							    
-							    
-								
+							    if (doesContainGivenPosition(worklist.getItems(), "P7"))
+					       	        {   
+									System.out.println("in in p7");
+						            target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  The controls have been cleared. Please start over using fewer controls"));
+						        	worklist.clearControlGroups();
+						        	worklist.getItems().clear();
+						        	worklist.getItems().addAll(tWI);
+						        	updatePage(target);
+						        	return;
+						        	}
+							    						    
 						    case "updateStartPlate":
 						    	prevStartPlate = worklist.getStartPlate();
 						    	// issue 205 clear anything that is moved when starting from a new plate

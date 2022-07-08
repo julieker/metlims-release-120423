@@ -339,7 +339,7 @@ public class PlateListHandler implements Serializable
 		    		namePositionMap.put(uniqueItems.get(i).getSampleName().substring(0, uniqueItems.get(i).getSampleName().lastIndexOf("-")), uniqueItems.get(i).getSamplePosition());
 		        else 
 		    	    namePositionMap.put(uniqueItems.get(i).getSampleName(), uniqueItems.get(i).getSamplePosition());
-				spacedList.add(uniqueItems.get(i)) ;
+				//spacedList.add(uniqueItems.get(i)) ;
 				}
 			else if (uniqueItems.get(0).getGroup().getParent().getPoolTypeA() != null && !alreadyPool && (uniqueItems.get(i).getSampleName().contains(uniqueItems.get(0).getGroup().getParent().getPoolTypeA())) && (uniqueItems.get(i).getSampleName().contains("MP") || uniqueItems.get(i).getSampleName().contains("BPM")))
 				{
@@ -402,6 +402,7 @@ public class PlateListHandler implements Serializable
        		}
         spacedList.clear();
         spacedList.addAll(tspacedList);
+        
         namePositionMap.put("R00CHRPL1-Pre", "P1-G1");
         namePositionMap.put("R00CHRUR1-Pre", "P1-G1");
         namePositionMap.put("CS00000MP-Pre", "P1-H1");
@@ -411,7 +412,7 @@ public class PlateListHandler implements Serializable
         namePositionMap.put("CS000BPM4-Pre", "P1-H1");
         namePositionMap.put("CS000BPM5-Pre", "P1-H1");
         namePositionMap.put("CS00000SB-Pre", "Vial 1"); // issue 215
-     
+               
     	return spacedList;
 		}
 	

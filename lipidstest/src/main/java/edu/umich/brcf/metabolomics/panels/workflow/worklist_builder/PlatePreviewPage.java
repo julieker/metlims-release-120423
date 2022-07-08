@@ -6,6 +6,7 @@
 
 package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,22 +14,18 @@ import java.util.Map;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PageableListView;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -36,27 +33,29 @@ import com.googlecode.wicket.jquery.ui.widget.dialog.AbstractFormDialog;
 import com.googlecode.wicket.jquery.ui.widget.dialog.DialogButton;
 
 import edu.umich.brcf.shared.layers.service.SampleService;
-import edu.umich.brcf.shared.util.StringParser;
 import edu.umich.brcf.shared.util.utilpackages.StringUtils;
-import edu.umich.brcf.shared.util.widgets.AjaxCancelLink;
 
 
 public class PlatePreviewPage extends AbstractFormDialog
 	{
 	@SpringBean
 	private SampleService sampleService;
-	Label plateHead10, plateHead11, plateHead12;
+	WebMarkupContainer arrowContainer;
+	WebMarkupContainer arrowContainerright;	
+	WebMarkupContainer holdarea , holdarearight, holderforcell;	
+	Label plateHead10, plateHead11, plateHead12, arrow, arrowright;
 	int nRowsNeeded, nRowsToCreate, nPlatesNeeded;
 	int nItemsPerRow, nItemsPerCol;
 	boolean gBothQCMPandMP;
 	WorklistBuilderPanel workListBuilderPanel;
 	Map<String, String> idsVsReasearcherNameMap = new HashMap<String, String> ();
-	int firstOrSecondClick = 1 ;
 	String thePrevSampleName;
 	WorklistItemSimple prevItem;
+	boolean didNewPage = false;
+	boolean didNewPageRight = false;
 	Label pLabelPrev;
 	public Form<?> form;
-	PlatePreviewForm rlf;
+	PlatePreviewForm rlf; 
 	public DialogButton submitButton = new DialogButton("submit", "Done");
 	public DialogButton submitButton2 = new DialogButton("submit2", "ResetDefault");
 	WorklistItemSimpleMatrix itemMatrix;
@@ -69,6 +68,11 @@ public class PlatePreviewPage extends AbstractFormDialog
 	boolean hasBeenOpened = false;
 	Map<String, String> colorMap = new HashMap<String, String> ();
 	PlateListHandler handler;
+	boolean firstTimeOpening = true; 
+	WorklistItemSimple itemHoldforCell;
+	Label pLabelHoldForCell;
+	boolean cameFromHolder = false;
+	boolean cameFromPreview = false;
 	
 	public PlatePreviewPage(boolean bothQCMPandMP,  List<WorklistItemSimple> items, boolean useCarousel, WorklistBuilderPanel wp, String id, String title,WorklistSimple ws)
 		{
@@ -107,12 +111,100 @@ public class PlatePreviewPage extends AbstractFormDialog
 		public PlatePreviewForm(final String id, List<WorklistItemSimple> items,  boolean useCarousel, WorklistSimple ws)
 			{
 			super(id);
-
 			add(new FeedbackPanel("feedback"));
 			this.setOutputMarkupId(true);
-
-			setMultiPart(true);
-
+			setMultiPart(true);		
+			
+			
+			arrowContainer = new WebMarkupContainer("arrowarea")
+				{
+			
+				};
+				add (arrowContainer);
+								
+			arrowContainerright = new WebMarkupContainer("arrowarearight")
+				{
+		
+				};
+				add (arrowContainerright);	
+				
+			holdarea = new WebMarkupContainer("holdarea")
+				{
+			
+				};
+				add (holdarea);
+			
+			holderforcell = new WebMarkupContainer("holderforcell")
+				{
+			
+				};
+				add (holderforcell);
+				holderforcell.setOutputMarkupId(true);
+				pLabelHoldForCell = new Label("holderforcelllabel", "");
+				pLabelHoldForCell.setOutputMarkupId(true);
+				holderforcell.add(pLabelHoldForCell);		
+					
+				holderforcell.add(new AjaxEventBehavior("drop")
+					{
+				    protected void onEvent(AjaxRequestTarget target)
+				    	{	    	
+				    	try
+			            	{
+				    	  	itemHoldforCell = prevItem;
+				    	  	itemHoldforCell.setShortSampleName(prevItem.getShortSampleName());				    	  	
+				         	pLabelHoldForCell.setDefaultModelObject(itemHoldforCell.getShortSampleName());
+				    	  	didNewPage = false;
+				    	  	didNewPageRight = false;
+			            	thePrevSampleName = thePrevSampleName.replace("\n",  "");
+			            	prevItem.setMpQcmpName(prevItem.getMpQcmpName().replace("\n",  ""));
+			            	prevItem.setSampleName(prevItem.getSampleName().replace("\n",  ""));
+			            	prevItem.setShortSampleName(prevItem.getShortSampleName().replace("\n",  ""));
+			             	String controlTitle = colorMap.get(thePrevSampleName);
+			             	if (StringUtils.isNullOrEmpty(controlTitle))
+			             		controlTitle = WorklistFieldBuilder.assembleStyleTag(prevItem, true); 
+			        		holderforcell.add(new AttributeModifier("style", controlTitle));
+			             	target.add(holderforcell);
+			             	target.add(pLabelHoldForCell);
+			            	}
+		            	catch(Exception e)
+			            	{
+			            	e.printStackTrace();
+			            	}
+				    	}			    
+					});
+	
+				holderforcell.add(new AjaxEventBehavior("drag")
+					{
+				    protected void onEvent(AjaxRequestTarget target)
+				    	{
+				    	cameFromHolder = true;
+				    	cameFromPreview = false;
+				    	prevItem = itemHoldforCell;
+				    	}
+					}
+					);
+				
+				holderforcell.add(new AjaxEventBehavior("dragstart")
+					{
+				    protected void onEvent(AjaxRequestTarget target)
+				    	{
+				    	//undo if (StringUtils.isEmptyOrNull(holderforcell.getDefaultModelObjectAsString()))
+				    	if (StringUtils.isEmptyOrNull(pLabelHoldForCell.getDefaultModelObjectAsString()))
+					    	{
+				    		target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("There is no control in the holding position.   Please drag a control to the holding position if you wish to move a control to a different page."));	
+					    	return;
+					    	}
+				    	}
+					}
+					);
+				
+				holdarearight = new WebMarkupContainer("holdarearight")
+					{
+				
+					};
+					add (holdarearight);
+			arrowContainer.add (arrow = new Label("arrow", " "));
+			arrowContainerright.add (arrowright = new Label("arrowright", " "));	
 			this.useCarousel = useCarousel;
 			PlateListHandler handler = new PlateListHandler(nItemsPerCol, nItemsPerRow, useCarousel);
 			// issue 212
@@ -141,6 +233,7 @@ public class PlatePreviewPage extends AbstractFormDialog
 			spacedg = sortedSpacedItems;
 		 	try
 	   			{
+		 		
 			    add(lhead10 = new Label("plateHead10", "10"));
 			    add(lhead11 = new Label("plateHead11", "11"));
 			    add(lhead12 = new Label("plateHead12", "12"));
@@ -235,9 +328,8 @@ public class PlatePreviewPage extends AbstractFormDialog
 				    }				
 				};
 			}
-/////////////////////////////////////////////////////////////////////
 // issue 205	
-//
+
 		public   Label  buildPlateLabelWorklistFieldNonStatic (boolean bothQCMPandMP , final String id, final WorklistItemSimple item,  String field, int colPos, int rowPos, WorklistSimple ws)
 			{
 			// Issue 268 
@@ -247,10 +339,21 @@ public class PlatePreviewPage extends AbstractFormDialog
 	        if (!item.getRepresentsControl())
 	        	//item.setCommentResearcherId(item.calcCommentToolTip(ws, item));
 	        	item.setCommentResearcherId(StringUtils.isEmptyOrNull(item.getComments()) ? item.calcCommentToolTip(ws, item) : item.getComments()   );
+	       
+	        String firstHalf, secondHalf;
+	        int halfWayPoint, numberlimit;
+	    //    if ( !StringUtils.isNullOrEmpty(item.getCommentResearcherId()) && item.getCommentResearcherId().length() > 10 && (Math.round(item.getCommentResearcherId().length()/2)) >= 10)
+	        if ( !StringUtils.isNullOrEmpty(item.getCommentResearcherId()) && item.getCommentResearcherId().length() > 10 )	
+	            {
+	        	numberlimit = item.getCommentResearcherId().length() >= 20 ? 20 : item.getCommentResearcherId().length();
+	        	item.setCommentResearcherId(item.getCommentResearcherId().substring(0,numberlimit));
+	        	halfWayPoint = Math.round(item.getCommentResearcherId().length()/2);
+	        	firstHalf = item.getCommentResearcherId().substring(0, halfWayPoint) + "\n";
+	        	secondHalf = item.getCommentResearcherId().substring(halfWayPoint+1);
+	        	item.setCommentResearcherId(firstHalf + secondHalf);
+	        	}
+	        
 	        // issue 227
-	       // else 
-	        	//item.setCommentResearcherId(StringUtils.isEmptyOrNull(item.getComments()) ? item.getShortSampleName() : item.getComments()   );
-			
 	        // Issue 268 
 			// issue 346
 			// issue 17
@@ -291,38 +394,69 @@ public class PlatePreviewPage extends AbstractFormDialog
 			if (bothQCMPandMP)
 			    if (item.getShortSampleName().equals("CS00000MP\nCS000QCMP"))
 				    pLabel.add(AttributeModifier.replace("title",item.getMpQcmpName()));
-					
+			
+			
+			// issue 229
+			pLabel.add(new AjaxEventBehavior("dragstart")			
+			    {
+			    protected void onEvent(AjaxRequestTarget target)
+				    {
+			    	didNewPage = false;
+			    	didNewPageRight = false;
+				    thePrevSampleName = pLabel.getDefaultModelObjectAsString();
+				       if (item.getSampleName().startsWith("S000"))
+		                  {
+		            	  target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please choose a control rather than sample:" + pLabel.getDefaultModelObjectAsString().replace("\n", "")));
+		            	  return;
+		            	  } 			    	
+				    }
+			    });
+			    
 			// issue 205
-			pLabel.add (new AjaxEventBehavior("click") 
-				{           
-		        @Override
-		        protected void onEvent(AjaxRequestTarget target) 
-		            {		        	
-		        	if (item.getSampleName().startsWith("S000"))
-		            	{
-		            	target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please choose a control rather than sample:" + pLabel.getDefaultModelObjectAsString()));
-		            	return;
-		            	}
-		        	if (!edu.umich.brcf.shared.util.io.StringUtils.isEmptyOrNull(pLabel.getDefaultModelObjectAsString().replace("\n", "")) && (firstOrSecondClick== 1))
-		             	{	 
-		            	thePrevSampleName = pLabel.getDefaultModelObjectAsString();
-		            	target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please click on the BLANK plate where you want to move control:" + pLabel.getDefaultModelObjectAsString().replace("\n", "").replace("CS00000MPCS000QCMP", "CS00000MP CS000QCMP") +  " to:"));
-		            	firstOrSecondClick ++;
+			pLabel.add(new AjaxEventBehavior("drag")
+					{
+				    protected void onEvent(AjaxRequestTarget target)
+					    {
+				    	cameFromHolder = false;
+				    	cameFromPreview = true;
+				    	
+					    thePrevSampleName = pLabel.getDefaultModelObjectAsString();
+		            	//target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please click on the BLANK plate where you want to move control:" + pLabel.getDefaultModelObjectAsString().replace("\n", "").replace("CS00000MPCS000QCMP", "CS00000MP CS000QCMP") +  " to:"));    
 		            	prevItem = item;
 		            	String controlTitlee = WorklistFieldBuilder.assembleStyleTag(prevItem, true);
 		            	if (!controlTitlee.equals("background :#eaeef2"))
 		            		colorMap.put(prevItem.getSampleName().indexOf("-") >= 0 ? prevItem.getSampleName().substring(0, prevItem.getSampleName().lastIndexOf("-")) : prevItem.getSampleName(), controlTitlee);
 		            	pLabelPrev = pLabel;
-		             	}
-		        	else if (!edu.umich.brcf.shared.util.io.StringUtils.isEmptyOrNull(pLabel.getDefaultModelObjectAsString()) && (firstOrSecondClick== 2))
-		        	 	{
-		        		target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please click on a blank space " ));
-		            	return;
-		        	 	}
-		        	else if (edu.umich.brcf.shared.util.io.StringUtils.isEmptyOrNull(pLabel.getDefaultModelObjectAsString()) && (firstOrSecondClick== 2))
-		             	{    
-		            	try
+					    }
+					});
+			
+			// issue 205
+			// issue 231			
+		//	pLabel.add( new AttributeModifier("drop", "alert ('Control:" +  item.getSampleName() + " has been moved:" + "');" ));	
+			
+			pLabel.add(new AjaxEventBehavior("drop")
+					{
+				    protected void onEvent(AjaxRequestTarget target)
+				    	{			    	
+				    	try
 			            	{
+				    		if (cameFromHolder)
+				    			{
+				    			 thePrevSampleName = pLabelHoldForCell.getDefaultModelObjectAsString();
+					             prevItem = itemHoldforCell;
+					             String controlTitlee = WorklistFieldBuilder.assembleStyleTag(prevItem, true);
+					             if (!controlTitlee.equals("background :#eaeef2"))
+					                 colorMap.put(prevItem.getSampleName().indexOf("-") >= 0 ? prevItem.getSampleName().substring(0, prevItem.getSampleName().lastIndexOf("-")) : prevItem.getSampleName(), controlTitlee);
+					             pLabelPrev = pLabelHoldForCell;
+				    			}
+				    		
+				    	  	if (!edu.umich.brcf.shared.util.io.StringUtils.isEmptyOrNull(pLabel.getDefaultModelObjectAsString()) )
+				        	 	{
+				        		target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please drop on a blank space " ));
+				            	return;
+				        	 	} 
+				    	  	didNewPage = false;
+				    	  	didNewPageRight = false;
 			            	thePrevSampleName = thePrevSampleName.replace("\n",  "");
 			            	prevItem.setMpQcmpName(prevItem.getMpQcmpName().replace("\n",  ""));
 			            	prevItem.setSampleName(prevItem.getSampleName().replace("\n",  ""));
@@ -330,7 +464,6 @@ public class PlatePreviewPage extends AbstractFormDialog
 			            	pLabel.setDefaultModelObject(thePrevSampleName);
 			                item.setShortSampleName(thePrevSampleName);
 			                item.setSampleName(thePrevSampleName);
-			             	//String controlTitle = WorklistFieldBuilder.assembleStyleTag(prevItem, true);
 			             	String controlTitle = colorMap.get(thePrevSampleName);
 			             	if (StringUtils.isNullOrEmpty(controlTitle))
 			             		controlTitle = WorklistFieldBuilder.assembleStyleTag(prevItem, true);       	
@@ -341,10 +474,8 @@ public class PlatePreviewPage extends AbstractFormDialog
 			        		    if (item.getShortSampleName().equals("CS00000MP\nCS000QCMP"))
 			        			    pLabel.add(AttributeModifier.replace("title",prevItem.getMpQcmpName()));
 			        		pLabel.add(new AttributeModifier("style", controlTitle));
-			             	firstOrSecondClick= 1;
 			             	item.setSamplePosition(calcPlatePositionBasedOnIndex(colPos, rowPos, wpMain.worklist.getIs96Well()));
 			             	wpMain.worklist.controlsMovedMap.put(item.getSampleName(), item.getSamplePosition());
-			                
 			            	for (Map.Entry<String, String> entry : wpMain.worklist.controlsMovedMap.entrySet()) 
 			    				{
 			            		for (WorklistItemSimple lilwi : wpMain.worklist.getItems())
@@ -359,14 +490,28 @@ public class PlatePreviewPage extends AbstractFormDialog
 				             			   .equals("CS00000MPCS000QCMP"))
 				             	    	lilwi.setSamplePosition(entry.getValue().toString());
 				                	}
-			    				}		             	
+			    				}	
 			                WorklistItemSimple lItem = new WorklistItemSimple();
 			                lItem.setSampleName(" ");
 			                lItem.setSampleType(" ");
 			                controlTitle = WorklistFieldBuilder.assembleStyleTag(lItem, true);
-			                pLabelPrev.add(new AttributeModifier("style", controlTitle));
-			                pLabelPrev.setDefaultModelObject(" ");	                
-			                controlTitle = WorklistFieldBuilder.assembleStyleTag(prevItem, true);
+			                if (cameFromPreview) 
+			                	{			                	
+			                	pLabelPrev.add(new AttributeModifier("style", controlTitle));
+			                	pLabelPrev.setDefaultModelObject(" ");	
+			                	//cameFromPreview = false;
+			                	}
+			                
+			                else if (cameFromHolder)
+			                	{			                	
+			                	holderforcell.add(new AttributeModifier("style", controlTitle));
+			                	pLabelHoldForCell.setDefaultModelObject(" ");	
+			                	itemHoldforCell.setShortSampleName("");
+			                	target.add(holderforcell);
+			                	target.add(pLabelHoldForCell);
+			                	cameFromHolder = false;
+			                	}
+			                controlTitle = WorklistFieldBuilder.assembleStyleTag(prevItem, true);             
 			             	target.add(pLabel);
 			             	target.add(pLabelPrev);
 			             	List <WorklistItemSimple> lilitems = new ArrayList <WorklistItemSimple> ();
@@ -374,24 +519,26 @@ public class PlatePreviewPage extends AbstractFormDialog
 			                wpMain.worklist.setItemsMovedNewPositions(lilitems);
 			                ws.setItemsMovedNewPositions(lilitems);
 			                wpMain.lilmovedlist.addAll(ws.getItemsMovedNewPositions());
-			                Long currentPage =  plateListView.getCurrentPage();	
-			                target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("The control:" + item.getSampleName().replace("CS00000MPCS000QCMP", "CS00000MP CS000QCMP") + " has been moved to position:" + item.getSamplePosition()));
-			                target.add(wpMain.form.platePreviewPageDialog);
-			                wpMain.form.platePreviewPageDialog.open(target);
-			                plateListView.setCurrentPage(currentPage.intValue());
-			                
+			                if (!cameFromPreview)
+			                	{
+			                	Long currentPage =  plateListView.getCurrentPage();
+			                	target.add(wpMain.form.platePreviewPageDialog);  // undo 
+			                	wpMain.form.platePreviewPageDialog.open(target);
+			                	plateListView.setCurrentPage(currentPage.intValue());
+			                	}			                
+			                if (cameFromPreview)
+			                	cameFromPreview = false;
+			                target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("The control:" + item.getSampleName().replace("CS00000MPCS000QCMP", "CS00000MP CS000QCMP") + " has been moved to position:" + item.getSamplePosition()));		                			                		            	
 			            	}
 		            	catch(Exception e)
 			            	{
 			            	e.printStackTrace();
 			            	}
-		             	}	             
-		            }
-				});
+				    	}
+					});
 			return pLabel;
 			}		
 				
-/////////////////////////////////////////////////////////////////////
 		// issue 205
 		
 		@Override
@@ -439,9 +586,19 @@ public class PlatePreviewPage extends AbstractFormDialog
 			return plate + "-" + letterOfRow + String.valueOf(colPos + 1);	
 			}
 		
+		public void clearHolding ()
+			{
+		    WorklistItemSimple lItem = new WorklistItemSimple();
+            lItem.setSampleName(" ");
+            lItem.setSampleType(" ");
+            String controlTitle = WorklistFieldBuilder.assembleStyleTag(lItem, true);
+            holderforcell.add(new AttributeModifier("style", controlTitle));
+            pLabelHoldForCell.setDefaultModelObject(" ");	
+            if (itemHoldforCell != null)
+            	itemHoldforCell.setShortSampleName("");
+			}
 		}
 	
-	////////////////////////////////////////////
 	
 	@Override
 	public void onClose(IPartialPageRequestHandler handler, DialogButton button) {
@@ -483,8 +640,5 @@ public class PlatePreviewPage extends AbstractFormDialog
 		// TODO Auto-generated method stub
 		
 	}
-	
-	//////////////////////////////////////////////
-	
-	
+		
 	}

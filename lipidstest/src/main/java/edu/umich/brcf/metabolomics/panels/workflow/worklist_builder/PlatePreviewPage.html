@@ -7,8 +7,17 @@
 	    <style>
 	        legend { border: 1px solid #e9601a; background-color: white; color: black; padding: 4px;}
 	        fieldset { border: 2px outset #4D94FF; background-color : white; padding: 10px;}
+	       
+	   
+	   
 	    </style>
+	    
+	    
+	   
 	</head>
+	
+	
+	    
 
 	<wicket:head>
 		<style>
@@ -23,6 +32,36 @@
 		</style>
 	</wicket:head>
 	<wicket:panel>
+	
+	  <script>
+	    function transferit(ev) 
+	    	{	
+	    	
+	    	ev.preventDefault();
+	    	ev.dataTransfer.getData("text", ev.target.id);  
+			}
+	    </script>
+	    
+	    
+	    <script>
+	    function drag(ev) 
+	    	{	
+	    	
+	    	ev.dataTransfer.setData("text", ev.target.id);  
+	    	
+	    	//alert ('in the drag 2');
+			}
+	    </script>
+	    
+	    
+	    <script>
+	    function enterit(ev) 
+	    	{
+	    	ev.preventDefault();  
+			}
+	    </script>
+	    
+	
 	<body class = "dialog_background">  
 		<fieldset style = "vertical-align : middle">
 	     	
@@ -60,18 +99,47 @@
 						</tr>
 						<tr wicket:id = "plateRows">
 							<th class = "plateHeader" style = "width : 140px" ><span wicket:id = "rowTitle" style = "text-align : center">A</span></th>
-							<td wicket:id = "position1" class = "plateCell" ></td>
-							<td wicket:id = "position2" class = "plateCell" ></td>
-							<td wicket:id = "position3" class = "plateCell" ></td>
-							<td wicket:id = "position4" class = "plateCell" ></td>
-							<td wicket:id = "position5" class = "plateCell" ></td>
-							<td wicket:id = "position6" class = "plateCell" ></td>
-							<td wicket:id = "position7" class = "plateCell" ></td>
-							<td wicket:id = "position8" class = "plateCell" ></td>
-							<td wicket:id = "position9" class = "plateCell" ></td>
-							<td wicket:id = "position10" class = "plateCell" ></td>
-						   <td wicket:id = "position11" class = "plateCell" ></td>
-						   <td wicket:id = "position12" class = "plateCell" ></td>
+							<!--  
+							<td wicket:id = "position1" class = "plateCell"  draggable="true"  ondragstart= "event.dataTransfer.setData('text', event.target.id);"></td>
+							-->
+							<td wicket:id = "position1" class = "plateCell"  draggable="true"  ondragover="event.preventDefault(); " ondrop=" transferit(event) ; " ></td>
+							<td wicket:id = "position2" class = "plateCell"  draggable="true"  ondragover="event.preventDefault(); " ondrop=" transferit(event) ; " ></td>
+							<td wicket:id = "position3" class = "plateCell"  draggable="true"  ondragover="event.preventDefault(); " ondrop=" transferit(event) ; " ></td>
+							<td wicket:id = "position4" class = "plateCell"  draggable="true"  ondragover="event.preventDefault(); " ondrop=" transferit(event) ;  " ></td>
+							<td wicket:id = "position5" class = "plateCell"  draggable="true"  ondragover="event.preventDefault(); " ondrop=" transferit(event) ; " ></td>
+							<td wicket:id = "position6" class = "plateCell"  draggable="true"  ondragover="event.preventDefault(); " ondrop=" transferit(event) ;  "></td>
+							<td wicket:id = "position7" class = "plateCell"  draggable="true"  ondragover="event.preventDefault(); " ondrop=" transferit(event) ; "></td>
+							<td wicket:id = "position8" class = "plateCell"  draggable="true"  ondragover="event.preventDefault(); " ondrop=" transferit(event) ; "></td>
+							<td wicket:id = "position9" class = "plateCell"  draggable="true"  ondragover="event.preventDefault(); " ondrop=" transferit(event) ; "></td>
+							<td wicket:id = "position10" class = "plateCell" draggable="true"  ondragover="event.preventDefault(); " ondrop=" transferit(event) ; " ></td>
+						   <td wicket:id = "position11" class = "plateCell"  draggable="true"  ondragover="event.preventDefault(); " ondrop=" transferit(event) ; "></td>
+						   <td wicket:id = "position12" class = "plateCell"  draggable="true"  ondragover="event.preventDefault(); " ondrop=" transferit(event) ; "></td>
+						</tr>
+						<tr>
+						<td></td>
+						 <td wicket:id = "holderforcell" class = "plateCell"  draggable="true"  ondragover="event.preventDefault(); " ondrop=" transferit(event) ; ">
+						 <span  wicket:id = "holderforcelllabel" >  </span>
+						 
+						 </td>
+						<td wicket:id = "arrowarea"   >
+						
+						
+						<span  wicket:id = "arrow"       style = "padding-left : 5%; color : #0000cc; font-weight : 400; font-size : 110%" >  </span>
+						
+						
+						</td>
+						<td wicket:id="holdarea" ></td>
+						<td></td>
+						<td></td>
+						<td wicket:id="holdarearight"  ></td>
+						<td wicket:id = "arrowarearight"   >
+						
+						
+						<span   wicket:id = "arrowright"      style = "padding-left : 5%; color : #0000cc; font-weight : 400; font-size : 110%">  </span>
+						
+						
+						</td>
+						
 						</tr>
 					</table>
 				</span>
