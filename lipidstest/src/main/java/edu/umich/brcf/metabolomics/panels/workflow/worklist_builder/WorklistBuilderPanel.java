@@ -290,7 +290,7 @@ public class WorklistBuilderPanel extends Panel
 					behavior.setOption("resizable", true);
 					behavior.setOption("width", 1000);
 					behavior.setOption("title", Options.asString(this.getTitle().getObject()));
-					behavior.setOption("height", 610);
+					behavior.setOption("height", 800);
 					//behavior.setOption("height", 1000);
 				    behavior.setOption("autofocus", false);
 				    }	
@@ -953,7 +953,6 @@ public class WorklistBuilderPanel extends Panel
 							    
 							    if (doesContainGivenPosition(worklist.getItems(), "P7"))
 					       	        {   
-									System.out.println("in in p7");
 						            target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  The controls have been cleared. Please start over using fewer controls"));
 						        	worklist.clearControlGroups();
 						        	worklist.getItems().clear();

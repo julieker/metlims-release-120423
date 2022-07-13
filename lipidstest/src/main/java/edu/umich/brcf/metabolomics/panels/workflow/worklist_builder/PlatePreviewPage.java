@@ -140,7 +140,7 @@ public class PlatePreviewPage extends AbstractFormDialog
 				};
 				add (holderforcell);
 				holderforcell.setOutputMarkupId(true);
-				pLabelHoldForCell = new Label("holderforcelllabel", "");
+				pLabelHoldForCell = new Label("holderforcelllabel", "Drag Control here to move");
 				pLabelHoldForCell.setOutputMarkupId(true);
 				holderforcell.add(pLabelHoldForCell);		
 					
@@ -151,8 +151,8 @@ public class PlatePreviewPage extends AbstractFormDialog
 				    	try
 			            	{
 				    	  	itemHoldforCell = prevItem;
-				    	  	itemHoldforCell.setShortSampleName(prevItem.getShortSampleName());				    	  	
-				         	pLabelHoldForCell.setDefaultModelObject(itemHoldforCell.getShortSampleName());
+				    	  	itemHoldforCell.setShortSampleName(prevItem.getShortSampleName());		
+				         	pLabelHoldForCell.setDefaultModelObject(itemHoldforCell.getShortSampleName().replace("CS00000MPCS000QCMP", "CS00000MP        CS000QCMP"));
 				    	  	didNewPage = false;
 				    	  	didNewPageRight = false;
 			            	thePrevSampleName = thePrevSampleName.replace("\n",  "");
@@ -160,8 +160,20 @@ public class PlatePreviewPage extends AbstractFormDialog
 			            	prevItem.setSampleName(prevItem.getSampleName().replace("\n",  ""));
 			            	prevItem.setShortSampleName(prevItem.getShortSampleName().replace("\n",  ""));
 			             	String controlTitle = colorMap.get(thePrevSampleName);
+			             	
 			             	if (StringUtils.isNullOrEmpty(controlTitle))
-			             		controlTitle = WorklistFieldBuilder.assembleStyleTag(prevItem, true); 
+			             		{
+			             		if (thePrevSampleName.contains("CS00000MP"))
+			             			{
+			             		    controlTitle = colorMap.get("CS00000MP");
+			             		    if (StringUtils.isNullOrEmpty(controlTitle))
+			             		        controlTitle = WorklistFieldBuilder.assembleStyleTag(prevItem, true);
+			             			}
+			             		else
+			             			controlTitle = WorklistFieldBuilder.assembleStyleTag(prevItem, true); 
+			             		}			             	
+			             	// goback if (StringUtils.isNullOrEmpty(controlTitle))
+			             	// goBack	controlTitle = WorklistFieldBuilder.assembleStyleTag(prevItem, true); 
 			        		holderforcell.add(new AttributeModifier("style", controlTitle));
 			             	target.add(holderforcell);
 			             	target.add(pLabelHoldForCell);
@@ -408,7 +420,13 @@ public class PlatePreviewPage extends AbstractFormDialog
 		                  {
 		            	  target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please choose a control rather than sample:" + pLabel.getDefaultModelObjectAsString().replace("\n", "")));
 		            	  return;
-		            	  } 			    	
+		            	  } 
+				       if (StringUtils.isEmptyOrNull(item.getSampleName()))
+		                  {
+		            	  target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please do not move a blank square:" + pLabel.getDefaultModelObjectAsString().replace("\n", "")));
+		            	  return;
+		            	  } 
+				       
 				    }
 			    });
 			    
@@ -418,10 +436,8 @@ public class PlatePreviewPage extends AbstractFormDialog
 				    protected void onEvent(AjaxRequestTarget target)
 					    {
 				    	cameFromHolder = false;
-				    	cameFromPreview = true;
-				    	
+				    	cameFromPreview = true;				    	
 					    thePrevSampleName = pLabel.getDefaultModelObjectAsString();
-		            	//target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please click on the BLANK plate where you want to move control:" + pLabel.getDefaultModelObjectAsString().replace("\n", "").replace("CS00000MPCS000QCMP", "CS00000MP CS000QCMP") +  " to:"));    
 		            	prevItem = item;
 		            	String controlTitlee = WorklistFieldBuilder.assembleStyleTag(prevItem, true);
 		            	if (!controlTitlee.equals("background :#eaeef2"))
@@ -432,7 +448,6 @@ public class PlatePreviewPage extends AbstractFormDialog
 			
 			// issue 205
 			// issue 231			
-		//	pLabel.add( new AttributeModifier("drop", "alert ('Control:" +  item.getSampleName() + " has been moved:" + "');" ));	
 			
 			pLabel.add(new AjaxEventBehavior("drop")
 					{
@@ -461,34 +476,57 @@ public class PlatePreviewPage extends AbstractFormDialog
 			            	prevItem.setMpQcmpName(prevItem.getMpQcmpName().replace("\n",  ""));
 			            	prevItem.setSampleName(prevItem.getSampleName().replace("\n",  ""));
 			            	prevItem.setShortSampleName(prevItem.getShortSampleName().replace("\n",  ""));
-			            	pLabel.setDefaultModelObject(thePrevSampleName);
+			            	pLabel.setDefaultModelObject(thePrevSampleName.replace("CS00000MPCS000QCMP", "CS00000MP        CS000QCMP"));
 			                item.setShortSampleName(thePrevSampleName);
 			                item.setSampleName(thePrevSampleName);
-			             	String controlTitle = colorMap.get(thePrevSampleName);
+			                item.setSampleType(prevItem.getSampleType());  //putback
+			                item.setMpQcmpName(prevItem.getMpQcmpName());
+			            
+			                String controlTitle = colorMap.get(thePrevSampleName);
+			             	
 			             	if (StringUtils.isNullOrEmpty(controlTitle))
-			             		controlTitle = WorklistFieldBuilder.assembleStyleTag(prevItem, true);       	
-			                if (prevItem.getRepresentsControl())
-			             		pLabel.add(AttributeModifier.append("title",prevItem.getSampleType()));
-			            	pLabel.add(AttributeModifier.append("title",prevItem.getSampleName()));
-			        		if (bothQCMPandMP)
-			        		    if (item.getShortSampleName().equals("CS00000MP\nCS000QCMP"))
-			        			    pLabel.add(AttributeModifier.replace("title",prevItem.getMpQcmpName()));
-			        		pLabel.add(new AttributeModifier("style", controlTitle));
+			             		{
+			             		if (thePrevSampleName.contains("CS00000MP"))
+			             			{
+			             		    controlTitle = colorMap.get("CS00000MP");
+			             		    if (StringUtils.isNullOrEmpty(controlTitle))
+			             		        controlTitle = WorklistFieldBuilder.assembleStyleTag(prevItem, true);
+			             			}
+			             		else
+			             		    {
+			             			if (StringUtils.isNullOrEmpty(controlTitle))
+			             				controlTitle = colorMap.get(thePrevSampleName + "-Pre");
+			             			if (StringUtils.isNullOrEmpty(controlTitle))
+			             				controlTitle = WorklistFieldBuilder.assembleStyleTag(prevItem, true);
+			             		    }
+			             		}
+			             	if (prevItem.getRepresentsControl())
+			             		{
+			             		pLabel.add(AttributeModifier.replace("title",prevItem.getSampleType()));
+			             		}
+			             	pLabel.add(new AttributeModifier("style", controlTitle));
+			             	pLabel.setDefaultModelObject(thePrevSampleName);
+			             	target.add(pLabel);	
+			           	if (bothQCMPandMP)
+			            		if (item.getShortSampleName().equals("CS00000MP\nCS000QCMP") || item.getShortSampleName().equals("CS00000MPCS000QCMP") || item.getShortSampleName().equals("CS00000MP        CS000QCMP"))	    
+			            			pLabel.add(AttributeModifier.replace("title",prevItem.getMpQcmpName()));
+			        		
 			             	item.setSamplePosition(calcPlatePositionBasedOnIndex(colPos, rowPos, wpMain.worklist.getIs96Well()));
-			             	wpMain.worklist.controlsMovedMap.put(item.getSampleName(), item.getSamplePosition());
+			             	String preEnding = wpMain.worklist.getIs96Well() && item.getSampleType().contains("Pre")? "-Pre" : "";
+			             	wpMain.worklist.controlsMovedMap.put(item.getSampleName().replace(" ",  "") + preEnding , item.getSamplePosition());
 			            	for (Map.Entry<String, String> entry : wpMain.worklist.controlsMovedMap.entrySet()) 
-			    				{
+			    				{			          
 			            		for (WorklistItemSimple lilwi : wpMain.worklist.getItems())
 				                	{
 				             	    if (!lilwi.getRepresentsControl())
 				             	    	continue;
-				             	    if (lilwi.getSampleName().contains(entry.getKey().toString()))
+				             	    if ((lilwi.getSampleName() + preEnding).contains(entry.getKey().toString()))
 				             	    	lilwi.setSamplePosition(entry.getValue().toString());
 				             	    if ((lilwi.getSampleName().contains("CS00000MP") 
 				             			   || lilwi.getSampleName().contains("CS000QCMP")) 
-				             			   && entry.getKey().toString()
-				             			   .equals("CS00000MPCS000QCMP"))
-				             	    	lilwi.setSamplePosition(entry.getValue().toString());
+				             			   && (entry.getKey().toString()
+				             					  .equals("CS00000MPCS000QCMP")  ))	   
+				             	    	lilwi.setSamplePosition(entry.getValue().toString());	
 				                	}
 			    				}	
 			                WorklistItemSimple lItem = new WorklistItemSimple();
@@ -499,36 +537,40 @@ public class PlatePreviewPage extends AbstractFormDialog
 			                	{			                	
 			                	pLabelPrev.add(new AttributeModifier("style", controlTitle));
 			                	pLabelPrev.setDefaultModelObject(" ");	
+			                	target.add(pLabel); //wow
+			                	target.add(pLabelPrev);
 			                	//cameFromPreview = false;
 			                	}
 			                
 			                else if (cameFromHolder)
 			                	{			                	
 			                	holderforcell.add(new AttributeModifier("style", controlTitle));
-			                	pLabelHoldForCell.setDefaultModelObject(" ");	
+			                	pLabelHoldForCell.setDefaultModelObject("Drag Control here to move");	
 			                	itemHoldforCell.setShortSampleName("");
 			                	target.add(holderforcell);
 			                	target.add(pLabelHoldForCell);
 			                	cameFromHolder = false;
 			                	}
 			                controlTitle = WorklistFieldBuilder.assembleStyleTag(prevItem, true);             
-			             	target.add(pLabel);
-			             	target.add(pLabelPrev);
 			             	List <WorklistItemSimple> lilitems = new ArrayList <WorklistItemSimple> ();
 			             	lilitems.add(item);		             	
 			                wpMain.worklist.setItemsMovedNewPositions(lilitems);
 			                ws.setItemsMovedNewPositions(lilitems);
 			                wpMain.lilmovedlist.addAll(ws.getItemsMovedNewPositions());
-			                if (!cameFromPreview)
-			                	{
+			             
+			             	/************************/
+			               // if (!cameFromPreview)
+			                //	{
+			                /***********************/
 			                	Long currentPage =  plateListView.getCurrentPage();
 			                	target.add(wpMain.form.platePreviewPageDialog);  // undo 
 			                	wpMain.form.platePreviewPageDialog.open(target);
 			                	plateListView.setCurrentPage(currentPage.intValue());
-			                	}			                
+			               // 	}	
+			                /***********************/
 			                if (cameFromPreview)
 			                	cameFromPreview = false;
-			                target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("The control:" + item.getSampleName().replace("CS00000MPCS000QCMP", "CS00000MP CS000QCMP") + " has been moved to position:" + item.getSamplePosition()));		                			                		            	
+			                target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("The control:" + item.getSampleName().replace("CS00000MPCS000QCMP", "CS00000MP CS000QCMP").replace("CS00000MP        CS000QCMP" ,"CS00000MP CS000QCMP") + " has been moved to position:" + item.getSamplePosition()));		                			                		            	
 			            	}
 		            	catch(Exception e)
 			            	{
@@ -593,7 +635,7 @@ public class PlatePreviewPage extends AbstractFormDialog
             lItem.setSampleType(" ");
             String controlTitle = WorklistFieldBuilder.assembleStyleTag(lItem, true);
             holderforcell.add(new AttributeModifier("style", controlTitle));
-            pLabelHoldForCell.setDefaultModelObject(" ");	
+            pLabelHoldForCell.setDefaultModelObject("Drag Control\n here to move");	
             if (itemHoldforCell != null)
             	itemHoldforCell.setShortSampleName("");
 			}
