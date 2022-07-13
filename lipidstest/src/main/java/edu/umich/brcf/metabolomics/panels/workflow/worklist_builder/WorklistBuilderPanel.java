@@ -290,7 +290,7 @@ public class WorklistBuilderPanel extends Panel
 					behavior.setOption("resizable", true);
 					behavior.setOption("width", 1000);
 					behavior.setOption("title", Options.asString(this.getTitle().getObject()));
-					behavior.setOption("height", 800);
+					behavior.setOption("height", 610);
 					//behavior.setOption("height", 1000);
 				    behavior.setOption("autofocus", false);
 				    }	

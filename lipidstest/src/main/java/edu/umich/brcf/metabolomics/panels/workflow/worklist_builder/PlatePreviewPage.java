@@ -51,8 +51,6 @@ public class PlatePreviewPage extends AbstractFormDialog
 	Map<String, String> idsVsReasearcherNameMap = new HashMap<String, String> ();
 	String thePrevSampleName;
 	WorklistItemSimple prevItem;
-	boolean didNewPage = false;
-	boolean didNewPageRight = false;
 	Label pLabelPrev;
 	public Form<?> form;
 	PlatePreviewForm rlf; 
@@ -73,6 +71,7 @@ public class PlatePreviewPage extends AbstractFormDialog
 	Label pLabelHoldForCell;
 	boolean cameFromHolder = false;
 	boolean cameFromPreview = false;
+
 	
 	public PlatePreviewPage(boolean bothQCMPandMP,  List<WorklistItemSimple> items, boolean useCarousel, WorklistBuilderPanel wp, String id, String title,WorklistSimple ws)
 		{
@@ -153,8 +152,6 @@ public class PlatePreviewPage extends AbstractFormDialog
 				    	  	itemHoldforCell = prevItem;
 				    	  	itemHoldforCell.setShortSampleName(prevItem.getShortSampleName());		
 				         	pLabelHoldForCell.setDefaultModelObject(itemHoldforCell.getShortSampleName().replace("CS00000MPCS000QCMP", "CS00000MP        CS000QCMP"));
-				    	  	didNewPage = false;
-				    	  	didNewPageRight = false;
 			            	thePrevSampleName = thePrevSampleName.replace("\n",  "");
 			            	prevItem.setMpQcmpName(prevItem.getMpQcmpName().replace("\n",  ""));
 			            	prevItem.setSampleName(prevItem.getSampleName().replace("\n",  ""));
@@ -184,28 +181,21 @@ public class PlatePreviewPage extends AbstractFormDialog
 			            	}
 				    	}			    
 					});
-	
-				holderforcell.add(new AjaxEventBehavior("drag")
-					{
-				    protected void onEvent(AjaxRequestTarget target)
-				    	{
-				    	cameFromHolder = true;
-				    	cameFromPreview = false;
-				    	prevItem = itemHoldforCell;
-				    	}
-					}
-					);
 				
 				holderforcell.add(new AjaxEventBehavior("dragstart")
 					{
 				    protected void onEvent(AjaxRequestTarget target)
 				    	{
+				    
 				    	//undo if (StringUtils.isEmptyOrNull(holderforcell.getDefaultModelObjectAsString()))
 				    	if (StringUtils.isEmptyOrNull(pLabelHoldForCell.getDefaultModelObjectAsString()))
 					    	{
 				    		target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("There is no control in the holding position.   Please drag a control to the holding position if you wish to move a control to a different page."));	
 					    	return;
 					    	}
+				    	cameFromHolder = true;
+				    	cameFromPreview = false;
+				    	prevItem = itemHoldforCell;
 				    	}
 					}
 					);
@@ -413,39 +403,29 @@ public class PlatePreviewPage extends AbstractFormDialog
 			    {
 			    protected void onEvent(AjaxRequestTarget target)
 				    {
-			    	didNewPage = false;
-			    	didNewPageRight = false;
 				    thePrevSampleName = pLabel.getDefaultModelObjectAsString();
-				       if (item.getSampleName().startsWith("S000"))
-		                  {
-		            	  target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please choose a control rather than sample:" + pLabel.getDefaultModelObjectAsString().replace("\n", "")));
-		            	  return;
-		            	  } 
-				       if (StringUtils.isEmptyOrNull(item.getSampleName()))
-		                  {
-		            	  target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please do not move a blank square:" + pLabel.getDefaultModelObjectAsString().replace("\n", "")));
-		            	  return;
-		            	  } 
-				       
+			        if (item.getSampleName().startsWith("S000"))
+		                {
+		            	target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please choose a control rather than sample:" + pLabel.getDefaultModelObjectAsString().replace("\n", "")));
+		            	return;
+		            	} 
+			        if (StringUtils.isEmptyOrNull(item.getSampleName()))
+	                    {
+	            	    target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please do not move a blank square:" + pLabel.getDefaultModelObjectAsString().replace("\n", "")));
+	            	    return;
+	            	    } 				       
+				       cameFromHolder = false;
+				       cameFromPreview = true;				    	
+					   thePrevSampleName = pLabel.getDefaultModelObjectAsString();
+		               prevItem = item;
+		               String controlTitlee = WorklistFieldBuilder.assembleStyleTag(prevItem, true);
+		               if (!controlTitlee.equals("background :#eaeef2"))
+		                   colorMap.put(prevItem.getSampleName().indexOf("-") >= 0 ? prevItem.getSampleName().substring(0, prevItem.getSampleName().lastIndexOf("-")) : prevItem.getSampleName(), controlTitlee);
+		               pLabelPrev = pLabel; 
 				    }
 			    });
 			    
 			// issue 205
-			pLabel.add(new AjaxEventBehavior("drag")
-					{
-				    protected void onEvent(AjaxRequestTarget target)
-					    {
-				    	cameFromHolder = false;
-				    	cameFromPreview = true;				    	
-					    thePrevSampleName = pLabel.getDefaultModelObjectAsString();
-		            	prevItem = item;
-		            	String controlTitlee = WorklistFieldBuilder.assembleStyleTag(prevItem, true);
-		            	if (!controlTitlee.equals("background :#eaeef2"))
-		            		colorMap.put(prevItem.getSampleName().indexOf("-") >= 0 ? prevItem.getSampleName().substring(0, prevItem.getSampleName().lastIndexOf("-")) : prevItem.getSampleName(), controlTitlee);
-		            	pLabelPrev = pLabel;
-					    }
-					});
-			
 			// issue 205
 			// issue 231			
 			
@@ -470,8 +450,6 @@ public class PlatePreviewPage extends AbstractFormDialog
 				        		target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please drop on a blank space " ));
 				            	return;
 				        	 	} 
-				    	  	didNewPage = false;
-				    	  	didNewPageRight = false;
 			            	thePrevSampleName = thePrevSampleName.replace("\n",  "");
 			            	prevItem.setMpQcmpName(prevItem.getMpQcmpName().replace("\n",  ""));
 			            	prevItem.setSampleName(prevItem.getSampleName().replace("\n",  ""));
