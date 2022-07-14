@@ -149,6 +149,16 @@ public class PlatePreviewPage extends AbstractFormDialog
 				    	{	    	
 				    	try
 			            	{
+				    	    if (prevItem.getSampleName().startsWith("S000"))
+				                {
+				            	target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please choose a control rather than sample:" + prevItem.getSampleName().replace("\n", "")));
+				            	return;
+				            	} 
+				    	    if (StringUtils.isEmptyOrNull(prevItem.getSampleName()))
+				                {
+				            	target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please choose a control rather than a blank square:" + prevItem.getSampleName().replace("\n", "")));
+				            	return;
+				            	} 
 				    	  	itemHoldforCell = prevItem;
 				    	  	itemHoldforCell.setShortSampleName(prevItem.getShortSampleName());		
 				         	pLabelHoldForCell.setDefaultModelObject(itemHoldforCell.getShortSampleName().replace("CS00000MPCS000QCMP", "CS00000MP        CS000QCMP"));
@@ -188,11 +198,7 @@ public class PlatePreviewPage extends AbstractFormDialog
 				    	{
 				    
 				    	//undo if (StringUtils.isEmptyOrNull(holderforcell.getDefaultModelObjectAsString()))
-				    	if (StringUtils.isEmptyOrNull(pLabelHoldForCell.getDefaultModelObjectAsString()))
-					    	{
-				    		target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("There is no control in the holding position.   Please drag a control to the holding position if you wish to move a control to a different page."));	
-					    	return;
-					    	}
+				   
 				    	cameFromHolder = true;
 				    	cameFromPreview = false;
 				    	prevItem = itemHoldforCell;
@@ -403,25 +409,15 @@ public class PlatePreviewPage extends AbstractFormDialog
 			    {
 			    protected void onEvent(AjaxRequestTarget target)
 				    {
+				    thePrevSampleName = pLabel.getDefaultModelObjectAsString();		  				       
+				    cameFromHolder = false;
+				    cameFromPreview = true;				    	
 				    thePrevSampleName = pLabel.getDefaultModelObjectAsString();
-			        if (item.getSampleName().startsWith("S000"))
-		                {
-		            	target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please choose a control rather than sample:" + pLabel.getDefaultModelObjectAsString().replace("\n", "")));
-		            	return;
-		            	} 
-			        if (StringUtils.isEmptyOrNull(item.getSampleName()))
-	                    {
-	            	    target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please do not move a blank square:" + pLabel.getDefaultModelObjectAsString().replace("\n", "")));
-	            	    return;
-	            	    } 				       
-				       cameFromHolder = false;
-				       cameFromPreview = true;				    	
-					   thePrevSampleName = pLabel.getDefaultModelObjectAsString();
-		               prevItem = item;
-		               String controlTitlee = WorklistFieldBuilder.assembleStyleTag(prevItem, true);
-		               if (!controlTitlee.equals("background :#eaeef2"))
-		                   colorMap.put(prevItem.getSampleName().indexOf("-") >= 0 ? prevItem.getSampleName().substring(0, prevItem.getSampleName().lastIndexOf("-")) : prevItem.getSampleName(), controlTitlee);
-		               pLabelPrev = pLabel; 
+		            prevItem = item;
+		            String controlTitlee = WorklistFieldBuilder.assembleStyleTag(prevItem, true);
+		            if (!controlTitlee.equals("background :#eaeef2"))
+		                colorMap.put(prevItem.getSampleName().indexOf("-") >= 0 ? prevItem.getSampleName().substring(0, prevItem.getSampleName().lastIndexOf("-")) : prevItem.getSampleName(), controlTitlee);
+		            pLabelPrev = pLabel; 
 				    }
 			    });
 			    
@@ -437,6 +433,11 @@ public class PlatePreviewPage extends AbstractFormDialog
 			            	{
 				    		if (cameFromHolder)
 				    			{
+				    		 	if (StringUtils.isEmptyOrNull(pLabelHoldForCell.getDefaultModelObjectAsString()) || pLabelHoldForCell.getDefaultModelObjectAsString().contains("Drag Control")  )
+							    	{
+						    		target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("There is no control in the holding position.   Please drag a control to the holding position if you wish to move a control to a different page."));	
+							    	return;
+							    	}
 				    			 thePrevSampleName = pLabelHoldForCell.getDefaultModelObjectAsString();
 					             prevItem = itemHoldforCell;
 					             String controlTitlee = WorklistFieldBuilder.assembleStyleTag(prevItem, true);
@@ -444,6 +445,16 @@ public class PlatePreviewPage extends AbstractFormDialog
 					                 colorMap.put(prevItem.getSampleName().indexOf("-") >= 0 ? prevItem.getSampleName().substring(0, prevItem.getSampleName().lastIndexOf("-")) : prevItem.getSampleName(), controlTitlee);
 					             pLabelPrev = pLabelHoldForCell;
 				    			}
+			    	       if (prevItem.getSampleName().startsWith("S000"))
+				                {
+				            	target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please choose a control rather than sample:" + prevItem.getSampleName().replace("\n", "")));
+				            	return;
+				            	} 
+				    		if (StringUtils.isEmptyOrNull(prevItem.getSampleName()))
+				                {
+				            	target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("Please do not move a blank square:" + pLabel.getDefaultModelObjectAsString().replace("\n", "")));
+				            	return;
+				            	}
 				    		
 				    	  	if (!edu.umich.brcf.shared.util.io.StringUtils.isEmptyOrNull(pLabel.getDefaultModelObjectAsString()) )
 				        	 	{

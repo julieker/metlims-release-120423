@@ -288,9 +288,9 @@ public class WorklistBuilderPanel extends Panel
 					behavior.setOption("modal", this.isModal());
 					//behavior.setOption("resizable", this.isResizable());
 					behavior.setOption("resizable", true);
-					behavior.setOption("width", 1000);
+					behavior.setOption("width", 1050);
 					behavior.setOption("title", Options.asString(this.getTitle().getObject()));
-					behavior.setOption("height", 610);
+					behavior.setOption("height", 650);
 					//behavior.setOption("height", 1000);
 				    behavior.setOption("autofocus", false);
 				    }	
