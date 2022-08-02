@@ -233,6 +233,14 @@ public class ControlDAO extends BaseDAO
 	tempArray.add("UM rat   adipose control (CS0UMRA01)");
 	// issue 126
 	tempArray.add("UM Human muscle control  (CSOUMHM03)");
+	// issue 235
+	/****************************************/
+	tempArray.add("Adi RefStdA  (CS0081053)");
+	tempArray.add("Adi RefStdB  (CS0081054)");
+	tempArray.add("Adi RefStdC  (CS0081055)");
+	tempArray.add("Adi RefStdD  (CS0081056)");
+	tempArray.add("Adi RefStdE  (CS0081057)");
+	/****************************************/
 	
 	tempArray.add("Standard.0    (CS000STD0)");
 	tempArray.add("Standard.1    (CS000STD1)");

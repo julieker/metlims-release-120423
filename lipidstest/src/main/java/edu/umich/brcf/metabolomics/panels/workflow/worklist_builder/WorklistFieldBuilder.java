@@ -439,8 +439,20 @@ public class WorklistFieldBuilder implements Serializable
 		else if (item.getSampleType().startsWith("Injection"))
 			style += "#c8a2c8";
 			// color will be good choice when pool1b is no longer use 
+		else if (item.getSampleType().startsWith("Adi RefStdA"))
+			style += "#EADDCA";
+		else if (item.getSampleType().startsWith("Adi RefStdB"))
+			style += "#FFBF00";
+		else if (item.getSampleType().startsWith("Adi RefStdC"))
+			style += "#FBCEB1";
+		else if (item.getSampleType().startsWith("Adi RefStdD"))
+			style += "#F5F5DC";
+		else if (item.getSampleType().startsWith("Adi RefStdE"))
+			style += "#E1C16E";
+			
 		else if (item.getRepresentsUserDefinedControl())
 			style += "#e0b3dd";	
+		
 		else
 			style += "#eaeef2";
 		return style;		

@@ -91,7 +91,15 @@ public class WorklistSimple implements Serializable
 	// issue 126
 	private int nMuscleHumanMale = 0;
 	private int nMuscleHumanFemale = 0;
-	private int nHumanMuscleCntrl = 0;	
+	private int nHumanMuscleCntrl = 0;
+	private int nRefStdA = 0;
+	private int nRefStdB = 0;
+	private int nRefStdC = 0;
+	private int nRefStdD = 0;
+	private int nRefStdE = 0;
+	
+	
+	
 	private int nKidneyExercise = 0;
 	private int nKidneySedentary = 0;
 	private int nHeartExercise = 0;
@@ -202,6 +210,57 @@ public class WorklistSimple implements Serializable
 		{
 		this.nHumanMuscleCntrl = nHumanMuscleCntrl;
 		}
+	
+	// issue 235
+	/********************************************************/
+	public int getNRefStdA ()
+		{
+		return nRefStdA;
+		}
+	public void setNRefStdA (int nRefStdA)
+		{
+		this.nRefStdA = nRefStdA;
+		}
+	
+	public int getNRefStdB ()
+		{
+		return nRefStdB;
+		}
+	public void setNRefStdB (int nRefStdB)
+		{
+		this.nRefStdB = nRefStdB;
+		}
+	
+	public int getNRefStdC ()
+		{
+		return nRefStdC;
+		}
+	public void setNRefStdC (int nRefStdC)
+		{
+		this.nRefStdC = nRefStdC;
+		}
+	
+	public int getNRefStdD ()
+		{
+		return nRefStdD;
+		}
+	public void setNRefStdD (int nRefStdD)
+		{
+		this.nRefStdD = nRefStdD;
+		}
+	
+	public int getNRefStdE ()
+		{
+		return nRefStdE;
+		}
+	public void setNRefStdE (int nRefStdE)
+		{
+		this.nRefStdE = nRefStdE;
+		}
+	
+	
+	
+	/*********************************************************/
 	
 	// issue 217
 	public int getMaxStartPlate ()

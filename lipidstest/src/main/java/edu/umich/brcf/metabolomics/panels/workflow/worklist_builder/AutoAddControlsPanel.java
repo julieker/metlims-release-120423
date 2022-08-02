@@ -162,7 +162,7 @@ public class AutoAddControlsPanel extends Panel
 			    if (originalWorklist.getChosenOtherSampleMotrPAC())
 			        {
 			    	target.appendJavaScript(buildHTMLSetString(1,22,"0"));
-			    	target.appendJavaScript(buildHTMLSetString(30,34, "0")); // issue 126 issue 193
+			    	target.appendJavaScript(buildHTMLSetString(30,39, "0")); // issue 126 issue 193
 			    	this.clearPrevValues();
 			        }
 				} 
@@ -201,6 +201,13 @@ public class AutoAddControlsPanel extends Panel
 				this.nMuscleHumanMalePrev=originalWorklist.getNMuscleHumanMale();
 				
 				this.nHumanMuscleCntrlPrev=originalWorklist.getNHumanMuscleCntrl();
+				
+				this.nRefStdAPrev=originalWorklist.getNRefStdA();
+				this.nRefStdBPrev=originalWorklist.getNRefStdB();
+				this.nRefStdCPrev=originalWorklist.getNRefStdC();
+				this.nRefStdDPrev=originalWorklist.getNRefStdD();
+				this.nRefStdEPrev=originalWorklist.getNRefStdE();
+
 				// issue 169
 				autoAddControlsPanel.defaultPoolBox.setDefaultModelObject(true);
 				worklist.setDefaultPool(true);
@@ -280,6 +287,12 @@ public class AutoAddControlsPanel extends Panel
 		        // issue 193
 		        originalWorklist.setNPlasmaHumanFemale(motrpacOptionsDialog.nPlasmaHumanFemalePrev);
 		        originalWorklist.setNPlasmaHumanMale(motrpacOptionsDialog.nPlasmaHumanMalePrev);
+			    // issue 235	        
+		        originalWorklist.setNRefStdA(motrpacOptionsDialog.nRefStdAPrev);
+		        originalWorklist.setNRefStdB(motrpacOptionsDialog.nRefStdBPrev);
+		        originalWorklist.setNRefStdC(motrpacOptionsDialog.nRefStdCPrev);
+		        originalWorklist.setNRefStdD(motrpacOptionsDialog.nRefStdDPrev);
+		        originalWorklist.setNRefStdE(motrpacOptionsDialog.nRefStdEPrev);
 			    }
 		    });			
 		
@@ -1298,6 +1311,55 @@ public class AutoAddControlsPanel extends Panel
 				group3.setStandardNotAddedControl(true);
 				originalWorklist.addControlGroup(group3);
 				}
+			
+			// issue 235
+			/******************************/
+			
+			for (int i = 0; i < worklist.getNRefStdA(); i++)
+				{
+				id = controlService.controlIdForNameAndAgilent("Adi RefStdA");
+				finalLabel = controlService.dropStringForIdAndAgilent(id);
+				WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+				group3.setStandardNotAddedControl(true);
+				originalWorklist.addControlGroup(group3);
+				}
+			
+			for (int i = 0; i < worklist.getNRefStdB(); i++)
+				{
+				id = controlService.controlIdForNameAndAgilent("Adi RefStdB");
+				finalLabel = controlService.dropStringForIdAndAgilent(id);
+				WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+				group3.setStandardNotAddedControl(true);
+				originalWorklist.addControlGroup(group3);
+				}
+			
+			for (int i = 0; i < worklist.getNRefStdC(); i++)
+				{
+				id = controlService.controlIdForNameAndAgilent("Adi RefStdC");
+				finalLabel = controlService.dropStringForIdAndAgilent(id);
+				WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+				group3.setStandardNotAddedControl(true);
+				originalWorklist.addControlGroup(group3);
+				}
+			
+			for (int i = 0; i < worklist.getNRefStdD(); i++)
+				{
+				id = controlService.controlIdForNameAndAgilent("Adi RefStdD");
+				finalLabel = controlService.dropStringForIdAndAgilent(id);
+				WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+				group3.setStandardNotAddedControl(true);
+				originalWorklist.addControlGroup(group3);
+				}
+			
+			for (int i = 0; i < worklist.getNRefStdE(); i++)
+				{
+				id = controlService.controlIdForNameAndAgilent("Adi RefStdE");
+				finalLabel = controlService.dropStringForIdAndAgilent(id);
+				WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+				group3.setStandardNotAddedControl(true);
+				originalWorklist.addControlGroup(group3);
+				}
+			/*******************************/	
 						
 		// issue 13 issue 17 issue 19
 		if (poolSpacingA > 0 &&  worklist.getMasterPoolsBefore()> 0 ) 
@@ -1330,6 +1392,58 @@ public class AutoAddControlsPanel extends Panel
 		// Issue 427
 		
 		// issue 126
+		
+		
+		// issue 235
+		/*********************************/
+		
+		for (int i = 0; i < worklist.getNRefStdE(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("Adi RefStdE");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
+		for (int i = 0; i < worklist.getNRefStdD(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("Adi RefStdD");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
+		for (int i = 0; i < worklist.getNRefStdC(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("Adi RefStdC");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
+		
+		for (int i = 0; i < worklist.getNRefStdB(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("Adi RefStdB");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
+		for (int i = 0; i < worklist.getNRefStdA(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("Adi RefStdA");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
+		/*********************************/
 		for (int i = 0; i < worklist.getNHumanMuscleCntrl(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("UM Human muscle control");

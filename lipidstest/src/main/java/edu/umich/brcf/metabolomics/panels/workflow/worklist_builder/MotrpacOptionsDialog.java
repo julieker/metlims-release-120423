@@ -77,6 +77,19 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 	protected int nMuscleHumanMalePrev=0;
 	protected int nMuscleHumanFemalePrev=0;
 	protected int nHumanMuscleCntrlPrev=0;
+	protected int nRefStdAPrev = 0;
+	protected int nRefStdBPrev = 0;
+	protected int nRefStdCPrev = 0;
+	protected int nRefStdDPrev = 0;
+	protected int nRefStdEPrev = 0;
+	
+	
+	protected int nRefStdA = 0;
+	protected int nRefStdB = 0;
+	protected int nRefStdC = 0;
+	protected int nRefStdD = 0;
+	protected int nRefStdE = 0;
+	
 	
 	// issue 126
 	protected int nMuscleHumanMale=0;
@@ -147,7 +160,13 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 		form.add(buildCountDropdown("nPlasmaHumanMale", "nPlasmaHumanMale"));
 		form.add(buildCountDropdown("nPlasmaHumanFemale", "nPlasmaHumanFemale"));
 		
-		
+	
+		form.add(buildCountDropdown("nRefStdA", "nRefStdA"));
+		form.add(buildCountDropdown("nRefStdB", "nRefStdB"));
+		form.add(buildCountDropdown("nRefStdC", "nRefStdC"));
+		form.add(buildCountDropdown("nRefStdD", "nRefStdD"));
+		form.add(buildCountDropdown("nRefStdE", "nRefStdE"));
+				
 		form.add(buildCountDropdown("nHumanMuscle", "nHumanMuscleCntrl"));
 		
 		form.add(buildCountDropdown("nRatPlasma", "nRatPlasma"));
@@ -375,6 +394,73 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 		this.nPlasmaHumanFemale = nPlasmaHumanFemale;
 		}
 	
+	// issue 235
+	/**************************************/
+	
+	// issue 193
+	public int getNRefStdA()
+		{
+		return nRefStdA;
+		}
+
+	// issue 193
+	public void setNRefStdA(int nRefStdA) 
+		{
+		this.nRefStdA= nRefStdA;
+		}
+	
+	// issue 193
+	public int getNRefStdB()
+		{
+		return nRefStdB;
+		}
+
+	// issue 193
+	public void setNRefStdB(int nRefStdB) 
+		{
+		this.nRefStdB= nRefStdB;
+		}
+	
+	// issue 193
+	public int getNRefStdC()
+		{
+		return nRefStdC;
+		}
+
+	// issue 193
+	public void setNRefStdC(int nRefStdC) 
+		{
+		this.nRefStdB= nRefStdC;
+		}
+	
+	
+	// issue 193
+	public int getNRefStdD()
+		{
+		return nRefStdD;
+		}
+
+	// issue 193
+	public void setNRefStdD(int nRefStdD) 
+		{
+		this.nRefStdD= nRefStdD;
+		}
+	
+	
+	// issue 193
+	public int getNRefStdE()
+		{
+		return nRefStdE;
+		}
+
+	// issue 193
+	public void setNRefStdE(int nRefStdE) 
+		{
+		this.nRefStdE= nRefStdE;
+		}
+	
+	/*************************************/
+	
 	// issue 126
 	public int getNHumanMuscleCntrl()
 		{
@@ -477,6 +563,15 @@ public abstract class MotrpacOptionsDialog extends AbstractFormDialog
 	// issue 6
     public void clearPrevValues ()
 	    {
+    	// issue 235
+    	nRefStdA = 0;
+    	nRefStdB = 0;
+    	nRefStdC = 0;
+    	nRefStdD = 0;
+    	nRefStdE = 0;
+    	
+    	
+    	
     	nGastroExercisePrev= 0; 
     	nGastroSedentaryPrev= 0;
     	nLiverExercisePrev= 0;

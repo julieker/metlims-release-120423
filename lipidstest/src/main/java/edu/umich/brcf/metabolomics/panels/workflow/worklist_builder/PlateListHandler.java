@@ -78,6 +78,7 @@ public class PlateListHandler implements Serializable
 			"CS00000RC","CS00000PB", "CS00000SB","CS00000NB", "CS00000QC",  // issue 151 issue 179
 	});*/
 	
+	// issue 235
 	public static List <String> POOL_CHEAR_CONTROL_TYPES = Arrays.asList(new String [] {
 			// issue 201
 			// issue 207
@@ -96,6 +97,7 @@ public class PlateListHandler implements Serializable
 			"CS0UMRG01", "CS0UMRL01", "CS0UMRA01","CS0UMRP01", "CSOUMHM03","CSMR80008","CSMR80009", "CSMR80010","CSMR80011", "CSMR80012","CSMR80013", 
 			"CSMR80014", "CSMR80015","CSMR80016","CSMR80017","CSMR80018","CSMR80019","CSMR80020","CSMR80021","CSMR80022", "CSMR80023","CSMR80024",
 			 "CSMR80025","CSMR81010", "CSMR81020","CSMR81040", "CSMR81030", // issue 193
+			 "CS0081053", "CS0081054", "CS0081055", "CS0081056", "CS0081057",
 			"CS00000RC","CS00000PB", "CS00000SB-Pre", "CS00000SB","CS00000NB", "CS00000QC",  // issue 151 issue 179
 	 });
 	
