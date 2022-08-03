@@ -419,9 +419,10 @@ public class AddSamplesPanel extends Panel
 
 			public void onClick(AjaxRequestTarget target)
 				{
-				//issue 166			
+				//issue 166		
 				PlateListHandler plateListHandler = null;
-				originalWorklist.getSampleGroup(0).setExpRandom(globalRand);
+				originalWorklist.getSampleGroup(0).setExpRandom(globalRand);				
+				wp.form.populateUnusedInj ();
 				List <WorklistItemSimple> tWI = new ArrayList <WorklistItemSimple> ();
 				try
 		        	{
@@ -460,7 +461,6 @@ public class AddSamplesPanel extends Panel
 					target.add(wp);
 					return;
 				    }
-				
 				Map<String, String> idsVsReasearcherNameMap =
 				        sampleService.sampleIdToResearcherNameMapForExpId(originalWorklist.getSampleGroup(0).getExperimentId());								
 				
@@ -490,6 +490,7 @@ public class AddSamplesPanel extends Panel
 				    	plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);	
 				    	}
 					plateListHandler.updateWorkListItemsMoved(originalWorklist);
+					wp.form.grabUnusedInj ();
 					return;
 					}				
 				if (excludedCount > 0 && !excludedSamplesWarningGiven)
@@ -517,8 +518,9 @@ public class AddSamplesPanel extends Panel
 			    	
 			    plateListHandler.updateWorkListItemsMoved(originalWorklist);	
 			    wp.form.agPanel.updateIddaList();
-			  //  if (originalWorklist.getIs96Well())
-			//	    {
+			    // issue 233
+			    if (originalWorklist.getSelectedPlatform().equals("agilent"))
+				    {
 				    try
 					    {
 					    wp.form.redoPlatePListView ();
@@ -529,7 +531,8 @@ public class AddSamplesPanel extends Panel
 				    	{
 				    	e.printStackTrace();
 				    	}
-				//    }
+				    }
+			    wp.form.grabUnusedInj ();
 				}
 			protected void onComponentTag(final ComponentTag tag)
 				{

@@ -470,7 +470,6 @@ public class PlatePreviewPage extends AbstractFormDialog
 			                item.setSampleName(thePrevSampleName);
 			                item.setSampleType(prevItem.getSampleType());  //putback
 			                item.setMpQcmpName(prevItem.getMpQcmpName());
-			            
 			                String controlTitle = colorMap.get(thePrevSampleName);
 			             	
 			             	if (StringUtils.isNullOrEmpty(controlTitle))
@@ -542,11 +541,13 @@ public class PlatePreviewPage extends AbstractFormDialog
 			                	}
 			                controlTitle = WorklistFieldBuilder.assembleStyleTag(prevItem, true);             
 			             	List <WorklistItemSimple> lilitems = new ArrayList <WorklistItemSimple> ();
-			             	lilitems.add(item);		             	
+			             	lilitems.add(item);		
 			                wpMain.worklist.setItemsMovedNewPositions(lilitems);
 			                ws.setItemsMovedNewPositions(lilitems);
 			                wpMain.lilmovedlist.addAll(ws.getItemsMovedNewPositions());
-			             
+			                // issue 233
+			                List <String> tUnusedInj = new ArrayList  <String> ();
+			                tUnusedInj.addAll(wpMain.itemsUpdateInj);
 			             	/************************/
 			               // if (!cameFromPreview)
 			                //	{
@@ -557,6 +558,7 @@ public class PlatePreviewPage extends AbstractFormDialog
 			                	plateListView.setCurrentPage(currentPage.intValue());
 			               // 	}	
 			                /***********************/
+			                wpMain.itemsUpdateInj.addAll(tUnusedInj);
 			                if (cameFromPreview)
 			                	cameFromPreview = false;
 			                target.appendJavaScript(edu.umich.brcf.shared.util.io.StringUtils.makeAlertMessage("The control:" + item.getSampleName().replace("CS00000MPCS000QCMP", "CS00000MP CS000QCMP").replace("CS00000MP        CS000QCMP" ,"CS00000MP CS000QCMP") + " has been moved to position:" + item.getSamplePosition()));		                			                		            	

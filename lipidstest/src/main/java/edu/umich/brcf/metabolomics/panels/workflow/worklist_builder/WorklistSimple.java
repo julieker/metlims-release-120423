@@ -1658,47 +1658,49 @@ public class WorklistSimple implements Serializable
 		return this.sampleGroupsList;
 		}
 	
-
+	// issue 233
 	public String grabOutputFileName(String sampleLabel, WorklistItemSimple item)   
+	{
+	String repeatTag;
+	String tag = item.getSampleTypeTagForFilename();		
+	String instrumentErrMsg = "Missing field : please select an instrument.";
+	String dateErrMsg = "Please correct your entry in the default date field.  Date should be written in mm/dd/yy format.";		
+	String dts, monthAsStr, yearStr;		
+	try
 		{
-		String tag = item.getSampleTypeTagForFilename();		
-		String instrumentErrMsg = "Missing field : please select an instrument.";
-		String dateErrMsg = "Please correct your entry in the default date field.  Date should be written in mm/dd/yy format.";		
-		String dts, monthAsStr, yearStr;		
-		try
-			{
-			Date date = DateUtils.dateFromDateStr(getRunDate(), "MM/dd/yy");
-			String fullString = DateUtils.dateAsFullString(date);
-			dts = DateUtils.grabYYYYmmddString(fullString);			
-			DateUtils.dateFromDateStr(dts, "MM/dd/yy");
-			monthAsStr = DateUtils.grabMonthString(getRunDate());
-			yearStr = DateUtils.grabYearString(getRunDate());
-			}
-		catch (ParseException e)
-			{
-			return dateErrMsg;
-			}		
-		if (getSelectedInstrument() == null)
-			return instrumentErrMsg;			
-		String [] instrumentLine = getSelectedInstrument().split("\\s");
-		String instrument =  (instrumentLine.length > 0) ? instrumentLine[0] : "Error";		
-		String repeatTag = item.isSelected() ? "2" : "";
-	// Error in default date field
-		if ("absciex".equalsIgnoreCase(this.getSelectedPlatform()))
-			return grabAbsciexOutputName(sampleLabel, tag, getDefaultExperimentId(), getDefaultAssayId(), yearStr, monthAsStr,
-					dts, instrument, getSelectedMode().equals("Positive") ? "Pos" : "Neg", repeatTag);		
-		if (instrument.equals("Unknown") || instrument.equalsIgnoreCase("IN0024") || instrument.equals(""))
-			return instrumentErrMsg;	
-		if (getUseGCOptions())
-			//issue 414
-			return grabNameWithoutPath(sampleLabel, "", getDefaultExperimentId(), this.getDefaultAssayId(), yearStr, monthAsStr, 
-		        dts, instrument, (getSelectedMode().contains("Positive") ? "P" : "N") + repeatTag); // issue 450
-			//return grabNameWithoutPath(sampleLabel, tag, getDefaultExperimentId(), this.getDefaultAssayId(), yearStr, monthAsStr, 
-				//	dts, instrument, (getSelectedMode().equals("Positive") ? "P" : "N") + repeatTag);		
-		return grabAgilentOutputName(sampleLabel, tag, getDefaultExperimentId(), this.getDefaultAssayId(), yearStr, monthAsStr, 
-		    dts, instrument, (getSelectedMode().contains("Positive") ? "P" : "N") + repeatTag); // issue 450
+		Date date = DateUtils.dateFromDateStr(getRunDate(), "MM/dd/yy");
+		String fullString = DateUtils.dateAsFullString(date);
+		dts = DateUtils.grabYYYYmmddString(fullString);			
+		DateUtils.dateFromDateStr(dts, "MM/dd/yy");
+		monthAsStr = DateUtils.grabMonthString(getRunDate());
+		yearStr = DateUtils.grabYearString(getRunDate());
 		}
-
+	catch (ParseException e)
+		{
+		return dateErrMsg;
+		}		
+	if (getSelectedInstrument() == null)
+		return instrumentErrMsg;			
+	String [] instrumentLine = getSelectedInstrument().split("\\s");
+	String instrument =  (instrumentLine.length > 0) ? instrumentLine[0] : "Error";		
+	if (item.getGroup().getParent().getSelectedPlatform().equals("agilent"))
+		repeatTag = item.getRepresentsControl() && item.isSelected() ? "Unused_Inj" : "";
+	else
+		repeatTag = item.isSelected() ? "2" : "";
+// Error in default date field
+	if ("absciex".equalsIgnoreCase(this.getSelectedPlatform()))
+		return grabAbsciexOutputName(sampleLabel, tag, getDefaultExperimentId(), getDefaultAssayId(), yearStr, monthAsStr,
+				dts, instrument, getSelectedMode().equals("Positive") ? "Pos" : "Neg", repeatTag);		
+	if (instrument.equals("Unknown") || instrument.equalsIgnoreCase("IN0024") || instrument.equals(""))
+		return instrumentErrMsg;	
+	if (getUseGCOptions())
+		//issue 414
+		return grabNameWithoutPath(sampleLabel, "", getDefaultExperimentId(), this.getDefaultAssayId(), yearStr, monthAsStr, 
+	        dts, instrument,  repeatTag); // issue 450		
+	return grabAgilentOutputName(sampleLabel, tag, getDefaultExperimentId(), this.getDefaultAssayId(), yearStr, monthAsStr, 
+	    dts, instrument,  repeatTag); // issue 450
+	}
+	
 
 	// issue 432
 	public String grabOutputFileNameIDDA()   
@@ -1742,21 +1744,22 @@ public class WorklistSimple implements Serializable
 		return ("" + yearStr + "\\" + dts + "_" + expId + "\\" + mode + "\\" +  dts + "_" + tagLabel + sampleLabel + "_" + modeTagForFilename + repeatTag);
 		}
 	
-	
+	// issue 233
 	public String grabNameWithoutPath(String sampleLabel, String tag, String expId, String aid, String yearStr, String monthAsStr, 
 			String dts,  String instrument, String mode)
 		{
 		String tagLabel = (tag != null && tag.length() > 0) ? tag + "-" : "";
-		return dts + "-" + expId + "-" + aid + "-" + instrument + "-" + tagLabel + sampleLabel + "-" + mode;
+		return (StringUtils.isEmptyOrNull(mode) ? "" : "\\" + mode + "\\") + dts + "-" + expId + "-" + aid + "-" + instrument + "-" + tagLabel + sampleLabel + "-" + (getSelectedMode().contains("Positive") ? "P" : "N");
 		}
 
 	// issue 368 and 394 
 	public String grabAgilentOutputName(String sampleLabel, String tag, String expId, String aid, String yearStr, String monthAsStr, 
 			String dts,  String instrument, String mode)
-		{
+		//issue 233
+	    {
 		String tagLabel = ""; //(tag != null && tag.length() > 0) ? tag + "-" : "";
-		return "D:\\MassHunter\\Data\\" + yearStr + "\\" +  monthAsStr + "\\" + expId +  "\\"  + dts + "-" + expId + "-" + aid
- 					+ "-" + instrument + "-" + tagLabel + sampleLabel + "-" + mode;
+		return "D:\\MassHunter\\Data\\"   +  yearStr + "\\" +  monthAsStr + "\\" + expId +  "\\" +  mode   +  (StringUtils.isNullOrEmpty(mode) ? "" : "\\")  +   dts + "-" + expId + "-" + aid
+ 					+ "-" + instrument + "-" + tagLabel + sampleLabel + "-"  + (getSelectedMode().contains("Positive") ? "P" : "N");
 		}
 	
 

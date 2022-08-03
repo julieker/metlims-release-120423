@@ -235,9 +235,11 @@ public class AddControlsPanel extends Panel
 			{
 			public boolean isEnabled() { return originalWorklist.getOpenForUpdates(); }
 
+			// issue 233
 			@Override
 			public void onClick(AjaxRequestTarget target)
 				{
+				wp.form.populateUnusedInj ();
 				// issue 17	
 				if (originalWorklist.countGroups(true) > 1)
 					{
@@ -303,6 +305,7 @@ public class AddControlsPanel extends Panel
 		    	PlateListHandler plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);
 		    	plateListHandler.updateWorkListItemsMoved(originalWorklist);
 		    	wp.form.agPanel.updateIddaList ();
+		    	wp.form.grabUnusedInj ();
 				refreshPage(target);
 				}
 			};
@@ -433,6 +436,8 @@ public class AddControlsPanel extends Panel
 			// issue 151
 			public void onClick(AjaxRequestTarget target)
 				{
+				// issue 233
+				wp.form.populateUnusedInj ();
 				// issue 153
 				if (originalWorklist.countOfSamplesForItems(originalWorklist.getItems())+ originalWorklist.buildControlTypeMap().size()  > (originalWorklist.getMaxStartPlate() * originalWorklist.getMaxItemsAsInt()))
 					{
@@ -507,6 +512,7 @@ public class AddControlsPanel extends Panel
 		    	PlateListHandler plateListHandler = new PlateListHandler(nPlateRows, nPlateCols,false);
 		    	plateListHandler.updateWorkListItemsMoved(originalWorklist);	
 		    	wp.form.agPanel.updateIddaList ();
+		    	wp.form.grabUnusedInj ();
 		    	refreshPage(target);
 				}
 			};

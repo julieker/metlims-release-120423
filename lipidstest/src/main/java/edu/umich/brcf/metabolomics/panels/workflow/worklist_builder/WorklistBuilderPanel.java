@@ -88,6 +88,8 @@ public class WorklistBuilderPanel extends Panel
     AjaxPagingNavigator ajaxPagingNavigatorWorkList;
     WorklistBuilderForm form;
     IndicatingAjaxLink pPreview;
+    List <String> itemsUpdateInj = new ArrayList <String> ();
+    
 	public WorklistBuilderPanel()  { this(""); }
 	
 	public WorklistBuilderPanel(String id)
@@ -185,7 +187,8 @@ public class WorklistBuilderPanel extends Panel
 				  
 				@Override
 				protected void onOpen(IPartialPageRequestHandler handler)
-					{ 					
+					{ 
+					populateUnusedInj ();
 					colorMap.clear();
 				    this.rlf.clearHolding ();               	
 					firstTimeOpening = true;
@@ -278,6 +281,7 @@ public class WorklistBuilderPanel extends Panel
 				    // issue 205 get rid of 910 911 and 912
 				    else 
 				    	plateListHandler.check96WellsUpdate(worklist.getItems());
+				    grabUnusedInj ();
 				    }
 					
 				@Override
@@ -1154,6 +1158,7 @@ public class WorklistBuilderPanel extends Panel
 		            {           
 				    try 
 				        { 
+				    	// issue 233 
 				        doRandomization(target);
 				        plateListHandler.updateWorkListItemsMoved(worklist);
 				        } 
@@ -1203,14 +1208,21 @@ public class WorklistBuilderPanel extends Panel
 			}
 		
 		private void doRandomization(AjaxRequestTarget target) 
-		    {   
+		    { 
+			
 			Map<String, String> idsVsReasearcherNameMap =
 				    sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());
 			if (worklist.getItems() == null || worklist.getItems().size() == 0)
 				return;		
 		    List <WorklistItemSimple> tWI = new ArrayList <WorklistItemSimple> ();	
 			if (worklist.getOpenForUpdates())
-				{	
+				{
+				itemsUpdateInj = new ArrayList <String> ();
+				for (WorklistItemSimple wi : worklist.getItems())
+		    		{
+		    	    if (wi.isSelected())
+		    	    	itemsUpdateInj.add(wi.getSampleName());    
+		    		} 
 				// issue 416
 				try 
 					{
@@ -1266,6 +1278,14 @@ public class WorklistBuilderPanel extends Panel
 						worklist.setPlateWarningGivenTwice(true);
 					worklist.setPlateWarningGiven(true);
 					}
+				
+				 for (WorklistItemSimple wi : worklist.getItems())
+		        	{
+		        	if (itemsUpdateInj.contains(wi.getSampleName()))
+		        		wi.setSelected(true);
+		        	}
+				 if (itemsUpdateInj.size()> 0 )
+					 worklist.updateOutputFileNames();
 				}
 			else
 				{
@@ -1281,8 +1301,15 @@ public class WorklistBuilderPanel extends Panel
 				worklist.setOpenForUpdates(true);
 				
 				// issue 212
-				
-				 updatePage(target);
+				for (WorklistItemSimple wi : worklist.getItems())
+		            {
+		        	if (itemsUpdateInj.contains(wi.getSampleName()))
+		        		wi.setSelected(true);
+		        	}
+				if (itemsUpdateInj.size()> 0 )
+				    worklist.updateOutputFileNames();
+				itemsUpdateInj = new ArrayList <String> (); 
+				updatePage(target);
 				}
 		    }
 		
@@ -1426,6 +1453,48 @@ public class WorklistBuilderPanel extends Panel
 				form.platePreviewPageDialog.rlf.add  (form.platePreviewPageDialog.plateListView);
 				}		
 			}
+	// issue 233	
+		public void populateUnusedInj ()
+			{
+			try
+				{
+				if (worklist.getOpenForUpdates())
+					{
+					itemsUpdateInj = new ArrayList <String> ();
+					for (WorklistItemSimple wi : worklist.getItems())
+			    		{
+			    	    if (wi.isSelected())
+			    	    	itemsUpdateInj.add(wi.getSampleName());
+			    		} 
+		            }
+				}
+			catch (Exception e)
+				{
+				itemsUpdateInj = new ArrayList <String> ();
+				e.printStackTrace();
+				}
+			}
+		
+     // issue 233
+		 public void grabUnusedInj ()
+		 	{
+			try
+				{
+				for (WorklistItemSimple wi : worklist.getItems())
+		        	{
+		        	if (itemsUpdateInj.contains(wi.getSampleName()))	        		
+		        		wi.setSelected(true);
+		        	}
+				if (itemsUpdateInj.size()> 0 )
+					worklist.updateOutputFileNames();
+	            itemsUpdateInj = new ArrayList <String> ();
+			 	}
+			catch (Exception e)
+				{
+				itemsUpdateInj = new ArrayList <String> ();
+				e.printStackTrace();
+				}
+		 	}
 		
 		}
 

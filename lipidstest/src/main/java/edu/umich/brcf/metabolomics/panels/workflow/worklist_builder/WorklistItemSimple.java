@@ -543,6 +543,7 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	// issue 32
 	// issue 217
 	// issue 229
+	// issue 233
 	public String grabDataFileWithCustomDirectory()
 		{
 		if ( StringUtils.isNullOrEmpty( parent.getCustomDirectoryStructureName()) ||     parent.getCustomDirectoryStructureName().equals("<custom directory>" ) ||  !parent.getIsCustomDirectoryStructure())
@@ -554,11 +555,12 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		String customDirectoryWOSlash = lastChar.equals("\\") && parent.getCustomDirectoryStructureName().length() > 1 ? 
 		    parent.getCustomDirectoryStructureName().substring(0,parent.getCustomDirectoryStructureName().length()-1) :
 		   ( lastChar.equals("\\") ? "" :parent.getCustomDirectoryStructureName());	  
-		if (this.getOutputFileName().indexOf("\\") < 0 )
+		String unusedInj = this.isSelected() && this.getRepresentsControl() ?  "Unused_Inj\\" : "";
+		    if (this.getOutputFileName().indexOf("\\") < 0 )
 			{
 			if (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()) || parent.getCustomDirectoryStructureName().equals("<custom directory>"))
 				return this.getOutputFileName();
-			return (StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash) + "\\" + this.getOutputFileName();
+			return (StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash) + "\\" +  this.getOutputFileName();
 			}
 	    else
 			{	       
@@ -566,7 +568,7 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 			String lastPartDataFile = fileNameArray[fileNameArray.length -1];
 			if (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()))
 				return lastPartDataFile;
-			return (StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash) + "\\" + lastPartDataFile;
+			return ((StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash) + "\\" + unusedInj +  (StringUtils.isNullOrEmpty(unusedInj) ? "" : "\\") +   lastPartDataFile).replace("\\\\", "\\");
 			}			
 	    }
 	

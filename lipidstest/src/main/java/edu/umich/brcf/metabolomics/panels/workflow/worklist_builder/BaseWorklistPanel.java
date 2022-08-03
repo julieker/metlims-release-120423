@@ -209,6 +209,8 @@ public abstract class BaseWorklistPanel extends Panel
 		}
 
 
+	
+	// issue 233
 	protected AjaxCheckBox buildRedoCheckbox(String id, final ListItem<WorklistItemSimple> item, final WebMarkupContainer container)
 		{
 		final WorklistItemSimple so = (WorklistItemSimple) item.getModelObject();
@@ -216,6 +218,14 @@ public abstract class BaseWorklistPanel extends Panel
 		AjaxCheckBox box = new AjaxCheckBox("selected", new PropertyModel(so, "selected"))
 			{
 			@Override
+		    public boolean isEnabled()
+			    {
+				if (worklist.getSelectedPlatform().equals("absciex"))
+					return true;
+			    return (worklist.getSelectedPlatform().equals("agilent") && so.getRepresentsControl() ? true : false);	
+			    }
+						
+			@Override			
 			public void onUpdate(AjaxRequestTarget target)
 				{
 				worklist.updateOutputFileNames();
@@ -226,11 +236,15 @@ public abstract class BaseWorklistPanel extends Panel
 		return box;
 		}
 
-	
+	// issue 233
 	protected AjaxCheckBox buildSelectAllBox(String id, final WebMarkupContainer container)
 		{
 		AjaxCheckBox box = new AjaxCheckBox("allSelected", new PropertyModel(worklist, "allSelected"))
 			{
+			 public boolean isEnabled()
+			    {
+			    return (worklist.getSelectedPlatform().equals("agilent") ? false : true);
+			    }
 			@Override
 			public void onUpdate(AjaxRequestTarget target)
 				{

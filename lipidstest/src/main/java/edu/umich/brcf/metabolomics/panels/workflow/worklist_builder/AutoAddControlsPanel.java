@@ -695,6 +695,8 @@ public class AutoAddControlsPanel extends Panel
 	        @Override
 	        public void onClick(AjaxRequestTarget target)
 		        {
+	        	// issue 233
+	        	wp.form.populateUnusedInj ();
 	            originalWorklist.getControlCommentsMap().clear();
 	        	worklist.getIddaStrList().clear();
 	    		// issue 509
@@ -854,6 +856,7 @@ public class AutoAddControlsPanel extends Panel
 			    if (!worklist.getIs96Well())
 					msWorklistWriter.printOutIDDA(null, null, 0, worklist.getSelectedMode(), worklist.getItems().get(0).getOutputFileName(), false ); 
 			    wp.form.agPanel.updateIddaList();
+			    wp.form.grabUnusedInj ();
 			    refreshPage(target);	
 			    target.add(wp.form.agPanel.textAreaIdda);
 		        }
