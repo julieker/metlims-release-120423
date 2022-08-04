@@ -89,6 +89,7 @@ public class WorklistBuilderPanel extends Panel
     WorklistBuilderForm form;
     IndicatingAjaxLink pPreview;
     List <String> itemsUpdateInj = new ArrayList <String> ();
+    List <String> titemsUpdateInj = new ArrayList <String> ();
     
 	public WorklistBuilderPanel()  { this(""); }
 	
@@ -339,7 +340,7 @@ public class WorklistBuilderPanel extends Panel
 				public boolean isEnabled()
 					{
 					// issue 229
-					return (worklist.getItems().size()> 0) && isPlatformChosenAs("agilent");
+					return (worklist.getItems().size()> 0) && isPlatformChosenAs("agilent") && !worklist.getUseCarousel();
 					}
 				@Override
 				public void onClick(AjaxRequestTarget target) 			     
@@ -1094,6 +1095,7 @@ public class WorklistBuilderPanel extends Panel
 									}
 								agPanel.updateIddaList();
 							    target.add(agPanel.textAreaIdda);
+							    target.add(pPreview); // issue 233
 								/// issue 217
 								break;
 								// issue 166	
@@ -1217,12 +1219,14 @@ public class WorklistBuilderPanel extends Panel
 		    List <WorklistItemSimple> tWI = new ArrayList <WorklistItemSimple> ();	
 			if (worklist.getOpenForUpdates())
 				{
-				itemsUpdateInj = new ArrayList <String> ();
+				titemsUpdateInj = new ArrayList <String> ();
 				for (WorklistItemSimple wi : worklist.getItems())
 		    		{
 		    	    if (wi.isSelected())
-		    	    	itemsUpdateInj.add(wi.getSampleName());    
+		    	    	titemsUpdateInj.add(wi.getSampleName());    
 		    		} 
+				itemsUpdateInj.clear();
+				itemsUpdateInj.addAll(titemsUpdateInj);
 				// issue 416
 				try 
 					{
@@ -1281,10 +1285,10 @@ public class WorklistBuilderPanel extends Panel
 				
 				 for (WorklistItemSimple wi : worklist.getItems())
 		        	{
-		        	if (itemsUpdateInj.contains(wi.getSampleName()))
+		        	if (titemsUpdateInj.contains(wi.getSampleName()))
 		        		wi.setSelected(true);
 		        	}
-				 if (itemsUpdateInj.size()> 0 )
+				 if (titemsUpdateInj.size()> 0 )
 					 worklist.updateOutputFileNames();
 				}
 			else
@@ -1301,14 +1305,15 @@ public class WorklistBuilderPanel extends Panel
 				worklist.setOpenForUpdates(true);
 				
 				// issue 212
+				// issue 233
 				for (WorklistItemSimple wi : worklist.getItems())
 		            {
-		        	if (itemsUpdateInj.contains(wi.getSampleName()))
+		        	if (titemsUpdateInj.contains(wi.getSampleName()))
 		        		wi.setSelected(true);
 		        	}
-				if (itemsUpdateInj.size()> 0 )
+				if (titemsUpdateInj.size()> 0 )
 				    worklist.updateOutputFileNames();
-				itemsUpdateInj = new ArrayList <String> (); 
+				titemsUpdateInj = new ArrayList <String> (); 
 				updatePage(target);
 				}
 		    }
