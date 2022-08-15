@@ -857,10 +857,10 @@ public class PlateListHandler implements Serializable
 		
 		// issue 153 do not do plate cycling
 		if (worklist.countOfSamplesForItems(items) + (worklist.buildControlTypeMap().get(null) != null ? worklist.buildControlTypeMap().size()-1 : worklist.buildControlTypeMap().size()  )  > (worklist.getMaxStartPlate() * worklist.getMaxItemsAsInt()))
-			worklist.setStartPlateControls((int) calculatePlate  (worklist.countOfSamplesForItems(items), worklist.buildControlTypeMap() , worklist.getMaxItemsAsInt()   )); // issue 146
+			worklist.setStartPlateControls((int) calculatePlate  (worklist.countOfSamplesForItems(items), worklist.buildControlTypeMap() , worklist.getMaxItemsAsInt()  , worklist.getIs96Well() )); // issue 146
 		else 
 			{
-			thePlateIdx = (int) calculatePlate  (worklist.countOfSamplesForItems(items), worklist.buildControlTypeMap() , worklist.getMaxItemsAsInt()   );
+			thePlateIdx = (int) calculatePlate  (worklist.countOfSamplesForItems(items), worklist.buildControlTypeMap() , worklist.getMaxItemsAsInt()  , worklist.getIs96Well() );
 			worklist.setStartPlateControls(Integer.parseInt(thePlateList.get(thePlateIdx-1 < 0 ? 0 : thePlateIdx-1)));
 			}
 		plate = Integer.parseInt(thePlateList.get(0));
@@ -1023,14 +1023,29 @@ public class PlateListHandler implements Serializable
 		}
 	
 	// issue 146
-	public double calculatePlate  (int countSamples, Map<String, Integer> controlTypeMap, int maxItems)
+	
+	//issue 237 
+	public int  countControlsWithoutPre ( Map<String, Integer> controlTypeMap)
+		{	
+		Map<String, Integer> controlTypeNoPreMap = new HashMap <String, Integer> ();		
+		for (Map.Entry<String, Integer> entry : controlTypeMap.entrySet()) 
+			controlTypeNoPreMap.put(StringParser.parseId(entry.getKey()).replace("-Pre", ""),1);	
+		return controlTypeNoPreMap.size();
+		}
+	
+	// issue 237
+	public double calculatePlate  (int countSamples, Map<String, Integer> controlTypeMap, int maxItems, boolean is96Wells)
 		{
-		int countControls = controlTypeMap.size();
+		int countControls = 0;
+		if (controlTypeMap.get(null) != null)
+			countControls = 0;
+		else
+			countControls = countControlsWithoutPre(controlTypeMap);
 		// issue 146 take care of case where QCMP and MP need to be counted as 1 control to avoid skipping a row
 		if (controlTypeMap.get(masterPoolMP) != null && controlTypeMap.get(masterPoolQCMP) != null)
 			countControls--;
 		// issue 151
-		if (controlTypeMap.get(null) != null)
+		if (controlTypeMap.get(null) != null && countControls > 0)
 			countControls--;
 		int countStandards = grabNumberStandards(controlTypeMap);
 		double nPlates = Math.floor(countSamples/maxItems) ;
@@ -1038,11 +1053,11 @@ public class PlateListHandler implements Serializable
 			nPlates ++;
 		double squaresLeft = (maxItems * nPlates) - countSamples;
 		// JAK new preview
-		//squaresLeft = squaresLeft - (squaresLeft%9);
-		squaresLeft = squaresLeft - (squaresLeft%12);
+		//squaresLeft = squaresLeft - (squaresLeft%9);		
+		squaresLeft = squaresLeft - (squaresLeft%(is96Wells ? 12 : 9));
 		// JAK new preview
-		double rowsNeededControls = Math.floor((countControls-countStandards)/12) + ((countControls-countStandards)%12 > 0 ?1 : 0) + (countStandards > 0 ? 1 : 0) ;
-		double rowsLeft = squaresLeft/12;
+		double rowsNeededControls = Math.floor((countControls-countStandards)/(is96Wells ? 12 : 9)) + ((countControls-countStandards)%(is96Wells ? 12 : 9) > 0 ?1 : 0) + (countStandards > 0 ? 1 : 0) ;
+		double rowsLeft = squaresLeft/(is96Wells ? 12 : 9);		
 		if ((squaresLeft <  countControls) || (rowsLeft < rowsNeededControls))
 			nPlates ++;
 		return nPlates;		
