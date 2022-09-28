@@ -148,7 +148,9 @@ public abstract class EditCompoundDialog extends AbstractFormDialog
 				@Override
 				public boolean isRequired() {	return false; }
 				});
-			parentCid.add(StringValidator.maximumLength(6));
+			
+			// issue 239
+			parentCid.add(StringValidator.maximumLength(FieldLengths.COMPOUND_ID_LENGTH));
 			// issue 57
 			add(nameFld = new TextField("name")
 				{

@@ -44,7 +44,7 @@ public class FieldLengths
 	public static Integer MRC2_FACTOR_VALUE_LENGTH = 40;
 	public static Integer MRC2_ASSAY_NAME_LENGTH = 200;
 	public static Integer MRC2_MIXTURE_NAME = 50; // issue 118
-	public static Integer COMPOUND_ID_LENGTH = 6; // issue 144
+	public static Integer COMPOUND_ID_LENGTH = 7; // issue 144
 	
 	public static Integer grabFieldLength(String property) 
 		{

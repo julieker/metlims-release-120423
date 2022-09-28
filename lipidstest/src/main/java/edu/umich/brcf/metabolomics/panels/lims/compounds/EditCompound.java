@@ -35,6 +35,7 @@ import edu.umich.brcf.metabolomics.layers.domain.CompoundName;
 import edu.umich.brcf.metabolomics.layers.service.CompoundNameService;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.shared.layers.dto.CompoundDTO;
+import edu.umich.brcf.shared.util.FieldLengths;
 import edu.umich.brcf.shared.util.utilpackages.CompoundIdUtils;
 import edu.umich.brcf.shared.util.utilpackages.NumberUtils;
 
@@ -148,7 +149,8 @@ public class EditCompound extends WebPage
 				@Override
 				public boolean isRequired() {	return false; }
 				});
-			parentCid.add(StringValidator.maximumLength(6));
+			// issue 239
+			parentCid.add(StringValidator.maximumLength(FieldLengths.COMPOUND_ID_LENGTH));
 			// issue 57
 			add(nameFld = new TextField("name")
 				{

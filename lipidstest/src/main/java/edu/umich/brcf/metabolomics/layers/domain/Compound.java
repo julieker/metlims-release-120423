@@ -58,8 +58,8 @@ public class Compound implements IClusterable
 	@Id()
 	@GeneratedValue(generator = "IdGeneratorDAOForCompound")
 	@GenericGenerator(name = "IdGeneratorDAOForCompound", strategy = "edu.umich.brcf.shared.layers.dao.IdGeneratorDAOForCompound", parameters = {
-			@Parameter(name = "idClass", value = "Compound"), @Parameter(name = "width", value = "6") })
-	@Column(name = "CID", unique = true, nullable = false, length = 6, columnDefinition = "CHAR(6)")
+			@Parameter(name = "idClass", value = "Compound"), @Parameter(name = "width", value = "7") })
+	@Column(name = "CID", unique = true, nullable = false, length = 7, columnDefinition ="VARCHAR2(7)")
 	private String cid;
 
 	@Basic()
