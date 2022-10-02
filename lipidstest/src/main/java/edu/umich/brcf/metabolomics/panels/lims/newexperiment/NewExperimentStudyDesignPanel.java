@@ -49,7 +49,7 @@ public class NewExperimentStudyDesignPanel extends Panel
 		int otherWidth = 10 + (90 - (nFactors + 3) * defaultWidth);
 		// Issue 443
 		add(buildSampleColumn("internalSampleId", "Sample ID", otherWidth));
-		add(buildSampleColumn("sampleName", "Sample Name", defaultWidth));
+		add(buildSampleColumn("sampleName", "Researcher sample ID", defaultWidth));
 		add(buildSampleColumn("subjectId", "Subject ID", defaultWidth));
 		
 		add(new Label("expId", getExperimentName()));
