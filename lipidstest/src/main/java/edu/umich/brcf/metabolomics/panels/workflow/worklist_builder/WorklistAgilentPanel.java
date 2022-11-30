@@ -45,7 +45,9 @@ public class WorklistAgilentPanel extends BaseWorklistPanel
 		// issue 229 
 		listItem.add(WorklistFieldBuilder.buildStringWorklistField("outputFileName", item, "outputFileNameWithDir"));
 		listItem.add(WorklistFieldBuilder.buildStringWorklistField("commentDisplay", item, "comments"));
-		listItem.add(buildCommentsButton("notes", item));
+	    // issue 245
+		listItem.add(buildAddNotesPage("addNotesPage", item));
+		listItem.add(buildNotesButton(item));
 		}
 	}
 

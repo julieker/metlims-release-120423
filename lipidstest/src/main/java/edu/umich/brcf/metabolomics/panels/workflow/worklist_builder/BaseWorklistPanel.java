@@ -7,36 +7,50 @@
 package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
+import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
+import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.markup.html.navigation.paging.IPagingLabelProvider;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.validation.validator.StringValidator;
+
+import com.googlecode.wicket.jquery.core.JQueryBehavior;
+import com.googlecode.wicket.jquery.core.Options;
+import com.googlecode.wicket.jquery.ui.widget.dialog.DialogButton;
+
+import edu.umich.brcf.metabolomics.layers.domain.Ms2SampleMap;
 import edu.umich.brcf.metabolomics.layers.service.GeneratedWorklistService;
 import edu.umich.brcf.shared.layers.service.SampleAssayService;
 import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.panels.utilitypanels.AddNotesPage;
+import edu.umich.brcf.shared.panels.utilitypanels.AddNotesPageDialog;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 import edu.umich.brcf.shared.util.interfaces.ICommentObject;
 import edu.umich.brcf.shared.util.sheetwriters.MsWorklistWriter;
-
+import org.apache.wicket.markup.html.form.Form;
 public abstract class BaseWorklistPanel extends Panel
 	{
 	@SpringBean
@@ -47,7 +61,7 @@ public abstract class BaseWorklistPanel extends Panel
 
 	@SpringBean
 	SampleService sampleService;
-
+    private boolean isPropagatedComment;
 	protected WorklistSimple worklist;
 	private   WebMarkupContainer container;
 	protected PageableListView worklistView;
@@ -59,6 +73,17 @@ public abstract class BaseWorklistPanel extends Panel
     private int maxLength = 84; // issue 227
     WebMarkupContainer iddaInfo;
     TextArea textAreaIdda;
+    AddNotesPage addNotesPage;
+    AddNotesPageDialog addNotesPageDialog;
+    WorklistItemSimple gWi;
+    
+    
+    
+    Map<WorklistItemSimple,AddNotesPageDialog> mapAddNotes = new HashMap<WorklistItemSimple, AddNotesPageDialog>();
+    
+    
+    IndicatingAjaxLink showNotes;
+    private FeedbackPanel feedback;
     
 	public BaseWorklistPanel(String id)
 		{
@@ -72,6 +97,8 @@ public abstract class BaseWorklistPanel extends Panel
 		add(container);
 		modal1 = ModalCreator.createModalWindow("modal1", 800, 320);
 		add(modal1);
+		
+		//add(buildAddNotesPage("addNotesPage", item));
 		modal1.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() 
 			{		
 			@Override
@@ -127,10 +154,14 @@ public abstract class BaseWorklistPanel extends Panel
 				{
 				WorklistItemSimple item = (WorklistItemSimple) listItem.getModelObject();
 				initListItem(listItem, item);
+				//listItem.add(buildAddNotesPage("addNotesPage", item));
+				//listItem.add(buildNotesButton());
 				}
 			};
 		}
 		
+	
+	
 	protected AjaxLink buildCommentsButton(String id, final WorklistItemSimple item)
 		{
 		return new AjaxLink <Void>(id)
@@ -142,7 +173,7 @@ public abstract class BaseWorklistPanel extends Panel
 				modal1.setInitialWidth(700);				
 				commentObject = item;
 				((MedWorksSession) Session.get()).setSaveValue(commentObject.getComments()); // issue 295
-				modal1.setPageCreator(new ModalWindow.PageCreator()
+			    modal1.setPageCreator(new ModalWindow.PageCreator()
 					{
 					public Page createPage()
 						{
@@ -158,7 +189,7 @@ public abstract class BaseWorklistPanel extends Panel
 								}
 							});
 						}
-					});
+					} );
 				    modal1.show(target);
 				}
 			
@@ -418,6 +449,140 @@ public abstract class BaseWorklistPanel extends Panel
 	    getContainer().add( textAreaIdda = initIDDA(worklist.getIddaStrList()));
 	    textAreaIdda.setOutputMarkupId(true);
 		}
+	
+	public AddNotesPageDialog buildAddNotesPage(String id, final WorklistItemSimple item)
+		{
+		String commentTitle = "Comments for "+ item.getSampleName();
+		// issue 245
+		addNotesPageDialog = new AddNotesPageDialog (new PropertyModel<String>(item, "comments"), commentTitle, id, "For comments", item)			   
+			{ // NOSONAR
+			private static final long serialVersionUID = 1L;	
+		    @Override
+			public void onClick(AjaxRequestTarget target, DialogButton button)
+				{	
+		    	// issue 205
+		    	gWi = item;
+		    	if (button.getName().equals("submit2") )
+		    		{
+		    		
+		    		}	    		
+		    	super.close(target, button);
+				}
+		    
+		    @Override
+			public void onConfigure(JQueryBehavior behavior)
+			    {
+				// class options //
+				behavior.setOption("autoOpen", false);
+				behavior.setOption("width", 500);
+				behavior.setOption("height", 500);
+			    }
+			@Override
+			protected void onSave(String notes) 
+			    {
+				// TODO Auto-generated method stub
+				
+			    } 
+			@Override
+			public Form<?> getForm() 
+				{
+				// TODO Auto-generated method stub
+			    form.setMultiPart(true);
+				return this.form;
+				}
+		    @Override
+			public DialogButton getSubmitButton() 
+		    	{
+				// TODO Auto-generated method stub
+				return this.submitButton;
+		    	}	 
+		    @Override
+			protected void onOpen(IPartialPageRequestHandler handler)
+				{ 
+				}
+		    
+		    @Override
+			public void onClose(IPartialPageRequestHandler handler, DialogButton button) 
+			    {
+				form.setMultiPart(true);
+				isPropagatedComment = getIsPropagated();
+				TextArea nt = notesTextArea;
+				commentObject.setComments(gWi.getComments());
+				AjaxRequestTarget target = (AjaxRequestTarget) handler;
+				if (isPropagatedComment)
+					{
+				    for (WorklistItemSimple lwi : worklist.getItems())
+				    	{
+				    	if (gWi.getSamplePosition().equals(lwi.getSamplePosition()))
+				    		lwi.setComments(gWi.getComments());
+				    	}
+					}
+				target.add(container);
+			    }
+	
+		    @Override
+			protected void onSubmit(AjaxRequestTarget target, DialogButton button) 
+					    {
+				    	// TODO Auto-generated method stub	
+				    //	target.add(feedback);
+				    	target.add(this);
+				    	target.add(this.form);
+					    }
+					@Override
+					protected void onError(AjaxRequestTarget target, DialogButton button) 
+					    {
+						System.out.println("reached on error!!!!!:");
+						// TODO Auto-generated method stub				
+					    }			
+					@Override
+					protected List<DialogButton> getButtons()
+					    {
+						List <DialogButton> dialogButtonList = new ArrayList <DialogButton> ();
+						
+						dialogButtonList.add( new DialogButton("submit3", "Done")) ;
+						//dialogButtonList.get(0).setEnabled(worklist.getOpenForUpdates());
+						return dialogButtonList;
+					    }
+		            };
+		    mapAddNotes.put(item , addNotesPageDialog);
+		    return addNotesPageDialog;
+		    }	
+			
+		public IndicatingAjaxLink buildNotesButton (WorklistItemSimple wwi)
+			{
+		    add(showNotes = new IndicatingAjaxLink <Void>("opennotes") 
+		    {			
+			private static final long serialVersionUID = 1L; 
+			@Override
+			public boolean isEnabled()
+				{
+				return true;
+				}
+			@Override
+			public void onClick(AjaxRequestTarget target) 			     
+			    {	
+				try
+					{
+					mapAddNotes.get(wwi).open(target);
+					gWi = wwi;
+					commentObject = gWi;
+					}
+				catch (Exception e)
+					{
+					e.printStackTrace();	
+					}
+			    }
+		    });
+	    return showNotes;
+		}
+	
+	
+		
+		
+		
+				
+		///////////////
+
 	abstract void initListItem(ListItem listItem, WorklistItemSimple item);
 	}
 
