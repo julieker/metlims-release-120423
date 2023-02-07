@@ -9,9 +9,13 @@ package edu.umich.brcf.metabolomics.panels.workflow.worklist_builder;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import edu.umich.brcf.metabolomics.layers.service.InstrumentService;
 import edu.umich.brcf.shared.util.interfaces.ICommentObject;
 import edu.umich.brcf.shared.util.interfaces.IWriteConvertable;
 import edu.umich.brcf.shared.util.structures.SelectableObject;
@@ -50,7 +54,7 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	private int direction;
 	private Integer customLoadOrder;
 	public String commentResearcherId;
-	
+		
 	// issue 29
 	public int getDirection ()
 		{
@@ -699,10 +703,40 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 	public String writeInAgilentFormat(char separator)
 	// issue 179
 		{
+		String monthAsStr = "";
+		String yearStr = "";
+		String monthAsStr2 = "";
+		String yearStr2 = "";
 		int dashIndex;
 		int stdIndex;
 		String stdIntString;
-		StringBuilder sb = new StringBuilder();       
+		StringBuilder sb = new StringBuilder(); 
+		Calendar cal = Calendar.getInstance();
+		Date date = DateUtils.dateFromDateStr(this.getGroup().getParent().getRunDate(), "MM/dd/yy");
+		/////////////////////////////////////
+		Date date2 = DateUtils.dateFromDateStr(this.getGroup().getParent().getRunDate(), "MM/dd/yy");
+		
+		// issue 247
+		 try
+			{	
+		    if (this.getGroup().getParent().getWorksheetTitle() != null && this.getGroup().getParent().getWorksheetTitle().equals("Worklist Builder Sheet - Neg CC"))
+			    {
+				cal.setTime(date2);
+				cal.add(Calendar.DAY_OF_MONTH, 4);
+				date2 = cal.getTime();
+				
+				monthAsStr = DateUtils.grabMonthString(DateUtils.dateAsFullString(date));
+				yearStr =  DateUtils.grabYearString(DateUtils.dateAsFullString(date));
+				monthAsStr2 = DateUtils.grabMonthString(DateUtils.dateAsFullString(date2));
+				yearStr2 = DateUtils.grabYearString(DateUtils.dateAsFullString(date2));
+				}
+			}
+		catch (Exception e)
+			{
+			e.printStackTrace();
+			}
+
+		/////////////////////////////////////		
 		// issue 179 sb.append(this.getRandomIdx().toString() + separator);
 		sb.append(this.getSampleName() + separator);
 		sb.append(this.getSamplePosition() + separator);
@@ -710,7 +744,6 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		sb.append((StringUtils.isNullOrEmpty(this.getMethodFileName()) ? " " : this.getMethodFileName())  + separator); 
 		sb.append((parent.getIsCustomDirectoryStructure() ? this.grabDataFileWithCustomDirectory() : this.getOutputFileName()  )+ separator);  		
 		sb.append(((this.getSampleName().contains("CS000STD") || this.getSampleName().contains("CS00STD")) ? "Calibration" : "Sample") + separator);
-		
 		if ((this.getSampleName().contains("CS000STD") || this.getSampleName().contains("CS00STD")) && this.getSampleName().contains("-"))
 			{
 			dashIndex = this.getSampleName().lastIndexOf("-");
@@ -731,7 +764,27 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		/////// put it back 	sb.append(theIndex +  (this.getRepresentsControl() ? "" : "_") + calcCommentContent(this.getSampleName())  );// issue 166
 		sb.append(StringUtils.isNullOrEmpty(comments) ? calcCommentToolTip(this.parent, this) : comments );// issue 166
 		// issue 25
-		// issue 32		
+		// issue 32	
+		// issue 247
+		String strForCC = "";
+		if (this.getGroup().getParent().getSelectedMode().equals("Positive + Negative + CC")
+		   && this.getGroup().getParent().getWorksheetTitle().equals("Worklist Builder Sheet - Neg CC")			
+		   )
+			{	
+			try
+				{
+				strForCC = sb.toString().replace(this.getGroup().getParent().getDefaultAssayId(), "A049").replace(this.getGroup().getParent().getInstrumentName(), "IN0030")
+						.replace(DateUtils.grabYYYYmmddString(  DateUtils.dateAsFullString(date)  ), DateUtils.grabYYYYmmddString(  DateUtils.dateAsFullString(date2)  ))
+						.replace(monthAsStr, monthAsStr2)
+						.replace(yearStr, yearStr2);
+				}
+			catch (Exception e)
+				{
+					
+				}
+			sb.setLength(0);
+			sb.append(strForCC);
+			}
 		return sb.toString();
 		}
 
@@ -779,17 +832,13 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		if (ws == null || ws.getItems() == null )
 			return "";
 		Integer countOfSamples = ws.countOfSamplesForItems(ws.getItems());
-		//System.out.println("AH HA here is the start sequence:" + ws.getStartSequence());
 		Integer endingIndex = Integer.parseInt(ws.getStartSequence()) + countOfSamples-1;
 		String endingIndexStr = endingIndex.toString();
-		//System.out.println("here is the ending index string:" + endingIndexStr);
 		String theIndex = wi.getRepresentsControl() ? "" : String.format("%1$" + endingIndexStr.length() + "s" , calcPosIndicator(this, ws)).replace(' ', '0');	
-		//System.out.println("here is the index:" + theIndex);
 		String theCommentPart = calcCommentContent(wi.getSampleName());
 		if ( StringUtils.isEmptyOrNull(theCommentPart))
 			return "";
-		String theComment = theIndex +  (wi.getRepresentsControl() ? "" : "_") + theCommentPart  ;//			
-		//System.out.println("HERE IS THE COMMENT:" + theComment);
+		String theComment = theIndex +  (wi.getRepresentsControl() ? "" : "_") + theCommentPart  ;			
 		return theComment;
 		}
 	

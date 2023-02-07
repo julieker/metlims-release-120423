@@ -12,12 +12,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import edu.umich.brcf.metabolomics.layers.service.InstrumentService;
 //import org.hibernate.mapping.Set;
 import edu.umich.brcf.shared.layers.domain.Sample;
 import edu.umich.brcf.shared.layers.service.SampleService;
@@ -34,6 +37,7 @@ public class WorklistSimple implements Serializable
 	// issue 287	
 	@SpringBean
 	private SampleService sampleService;
+	
 	// issue 394	
 	Map<String, String> idsVsReasearcherNameMap = new HashMap<String, String> ();
 	private Integer masterPoolsBefore = 3, masterPoolsAfter = 1, batchPoolsBefore = 1, batchPoolsAfter = 1;	
@@ -123,7 +127,30 @@ public class WorklistSimple implements Serializable
  // issue 229 
     Map<String, String> controlCommentsMap = new HashMap<String, String> ();
     
+    // issue 247
+    private String worksheetTitle ;
+    private String instrumentName ;
     
+    // issue 247
+    public String getWorksheetTitle()
+		{
+    	return worksheetTitle;
+		}
+    // issue 247
+    public void setWorksheetTitle(String worksheetTitle ) 
+		{
+		this.worksheetTitle =  worksheetTitle;
+		}
+    // issue 247
+    public String getInstrumentName()
+		{
+    	return instrumentName;
+		}
+    // issue 247
+    public void setInstrumentName(String instrumentName ) 
+		{
+		this.instrumentName =  instrumentName;
+		}
     
     // issue 229
 	public List<String> getIddaStrList()
@@ -830,11 +857,8 @@ public class WorklistSimple implements Serializable
 			String sampleResearcherId = this.isPlatformChosenAs("absciex") || !this.getIncludeResearcherId() ? "" : idsVsReasearcherNameMap.get(item.getSampleName());
 			sampleResearcherId = sampleResearcherId == null ? "" : StringUtils.stripNonAlpha(sampleResearcherId);
 			String outname = grabOutputFileName(sampleResearcherId.equals("") ? item.getSampleName(): item.getSampleName() + "-" + sampleResearcherId, item); 
-		//	System.out.println("here is outname:" + outname + " here is outputname:" + item.getOutputFileName() + " " + item.getOutputFileDir());
-		//	System.out.println("here is outnamewithdir:" + item.getO;
 			item.setOutputFileNameWithDir(item.getGroup().getParent().getIsCustomDirectoryStructure() ?  item.grabDataFileWithCustomDirectory() : outname);
 			item.setOutputFileName(outname);	
-		//	System.out.println("Here is outname:" + outname + " here is outputfilenamwithdir:" + item.getOutputFileNameWithDir());
 			}
 		}
 
@@ -1659,16 +1683,22 @@ public class WorklistSimple implements Serializable
 		}
 	
 	// issue 233
+	// issue 247
 	public String grabOutputFileName(String sampleLabel, WorklistItemSimple item)   
 	{
 	String repeatTag;
 	String tag = item.getSampleTypeTagForFilename();		
 	String instrumentErrMsg = "Missing field : please select an instrument.";
 	String dateErrMsg = "Please correct your entry in the default date field.  Date should be written in mm/dd/yy format.";		
-	String dts, monthAsStr, yearStr;		
+	String dts, monthAsStr, yearStr;
+	//Calendar cal =  Calendar.getInstance();
 	try
 		{
 		Date date = DateUtils.dateFromDateStr(getRunDate(), "MM/dd/yy");
+
+		
+		// issue 247
+		
 		String fullString = DateUtils.dateAsFullString(date);
 		dts = DateUtils.grabYYYYmmddString(fullString);			
 		DateUtils.dateFromDateStr(dts, "MM/dd/yy");
@@ -1777,7 +1807,6 @@ public class WorklistSimple implements Serializable
 		String dts = "00/00/00";
 		String expId = this.getDefaultExperimentId();
 		String aid = this.getDefaultAssayId();
-		
 		try
 		// issue 282
 			{
@@ -1819,7 +1848,7 @@ public class WorklistSimple implements Serializable
 		String mode = getSelectedMode() == null ? "" : getSelectedMode();
 		String pmode = mode.equals("Positive") ? "P"  : (mode.equals("Negative") ? "N" : "PN") ; // issue 450
 		String instrument = getSelectedInstrument() == null ? "" : getSelectedInstrument().replaceAll("\\s", "");
-		String name = "Worklist" + dts + "-" + expId  + "-" + aid + "-" + instrument + "-" + pmode;
+		String name = "Worklist" + dts + "-" + expId  + "-" + aid + "-" + instrument + "-" + pmode ;
 		return name;
 		}
 		

@@ -1328,7 +1328,8 @@ public class WorklistBuilderPanel extends Panel
 				@Override
 				public boolean isEnabled() 
 					{ 
-					return true; 
+					//return true; 
+					return worklist.getSelectedInstrument() != null;
 					} //!worklist.getItems().isEmpty(); }
 
 				// Artifact of upgrade -- not called by validating button
@@ -1337,7 +1338,7 @@ public class WorklistBuilderPanel extends Panel
 				public boolean validate(AjaxRequestTarget target, IWriteableSpreadsheetReturnStream report)
 					{
 				
-					if (worklist.getItems() == null || worklist.getItems().size() == 0)
+					if (worklist.getItems() == null || worklist.getItems().size() == 0 )
 						return false;
 
 					//persistWorksheetToDatabase();
@@ -1351,7 +1352,7 @@ public class WorklistBuilderPanel extends Panel
 					idsVsReasearcherNameMap =
 					     sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());								
 					worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
-					if (worklist.getItems() == null || worklist.getItems().size() == 0)
+					if (worklist.getItems() == null || worklist.getItems().size() == 0 || worklist.getSelectedInstrument() == null)
 						return false;
 					persistWorksheetToDatabase();
 					

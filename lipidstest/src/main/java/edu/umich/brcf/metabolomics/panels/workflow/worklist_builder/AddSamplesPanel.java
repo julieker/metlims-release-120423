@@ -641,6 +641,18 @@ public class AddSamplesPanel extends Panel
 						originalWorklist.setCustomDirectoryStructureName("<custom directory>");
 						originalWorklist.setIsCustomDirectoryStructure(false);
 						wp.form.agPanel.updateIddaList();
+						// issue 247
+						if (experimentService.experimentsWithCC().contains(item.getExperimentId()) && experimentService.assayA003A049DifferentSamples().size() == 0  && aid.equals("A003"))
+	                    	{
+	                    	wp.form.availableModes = Arrays.asList(new String[] { "Positive", "Negative", "Positive + Negative" , "Positive + Negative + CC"});
+	                    	wp.form.getWorklist().setSelectedMode("Positive + Negative + CC");
+	                    	}	
+						else
+	                    	{
+	                    	wp.form.availableModes = Arrays.asList(new String[] { "Positive", "Negative", "Positive + Negative" });
+	                    	wp.form.getWorklist().setSelectedMode("Positive");	                    
+	                    	}
+						target.add(wp);
 						break;
 
 					case "updateForExperimentDrop":
@@ -680,8 +692,8 @@ public class AddSamplesPanel extends Panel
 							e.printStackTrace();
 							target.appendJavaScript("alert('Experiment " + eid + " has missing information and cannot be accessed at this time');");
 							}
-
-						break;
+                        target.add(wp);
+                        break;
 
 					case "registerEvent":
 						break;

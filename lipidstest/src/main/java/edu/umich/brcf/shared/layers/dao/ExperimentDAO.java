@@ -767,4 +767,83 @@ public class ExperimentDAO extends BaseDAO
 		Experiment exp =  getEntityManager().find(Experiment.class, expId);
 		return (exp != null ? exp.getExpName() : "");
 		}
+	
+	
+	// issue 247
+	public List<String> experimentsWithCC()
+		{
+		
+		Query query2 = getEntityManager().createNativeQuery("select distinct exp_id from sample t1 where exists (select * from sample_assays t2 where t1.sample_id = t2.sample_id and assay_id = 'A003') and exists( select * from sample_assays t2 where t1.sample_id = t2.sample_id and assay_id = 'A049' ) order by 1 ");
+		List<String> expCCList = new ArrayList <String> ();
+		expCCList = query2.getResultList();
+	
+		return expCCList;
+		}
+	
+	public List<String> assayA003A049DifferentSamples()
+		{	
+		String qString = "select distinct tt2.sample_id " + 
+		"from  " + 
+		" sample tt1 , sample_assays tt2  " + 
+		" where tt1.sample_id = tt2.sample_id  " + 
+		" and exists  (select * from sample_assays t2 " + 
+		"  where tt1.sample_id = t2.sample_id " + 
+		" and assay_id  ='A049') " + 
+		" and exists  (select * from sample_assays t2 " + 
+		" where tt1.sample_id = t2.sample_id " + 
+		" and assay_id  ='A003') " + 
+		" and exp_id = 'EX01263'  " + 
+		" and assay_id = 'A003' " +
+		" minus " + 
+		" select distinct tt2.sample_id  " + 
+		" from  " + 
+		" sample tt1 , sample_assays tt2 " +
+		" where tt1.sample_id = tt2.sample_id  " +
+		" and exists  (select * from sample_assays t2 " +
+		"  where tt1.sample_id = t2.sample_id " +
+		" and assay_id  ='A049') " +
+		" and exists  (select * from sample_assays t2  " +
+		" where tt1.sample_id = t2.sample_id " + 
+		" and assay_id  ='A003') " + 
+		" and exp_id = 'EX01263'  " + 
+		" and assay_id = 'A049' " ;
+	
+		Query query2 = getEntityManager().createNativeQuery( qString);
+		List<String> expCCList = new ArrayList <String> ();
+		expCCList = query2.getResultList();
+		if (expCCList.size() > 0 )
+		     return expCCList;
+	
+		qString = "select distinct tt2.sample_id " + 
+				"from  " + 
+				" sample tt1 , sample_assays tt2  " + 
+				" where tt1.sample_id = tt2.sample_id  " + 
+				" and exists  (select * from sample_assays t2 " + 
+				"  where tt1.sample_id = t2.sample_id " + 
+				" and assay_id  ='A049') " + 
+				" and exists  (select * from sample_assays t2 " + 
+				" where tt1.sample_id = t2.sample_id " + 
+				" and assay_id  ='A003') " + 
+				" and exp_id = 'EX01263'  " + 
+				" and assay_id = 'A049' " +
+				" minus " + 
+				" select distinct tt2.sample_id  " + 
+				" from  " + 
+				" sample tt1 , sample_assays tt2 " +
+				" where tt1.sample_id = tt2.sample_id  " +
+				" and exists  (select * from sample_assays t2 " +
+				"  where tt1.sample_id = t2.sample_id " +
+				" and assay_id  ='A049') " +
+				" and exists  (select * from sample_assays t2  " +
+				" where tt1.sample_id = t2.sample_id " + 
+				" and assay_id  ='A003') " + 
+				" and exp_id = 'EX01263'  " + 
+				" and assay_id = 'A003' " ;
+	
+		query2 = getEntityManager().createNativeQuery( qString);
+		expCCList = new ArrayList <String> ();
+		expCCList = query2.getResultList();
+		return expCCList;
+		}
+	
 	}

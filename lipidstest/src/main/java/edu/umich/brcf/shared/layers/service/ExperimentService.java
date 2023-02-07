@@ -492,6 +492,16 @@ public class ExperimentService
 		return (assaysForExpId.size() == submittedReportsForExpId.size());
 		}
 	
+	public List<String> experimentsWithCC()
+		{
+		return experimentDao.experimentsWithCC();
+		}
+	
+	public List<String> assayA003A049DifferentSamples()
+		{
+		return experimentDao.assayA003A049DifferentSamples();
+		}
+	
 	public void setAssayDao(AssayDAO assayDao) { this.assayDao = assayDao; }
 	public void setClientReportDao(ClientReportDAO clientReportDao) { this.clientReportDao = clientReportDao; }
 	public void setProjectDao(ProjectDAO projectDao) { this.projectDao = projectDao; }

@@ -8,6 +8,8 @@ package edu.umich.brcf.shared.util.sheetwriters;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -17,19 +19,28 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.wicket.injection.Injector;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import edu.umich.brcf.metabolomics.layers.service.InstrumentService;
 import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.WorklistBuilderPanel;
 import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.WorklistItemSimple;
 import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.WorklistSimple;
+import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheetReturnStream;
 import edu.umich.brcf.shared.util.io.PoiUtils;
 import edu.umich.brcf.shared.util.io.StringUtils;
-
+import edu.umich.brcf.shared.util.utilpackages.DateUtils;
 import edu.umich.brcf.shared.util.io.SpreadSheetWriter;
 
 
 
 public class MsWorklistWriter extends SpreadSheetWriter implements Serializable, IWriteableSpreadsheetReturnStream
 	{
+	
+	// issue 287	
+	@SpringBean
+	private InstrumentService instrumentService;
+	
 	private String selectedExperiment; 
 	protected WorklistSimple worklist;
 	public OutputStream joutput = null;
@@ -41,6 +52,9 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 	private final int IDDADATAFILECOL = 3; // issue 166
 	List <String> workListData = new ArrayList <String> ();
     public OutputStream outputReportStream;
+    
+    // issue 247
+    
     
 	WorklistBuilderPanel wpWriter;
 	// issue 450
@@ -68,15 +82,22 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 			createWorklistSheet("Worklist Builder Sheet - Pos", workBook, worklist, worklist.isPlatformChosenAs("agilent"), "Positive");
 			createWorklistSheet("Worklist Builder Sheet - Neg", workBook, worklist, worklist.isPlatformChosenAs("agilent"), "Negative");
 		    }
+		// issue 247
+		else if (worklist.getSelectedMode().equals("Positive + Negative + CC"))
+		    {	
+			createWorklistSheet("Worklist Builder Sheet - Pos", workBook, worklist, worklist.isPlatformChosenAs("agilent"), "Positive");
+			createWorklistSheet("Worklist Builder Sheet - Neg", workBook, worklist, worklist.isPlatformChosenAs("agilent"), "Negative");
+			createWorklistSheet("Worklist Builder Sheet - Neg CC", workBook, worklist, worklist.isPlatformChosenAs("agilent"), "Negative");
+		    }
 		else
 			createWorklistSheet("Worklist Builder Sheet", workBook, worklist, worklist.isPlatformChosenAs("agilent"), worklist.getSelectedMode());  		
 		try 
 			{
 	
-			if (worklist.getSelectedMode().equals("Positive + Negative"))
+			if (worklist.getSelectedMode().contains("Positive + Negative")  )
 				workBook.write(output);
 			output.close();
-			if (!worklist.getSelectedMode().equals("Positive + Negative"))
+			if (!worklist.getSelectedMode().contains("Positive + Negative"))
 				return worklist.getIddaStrList();
 			else
 				return null;
@@ -89,7 +110,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 	@Override
 	public String getReportFileName()
 		{
-		return worklist.getWorklistName() +  (worklist.getSelectedMode().equals("Positive + Negative") ? ".xlsx" : ".txt" ) ;
+		return   worklist.getWorklistName() +  (worklist.getSelectedMode().contains("CC") ? "-CC" : "") + (worklist.getSelectedMode().contains("Positive + Negative") ? ".xlsx" : ".txt" )    ;
 		}
 			
 	private Boolean haveWorkbook()
@@ -176,10 +197,12 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 					{				
 				    outputFileNameBase = item.getOutputFileName();
 				    initializedOutputFileNameBase = true;
-					}			
-				String itemStr = item.toCharDelimited((worklist.getSelectedMode().equals("Positive + Negative") ? "," : "\t" ));	
+					}	
+				worklist.setWorksheetTitle(title);
+				worklist.setInstrumentName(worklist.getSelectedInstrument() == null ? "Missing field : please select an instrument." : worklist.getSelectedInstrument().substring(0,worklist.getSelectedInstrument().indexOf("(") ).trim());
+				String itemStr = item.toCharDelimited((worklist.getSelectedMode().contains("Positive + Negative") ? "," : "\t" ));	
 				worklist.getIddaStrList().add(itemStr + "\r\n"); // issue 207
-				String [] tokens = StringUtils.splitAndTrim(itemStr, (worklist.getSelectedMode().equals("Positive + Negative") ? "," : "\t" ), true);
+				String [] tokens = StringUtils.splitAndTrim(itemStr, (worklist.getSelectedMode().contains("Positive + Negative") ? "," : "\t" ), true);
 				PoiUtils.createBlankRow(rowCt,  sheet);
 				sheet.setColumnWidth(CONTROLNAMECOL, 28*256); // issue 179
 				sheet.setColumnWidth(IDDADATAFILECOL, 96*256);
@@ -228,13 +251,58 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 	// issue 432
 // issue 56
 	// issue 229
+	// issue 247
+	public String createWorkListCCString(String ccStringToReplace)
+		{
+		Calendar cal = Calendar.getInstance();
+		Date date = DateUtils.dateFromDateStr(worklist.getRunDate(), "MM/dd/yy");
+		/////////////////////////////////////
+		Date date2 = DateUtils.dateFromDateStr(worklist.getRunDate(), "MM/dd/yy");
+		String monthAsStr = "";
+		String yearStr = "";
+		String monthAsStr2 = "";
+		String yearStr2 = "";
+		try 
+		    {
+		    if (worklist.getWorksheetTitle() != null && worklist.getWorksheetTitle().equals("Worklist Builder Sheet - Neg CC"))
+		        {
+			    cal.setTime(date2);
+			    cal.add(Calendar.DAY_OF_MONTH, 4);
+			    date2 = cal.getTime();				
+			    monthAsStr = DateUtils.grabMonthString(DateUtils.dateAsFullString(date));
+			    yearStr =  DateUtils.grabYearString(DateUtils.dateAsFullString(date));
+			    monthAsStr2 = DateUtils.grabMonthString(DateUtils.dateAsFullString(date2));
+				yearStr2 = DateUtils.grabYearString(DateUtils.dateAsFullString(date2));
+			    ccStringToReplace = ccStringToReplace.replace(DateUtils.grabYYYYmmddString(  DateUtils.dateAsFullString(date)  ), DateUtils.grabYYYYmmddString(  DateUtils.dateAsFullString(date2)  ))
+						.replace(monthAsStr, monthAsStr2)
+						.replace(yearStr, yearStr2)
+						.replace(worklist.getDefaultAssayId(), "A049")
+						.replace(worklist.getInstrumentName(), "IN0030");
+		        }
+		    return ccStringToReplace;   
+		    }
+		
+		catch (Exception e)
+		  	{
+			e.printStackTrace();
+			return ccStringToReplace;
+		  	}
+		  }
+	
+	
 	public void printOutIDDA(Workbook workBook, Sheet sheet, int rowCt, String strMode, String outputFileBase)
 		{
 		printOutIDDA(workBook, sheet, rowCt,  strMode, outputFileBase, true);
 		}
 	
+	// issue 247
 	public void printOutIDDA(Workbook workBook, Sheet sheet, int rowCt, String strMode, String outputFileBase, boolean includeSpreadsheet)
 		{	
+		
+		///////////////
+		
+		/////////////////
+		
 		Font font = null;
 		//worklist.getIddaStrList().clear();
 		XSSFCellStyle styleColorBlue = null;
@@ -296,15 +364,19 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 				fileStr = worklist.grabOutputFileNameIDDA() + "-"  + iddaStr + "-" + (strMode.contains("Positive") ? "P" : "N") + ".d"  ;
 			else
 				fileStr = worklist.grabOutputFileNameIDDA() + "-" +iddaStr +  "-IDDA_ce10" + "_" + j + "-" + (strMode.contains("Positive") ? "P" : "N") +   ".d";
-			 if (includeSpreadsheet)
+			if (worklist.getWorksheetTitle() != null)
+			    fileStr = (worklist.getWorksheetTitle().contains("CC") ? createWorkListCCString( fileStr) :  fileStr  );
+			if (includeSpreadsheet)
 	    		{
 				PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
 			    PoiUtils.createRowEntry(rowCt,CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
 			    PoiUtils.createRowEntry(rowCt,IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
 	    		}
 			    //issue 209
-		    worklist.getIddaStrList().add(iddaStr + (worklist.getSelectedMode().equals("Positive + Negative") ? "," : "\t" ) + iddaPlatePos + "\t\t" +fileNamePredicateWithIdda(outputFileBase,fileStr)  + "\t\t\t\t\r\n" );
-		    rowCt ++;
+			 // issue 247
+		  ////  worklist.getIddaStrList().add(iddaStr + (worklist.getSelectedMode().contains("Positive + Negative") ? "," : "\t" ) + iddaPlatePos + "\t\t" +fileNamePredicateWithIdda(outputFileBase,fileStr)  + "\t\t\t\t\r\n" );
+			 worklist.getIddaStrList().add(iddaStr + "\t" + iddaPlatePos + "\t\t" +fileNamePredicateWithIdda(outputFileBase,fileStr)  + "\t\t\t\t\r\n" );
+			 rowCt ++;
 		    }
 		// issue 38
 		if (worklist.getNCE10Reps() > 0)
@@ -320,8 +392,11 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 				fileStr = worklist.grabOutputFileNameIDDA() + "-"  + iddaStr + "-" + (strMode.contains("Positive") ? "P" : "N") + ".d"  ;
 			else
 		        fileStr = worklist.grabOutputFileNameIDDA() + "-" +iddaStr +  "-IDDA_ce20" + "_" + j + "-" + (strMode.contains("Positive") ? "P" : "N") +   ".d";
+			if (worklist.getWorksheetTitle() != null)
+			    fileStr = (worklist.getWorksheetTitle().contains("CC") ? createWorkListCCString( fileStr) :  fileStr  );
 			if (includeSpreadsheet)
 	    		{
+				
 				PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
 	            PoiUtils.createRowEntry(rowCt, CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
 	            PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
@@ -344,16 +419,19 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 				fileStr = worklist.grabOutputFileNameIDDA() + "-"  + iddaStr + "-" + (strMode.contains("Positive") ? "P" : "N") + ".d"  ;
 			else
 				fileStr = worklist.grabOutputFileNameIDDA() + "-" +iddaStr +  "-IDDA_ce40" + "_" + j + "-" + (strMode.contains("Positive") ? "P" : "N") +   ".d";
+		    if (worklist.getWorksheetTitle() != null)
+		        fileStr = (worklist.getWorksheetTitle().contains("CC")  ? createWorkListCCString( fileStr) :  fileStr  );
 		    if (includeSpreadsheet)
 	    		{
 			    PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
-	            PoiUtils.createRowEntry(rowCt, CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
-	            PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
+	            PoiUtils.createRowEntry(rowCt, CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);	 
+	            // issue 247
+	            PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, (worklist.getWorksheetTitle().contains("CC") ? createWorkListCCString( fileNamePredicateWithIdda(outputFileBase,fileStr)) :  fileNamePredicateWithIdda(outputFileBase,fileStr)  ), j == 0 ? styleColorBlue : styleStandard); //use constant
 	    		}
-            // issue 209
-            worklist.getIddaStrList().add(iddaStr + (worklist.getSelectedMode().equals("Positive + Negative") ? "," : "\t" ) + iddaPlatePos + "\t\t" +fileNamePredicateWithIdda(outputFileBase,fileStr) + "\t\t\t\t\r\n");
-            rowCt ++;
+		    	worklist.getIddaStrList().add(iddaStr + "\t"  + iddaPlatePos + "\t\t" +fileNamePredicateWithIdda(outputFileBase,fileStr) + "\t\t\t\t\r\n");
+		    rowCt ++;
 		    }
+		worklist.setWorksheetTitle("");
 		}
 	}
 
