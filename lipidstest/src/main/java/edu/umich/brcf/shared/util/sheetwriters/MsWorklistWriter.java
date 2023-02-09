@@ -272,7 +272,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 			    monthAsStr = DateUtils.grabMonthString(DateUtils.dateAsFullString(date));
 			    yearStr =  DateUtils.grabYearString(DateUtils.dateAsFullString(date));
 			    monthAsStr2 = DateUtils.grabMonthString(DateUtils.dateAsFullString(date2));
-				yearStr2 = DateUtils.grabYearString(DateUtils.dateAsFullString(date2));
+			    yearStr2 = DateUtils.grabYearString(DateUtils.dateAsFullString(date2));
 			    ccStringToReplace = ccStringToReplace.replace(DateUtils.grabYYYYmmddString(  DateUtils.dateAsFullString(date)  ), DateUtils.grabYYYYmmddString(  DateUtils.dateAsFullString(date2)  ))
 						.replace(monthAsStr, monthAsStr2)
 						.replace(yearStr, yearStr2)
@@ -370,7 +370,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 	    		{
 				PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
 			    PoiUtils.createRowEntry(rowCt,CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
-			    PoiUtils.createRowEntry(rowCt,IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
+			    PoiUtils.createRowEntry(rowCt,IDDADATAFILECOL, sheet, createWorkListCCString(fileNamePredicateWithIdda(outputFileBase,fileStr)), j == 0 ? styleColorBlue : styleStandard); //use constant
 	    		}
 			    //issue 209
 			 // issue 247
@@ -399,7 +399,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 				
 				PoiUtils.createRowEntry(rowCt, CONTROLNAMECOL, sheet, iddaStr, j == 0 ? styleItalic : styleStandard );
 	            PoiUtils.createRowEntry(rowCt, CONTROLPOSCOL, sheet, iddaPlatePos, j == 0 ? styleItalic : styleStandard);
-	            PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, fileNamePredicateWithIdda(outputFileBase,fileStr), j == 0 ? styleColorBlue : styleStandard); //use constant
+	            PoiUtils.createRowEntry(rowCt, IDDADATAFILECOL, sheet, createWorkListCCString(fileNamePredicateWithIdda(outputFileBase,fileStr)), j == 0 ? styleColorBlue : styleStandard); //use constant
 	    		}
 	            // issue 209
             worklist.getIddaStrList().add(iddaStr + "\t" + iddaPlatePos + "\t\t" +fileNamePredicateWithIdda(outputFileBase,fileStr)  + "\t\t\t\t\r\n");

@@ -142,7 +142,8 @@ public class WorklistBuilderPanel extends Panel
 		private ValidatingAjaxExcelDownloadLink downloadListButton;
 		String msg = "";
 		private ModalWindow modal1; 
-		final PlatePreviewPage platePreviewPageDialog;		
+		final PlatePreviewPage platePreviewPageDialog;	
+		List <String> availableInstruments= new ArrayList <String> ();
 		WorklistBuilderForm(String id, PrepData prepData)
 			{			
 			super(id);
@@ -707,6 +708,12 @@ public class WorklistBuilderPanel extends Panel
 		public List<String> getAvailableInstruments()
 			{
 			return (isPlatformChosenAs("agilent") ? agilentInstruments : absciexInstruments);
+			}
+		
+		// issue 247
+		public void setAvailableInstruments( List<String> availableInstruments)
+			{
+			this.availableInstruments =  availableInstruments ;
 			}
 		
 		private boolean isInstrumentChosen()

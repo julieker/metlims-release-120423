@@ -261,7 +261,7 @@ public class AddSamplesPanel extends Panel
 				{
 				WorklistSampleGroup item = (WorklistSampleGroup) listItem.getModelObject();
 				listItem.add(selectedExperimentDrop = buildExperimentDropdown("experimentDropdown", item, "experimentId", wp));
-				listItem.add(buildAssayDropdown("assayDropdown", item, "assayType", wp));
+				listItem.add(selectedAssayDrop = buildAssayDropdown("assayDropdown", item, "assayType", wp));
 				listItem.add(randomizationDrop = buildRandomizationDropdown( "randomizationDropdown", item, "randomizationType", availableRandomizations, wp));
 				listItem.add(buildDeleteButton("deleteButton", item,container));
 				listItem.add(buildAddButton("addButton", item, container));
@@ -314,6 +314,7 @@ public class AddSamplesPanel extends Panel
 				return new ArrayList<String>();
 				}
 			});
+		
         // issue 464
 		drp.add(this.buildStandardFormComponentUpdateBehavior("change", "updateForAssayDrop", item, wp));
 		return drp;
@@ -646,22 +647,35 @@ public class AddSamplesPanel extends Panel
 	                    	{
 	                    	wp.form.availableModes = Arrays.asList(new String[] { "Positive", "Negative", "Positive + Negative" , "Positive + Negative + CC"});
 	                    	wp.form.getWorklist().setSelectedMode("Positive + Negative + CC");
+	                    	List <String> tAvailList = new ArrayList <String> ();
+	                    	for (String tINs : wp.form.getAvailableInstruments())
+		                    	{	                    		
+		                    	if  (! tINs.contains("GC")	)
+		                    		tAvailList.add(tINs);
+		                    	}
+	                    	wp.form.setAvailableInstruments(tAvailList);
+	                    	wp.form.selectedInstrumentDrop.setChoices(tAvailList);
 	                    	}	
 						else
 	                    	{
 	                    	wp.form.availableModes = Arrays.asList(new String[] { "Positive", "Negative", "Positive + Negative" });
-	                    	wp.form.getWorklist().setSelectedMode("Positive");	                    
+	                    	wp.form.getWorklist().setSelectedMode("Positive");	
+	                    	wp.form.setAvailableInstruments(wp.form.getAvailableInstruments());
+	                    	wp.form.selectedInstrumentDrop.setChoices(wp.form.getAvailableInstruments());
 	                    	}
 						target.add(wp);
 						break;
 
 					case "updateForExperimentDrop":
+						//wp.form
+						
 						originalWorklist.controlsMovedMap.clear();
 						originalWorklist.setChearBlankType("Plasma"); // issue 186
 						originalWorklist.setRandomizeByPlate(false);// issue 179
 						item.setIsRandomized(false);
 						originalWorklist.setIs96Well(false);// issue 212
 						originalWorklist.setDefaultPool(true); // issue 169
+						
 						if (originalWorklist == null)
 							return;
 						// issue 387
@@ -686,6 +700,7 @@ public class AddSamplesPanel extends Panel
 							originalWorklist.setCustomDirectoryStructureName("<custom directory>");
 							originalWorklist.setIsCustomDirectoryStructure(false);
 							wp.form.agPanel.updateIddaList();
+							
 							} 
 						catch (Exception e)
 							{
@@ -693,6 +708,15 @@ public class AddSamplesPanel extends Panel
 							target.appendJavaScript("alert('Experiment " + eid + " has missing information and cannot be accessed at this time');");
 							}
                         target.add(wp);
+                        // issue 247
+                        if (!experimentService.experimentsWithCC().contains(item.getExperimentId()) )
+                        	{
+                        	wp.form.availableModes = Arrays.asList(new String[] { "Positive", "Negative", "Positive + Negative" });
+	                    	wp.form.getWorklist().setSelectedMode("Positive");	
+	                    	wp.form.setAvailableInstruments(wp.form.getAvailableInstruments());
+	                    	wp.form.selectedInstrumentDrop.setChoices(wp.form.getAvailableInstruments());
+	                    	target.add(wp);
+                        	}
                         break;
 
 					case "registerEvent":
