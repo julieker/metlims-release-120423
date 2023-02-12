@@ -563,16 +563,17 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		    if (this.getOutputFileName().indexOf("\\") < 0 )
 			{
 			if (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()) || parent.getCustomDirectoryStructureName().equals("<custom directory>"))
-				return this.getOutputFileName();
-			return (StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash) + "\\" +  this.getOutputFileName();
+				return this.getOutputFileName();	
+			// issue 247
+			return (StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash)  + "\\" +   (this.getGroup().getParent().getSelectedMode().contains("Pos") ? "pos" : "neg") + "\\"  +  this.getOutputFileName();
 			}
 	    else
-			{	       
+			{	
 			String [] fileNameArray = StringUtils.splitAndTrim(this.getOutputFileName(), "\\\\");	
 			String lastPartDataFile = fileNameArray[fileNameArray.length -1];
 			if (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()))
-				return lastPartDataFile;
-			return ((StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash) + "\\" + unusedInj +  (StringUtils.isNullOrEmpty(unusedInj) ? "" : "\\") +   lastPartDataFile).replace("\\\\", "\\");
+				return (this.getGroup().getParent().getSelectedMode().contains("Pos") ? "pos" : "neg") + "\\" + lastPartDataFile;
+			return ((StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash) + "\\" + unusedInj +  (StringUtils.isNullOrEmpty(unusedInj) ? "" : "\\") +  (this.getGroup().getParent().getSelectedMode().contains("Pos") ? "pos" : "neg") + "\\" +  lastPartDataFile).replace("\\\\", "\\");
 			}			
 	    }
 	
@@ -742,7 +743,25 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		sb.append(this.getSamplePosition() + separator);
 		// issue 181
 		sb.append((StringUtils.isNullOrEmpty(this.getMethodFileName()) ? " " : this.getMethodFileName())  + separator); 
-		sb.append((parent.getIsCustomDirectoryStructure() ? this.grabDataFileWithCustomDirectory() : this.getOutputFileName()  )+ separator);  		
+		
+		
+		
+		String posNegSub =  (parent.getIsCustomDirectoryStructure() ? this.grabDataFileWithCustomDirectory() : this.getOutputFileName()  );
+		// issue 247
+		if (!StringUtils.isNullOrEmpty(this.getGroup().getParent().getWorksheetTitle()) )
+			{
+			if (!this.getGroup().getParent().getWorksheetTitle().equals("Worklist Builder Sheet"))
+			     {
+				 if (this.getGroup().getParent().getWorksheetTitle().contains("Pos"))
+				 	{
+					 posNegSub = posNegSub.replace("neg", "pos");
+					 
+				 	}
+				 else 
+					posNegSub = posNegSub.replace("pos", "neg"); 
+			     }
+			}
+		sb.append(posNegSub+ separator);  		
 		sb.append(((this.getSampleName().contains("CS000STD") || this.getSampleName().contains("CS00STD")) ? "Calibration" : "Sample") + separator);
 		if ((this.getSampleName().contains("CS000STD") || this.getSampleName().contains("CS00STD")) && this.getSampleName().contains("-"))
 			{

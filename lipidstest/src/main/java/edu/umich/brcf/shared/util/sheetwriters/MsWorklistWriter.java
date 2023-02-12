@@ -142,15 +142,20 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 	private String fileNamePredicateWithIdda(String vOutputFileName, String iddaString)
 		{
 		String fileName = "";
+		String workSheetOrMode = (StringUtils.isEmptyOrNull(worklist.getWorksheetTitle()) ? worklist.getSelectedMode() : (worklist.getWorksheetTitle().equals("Worklist Builder Sheet") ? worklist.getSelectedMode() : (worklist.getWorksheetTitle())   ));
+		
 		// issue 32
+		// issue 247
 		if (worklist.getIsCustomDirectoryStructure())
-		    return (StringUtils.isEmptyOrNull(worklist.getCustomDirectoryStructureName()) ? " " : worklist.getCustomDirectoryStructureName()) +   "\\IDDA\\" + iddaString; 	// issue 32			
-		if (vOutputFileName.indexOf("\\") < 0 )
-		    return "IDDA\\" + iddaString; // issue 32 issue 48
+		    return ((StringUtils.isEmptyOrNull(worklist.getCustomDirectoryStructureName()) ? " " : worklist.getCustomDirectoryStructureName()) +   "\\IDDA\\" + ( (workSheetOrMode.contains("Pos") ? "pos" : "neg") + "\\"    ) +  iddaString).replace("\\\\", "\\"); 	// issue 32					
+		// issue 247
+		if (vOutputFileName.indexOf("\\") < 0 || worklist.getUseGCOptions() )
+		    return "IDDA\\" + ( (workSheetOrMode.contains("Pos") ? "pos" : "neg") + "\\"    ) + iddaString; // issue 32 issue 48		
 		String [] fileNameArray = StringUtils.splitAndTrim(vOutputFileName, "\\\\");
-		if (fileNameArray.length >= 7)
+		if (fileNameArray.length >= 7 || !worklist.getUseGCOptions() )
 			{
-			fileName = fileNameArray[0] + "\\"  +  fileNameArray[1] + "\\"  + fileNameArray[2] + "\\" +  fileNameArray[3] + "\\" + fileNameArray[4] + "\\" + fileNameArray[5] +  "\\IDDA\\" + iddaString; 
+			//fileName = fileName +  "IDDA\\" +  ( (workSheetOrMode.contains("Pos") ? "pos" : "neg") + "\\"    ) + iddaString;
+			fileName = fileNameArray[0] + "\\"  +  fileNameArray[1] + "\\"  + fileNameArray[2] + "\\" +  fileNameArray[3] + "\\" + fileNameArray[4] + "\\" + fileNameArray[5] +  "\\IDDA\\" + ( (workSheetOrMode.contains("Pos") ? "pos" : "neg") + "\\"    ) + iddaString; 			
 			return fileName;
 			}
 	    return "";

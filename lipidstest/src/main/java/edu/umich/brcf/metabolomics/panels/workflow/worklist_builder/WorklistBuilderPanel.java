@@ -1356,13 +1356,14 @@ public class WorklistBuilderPanel extends Panel
 				public boolean validate()
 					{
 					// issue 212
+				
 					idsVsReasearcherNameMap =
 					     sampleService.sampleIdToResearcherNameMapForExpId(worklist.getSampleGroup(0).getExperimentId());								
 					worklist.populateSampleName(worklist,idsVsReasearcherNameMap );
 					if (worklist.getItems() == null || worklist.getItems().size() == 0 || worklist.getSelectedInstrument() == null)
 						return false;
 					persistWorksheetToDatabase();
-					
+					worklist.setWorksheetTitle("");
 					return true;
 					}
 				};		

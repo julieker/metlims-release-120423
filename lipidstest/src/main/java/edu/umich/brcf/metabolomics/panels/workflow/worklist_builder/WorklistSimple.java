@@ -1775,20 +1775,26 @@ public class WorklistSimple implements Serializable
 		}
 	
 	// issue 233
+	// issue 247
 	public String grabNameWithoutPath(String sampleLabel, String tag, String expId, String aid, String yearStr, String monthAsStr, 
 			String dts,  String instrument, String mode)
 		{
+		String thePosNegSub = "";
+		thePosNegSub = (getSelectedPlatform().equals("agilent") ? (getSelectedMode().contains("Pos") ? "pos" : "neg") + "\\" : "");
 		String tagLabel = (tag != null && tag.length() > 0) ? tag + "-" : "";
-		return (StringUtils.isEmptyOrNull(mode) ? "" : "\\" + mode + "\\") + dts + "-" + expId + "-" + aid + "-" + instrument + "-" + tagLabel + sampleLabel + "-" + (getSelectedMode().contains("Positive") ? "P" : "N");
+		return (StringUtils.isEmptyOrNull(mode) ? "" : "\\" + mode + "\\") + thePosNegSub + dts + "-" + expId + "-" + aid + "-" + instrument + "-" + tagLabel + sampleLabel + "-" + (getSelectedMode().contains("Positive") ? "P" : "N");
 		}
 
 	// issue 368 and 394 
+	// issue 247
 	public String grabAgilentOutputName(String sampleLabel, String tag, String expId, String aid, String yearStr, String monthAsStr, 
 			String dts,  String instrument, String mode)
 		//issue 233
 	    {
+		String thePosNegSub = "";		
+		thePosNegSub = (getSelectedPlatform().equals("agilent") ? (getSelectedMode().contains("Positive") ? "pos" : "neg") + "\\" : "");
 		String tagLabel = ""; //(tag != null && tag.length() > 0) ? tag + "-" : "";
-		return "D:\\MassHunter\\Data\\"   +  yearStr + "\\" +  monthAsStr + "\\" + expId +  "\\" +  mode   +  (StringUtils.isNullOrEmpty(mode) ? "" : "\\")  +   dts + "-" + expId + "-" + aid
+		return "D:\\MassHunter\\Data\\"   +  yearStr + "\\" +  monthAsStr + "\\" + expId +  "\\" +  mode   +  (StringUtils.isNullOrEmpty(mode) ? "" : "\\")  + thePosNegSub   + dts + "-" + expId + "-" + aid
  					+ "-" + instrument + "-" + tagLabel + sampleLabel + "-"  + (getSelectedMode().contains("Positive") ? "P" : "N");
 		}
 	
