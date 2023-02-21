@@ -591,9 +591,26 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 		sb.append(this.getVialPosition() + separator);
 
 		sb.append(this.getMethodFileName() + separator);
-		sb.append(this.getOutputFileName() + separator);
-		sb.append(this.getInjectionVolume());
+		// issue 253
+		String posNegSub =  this.getOutputFileName() ;
+		// issue 247
+		if (!StringUtils.isNullOrEmpty(this.getGroup().getParent().getWorksheetTitle()) )
+			{
+			if (!this.getGroup().getParent().getWorksheetTitle().equals("Worklist Builder Sheet"))
+			     {
+				 if (this.getGroup().getParent().getWorksheetTitle().contains("Pos"))
+				 	{
+					 posNegSub = posNegSub.replace("neg", "pos").replace("_N", "_P");
+					 
+				 	}
+				 else 
+					posNegSub = posNegSub.replace("pos", "neg").replace("_P", "_N"); 
+			     }
+			}
 
+		// issue 253
+		sb.append(posNegSub + separator);
+		sb.append(this.getInjectionVolume());
 		return sb.toString();
 		}
 

@@ -364,22 +364,23 @@ public class AutoAddControlsPanel extends Panel
 				// issue 169
 				if (originalWorklist.getDefaultPool())
 					{
-					if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 1)
+					// issue 253
+					if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 2)
 						{
-						target.appendJavaScript(buildHTMLSetString(24,24,"1"));
-						originalWorklist.setMasterPoolsAfter(1);
+						target.appendJavaScript(buildHTMLSetString(24,24,originalWorklist.getMasterPoolsAfter() ==1 ? "1" : "2"));
+						originalWorklist.setMasterPoolsAfter(2);
 						}
-					if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsBefore() <= 1)
+					if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsBefore() <= 2)
 						{
-						target.appendJavaScript(buildHTMLSetString(23,23,"1"));
-						originalWorklist.setMasterPoolsBefore(1);
+						target.appendJavaScript(buildHTMLSetString(23,23,originalWorklist.getMasterPoolsBefore() ==1 ? "1" : "2"));
+						originalWorklist.setMasterPoolsBefore(2);
 						}
-				  	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsAfter() <= 1)
+					if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsAfter() <= 1)
 				  		{
 				  		target.appendJavaScript(buildHTMLSetString(26,26,"1"));
 				  		originalWorklist.setBatchPoolsAfter(1);
 				  		}
-				  	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsBefore() <= 1)
+					if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsBefore() <= 1)
 				  		{
 				  		target.appendJavaScript(buildHTMLSetString(25,25,"1"));
 				  		originalWorklist.setBatchPoolsBefore(1);
@@ -387,7 +388,7 @@ public class AutoAddControlsPanel extends Panel
 					}
 				else
 					{
-					if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 1)
+					/*   if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 1)
 						{
 						target.appendJavaScript(buildHTMLSetString(24,24,"0"));
 						originalWorklist.setMasterPoolsAfter(0);
@@ -406,7 +407,7 @@ public class AutoAddControlsPanel extends Panel
 				  		{
 				  		target.appendJavaScript(buildHTMLSetString(25,25,"0"));
 				  		originalWorklist.setBatchPoolsBefore(0);
-				  		}
+				  		} */
 					}		
 				target.add(this);
 				}
@@ -593,26 +594,28 @@ public class AutoAddControlsPanel extends Panel
 		    @Override
 		    public void onUpdate(AjaxRequestTarget target)
 			    {
+		    	// issue 253
 		    	if (!originalWorklist.getDefaultPool())
 			    	{
-			    	if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 1)
+			    	if ( poolSpacingA > 0 && originalWorklist.getMasterPoolsAfter() == 2)
 			    		originalWorklist.setMasterPoolsAfter(0);
-			    	if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsBefore() <= 1)
+			    	if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsBefore() == 2)
 			    		originalWorklist.setMasterPoolsBefore(0);
-			    	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsAfter() <= 1)
+			    	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsAfter() == 1)
 			    		originalWorklist.setBatchPoolsAfter(0);
-			    	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsBefore() <= 1)
+			    	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsBefore() == 1)
 			    		originalWorklist.setBatchPoolsBefore(0);
 			    	}
 		    	else
+		    		// issue 253
 		    		{
-				    if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 1)
-				        originalWorklist.setMasterPoolsAfter(1);
-				    if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsBefore() <= 1)
-				    	originalWorklist.setMasterPoolsBefore(1);
-				    if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsAfter() <= 1)
+				    if (poolSpacingA > 0 &&  (originalWorklist.getMasterPoolsAfter() == 2 || originalWorklist.getMasterPoolsAfter() == 0))
+				        originalWorklist.setMasterPoolsAfter(2);
+				    if (poolSpacingA > 0 &&  (originalWorklist.getMasterPoolsBefore() == 2 ||  originalWorklist.getMasterPoolsBefore() == 0 ))
+				    	originalWorklist.setMasterPoolsBefore(2);
+				    if (poolSpacingB > 0 &&  (originalWorklist.getBatchPoolsAfter() == 1 || originalWorklist.getBatchPoolsAfter() == 0))
 				    	originalWorklist.setBatchPoolsAfter(1);
-				    if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsBefore() <= 1)
+				    if (poolSpacingB > 0 &&  (originalWorklist.getBatchPoolsBefore() == 1 || originalWorklist.getBatchPoolsBefore() == 0))
 				    	originalWorklist.setBatchPoolsBefore(1);
 		    		}
 		        if (originalWorklist.getMasterPoolsAfter() == 0  && ( originalWorklist.getNCE10Reps() > 0  || originalWorklist.getNCE20Reps() > 0 || originalWorklist.getNCE40Reps() > 0 ))
@@ -712,39 +715,59 @@ public class AutoAddControlsPanel extends Panel
 	        		return;
 	        		}
 	        	// issue 169
+	        	// issue 253
 	        	if (originalWorklist.getDefaultPool())
 		        	{
-		        	if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 0)
+		        	if (poolSpacingA > 0 &&  (originalWorklist.getMasterPoolsAfter() == 2 || originalWorklist.getMasterPoolsAfter() == 0))
 		        		{
-		        		originalWorklist.setMasterPoolsAfter(1);
+		        		originalWorklist.setMasterPoolsAfter(2);
 		        		customizeControlGroupPageDialog.setMasterPoolsAfter(originalWorklist.getMasterPoolsAfter());
 		        		}
-		        	if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsBefore() <= 0)
+		        	if (poolSpacingA > 0 &&  (originalWorklist.getMasterPoolsBefore() == 2 ||  originalWorklist.getMasterPoolsBefore() == 0 ))
 		        		{
-		        		originalWorklist.setMasterPoolsBefore(1);
+		        		originalWorklist.setMasterPoolsBefore(2);
 		        		customizeControlGroupPageDialog.setMasterPoolsBefore(originalWorklist.getMasterPoolsBefore());
 		        		}
-		        	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsAfter() <= 0)
+		        	if (poolSpacingB > 0 &&  (originalWorklist.getBatchPoolsAfter() == 1 || originalWorklist.getBatchPoolsAfter() == 0))
 		        		{
 		        		originalWorklist.setBatchPoolsAfter(1);
 		        		customizeControlGroupPageDialog.setBatchPoolsAfter(originalWorklist.getBatchPoolsAfter());
 		        		}
-		        	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsBefore() <= 0)
+		        	if (poolSpacingB > 0 &&  (originalWorklist.getBatchPoolsBefore() == 1 || originalWorklist.getBatchPoolsBefore() == 0))
 		        		{
 		        		originalWorklist.setBatchPoolsBefore(1);
 		        		customizeControlGroupPageDialog.setBatchPoolsBefore(originalWorklist.getBatchPoolsBefore());
 		        		}
 		        	}
 	        	else
+	        		// issue 253
 		    		{
-				    if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 1)
-				        originalWorklist.setMasterPoolsAfter(0);
-				    if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsBefore() <= 1)
-				    	originalWorklist.setMasterPoolsBefore(0);
-				    if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsAfter() <= 1)
-				    	originalWorklist.setBatchPoolsAfter(0);
-				    if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsBefore() <= 1)
-				    	originalWorklist.setBatchPoolsBefore(0);
+	        		customizeControlGroupPageDialog.setMasterPoolsAfter(originalWorklist.getMasterPoolsAfter());
+	        		customizeControlGroupPageDialog.setMasterPoolsBefore(originalWorklist.getMasterPoolsBefore());
+	        		customizeControlGroupPageDialog.setBatchPoolsAfter(originalWorklist.getBatchPoolsAfter());
+	        		customizeControlGroupPageDialog.setBatchPoolsBefore(originalWorklist.getBatchPoolsBefore());
+	        		/* System.out.println("here is originalWorklist.getMasterPoolsAfter:" + originalWorklist.getMasterPoolsAfter());
+	        		if (poolSpacingA > 0 &&  (originalWorklist.getMasterPoolsAfter() == 2 || originalWorklist.getMasterPoolsAfter() == 0))
+		        		{
+		        		originalWorklist.setMasterPoolsAfter(0);
+		        		customizeControlGroupPageDialog.setMasterPoolsAfter(originalWorklist.getMasterPoolsAfter());
+		        		}
+	        		if (poolSpacingA > 0 &&  (originalWorklist.getMasterPoolsBefore() == 2 ||  originalWorklist.getMasterPoolsBefore() == 0 ))
+		        		{
+		        		originalWorklist.setMasterPoolsBefore(0);
+		        		customizeControlGroupPageDialog.setMasterPoolsBefore(originalWorklist.getMasterPoolsBefore());
+		        		}
+		        	if (poolSpacingB > 0 &&  (originalWorklist.getBatchPoolsAfter() == 1 || originalWorklist.getBatchPoolsAfter() == 0))
+		        		{
+		        		originalWorklist.setBatchPoolsAfter(0);
+		        		customizeControlGroupPageDialog.setBatchPoolsAfter(originalWorklist.getBatchPoolsAfter());
+		        		}
+		        	if (poolSpacingB > 0 &&  (originalWorklist.getBatchPoolsBefore() == 1 || originalWorklist.getBatchPoolsBefore() == 0))
+		        		{
+		        		originalWorklist.setBatchPoolsBefore(0);
+		        		customizeControlGroupPageDialog.setBatchPoolsBefore(originalWorklist.getBatchPoolsBefore());
+		        		}
+		        	*/
 		    		}
 	        		// issue 17
 	        	
@@ -1398,7 +1421,74 @@ public class AutoAddControlsPanel extends Panel
 		
 		
 		// issue 235
+		// issue 13 20202
+		
+		// issue 191
+		if (nStandards > 0)
+			{
+			for (int i = 0; i < nBlanks; i++)
+				{
+				id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+				finalLabel = controlService.dropStringForIdAndAgilent(id);
+				WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+				group4.setStandardNotAddedControl(true);
+				originalWorklist.addControlGroup(group4);
+				}
+			}
+		for (int i = nStandards - 1; i >= 0; i--)
+			{
+			id = controlService.controlIdForNameAndAgilent("Standard." + i);
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group2 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group2.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group2);
+			}
+		for (int i = 0; i < nBlanks; i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group4.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group4);
+			}
+		
+		
+		// issue 253
+		for (int i = 0; i < nProcessBlanks; i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("Process Blank");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group4.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group4);
+			}
+		
+		for (int i = 0; i < nMatrixBlanks; i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("Red Cross");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}	
+		
+		for (int i = 0; i < nChearBlanks; i++)
+			{
+			if ("Urine".equals(originalWorklist.getChearBlankType()))
+				id = controlService.controlIdForNameAndAgilent("Reference 1 - urine");
+			if ("Plasma".equals(originalWorklist.getChearBlankType()))
+				id = controlService.controlIdForNameAndAgilent("Reference 1 - plasma");			
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
+
+		
+		////// where to move the motrpac stuff		
 		/*********************************/
+		/// MotrPac After
 		
 		for (int i = 0; i < worklist.getNRefStdE(); i++)
 			{
@@ -1696,64 +1786,8 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
-		
-		// issue 13 20202
-		for (int i = 0; i < nProcessBlanks; i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("Process Blank");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group4.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group4);
-			}
-		// issue 191
-		if (nStandards > 0)
-			{
-			for (int i = 0; i < nBlanks; i++)
-				{
-				id = controlService.controlIdForNameAndAgilent("Solvent Blank");
-				finalLabel = controlService.dropStringForIdAndAgilent(id);
-				WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-				group4.setStandardNotAddedControl(true);
-				originalWorklist.addControlGroup(group4);
-				}
-			}
-		for (int i = nStandards - 1; i >= 0; i--)
-			{
-			id = controlService.controlIdForNameAndAgilent("Standard." + i);
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group2 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group2.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group2);
-			}
-		for (int i = 0; i < nBlanks; i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group4.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group4);
-			}	
-		for (int i = 0; i < nChearBlanks; i++)
-			{
-			if ("Urine".equals(originalWorklist.getChearBlankType()))
-				id = controlService.controlIdForNameAndAgilent("Reference 1 - urine");
-			if ("Plasma".equals(originalWorklist.getChearBlankType()))
-				id = controlService.controlIdForNameAndAgilent("Reference 1 - plasma");			
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group3.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group3);
-			}
-		for (int i = 0; i < nMatrixBlanks; i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("Red Cross");
-			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group3.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group3);
-			}	
-		
+		/**************  end of motrpac after ******/
+		///// move motorpac here
 		// issue 13
 		// issue 17
 		// issue 19

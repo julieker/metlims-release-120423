@@ -1719,8 +1719,9 @@ public class WorklistSimple implements Serializable
 		repeatTag = item.isSelected() ? "2" : "";
 // Error in default date field
 	if ("absciex".equalsIgnoreCase(this.getSelectedPlatform()))
+		// issue 253
 		return grabAbsciexOutputName(sampleLabel, tag, getDefaultExperimentId(), getDefaultAssayId(), yearStr, monthAsStr,
-				dts, instrument, getSelectedMode().equals("Positive") ? "Pos" : "Neg", repeatTag);		
+				dts, instrument, getSelectedMode().contains("Positive") ? "pos" : "neg", repeatTag);		
 	if (instrument.equals("Unknown") || instrument.equalsIgnoreCase("IN0024") || instrument.equals(""))
 		return instrumentErrMsg;	
 	if (getUseGCOptions())
@@ -1769,8 +1770,8 @@ public class WorklistSimple implements Serializable
 			String dts,  String instrument, String mode, String repeatTag)
 		{
 		String tagLabel = (tag != null && tag.length() > 0) ? tag + "_" : "";
-		String modeTagForFilename = mode.equals("Pos") ? "P" : "N";
-		
+		// issue 253
+		String modeTagForFilename = mode.contains("pos") ? "P" : "N";		
 		return ("" + yearStr + "\\" + dts + "_" + expId + "\\" + mode + "\\" +  dts + "_" + tagLabel + sampleLabel + "_" + modeTagForFilename + repeatTag);
 		}
 	

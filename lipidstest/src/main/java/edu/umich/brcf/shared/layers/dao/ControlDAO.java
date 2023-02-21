@@ -177,7 +177,7 @@ public class ControlDAO extends BaseDAO
 	tempArray.add("Process Blank (CS00000PB)");
 	tempArray.add("Solvent Blank (CS00000SB)");
 	tempArray.add("Red Cross     (CS00000RC)");
-	tempArray.add("Neat Blank    (CS00000NB)");
+	///tempArray.add("Neat Blank    (CS00000NB)"); issue 253
 
 	tempArray.add("Master Pool   (CS00000MP)");
 	tempArray.add("Master Pool.QCMP (CS000QCMP)"); // issue 450 // issue 17
@@ -256,7 +256,7 @@ public class ControlDAO extends BaseDAO
 	tempArray.add("Standard.11   (CS00STD11)");
 	tempArray.add("Standard.12   (CS00STD12)");
 
-	tempArray.add("Agilent Standard (CS00000QC)");
+	//tempArray.add("Agilent Standard (CS00000QC)"); issue 253
 
 	tempArray.add("Reference 1 - urine  (R00CHRUR1)");
 	tempArray.add("Reference 2 - urine  (R00CHRUR2)");
