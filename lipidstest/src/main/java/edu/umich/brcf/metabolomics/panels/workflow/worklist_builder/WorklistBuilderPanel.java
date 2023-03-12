@@ -64,7 +64,6 @@ public class WorklistBuilderPanel extends Panel
 	SampleAssayService sampleAssayService;
 	@SpringBean
 	SampleService sampleService;
-	
 	String prevStartPlate;
 	private static final long serialVersionUID = -2719126649022550590L;
 	private FeedbackPanel feedback;
@@ -90,7 +89,7 @@ public class WorklistBuilderPanel extends Panel
     IndicatingAjaxLink pPreview;
     List <String> itemsUpdateInj = new ArrayList <String> ();
     List <String> titemsUpdateInj = new ArrayList <String> ();
-    
+
 	public WorklistBuilderPanel()  { this(""); }
 	
 	public WorklistBuilderPanel(String id)
@@ -225,9 +224,6 @@ public class WorklistBuilderPanel extends Panel
 						catch (Exception e)
 							{
 							}
-						
-
-						//plateListViewWorkList = this.rlf.buildPlateListView(nItemsPerRow, nItemsPerCol, worklist.getItems(), worklist);
 						rlf.add (plateListView);					
 						plateListView.setOutputMarkupId(true);						
 						try
@@ -581,7 +577,8 @@ public class WorklistBuilderPanel extends Panel
 				    }	
 			    };
 				box.add(this.buildStandardFormComponentUpdateBehavior("change", "update96Well"));
-		    return box;
+				
+				return box;
 		    }
 		
 		// issue 179		
@@ -602,7 +599,7 @@ public class WorklistBuilderPanel extends Panel
 				    }	
 			    };
 			box.add(this.buildStandardFormComponentUpdateBehavior("change", "updateChangeDefaultInjVol"));
-		    return box;
+			return box;
 		    }
 		
 			// Issue 464
@@ -900,11 +897,11 @@ public class WorklistBuilderPanel extends Panel
 					 */
 					@Override
 					protected void onUpdate(AjaxRequestTarget target)
-						{					    
+						{	
 						switch (response)
 							{
 						// issue 212
-							case "update96Well" : 
+							case "update96Well" :
 								List <WorklistItemSimple> tWI = new ArrayList <WorklistItemSimple> ();	
 								for (WorklistItemSimple wi : worklist.getItems())
 					        		{
@@ -930,8 +927,9 @@ public class WorklistBuilderPanel extends Panel
 								addGroupsPanel.nStandards = Integer.valueOf(addGroupsPanel.nStandardsStr);
 								target.add (change96WellBox);								
 								target.add(addGroupsPanel.motrPacLink);
-								target.add(addGroupsPanel.blanksDrop);
-								target.add(addGroupsPanel.processBlanksDrop);
+								//// issue 255 target.add(addGroupsPanel.blanksDrop);
+								// issue 257
+								//target.add(addGroupsPanel.processBlanksDrop);
 								target.add(addGroupsPanel.poolTypeBDrop);
 								target.add(addGroupsPanel.standardsDrop);
 								target.add(addGroupsPanel.customLink);
@@ -940,13 +938,18 @@ public class WorklistBuilderPanel extends Panel
 								target.add(addGroupsPanel.numberInjectionsDropSB);
 								target.add(controlsVisibleButton);	
 								target.add(agPanel);
+								// issue 255
+								target.add(addGroupsPanel.numberInjectionsDropPB);
 								try 
 									{
 									worklist.controlsMovedMap.clear();
 									plateListHandler.updatePlatePositionsForAgilent(worklist);
-									worklist.rebuildEverything();  // issue 212
+									worklist.rebuildEverything();  // issue 212						
 									if (worklist.getIs96Well())
+										{
+								
 										plateListHandler.check96WellsUpdate(worklist.getItems());
+										}
 									} 
 								
 								catch (METWorksException e1) 
@@ -972,7 +975,12 @@ public class WorklistBuilderPanel extends Panel
 						        	updatePage(target);
 						        	return;
 						        	}
-							    						    
+							    // issue 255
+							    redoPlatePListView ();
+							    plateListHandler.check96WellsUpdate(worklist.getItems());
+							    plateListHandler.addLastControlRepeater(worklist);
+							    
+							    //target.add(platePreviewPageDialog);
 						    case "updateStartPlate":
 						    	prevStartPlate = worklist.getStartPlate();
 						    	// issue 205 clear anything that is moved when starting from a new plate

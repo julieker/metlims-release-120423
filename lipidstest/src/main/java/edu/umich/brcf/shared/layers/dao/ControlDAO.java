@@ -275,6 +275,13 @@ public class ControlDAO extends BaseDAO
    
     // Issue 207
     tempArray.add("Injection - Solvent Blank (CS00000SB-Pre)");
+    tempArray.add("Injection - Solvent Blank (CS00000SB-Post)");
+    
+    // issue 255
+    tempArray.add("Injection - Process Blank (CS00000PB-Pre)");
+    tempArray.add("Injection - Process Blank (CS00000PB-Post)");
+    
+    
     
 	return tempArray;
 	}

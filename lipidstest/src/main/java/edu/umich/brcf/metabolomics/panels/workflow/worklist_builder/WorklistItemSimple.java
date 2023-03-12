@@ -565,7 +565,9 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 			if (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()) || parent.getCustomDirectoryStructureName().equals("<custom directory>"))
 				return this.getOutputFileName();	
 			// issue 247
-			return (StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash)  + "\\" +   (this.getGroup().getParent().getSelectedMode().contains("Pos") ? "pos" : "neg") + "\\"  +  this.getOutputFileName();
+			// issue 255
+			//return (StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash)  + "\\" +   (this.getGroup().getParent().getSelectedMode().contains("Pos") ? "pos" : "neg") + "\\"  +  this.getOutputFileName();
+			return (StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash)  + "\\" +      this.getOutputFileName();
 			}
 	    else
 			{	
@@ -573,7 +575,9 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 			String lastPartDataFile = fileNameArray[fileNameArray.length -1];
 			if (StringUtils.isEmptyOrNull(parent.getCustomDirectoryStructureName()))
 				return (this.getGroup().getParent().getSelectedMode().contains("Pos") ? "pos" : "neg") + "\\" + lastPartDataFile;
-			return ((StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash) + "\\" + unusedInj +  (StringUtils.isNullOrEmpty(unusedInj) ? "" : "\\") +  (this.getGroup().getParent().getSelectedMode().contains("Pos") ? "pos" : "neg") + "\\" +  lastPartDataFile).replace("\\\\", "\\");
+			// issue 255
+			//return ((StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash) + "\\" + unusedInj +  (StringUtils.isNullOrEmpty(unusedInj) ? "" : "\\") +  (this.getGroup().getParent().getSelectedMode().contains("Pos") ? "pos" : "neg") + "\\" +  lastPartDataFile).replace("\\\\", "\\");
+			return ((StringUtils.isEmptyOrNull(customDirectoryWOSlash) ? " " : customDirectoryWOSlash) + "\\" + unusedInj +  (StringUtils.isNullOrEmpty(unusedInj) ? "" : "\\") +  "\\" +  lastPartDataFile).replace("\\\\", "\\");
 			}			
 	    }
 	
@@ -680,6 +684,15 @@ public class WorklistItemSimple extends SelectableObject implements Serializable
 				     		break;	
 						case "CS00000SB-Pre": preControltype = "Solvent Blank (CS00000SB)";
 			     			break;	
+			     			// issue 255
+						case "CS00000SB-Post": preControltype = "Solvent Blank (CS00000SB)";
+		     				break;	
+		     			// issue 255
+						case "CS00000PB-Pre": preControltype = "Process Blank (CS00000PB)";
+		     				break;	
+		     			// issue 255
+						case "CS00000PB-Post": preControltype = "Process Blank (CS00000PB)";
+	     					break;	
 						case "CS000BPM1": preControltype = "Batch Pool.M1 (CS000BPM1)";
 				     		break;
 						case "CS000BPM2": preControltype = "Batch Pool.M2 (CS000BPM2)";

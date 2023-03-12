@@ -255,8 +255,9 @@ public class AddControlsPanel extends Panel
 			        	{
 		        		target.appendJavaScript(StringUtils.makeAlertMessage("The control type:" + countPair.getTag() + " will have " + (countPair.getCount() - item.getIntQuantity()) + " entries. Please limit this to " + originalWorklist.getLimitNumberControls() + " before deleting. "));
 		        		return;	
-			        	}			
+			        	}	
 					originalWorklist.deleteControlItem(item);
+					//System.out.println("AFTER here in original list ... here is the count of original list:" + originalWorklist.getItems().size());
 					if (! doBothQCMPandMPExist(originalWorklist))
 						originalWorklist.setBothQCMPandMP(false);
 					List <WorklistItemSimple> tWI = new ArrayList <WorklistItemSimple> ();
@@ -268,9 +269,13 @@ public class AddControlsPanel extends Panel
 			        			tWI.add(wi);
 			        		}
 			        	originalWorklist.rebuildEverything();	
+			        	
+			        	
 			        	}
 			        catch (Exception e)
 			        	{
+			        	//System.out.println("here in exception...");
+			        	e.printStackTrace();
 			        	originalWorklist.getItems().clear();
 			        	originalWorklist.clearControlGroups();
 			        	originalWorklist.getItems().addAll(tWI);
@@ -278,7 +283,6 @@ public class AddControlsPanel extends Panel
 			        	refreshPage(target);
 			        	return;
 			        	}
-				    
 				    if (wp.form.doesContainGivenPosition(originalWorklist.getItems(), "P7"))
 		       	        {     
 			        	target.appendJavaScript(StringUtils.makeAlertMessage("This worklist will contain more than 6 plates with the added controls.  The controls have been cleared. Please start over using fewer controls"));

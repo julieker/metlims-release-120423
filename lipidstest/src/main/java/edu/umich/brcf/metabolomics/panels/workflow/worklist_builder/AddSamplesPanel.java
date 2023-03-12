@@ -712,7 +712,7 @@ public class AddSamplesPanel extends Panel
                         if (!experimentService.experimentsWithCC().contains(item.getExperimentId()) )
                         	{
                         	wp.form.availableModes = Arrays.asList(new String[] { "Positive", "Negative", "Positive + Negative" });
-	                    	wp.form.getWorklist().setSelectedMode("Positive");	
+	                    	//// issue 255 wp.form.getWorklist().setSelectedMode("Positive");	
 	                    	wp.form.setAvailableInstruments(wp.form.getAvailableInstruments());
 	                    	wp.form.selectedInstrumentDrop.setChoices(wp.form.getAvailableInstruments());
 	                    	target.add(wp);

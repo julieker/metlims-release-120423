@@ -71,6 +71,9 @@ public class WorklistFieldBuilder implements Serializable
 			protected void onComponentTag(ComponentTag tag)
 				{
 				super.onComponentTag(tag);
+				//System.out.println("here is item sample type and item sample name:" + item.getSampleType() + " " + item.getSampleName());
+				if (item.getSampleType().contains("Injection - Solvent Blank"))					
+					item.setSampleType("Solvent Blank (CS00000SB)");
 				String displayTitle = assembleStyleTag(item, true);
 				tag.put("style", displayTitle);
 				if (!(item == null || item.getSampleType().trim().startsWith("Unknown")))
@@ -257,6 +260,7 @@ public class WorklistFieldBuilder implements Serializable
 			style += "#D9F6CB";  
 		else if (item.getSampleType().startsWith("Neat Blank"))
 			style += "#CEF7E8"; 
+		// issue 255
 		else if (item.getSampleType().startsWith("Process Blank"))
 			style += "#F6CDCB";  
 		else if (item.getSampleType().startsWith("RC Plasma"))

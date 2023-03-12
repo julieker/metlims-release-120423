@@ -288,7 +288,6 @@ public class PlatePreviewPage extends AbstractFormDialog
 						{							
 						String property = "name." + i;
 						String label = "position" + (i + 1);
-						
 						if (!item.getItem(i).getRepresentsControl())
 							item.getItem(i).setResearcherName(idsVsReasearcherNameMap.get(item.getItem(i).getSampleName()));
 						else 
@@ -305,10 +304,8 @@ public class PlatePreviewPage extends AbstractFormDialog
 							{
 							if (workListBuilderPanel.change96WellBox.getDefaultModelObjectAsString().equals("true"))								
 								listItem.add(buildPlateLabelWorklistFieldNonStatic(gBothQCMPandMP, label, new WorklistItemSimple(), "sampleName",i, item.getRowIndex(), ws));
-							else 
-								{
-								listItem.add(buildPlateLabelWorklistFieldNonStatic(gBothQCMPandMP, label, item.getItem(i), "sampleName",i, item.getRowIndex(), ws));
-								}	
+							else 								
+								listItem.add(buildPlateLabelWorklistFieldNonStatic(gBothQCMPandMP, label, item.getItem(i), "sampleName",i, item.getRowIndex(), ws));	
 							}
 						}											    
 					    if (workListBuilderPanel.change96WellBox.getDefaultModelObjectAsString().equals("false"))

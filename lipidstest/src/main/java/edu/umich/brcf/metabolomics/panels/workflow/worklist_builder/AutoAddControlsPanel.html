@@ -47,15 +47,17 @@
 								<select wicket:id = "standardsDrop" style = "width : 80px"><option>1</option><option>2</option><option>3</option><option>4</option></select>	
 							</td>
 						
+						<!--  issue 255
 							<td nowrap style = "text-align : left; width : 10%">
 								Solvent Blanks<br>
 								<select wicket:id = "blanksDrop" style = "width : 80px"><option>1</option><option>2</option><option>3</option><option>4</option></select>	
 							</td>
+						-->
 							
 							<!-- issue 207 -->
 								<td nowrap style = "text-align : left; width : 0%"> 
 							  &nbsp;&nbsp;&nbsp;
-								<span style = "padding-left : 0px; width: 100%; text-align : left">Pre-Injections SB </span><br>
+								<span style = "padding-left : 0px; width: 100%; text-align : left">Pre/Post-Injections SB </span><br>
 								<select wicket:id = "numberInjectionsDropSB" style = "margin-left : 0px; width : 90px"><option>SB</option><option>SB</option><option>3</option><option>4</option></select>	
 							</td>
 							
@@ -157,11 +159,14 @@
 						<tr>
 						<td/>
 						<td/>
-						<td nowrap style = "text-align : left; width : 10%">
-								Process Blanks<br>
-								<select wicket:id = "processBlanksDrop" style = "width : 80px"><option>1</option><option>2</option><option>3</option><option>4</option></select>	
-							
-						</td>
+						
+						 
+						<td nowrap style = "text-align : left; width : 0%"> 
+							  &nbsp;&nbsp;&nbsp;
+								<span style = "padding-left : 0px; width: 100%; text-align : left">Pre/Post-Injections PB </span><br>
+								<select wicket:id = "numberInjectionsDropPB" style = "margin-left : 0px; width : 90px"><option>PB</option><option>PB</option><option>3</option><option>4</option></select>	
+							</td>
+						
 						<td class = "worklistOptionFieldCell2" style = "width : 10%;">Default Pool? :&nbsp;&nbsp;<br>	
 					         <input wicket:id = "defaultPool"  type = "checkbox" />
 					    </td>

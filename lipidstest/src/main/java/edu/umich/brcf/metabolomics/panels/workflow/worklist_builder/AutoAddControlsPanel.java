@@ -53,8 +53,7 @@ public class AutoAddControlsPanel extends Panel
 	final CustomizeControlGroupPageDialog customizeControlGroupPageDialog;
 	List <WorklistItemSimple> lgetItems = new ArrayList <WorklistItemSimple>  ();
 	Map<String, String> idsVsReasearcherNameMap = new HashMap<String, String> ();
-	
-	
+	boolean alreadyBlank = false;
 	AjaxCheckBox defaultPoolBox ;
 	private WorklistSimple originalWorklist;
 	private ModalWindow modal1;
@@ -71,16 +70,20 @@ public class AutoAddControlsPanel extends Panel
 	public String poolTypeA =  "Master Pool   (CS00000MP)"; // issue 13
 	public String poolTypeB =  "Batch Pool.M1 (CS000QCMP)"; // issue 13
 	// issue 13 2020
-	public Integer nStandards = 1, nProcessBlanks = 1, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
-    public  Integer poolSpacingA = 0, poolSpacingB = 0, numberInjections = 0, numberInjectionsSB = 0, numberInjectionsPool = 0 ; // issue 207 issue 201	   
+	// issue 255
+	public Integer nStandards = 0, nProcessBlanks = 1, nBlanks = 1, nMatrixBlanks = 0, nChearBlanks = 0;
+    public  Integer poolSpacingA = 0, poolSpacingB = 0, numberInjections = 0, numberInjectionsSB = 2, numberInjectionsPB = 0, numberInjectionsPool = 0 ; // issue 207 issue 201	   
 	// Issue 302
     public String nBlanksStr = "1", nProcessBlanksStr = "1";
-	public DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop, processBlanksDrop, qcDrop1, qcDrop2, chearBlankTypeDrop, poolTypeADrop, poolTypeBDrop, numberInjectionsDrop, numberInjectionsDropPool, numberInjectionsDropSB;// issue 13
+    // issue 253
+	public DropDownChoice<String> standardsDrop, poolsDropA, poolsDropB, blanksDrop,  qcDrop1, qcDrop2, chearBlankTypeDrop, poolTypeADrop, poolTypeBDrop, numberInjectionsDrop, numberInjectionsDropPool, numberInjectionsDropSB, numberInjectionsDropPB;// issue 13
 	
 	// issue 212
-	public String numberInjectionsStr = "0 (NO INJECTIONS)", nStandardsStr = "1", poolSpacingStrA = "0 (NO POOLS)", poolSpacingStrB = "0 (NO POOLS)",  nMatrixBlanksStr = "0", nChearBlanksStr= "0";
+	// issue 255
+	String numberInjectionsStr = "0 (NO INJECTIONS)", nStandardsStr = "0", poolSpacingStrA = "0 (NO POOLS)", poolSpacingStrB = "0 (NO POOLS)",  nMatrixBlanksStr = "0", nChearBlanksStr= "0";
 	private String numberInjectionsPoolStr = "0 (NO INJECTIONS)";
-	private String numberInjectionsSBStr = "0 (NO INJECTIONS)";
+	private String numberInjectionsSBStr = "2";
+	String numberInjectionsPBStr = "0 (NO INJECTIONS)";
 	// issue 13 2020 
 	//private String nProcessBlanksStr = "1";
 	private WebMarkupContainer container = new WebMarkupContainer("container");
@@ -96,7 +99,6 @@ public class AutoAddControlsPanel extends Panel
 		IndicatingAjaxLink buildButton,clearButton;	
 		modal1 = ModalCreator.createModalWindow("modal1", 800, 320);
 		add(modal1);
-		
 		originalWorklist = worklist;
 		//tOriginalWorklist = worklist;
 		originalWorklist.initializeControls();
@@ -111,8 +113,10 @@ public class AutoAddControlsPanel extends Panel
 		container.add(numberInjectionsDrop = buildQuantityDropdown("numberInjectionsDrop", "numberInjectionsStr")); // issue 201
 		container.add(numberInjectionsDropPool = buildQuantityDropdown("numberInjectionsDropPool", "numberInjectionsPoolStr")); // issue 201
 		container.add(numberInjectionsDropSB = buildQuantityDropdown("numberInjectionsDropSB", "numberInjectionsSBStr")); // issue 207
-		container.add(blanksDrop = buildQuantityDropdown("blanksDrop","nBlanksStr"));
-		container.add(processBlanksDrop = buildQuantityDropdown("processBlanksDrop","nProcessBlanksStr")); // issue 13 2020
+		container.add(numberInjectionsDropPB = buildQuantityDropdown("numberInjectionsDropPB", "numberInjectionsPBStr")); // issue 207
+		//issue 255
+		//container.add(blanksDrop = buildQuantityDropdown("blanksDrop","nBlanksStr"));
+		
 		container.add(qcDrop1 = buildQuantityDropdown("qcDrop1","nMatrixBlanksStr"));
 		container.add(qcDrop2 = buildQuantityDropdown("qcDrop2","nChearBlanksStr"));
 		container.add(chearBlankTypeDrop = buildChearBlankTypeDropdown("chearBlankTypeDrop"));
@@ -123,9 +127,7 @@ public class AutoAddControlsPanel extends Panel
 		container.add(buildButton = buildBuildButton("buildButton",container, worklist, wp));
 		container.add(clearButton = buildClearButton("clearButton",container, wp));
 		// issue 56
-	
-		
-		
+
 		    final MotrpacOptionsDialog motrpacOptionsDialog = new MotrpacOptionsDialog ("motrpacOptionsDialog",  "MoTrPAC Controls", originalWorklist)		
 		    { // NOSONAR
 			private static final long serialVersionUID = 1L;
@@ -385,30 +387,7 @@ public class AutoAddControlsPanel extends Panel
 				  		target.appendJavaScript(buildHTMLSetString(25,25,"1"));
 				  		originalWorklist.setBatchPoolsBefore(1);
 				  		}
-					}
-				else
-					{
-					/*   if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsAfter() <= 1)
-						{
-						target.appendJavaScript(buildHTMLSetString(24,24,"0"));
-						originalWorklist.setMasterPoolsAfter(0);
-						}
-					if (poolSpacingA > 0 &&  originalWorklist.getMasterPoolsBefore() <= 1)
-						{
-						target.appendJavaScript(buildHTMLSetString(23,23,"0"));
-						originalWorklist.setMasterPoolsBefore(0);
-						}
-				  	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsAfter() <= 1)
-				  		{
-				  		target.appendJavaScript(buildHTMLSetString(26,26,"0"));
-				  		originalWorklist.setBatchPoolsAfter(0);
-				  		}
-				  	if (poolSpacingB > 0 &&  originalWorklist.getBatchPoolsBefore() <= 1)
-				  		{
-				  		target.appendJavaScript(buildHTMLSetString(25,25,"0"));
-				  		originalWorklist.setBatchPoolsBefore(0);
-				  		} */
-					}		
+					}	
 				target.add(this);
 				}
 		    
@@ -646,6 +625,7 @@ public class AutoAddControlsPanel extends Panel
 			    Boolean doInjections  = (propertyName != null && propertyName.startsWith("numberInjectionsStr"));
 			    Boolean doInjectionsPool = (propertyName != null && propertyName.startsWith("numberInjectionsPoolStr"));
 			    Boolean doInjectionsSB = (propertyName != null && propertyName.startsWith("numberInjectionsSBStr"));
+			    Boolean doInjectionsPB = (propertyName != null && propertyName.startsWith("numberInjectionsPBStr"));
 			    // issue 207
 			    if (doPoolSpacing) 
 			    	return availableSpacingQuantities;
@@ -665,7 +645,8 @@ public class AutoAddControlsPanel extends Panel
 			    {
 			    if (!originalWorklist.getOpenForUpdates()) return false;
 			    // issue 215
-			    if (id.equals("processBlanksDrop") || id.equals("qcDrop1")  || id.equals("poolsDropB"))
+			    // issue 255
+			    if (id.equals("numberInjectionsDropPB") || id.equals("qcDrop1")  || id.equals("poolsDropB"))
 			       return (originalWorklist.getItems().size() > 0  && !originalWorklist.getIs96Well());		   
 			    else 
 			    	return originalWorklist.getItems().size() > 0;
@@ -746,28 +727,6 @@ public class AutoAddControlsPanel extends Panel
 	        		customizeControlGroupPageDialog.setMasterPoolsBefore(originalWorklist.getMasterPoolsBefore());
 	        		customizeControlGroupPageDialog.setBatchPoolsAfter(originalWorklist.getBatchPoolsAfter());
 	        		customizeControlGroupPageDialog.setBatchPoolsBefore(originalWorklist.getBatchPoolsBefore());
-	        		/* System.out.println("here is originalWorklist.getMasterPoolsAfter:" + originalWorklist.getMasterPoolsAfter());
-	        		if (poolSpacingA > 0 &&  (originalWorklist.getMasterPoolsAfter() == 2 || originalWorklist.getMasterPoolsAfter() == 0))
-		        		{
-		        		originalWorklist.setMasterPoolsAfter(0);
-		        		customizeControlGroupPageDialog.setMasterPoolsAfter(originalWorklist.getMasterPoolsAfter());
-		        		}
-	        		if (poolSpacingA > 0 &&  (originalWorklist.getMasterPoolsBefore() == 2 ||  originalWorklist.getMasterPoolsBefore() == 0 ))
-		        		{
-		        		originalWorklist.setMasterPoolsBefore(0);
-		        		customizeControlGroupPageDialog.setMasterPoolsBefore(originalWorklist.getMasterPoolsBefore());
-		        		}
-		        	if (poolSpacingB > 0 &&  (originalWorklist.getBatchPoolsAfter() == 1 || originalWorklist.getBatchPoolsAfter() == 0))
-		        		{
-		        		originalWorklist.setBatchPoolsAfter(0);
-		        		customizeControlGroupPageDialog.setBatchPoolsAfter(originalWorklist.getBatchPoolsAfter());
-		        		}
-		        	if (poolSpacingB > 0 &&  (originalWorklist.getBatchPoolsBefore() == 1 || originalWorklist.getBatchPoolsBefore() == 0))
-		        		{
-		        		originalWorklist.setBatchPoolsBefore(0);
-		        		customizeControlGroupPageDialog.setBatchPoolsBefore(originalWorklist.getBatchPoolsBefore());
-		        		}
-		        	*/
 		    		}
 	        		// issue 17
 	        	
@@ -818,6 +777,7 @@ public class AutoAddControlsPanel extends Panel
 		        	}
 		        catch (Exception e)
 		        	{
+		        	e.printStackTrace();
 		        	originalWorklist.getItems().clear();
 		        	originalWorklist.clearControlGroups();
 		        	originalWorklist.getItems().addAll(tWI);
@@ -901,7 +861,7 @@ public class AutoAddControlsPanel extends Panel
 				wp.form.agPanel.getContainer().remove(wp.form.agPanel.textAreaIdda);
 				wp.form.agPanel.getContainer().add( wp.form.agPanel.textAreaIdda = wp.form.agPanel.initIDDA(originalWorklist.getIddaStrList()));
 				wp.form.agPanel.textAreaIdda.setOutputMarkupId(true);
-				refreshPage(target);
+				refreshPage(target);;
 				}
 			};
 		}
@@ -922,6 +882,16 @@ public class AutoAddControlsPanel extends Panel
 		for (int i = 0; i < numberInjectionsSB; i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("Injection - Solvent Blank (CS00000SB-Pre)");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
+		
+		// issue 255
+		for (int i = 0; i < numberInjectionsPB; i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("Injection - Process Blank (CS00000PB-Pre)");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
 			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
 			group3.setStandardNotAddedControl(true);
@@ -964,17 +934,17 @@ public class AutoAddControlsPanel extends Panel
 		
 		// issue 191
 		// issue 212
-		if (nStandards > 0)
-			{
-			for (int i = 0; i < nBlanks; i++)
-				{
-				id = controlService.controlIdForNameAndAgilent("Solvent Blank");
-				finalLabel = controlService.dropStringForIdAndAgilent(id);
-				WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
-				group3.setStandardNotAddedControl(true);
-				originalWorklist.addControlGroup(group3);
-				}
-			}
+		// issue 255
+ 		 alreadyBlank = false;
+		 if (nStandards > 0)
+		 	{
+			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+		 	}
+		
 		for (int i = 0; i < nStandards ; i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("Standard." + i);
@@ -983,27 +953,32 @@ public class AutoAddControlsPanel extends Panel
 			group.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group);
 			}
-	
-		for (int i = 0; i < nBlanks; i++)
-			{
+		
+		 if (nStandards > 0 )
+		 	{
 			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
 			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
-			}
-		
+			alreadyBlank = true;
+		 	}
+		 
 		// issue 13 2020
 		//if (!worklist.getIs96Well())
-			for (int i = 0; i < nProcessBlanks; i++)
-				{
-				id = controlService.controlIdForNameAndAgilent("Process Blank");
-				finalLabel = controlService.dropStringForIdAndAgilent(id);
-				WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
-				group3.setStandardNotAddedControl(true);
-				originalWorklist.addControlGroup(group3);
-				}
+		  	
+		// if (nChearBlanks > 0 )
+		//	 alreadyBlank = true;
 		
+		 if (nMatrixBlanks > 0 && !alreadyBlank)
+		 	{
+			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+		 	}
+		 
 		//if (!worklist.getIs96Well())
 			for (int i = 0; i < nMatrixBlanks; i++)
 				{
@@ -1012,8 +987,31 @@ public class AutoAddControlsPanel extends Panel
 				WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
 				group3.setStandardNotAddedControl(true);
 				originalWorklist.addControlGroup(group3);
+				alreadyBlank = false;
 				}
 	
+			 if (nMatrixBlanks > 0 && !alreadyBlank)
+			 	{
+				id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+				finalLabel = controlService.dropStringForIdAndAgilent(id);
+				WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+				group3.setStandardNotAddedControl(true);
+				originalWorklist.addControlGroup(group3);
+			 	alreadyBlank = true;
+			 	}
+			 
+	  // issue 255
+
+            if  (nChearBlanks >= 1 && !alreadyBlank)
+	            {
+				id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+				finalLabel = controlService.dropStringForIdAndAgilent(id);
+				WorklistControlGroup group3 = 
+						new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+				group3.setStandardNotAddedControl(true);
+				originalWorklist.addControlGroup(group3);
+	            }
+			
 		for (int i = 0; i < nChearBlanks; i++)
 			{
 			// issue 186
@@ -1026,19 +1024,74 @@ public class AutoAddControlsPanel extends Panel
 			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
+			alreadyBlank = false;
 			}	
-		
+		 
+		  if  (nChearBlanks >= 1 && !alreadyBlank)
+          	{
+			  
+			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = 
+					new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			alreadyBlank = true;
+			
+          	}
+		  
+// issue 255 first part of motrpac
+		  if (!alreadyBlank && (worklist.getNGastroExercise() > 0 || 
+				  worklist.getNGastroSedentary() > 0 ||
+				 worklist.getNLiverExercise() > 0 ||
+				 worklist.getNLiverSedentary() > 0 || 
+				 worklist.getNAdiposeExercise() > 0 || 
+				 worklist.getNAdiposeSedentary() > 0 || 
+				 worklist.getNPlasmaExercise() > 0 || 
+				 worklist.getNPlasmaSedentary() > 0 || 
+				 worklist.getNLungExercise() > 0 ||
+				 worklist.getNLungSedentary() > 0 || 
+				 worklist.getNKidneyExercise() > 0 ||
+				 worklist.getNKidneySedentary() > 0 || 
+				 worklist.getNBrownAdiposeExercise() > 0 ||
+				 worklist.getNBrownAdiposeSedentary() > 0 ||
+				 worklist.getNHeartExercise() > 0 || 
+				 worklist.getNHeartSedentary() > 0 || 
+				 worklist.getNHippoCampusExercise() > 0 ||
+				 worklist.getNHippoCampusSedentary() > 0  ||
+				 worklist.getNMuscleHumanMale() > 0 ||
+				 worklist.getNMuscleHumanFemale() > 0 ||
+				 worklist.getNPlasmaHumanMale() > 0 || 
+				 worklist.getNPlasmaHumanFemale() > 0 || 
+				 worklist.getNRatG() > 0 ||
+				 worklist.getNRatL() > 0 || 
+				 worklist.getNRatA() > 0 ||
+				 worklist.getNRatPlasma() > 0 ||
+				 worklist.getNHumanMuscleCntrl() > 0 ||
+				 worklist.getNRefStdA() > 0 ||
+				 worklist.getNRefStdB() > 0 ||
+				 worklist.getNRefStdC() > 0 || 
+				  worklist.getNRefStdD() > 0 || 
+				 worklist.getNRefStdE() > 0 ))
+             {
+			 id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+			 finalLabel = controlService.dropStringForIdAndAgilent(id);
+			 WorklistControlGroup group3 = 
+			     new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			 group3.setStandardNotAddedControl(true);
+			 originalWorklist.addControlGroup(group3);
+             } 
 		// issue 212
 	//	if (!worklist.getIs96Well())
 		// Issue 422
-			for (int i = 0; i < worklist.getNGastroExercise(); i++)
-				{
-				id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Gastrocnemius, Exercise");
-				finalLabel = controlService.dropStringForIdAndAgilent(id);
-				WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
-				group3.setStandardNotAddedControl(true);
-				originalWorklist.addControlGroup(group3);
-				}
+		for (int i = 0; i < worklist.getNGastroExercise(); i++)
+			{
+			id = controlService.controlIdForNameAndAgilent("MoTrPAC -   Gastrocnemius, Exercise");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			}
 		
 		// Issue 422
 		// issue 212
@@ -1386,6 +1439,50 @@ public class AutoAddControlsPanel extends Panel
 				originalWorklist.addControlGroup(group3);
 				}
 			/*******************************/	
+			
+			// issue 255 last part of motrpac
+		     if ( (worklist.getNGastroExercise() > 0 || 
+					  worklist.getNGastroSedentary() > 0 ||
+						 worklist.getNLiverExercise() > 0 ||
+						 worklist.getNLiverSedentary() > 0 || 
+						 worklist.getNAdiposeExercise() > 0 || 
+						 worklist.getNAdiposeSedentary() > 0 || 
+						 worklist.getNPlasmaExercise() > 0 || 
+						 worklist.getNPlasmaSedentary() > 0 || 
+						 worklist.getNLungExercise() > 0 ||
+						 worklist.getNLungSedentary() > 0 || 
+						 worklist.getNKidneyExercise() > 0 ||
+						 worklist.getNKidneySedentary() > 0 || 
+						 worklist.getNBrownAdiposeExercise() > 0 ||
+						 worklist.getNBrownAdiposeSedentary() > 0 ||
+						 worklist.getNHeartExercise() > 0 || 
+						 worklist.getNHeartSedentary() > 0 || 
+						 worklist.getNHippoCampusExercise() > 0 ||
+						 worklist.getNHippoCampusSedentary() > 0  ||
+						 worklist.getNMuscleHumanMale() > 0 ||
+						 worklist.getNMuscleHumanFemale() > 0 ||
+						 worklist.getNPlasmaHumanMale() > 0 || 
+						 worklist.getNPlasmaHumanFemale() > 0 || 
+						 worklist.getNRatG() > 0 ||
+						 worklist.getNRatL() > 0 || 
+						 worklist.getNRatA() > 0 ||
+						 worklist.getNRatPlasma() > 0 ||
+						 worklist.getNHumanMuscleCntrl() > 0 ||
+						 worklist.getNRefStdA() > 0 ||
+						 worklist.getNRefStdB() > 0 ||
+						 worklist.getNRefStdC() > 0 || 
+						  worklist.getNRefStdD() > 0 || 
+						 worklist.getNRefStdE() > 0 ))
+	             {
+		    	 
+				 id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+				 finalLabel = controlService.dropStringForIdAndAgilent(id);
+				 WorklistControlGroup group3 = 
+				     new WorklistControlGroup(null, finalLabel, "1", "Before", firstSample, worklist);
+				 group3.setStandardNotAddedControl(true);
+				 originalWorklist.addControlGroup(group3);
+	             alreadyBlank = true;
+	             } 
 						
 		// issue 13 issue 17 issue 19
 		if (poolSpacingA > 0 &&  worklist.getMasterPoolsBefore()> 0 ) 
@@ -1411,30 +1508,66 @@ public class AutoAddControlsPanel extends Panel
 			    group3.setStandardNotAddedControl(true);
 			    originalWorklist.addControlGroup(group3);
 			    }
-		    }	
-	
+		    }
+		
+		
+		// issue 255
+		
+		try 
+			{
+			for (int i = 0; i < numberInjectionsSB; i++)
+				{
+				id = controlService.controlIdForNameAndAgilent("Injection - Solvent Blank (CS00000SB-Post)");
+				finalLabel = controlService.dropStringForIdAndAgilent(id);
+				WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+				group3.setStandardNotAddedControl(true);
+				originalWorklist.addControlGroup(group3);
+				} 
+			}
+		catch (Exception e)
+			{
+			e.printStackTrace();
+			}
+		
+		
+		// issue 255
+		try 
+			{
+			for (int i = 0; i < numberInjectionsPB; i++)
+				{
+				id = controlService.controlIdForNameAndAgilent("Injection - Process Blank (CS00000PB-Post)");
+				finalLabel = controlService.dropStringForIdAndAgilent(id);
+				WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+				group3.setStandardNotAddedControl(true);
+				originalWorklist.addControlGroup(group3);
+				} 
+			}
+		catch (Exception e)
+			{
+			e.printStackTrace();
+			}
+		
 		// issue 422 for MotrPac		
 		// Issue 422
-		// Issue 427
-		
+		// Issue 427		
 		// issue 126
-		
-		
 		// issue 235
 		// issue 13 20202
-		
 		// issue 191
-		if (nStandards > 0)
-			{
-			for (int i = 0; i < nBlanks; i++)
-				{
-				id = controlService.controlIdForNameAndAgilent("Solvent Blank");
-				finalLabel = controlService.dropStringForIdAndAgilent(id);
-				WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-				group4.setStandardNotAddedControl(true);
-				originalWorklist.addControlGroup(group4);
-				}
-			}
+		
+		alreadyBlank = false;
+		
+				 // issue 255
+		 if (nStandards > 0 )
+		 	{
+			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			
+		 	}
+		
 		for (int i = nStandards - 1; i >= 0; i--)
 			{
 			id = controlService.controlIdForNameAndAgilent("Standard." + i);
@@ -1443,25 +1576,29 @@ public class AutoAddControlsPanel extends Panel
 			group2.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group2);
 			}
-		for (int i = 0; i < nBlanks; i++)
-			{
+		
+		 if (nStandards > 0)
+		 	{
 			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group4.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group4);
-			}
+			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			alreadyBlank = true;
+		 	}
 		
 		
-		// issue 253
-		for (int i = 0; i < nProcessBlanks; i++)
-			{
-			id = controlService.controlIdForNameAndAgilent("Process Blank");
+		if  (nMatrixBlanks >= 1 && !alreadyBlank)
+	        {
+			id = controlService
+					.controlIdForNameAndAgilent("Solvent Blank");
 			finalLabel = controlService.dropStringForIdAndAgilent(id);
-			WorklistControlGroup group4 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
-			group4.setStandardNotAddedControl(true);
-			originalWorklist.addControlGroup(group4);
-			}
+			WorklistControlGroup group3 = 
+					new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+	        }
+		
 		
 		for (int i = 0; i < nMatrixBlanks; i++)
 			{
@@ -1470,7 +1607,31 @@ public class AutoAddControlsPanel extends Panel
 			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
+		    alreadyBlank = false;	
 			}	
+		
+		if  (nMatrixBlanks >= 1 && !alreadyBlank)
+	        {
+			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = 
+					new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			alreadyBlank = true;
+	        }
+		
+		// issue 255
+		if  (nChearBlanks >= 1 && !alreadyBlank)
+	        {
+			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = 
+					new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			alreadyBlank = true;
+	        }
 		
 		for (int i = 0; i < nChearBlanks; i++)
 			{
@@ -1482,14 +1643,65 @@ public class AutoAddControlsPanel extends Panel
 			WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
+			alreadyBlank = false;
 			}
 		
-
+		
+		
+		if  (nChearBlanks >= 1 && !alreadyBlank)
+	        {
+			alreadyBlank = true;
+			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+			WorklistControlGroup group3 = 
+					new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+	        }
 		
 		////// where to move the motrpac stuff		
 		/*********************************/
 		/// MotrPac After
-		
+		 if (!alreadyBlank && (worklist.getNGastroExercise() > 0 || 
+				  worklist.getNGastroSedentary() > 0 ||
+					 worklist.getNLiverExercise() > 0 ||
+					 worklist.getNLiverSedentary() > 0 || 
+					 worklist.getNAdiposeExercise() > 0 || 
+					 worklist.getNAdiposeSedentary() > 0 || 
+					 worklist.getNPlasmaExercise() > 0 || 
+					 worklist.getNPlasmaSedentary() > 0 || 
+					 worklist.getNLungExercise() > 0 ||
+					 worklist.getNLungSedentary() > 0 || 
+					 worklist.getNKidneyExercise() > 0 ||
+					 worklist.getNKidneySedentary() > 0 || 
+					 worklist.getNBrownAdiposeExercise() > 0 ||
+					 worklist.getNBrownAdiposeSedentary() > 0 ||
+					 worklist.getNHeartExercise() > 0 || 
+					 worklist.getNHeartSedentary() > 0 || 
+					 worklist.getNHippoCampusExercise() > 0 ||
+					 worklist.getNHippoCampusSedentary() > 0  ||
+					 worklist.getNMuscleHumanMale() > 0 ||
+					 worklist.getNMuscleHumanFemale() > 0 ||
+					 worklist.getNPlasmaHumanMale() > 0 || 
+					 worklist.getNPlasmaHumanFemale() > 0 || 
+					 worklist.getNRatG() > 0 ||
+					 worklist.getNRatL() > 0 || 
+					 worklist.getNRatA() > 0 ||
+					 worklist.getNRatPlasma() > 0 ||
+					 worklist.getNHumanMuscleCntrl() > 0 ||
+					 worklist.getNRefStdA() > 0 ||
+					 worklist.getNRefStdB() > 0 ||
+					 worklist.getNRefStdC() > 0 || 
+					  worklist.getNRefStdD() > 0 || 
+					 worklist.getNRefStdE() > 0 ))
+            {
+			id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+			finalLabel = controlService.dropStringForIdAndAgilent(id);
+		    WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			group3.setStandardNotAddedControl(true);
+			originalWorklist.addControlGroup(group3);
+			alreadyBlank = true;
+            }
 		for (int i = 0; i < worklist.getNRefStdE(); i++)
 			{
 			id = controlService.controlIdForNameAndAgilent("Adi RefStdE");
@@ -1786,6 +1998,50 @@ public class AutoAddControlsPanel extends Panel
 			group3.setStandardNotAddedControl(true);
 			originalWorklist.addControlGroup(group3);
 			}
+		
+		/// MotrPac After
+		 if (worklist.getNGastroExercise() > 0 || 
+				  worklist.getNGastroSedentary() > 0 ||
+					 worklist.getNLiverExercise() > 0 ||
+					 worklist.getNLiverSedentary() > 0 || 
+					 worklist.getNAdiposeExercise() > 0 || 
+					 worklist.getNAdiposeSedentary() > 0 || 
+					 worklist.getNPlasmaExercise() > 0 || 
+					 worklist.getNPlasmaSedentary() > 0 || 
+					 worklist.getNLungExercise() > 0 ||
+					 worklist.getNLungSedentary() > 0 || 
+					 worklist.getNKidneyExercise() > 0 ||
+					 worklist.getNKidneySedentary() > 0 || 
+					 worklist.getNBrownAdiposeExercise() > 0 ||
+					 worklist.getNBrownAdiposeSedentary() > 0 ||
+					 worklist.getNHeartExercise() > 0 || 
+					 worklist.getNHeartSedentary() > 0 || 
+					 worklist.getNHippoCampusExercise() > 0 ||
+					 worklist.getNHippoCampusSedentary() > 0  ||
+					 worklist.getNMuscleHumanMale() > 0 ||
+					 worklist.getNMuscleHumanFemale() > 0 ||
+					 worklist.getNPlasmaHumanMale() > 0 || 
+					 worklist.getNPlasmaHumanFemale() > 0 || 
+					 worklist.getNRatG() > 0 ||
+					 worklist.getNRatL() > 0 || 
+					 worklist.getNRatA() > 0 ||
+					 worklist.getNRatPlasma() > 0 ||
+					 worklist.getNHumanMuscleCntrl() > 0 ||
+					 worklist.getNRefStdA() > 0 ||
+					 worklist.getNRefStdB() > 0 ||
+					 worklist.getNRefStdC() > 0 || 
+					 worklist.getNRefStdD() > 0 || 
+					 worklist.getNRefStdE() > 0 )
+	           {
+			   id = controlService.controlIdForNameAndAgilent("Solvent Blank");
+			   finalLabel = controlService.dropStringForIdAndAgilent(id);
+			   WorklistControlGroup group3 = new WorklistControlGroup(null, finalLabel, "1", "After", lastSample, worklist);
+			   group3.setStandardNotAddedControl(true);
+			   originalWorklist.addControlGroup(group3);
+	           }
+		 
+		 
+		 
 		/**************  end of motrpac after ******/
 		///// move motorpac here
 		// issue 13
@@ -1848,7 +2104,11 @@ public class AutoAddControlsPanel extends Panel
 			    group4.setStandardNotAddedControl(true);
 			    originalWorklist.addControlGroup(group4);
 			    }
-		    }		   
+		    }
+		
+		
+		
+		
 		}
 
      // issue 324    
@@ -1907,6 +2167,8 @@ public class AutoAddControlsPanel extends Panel
 							numberInjectionsPool = Integer.parseInt(StringParser.parseName(numberInjectionsPoolStr));
 						if (!StringUtils.isEmptyOrNull(numberInjectionsSBStr))
 							numberInjectionsSB = Integer.parseInt(StringParser.parseName(numberInjectionsSBStr));
+						if (!StringUtils.isEmptyOrNull(numberInjectionsPBStr))
+							numberInjectionsPB = Integer.parseInt(StringParser.parseName(numberInjectionsPBStr));
 						// issue 169
 						if (originalWorklist.getDefaultPool())
 							{
