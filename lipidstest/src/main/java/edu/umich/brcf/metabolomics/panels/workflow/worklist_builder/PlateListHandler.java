@@ -852,7 +852,10 @@ public class PlateListHandler implements Serializable
 			// issue 255
 			if (controlType.indexOf("CS00000SB-Post") > -1  )
 				{
-				targetIdx = controlPositionIdxByTypeMap.get("CS00000SB-Pre");
+				if (worklist.getIs96Well())
+					targetIdx = controlPositionIdxByTypeMap.get("CS00000SB-Post");
+				else
+					targetIdx = controlPositionIdxByTypeMap.get("CS00000SB-Pre");
 				item.setSamplePosition(plateStr + "-" + map.get(targetIdx));
 				item.setRackPosition(plateStr + "-" + map.get(targetIdx));
 				continue;
@@ -860,7 +863,7 @@ public class PlateListHandler implements Serializable
 			
 			// issue 207
 			// issue 255
-			if (controlType.indexOf("CS00000PB-Pre") > -1 ) //&& bothPreinjectionsAndControl(items,"CS00000PB-Pre-01", "CS00000PB-01") )
+			if (controlType.indexOf("CS00000PB-Pre") > -1  && !worklist.getIs96Well() )//&& bothPreinjectionsAndControl(items,"CS00000PB-Pre-01", "CS00000PB-01") )
 				{
 				targetIdx = controlPositionIdxByTypeMap.get("CS00000PB-Pre");
 				item.setSamplePosition(plateStr + "-" + map.get(targetIdx));
@@ -869,9 +872,9 @@ public class PlateListHandler implements Serializable
 				}
 			
 			// issue 255
-			if (controlType.indexOf("CS00000PB-Post") > -1)// && bothPreinjectionsAndControl(items,"CS00000PB-Post-01", "CS00000PB-01") )
+			if (controlType.indexOf("CS00000PB-Post") > -1 && !worklist.getIs96Well() )  // && bothPreinjectionsAndControl(items,"CS00000PB-Post-01", "CS00000PB-01") )
 				{
-				if (controlPositionIdxByTypeMap.get("CS00000PB-Pre") == null )
+				if (controlPositionIdxByTypeMap.get("CS00000PB-Pre") == null ) 
 					targetIdx = controlPositionIdxByTypeMap.get("CS00000PB-Post");
 				else
 					targetIdx = controlPositionIdxByTypeMap.get("CS00000PB-Pre");			
@@ -889,10 +892,13 @@ public class PlateListHandler implements Serializable
 			
 			if (item.getRepresentsUserDefinedControl())
 				targetIdx = controlPositionIdxByTypeMap.get(controlType);
-			else
-			    targetIdx = controlPositionIdxByTypeMap.get(StringParser.parseId(controlType));		
+			
+			// issue 255
+			//else if ( !(worklist.getIs96Well() && controlType.contains("CS00000PB-")))
+			else if (!(worklist.getIs96Well() && controlType.contains("CS00000PB-")))				
+				targetIdx = controlPositionIdxByTypeMap.get(StringParser.parseId(controlType));	
 			item.setSamplePosition(plateStr + "-" + map.get(targetIdx));
-			item.setRackPosition(plateStr + "-" + map.get(targetIdx));				
+			item.setRackPosition(plateStr + "-" + map.get(targetIdx));	
 			}
 	    return spotsLeft;
 	    }

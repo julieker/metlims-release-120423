@@ -54,10 +54,20 @@ public class AddControlsPanel extends Panel
 	WebMarkupContainer container = new WebMarkupContainer("container");
 	List<WebMarkupContainer> sibContainers = new ArrayList<WebMarkupContainer>();
 	AddControlsPanel addControlsPanel = this;
+	WorklistBuilderPanel gWp;
 	
+	// issue 255
+    protected void onBeforeRender() 
+	    {
+	     if (gWp != null && originalWorklist != null && originalWorklist.getItems().size() > 0)                          
+	     	gWp.form.plateListHandler.addLastControlRepeater(originalWorklist);     
+	     super.onBeforeRender();         
+	    }
+    
 	public AddControlsPanel(String id, WorklistSimple worklist, WorklistBuilderPanel wp)
 		{
 		super(id);
+		gWp = wp;
 		modal1 = ModalCreator.createModalWindow("modal1", 800, 320);
 		add(modal1);
 		originalWorklist = worklist;

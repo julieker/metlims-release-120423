@@ -93,7 +93,16 @@ public class AddSamplesPanel extends Panel
 	boolean excludedSamplesWarningGiven = false, secondBuild = false, buildWarningGiven = false;
     String userDefinedSamplesLongStr = "";
     Model<String> userDefinedSamplesModel = Model.of("");
+    WorklistBuilderPanel gWp;
     
+ // issue 255
+    protected void onBeforeRender() 
+	    {
+	     if (gWp != null && originalWorklist != null && originalWorklist.getItems().size() > 0)                          
+	     	gWp.form.plateListHandler.addLastControlRepeater(originalWorklist);     
+	     super.onBeforeRender();         
+	    }
+       
 	public AddSamplesPanel(String id)
 		{		
 		super(id);
@@ -102,6 +111,7 @@ public class AddSamplesPanel extends Panel
 	public AddSamplesPanel(String id, WorklistSimple worklist, WorklistBuilderPanel wp)
 		{
 		super(id);	
+		gWp = wp;
 		// issue 46
 		AddSamplesRandomizationLoaderForm arlf = new AddSamplesRandomizationLoaderForm ("addSamplesRandomizationForm");
 		container.add(arlf);
@@ -659,7 +669,7 @@ public class AddSamplesPanel extends Panel
 						else
 	                    	{
 	                    	wp.form.availableModes = Arrays.asList(new String[] { "Positive", "Negative", "Positive + Negative" });
-	                    	wp.form.getWorklist().setSelectedMode("Positive");	
+	                    	// issue 255 wp.form.getWorklist().setSelectedMode("Positive");	
 	                    	wp.form.setAvailableInstruments(wp.form.getAvailableInstruments());
 	                    	wp.form.selectedInstrumentDrop.setChoices(wp.form.getAvailableInstruments());
 	                    	}

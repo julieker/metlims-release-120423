@@ -92,10 +92,19 @@ public class AutoAddControlsPanel extends Panel
 	private boolean prevDefaultPool = true ; // issue 169
 	PlateListHandler plateListHandler ;
 	MsWorklistWriter msWorklistWriter; 
-    
+    WorklistBuilderPanel gWp;
+	// issue 255
+    protected void onBeforeRender() 
+	    {
+	     if (gWp != null && originalWorklist != null && originalWorklist.getItems().size() > 0)                          
+	     	gWp.form.plateListHandler.addLastControlRepeater(originalWorklist);     
+	     super.onBeforeRender();         
+	    }
+	
 	public AutoAddControlsPanel(String id, final WorklistSimple worklist, WorklistBuilderPanel wp)
 		{
 		super(id);
+		gWp = wp;
 		IndicatingAjaxLink buildButton,clearButton;	
 		modal1 = ModalCreator.createModalWindow("modal1", 800, 320);
 		add(modal1);
