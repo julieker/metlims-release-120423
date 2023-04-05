@@ -1,0 +1,368 @@
+<head>
+<style> 
+table.scroll {
+    /* width: 100%; */ /* Optional */
+    /* border-collapse: collapse; */
+    border-spacing: 0;
+    border: 2px solid black;
+}
+
+table.scroll tbody,
+table.scroll thead { display: block; }
+
+thead tr th { 
+    height: 30px;
+    line-height: 30px;
+    /* text-align: left; */
+}
+
+table.scroll tbody {
+    height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+tbody { border-top: 2px solid black; }
+
+tbody td, thead th {
+    /* width: 20%; */ /* Optional */
+    border-right: 1px solid black;
+    /* white-space: nowrap; */
+}
+
+tbody td:last-child, thead th:last-child {
+    border-right: none;
+}
+
+html, body{
+  margin:0;
+  padding:0;
+  height:100%;
+}
+section {
+  position: relative;
+  border: 1px solid #000;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  padding-top: 37px;
+  /*background: #220;*/
+  background-color: blue;
+}
+section.positioned {
+  position: absolute;
+  top:100px;
+  left:100px;
+  width:800px;
+  box-shadow: 0 0 15px #220;
+}
+.container {
+  overflow-y: auto;
+  /* height: 200px; */
+  height: 400px;
+}
+table {
+  border-spacing: 0;
+  width:100%;
+}
+td + td {
+  border-left:1px solid #eee;
+}
+td, th {
+  border-bottom:1px solid #eee;
+  background: #ddd;
+  color: #000;
+ /* padding: 10px 25px; */
+ padding: 4px 25px;
+}
+th {
+  height: 0;
+  line-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  color: transparent;
+  border: none;
+  white-space: nowrap;
+}
+th div{
+  position: absolute;
+  background: transparent;
+  color: #fff;
+  /* padding: 9px 25px; */
+  padding: 4px 25px;
+  top: 0;
+  margin-left: -25px;
+  line-height: normal;
+  border-left: 1px solid #800;
+}
+th:first-child div{
+  border: none;
+}
+
+</style>
+</head>
+<!--  
+<wicket:panel>
+-->
+<body>
+
+	    <div wicket:id="modal2"></div>
+		 <div style="overflow-y: auto; height : 100%; width : 96%; padding-right : 10px;">
+			<br>
+			<br>
+			<br>
+			    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		   		<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">View Progress Tracking</span> &nbsp;&nbsp;&nbsp;
+		   	        <!--  
+		   	     	<input wicket:id="addTrackingAdmin" type="submit" id="search" value="Assign Tasks"  style="height:30px; width:125px" />
+		   	     	
+		   	     	<input wicket:id="addTrackingAdminDefault" type="submit" id="search2" value="Assign WorkFlows"  style="height:30px; width:125px" />
+		   	     	-->
+		   	     	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		   	     	<input wicket:id="close" type="button" style = "margin-left : 15px; width : 100px;"  value="Close"/>
+                    <br>  
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;              
+                   <span> Search by assigned to: </span>
+                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                   
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;              
+                   <span> Search by experiment: </span>
+                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                   
+                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;              
+                   <span> Search by assay: </span>
+                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                   
+                   <br>
+                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                 <select wicket:id = "assignedTo"></select> 
+                 
+                   &nbsp;&nbsp;
+                 <input wicket:id="resetAssignedTo" type="submit"  value="Reset"  style="height:30px; width:125px" />
+                 
+                 
+                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                 <select wicket:id = "experimentDropDown"></select>
+                 
+                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                 <select wicket:id = "assayDescDropDown"></select>                
+                
+		
+			       &nbsp;&nbsp;
+			        <span> On hold: </span>
+			        <input wicket:id="onHold" type="checkbox"/>
+			        
+			        &nbsp;&nbsp;
+			        <span> In progress: </span>
+			        <input wicket:id="inProgress" type="checkbox"/>
+			        
+			         &nbsp;&nbsp;
+			        <span> Completed: </span>
+			        <input wicket:id="completed" type="checkbox"/>
+			        
+			         &nbsp;&nbsp;
+			        <span> In Queue: </span>
+			        <input wicket:id="inQueue" type="checkbox"/>
+			      <br>
+			      <br>
+			      <br>
+                  
+       
+        <center>	
+    </center>
+	
+	
+<section class="">
+  
+  <div class="container">
+<!--  
+    <table  >
+      <thead>
+        <tr >
+           <th>
+            Workflow
+            <div>Workflow </div>
+          </th>
+         
+          <th>
+            Experiment
+            <div>Experiment </div>
+          </th>
+          
+          
+       
+          <th>
+            Description
+            <div>Description </div>
+          </th>
+          
+          
+          <th>
+            Date Assigned
+            <div>Date Assigned</div>
+          </th>
+          
+           <th>
+            Date Started
+            <div>Date Started</div>
+          </th>
+          
+          <th>
+            Assigned To
+            <div>Assigned To</div>
+          </th>
+          
+             <th>
+           Date Completed
+            <div>Date Completed</div>
+          </th>
+           <th>
+            Comments
+            <div>Comments</div>
+          </th>
+          <th>
+            Status
+            <div>Status</div>
+          </th>
+            <th>
+            <div></div>
+          </th>
+        </tr>
+      </thead>
+      
+     </table>
+     -->
+     <table  >
+     
+       <thead>
+        <tr >
+           <th>
+            Workflow
+            <div>Workflow </div>
+          </th>
+         
+          <th>
+            Experiment
+            <div>Experiment </div>
+          </th>
+          
+            <th>
+            Sample Type
+            <div>Sample Type </div>
+          </th>
+       
+          <th>
+            Description
+            <div>Description </div>
+          </th>
+          
+            <th>
+            Assigned To
+            <div>Assigned To</div>
+          </th>
+          
+          <th>
+            Assigned
+            <div>Assigned</div>
+          </th>
+          
+           <th>
+            Started
+            <div>Started</div>
+          </th>
+          
+        
+          
+             <th>
+           Completed
+            <div>Completed</div>
+          </th>
+    
+          <th>
+            Status
+            <div>Status</div>
+          </th>
+          
+          <th>
+            Comments
+            <div>Comments</div>
+          </th>
+          
+            <th>
+            <div></div>
+          </th>
+        </tr>
+      </thead>
+     
+    
+         
+     <thead>
+     </thead>
+      <tbody wicket:id = "wfDetail">
+      
+        <tr >
+        <td>
+        <a wicket:id = "wfLink">
+        <span wicket:id = "wfDesc">Huckleberry Finn</span>
+        </a>
+        </td>
+          <td><span wicket:id = "eLabel"> </span></td>
+            <td><span></span></td>
+              <td><span ></span></td>
+                <td><span></span></td>
+                  <td><span wicket:id = "assignedDate" ></span></td>
+                    <td><span></span></td>
+                      <td><span></span></td>
+                      <td><span   wicket:id = "onHoldStatus"  ></span></td>
+                        <td><span ></span></td>
+                          <td><span></span></td>
+        </tr>
+     
+       <!--  
+       <tr wicket:id = "wfDesc">Huckleberry Finn</span></td>
+       -->
+        
+        <tr wicket:id = "trackingDetail" >
+       
+       <!--  
+        <td><span wicket:id = "wfDesc">Huckleberry Finn</span></td>
+       -->
+       <!--  
+       <td><span></span></td>
+       -->
+       <td><span></span></td>
+        <td>
+        <a wicket:id = "eLink">
+        <span wicket:id = "experimentID">Huckleberry Finn</span>
+        </a> 
+        </td>
+           <td><span wicket:id = "sampleType">Huckleberry Finn</span></td>     
+          <td><span wicket:id = "taskdescription">Huckleberry Finn</span></td>
+          <td><span wicket:id = "assignedto">Huckleberry Finn</span></td>
+         <td><span wicket:id = "dateAssigned">Huckleberry Finn</span></td>
+		  <td><span wicket:id = "dateStarted">Huckleberry Finn</span></td>
+        
+           <td> <span wicket:id = "datecompleted">Mark Twain</span></td>
+          
+          
+           <td><span wicket:id = "status">(123) 456-7890</span></td>
+           <td><span wicket:id = "comments">(123) 456-7890</span></td> 
+           <td> <a wicket:id = "editTrackingAdmin" href="#">edit</a> </td>
+           
+         
+        </tr>
+      </tbody>
+    </table>
+    
+  
+    
+  </div>
+</section>
+
+</div>
+
+	    
+</body>
+
+<!--  
+</wicket:panel>
+-->

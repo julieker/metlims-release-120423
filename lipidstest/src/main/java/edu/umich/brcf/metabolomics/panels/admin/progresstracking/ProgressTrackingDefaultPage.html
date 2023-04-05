@@ -1,0 +1,315 @@
+<head>
+<link rel="stylesheet" type="text/css" href="worklist.css"/>
+<style> 
+table.scroll {
+    /* width: 100%; */ /* Optional */
+    /* border-collapse: collapse; */
+    border-spacing: 0;
+    border: 2px solid black;
+}
+
+table.scroll tbody,
+table.scroll thead { display: block; }
+
+thead tr th { 
+    height: 30px;
+    line-height: 30px;
+    /* text-align: left; */
+}
+
+table.scroll tbody {
+    height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+tbody { border-top: 2px solid black; }
+
+tbody td, thead th {
+    /* width: 20%; */ /* Optional */
+    border-right: 1px solid black;
+    /* white-space: nowrap; */
+}
+
+tbody td:last-child, thead th:last-child {
+    border-right: none;
+}
+
+html, body{
+  margin:0;
+  padding:0;
+  height:100%;
+}
+section {
+  position: relative;
+  border: 1px solid #000;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  padding-top: 37px;
+  /*background: #220;*/
+  background-color: blue;
+}
+section.positioned {
+  position: absolute;
+  top:100px;
+  left:100px;
+  width:800px;
+  box-shadow: 0 0 15px #220;
+}
+.container {
+  overflow-y: auto;
+  /* height: 200px; */
+  height: 400px;
+}
+table {
+  border-spacing: 0;
+  width:100%;
+}
+td + td {
+  border-left:1px solid #eee;
+}
+td, th {
+  border-bottom:1px solid #eee;
+  background: #ddd;
+  color: #000;
+ /* padding: 10px 25px; */
+ padding: 4px 25px;
+}
+th {
+  height: 0;
+  line-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  color: transparent;
+  border: none;
+  white-space: nowrap;
+}
+th div{
+  position: absolute;
+  background: transparent;
+  color: #fff;
+  /* padding: 9px 25px; */
+  padding: 4px 25px;
+  top: 0;
+  margin-left: -25px;
+  line-height: normal;
+  border-left: 1px solid #800;
+}
+th:first-child div{
+  border: none;
+}
+.feedbackMsg { color : red; font-weight : 600; text-align : left } 
+</style>
+</head>
+<!--  
+<wicket:panel>
+-->
+
+
+ <script>
+ 
+     
+	
+ 
+	    function scrollit ()
+	    	{	
+	    	var objDiv = document.getElementById("scroll-to-bottom");
+	    	objDiv.scrollTop = objDiv.scrollHeight;
+			}
+ </script>
+
+<!--  
+<body onload="scrollit()">
+-->
+<body>
+
+        <form wicket:id = "progressTrackingDefaultForm" > 
+	    <div wicket:id="modal2"></div>
+		 <div style="overflow-y: auto; height : 100%; width : 96%; padding-right : 10px;">
+			<br>
+			 <span wicket:id = "feedback" class = "feedbackMsg"> </span>
+			<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span  style = "text-align : left; font-weight : bold; color :  #0053CF">Experiment:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Assay:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Workflow: </span> &nbsp;&nbsp;&nbsp;
+			
+			<br>
+		   
+		   		<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">View Progress Tracking</span> &nbsp;&nbsp;&nbsp;
+		   	      
+		   	        <select wicket:id = "experimentDropDown" style = "margin-left : 15px; width : 100px;" ></select> &nbsp;
+		   	          <select wicket:id = "assayDescDropDown" style = "margin-left : 15px; width : 100px;" ></select> &nbsp;&nbsp;&nbsp;
+		   	         <select wicket:id = "wfDropDown" style = "margin-left : 15px; width : 100px;" ></select> &nbsp;&nbsp;&nbsp;
+		   	 
+		   	     	<input wicket:id="close" type="button" style = "margin-left : 15px; width : 100px;"  value="Close"/>
+		  	
+		   	     	<input wicket:id="saveDefault" type="button" style = "margin-left : 15px; width : 100px;"  value="Save Workflow"/>
+           
+        <center>	
+    </center>
+	
+	
+<section class="">
+  
+  <div id = "scroll-to-bottom" class="container">
+      <table>
+      <thead>
+        <tr >
+      
+      <th>
+      </th>
+
+          <th>
+            Description
+            <div>Description </div>
+          </th>
+          
+          
+          <th>
+            Date Assigned
+            <div>Date Assigned</div>
+          </th>
+          
+          <th>
+            Days Expected
+            <div>Days Expected</div>
+          </th>
+          
+          <th>
+            Assigned To
+            <div>Assigned To</div>
+          </th>
+          
+
+           <th>
+            Comments
+            <div>Comments</div>
+          </th>
+          
+          <th>
+         </th>
+         <th>
+         </th>
+          
+        </tr>
+      </thead>
+      
+      <tbody id="taskBody">
+      
+     
+      <tr>
+     
+      <td> 
+      
+      <!--  
+      	<input wicket:id = "addButton" onclick = "scrollit();" class = "worklistSmallButton" style = "color : #00ee00; "
+									title = "Add another control group"  type = "button"  value = "+"/>
+      
+      -->
+      
+      <!-- 
+      <input wicket:id = "addButton"  class = "worklistSmallButton" style = "color : #00ee00; "
+									title = "Add another control group" onclick="alert('hey'); document.getElementById('scroll-to-bottom').scrollTop= document.getElementById('scroll-to-bottom').scrollHeight;alert('hey again')" type = "button"  value = "+"/>
+		
+		-->
+									
+       <input wicket:id = "addButton"  class = "worklistSmallButton" style = "color : #00ee00; "
+									title = "Add another control group"  type = "button"  value = "+"/>
+									
+      </td>
+      
+      <td> 
+      </td>
+      
+       <td> 
+      </td>
+      
+       <td> 
+      </td>
+      
+       <td> 
+      </td>
+      
+       <td>
+         </td>
+         <td>
+         </td>
+          <td>
+         </td>
+      </tr>
+      
+      
+     <tr wicket:id = "addedTasks" >
+        <td>
+        	<input wicket:id = "deleteButton" class = "worklistSmallButton" style = "color : #FF0000; "
+									title = "Add another control group"  type = "button"  value = "-"/>
+        
+        </td>
+         <td> <input wicket:id="taskdescriptiona" type="text" value=" "  size="20" /> 
+          <!--  
+           <input wicket:id="saveTaskDesc" type="submit" style = "margin-left : 15px; width : 100px;"  value="Done"/>   
+          -->
+          </td>
+         <td> <input wicket:id="dateAssignedda" type="text" value="date"  size="10">  </td>
+		 <td><select wicket:id = "daysExpected">Huckleberry Finn</select></td>
+          <td><select wicket:id = "assignedToa">Huckleberry Finn</select></td>
+           
+           <td><textarea wicket:id = "commentsa" style = "overflow: scroll; width : 100%;  height : 90px" cols = "40" rows = "7" ></textarea>
+             </td>
+           <!--  
+           <td> <a wicket:id = "editTrackingAdmin" href="#">edit</a> </td>
+           -->
+            
+             <td>
+             <button wicket:id = "upArrow" > 
+             <span>  &#x2191;  </span>
+             </button>
+             
+             </td>
+            
+             <td>
+           
+             
+             <button wicket:id = "downArrow" > 
+            
+             <span>  &#x2193;  </span>
+             </button>
+             </td>
+         
+        </tr>
+      
+        <tr wicket:id = "trackingDetail" >
+        <td></td>
+          <td><span wicket:id = "taskdescription">Huckleberry Finn</span></td>
+         <td> <input wicket:id="dateAssignedd" type="text" value="date"  size="20">  </td>
+		 
+          <td><select wicket:id = "assignedTo">Huckleberry Finn</select></td>
+         
+           <td><textarea wicket:id = "comments" style = "overflow: scroll; width : 100%;  height : 90px" cols = "40" rows = "7" ></textarea>
+             </td>
+           <!--  
+           <td> <a wicket:id = "editTrackingAdmin" href="#">edit</a> </td>
+           -->
+           
+         <td>
+         </td>
+         <td>
+         </td>
+         
+         
+         
+        </tr>
+      </tbody>
+    </table>
+    
+    
+    
+  </div>
+</section>
+
+</div>
+
+</form>	    
+</body>
+
+<!--  
+</wicket:panel>
+-->

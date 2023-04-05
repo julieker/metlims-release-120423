@@ -1,0 +1,159 @@
+<head>
+<style> 
+table.scroll {
+    /* width: 100%; */ /* Optional */
+    /* border-collapse: collapse; */
+    border-spacing: 0;
+    border: 2px solid black;
+}
+
+table.scroll tbody,
+table.scroll thead { display: block; }
+
+thead tr th { 
+    height: 30px;
+    line-height: 30px;
+    /* text-align: left; */
+}
+
+table.scroll tbody {
+    height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+tbody { border-top: 2px solid black; }
+
+tbody td, thead th {
+    /* width: 20%; */ /* Optional */
+    border-right: 1px solid black;
+    /* white-space: nowrap; */
+}
+
+tbody td:last-child, thead th:last-child {
+    border-right: none;
+}
+
+html, body{
+  margin:0;
+  padding:0;
+  height:100%;
+}
+section {
+  position: relative;
+  border: 1px solid #000;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  padding-top: 37px;
+  /*background: #220;*/
+  background-color: blue;
+}
+section.positioned {
+  position: absolute;
+  top:100px;
+  left:100px;
+  width:800px;
+  box-shadow: 0 0 15px #220;
+}
+.container {
+  overflow-y: auto;
+  /* height: 200px; */
+  height: 400px;
+}
+table {
+  border-spacing: 0;
+  width:100%;
+}
+td + td {
+  border-left:1px solid #eee;
+}
+td, th {
+  border-bottom:1px solid #eee;
+  background: #ddd;
+  color: #000;
+ /* padding: 10px 25px; */
+ padding: 4px 25px;
+}
+th {
+  height: 0;
+  line-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  color: transparent;
+  border: none;
+  white-space: nowrap;
+}
+th div{
+  position: absolute;
+  background: transparent;
+  color: #fff;
+  /* padding: 9px 25px; */
+  padding: 4px 25px;
+  top: 0;
+  margin-left: -25px;
+  line-height: normal;
+  border-left: 1px solid #800;
+}
+th:first-child div{
+  border: none;
+}
+
+</style>
+</head>
+<!--  
+<wicket:panel>
+-->
+<body>
+
+	    <div wicket:id="modal2"></div>
+		 <div style="overflow-y: auto; height : 100%; width : 100%; padding-right : 10px;">
+			<br>
+			<br>
+			<br>
+		   		<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">Add or Edit New Tasks</span> &nbsp;&nbsp;&nbsp;
+		   	     
+		   	     	<input wicket:id="addTask" type="submit" id="search" value="Add New Task"  style="height:30px; width:120px" />
+               
+        <center>	
+    </center>
+	
+	
+<section class="">
+  
+  <div class="container">
+
+    <table>
+      <thead>
+        <tr >
+       
+          <th>
+            Task
+            <div>Task </div>
+          </th>
+    
+           <th>
+                     
+            <div></div>
+          </th>
+    
+    
+        </tr>
+      </thead>
+      
+      <tbody>
+      
+        <tr wicket:id = "trackingDetail" >
+          <td><span wicket:id = "taskdescription">Huckleberry Finn</span></td>
+          <td> <a wicket:id = "editTask" href="#">edit</a> </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div>
+</body>
+
+<!--  
+</wicket:panel>
+-->

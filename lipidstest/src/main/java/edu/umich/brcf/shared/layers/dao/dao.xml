@@ -11,7 +11,8 @@
 	                    http://www.springframework.org/schema/aop 
 	                    http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-	
+	<bean id="processTrackingDAO" class="edu.umich.brcf.shared.layers.dao.ProcessTrackingDAO" />
+	<bean id="meetingNotesDAO" class="edu.umich.brcf.shared.layers.dao.MeetingNotesDAO" />
 	<bean id="assayDAO" class="edu.umich.brcf.shared.layers.dao.AssayDAO" />
 	<bean id="aliquotDAO" class="edu.umich.brcf.shared.layers.dao.AliquotDAO" />
 	<bean id="barcodePrintingDAO" class="edu.umich.brcf.shared.layers.dao.BarcodePrintingDAO" />

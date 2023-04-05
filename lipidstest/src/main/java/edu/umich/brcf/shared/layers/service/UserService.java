@@ -63,6 +63,10 @@ public class UserService
 		return userDao.allAdminNames();
 		}
 	
+	public List<String> allAdminNames(boolean isNotTracking )
+		{
+		return userDao.allAdminNames(isNotTracking);
+		}
 	
 	public boolean isTrustedAdmin(String userId)
 		{
@@ -206,24 +210,26 @@ public class UserService
 		return userDao.authenticate(username, password);
 		}
 	
-
 	public void delete(UserDTO user) 
 		{
 		userDao.delete(user);
 		}
 
-	
 	public User getUserByUserName(String username) 
 		{
 		return userDao.loadUserByUserName(username);
 		}
 	
+	// issue 210
+	public User loadUserByFullName(String fullName) 
+		{
+		return userDao.loadUserByFullName(fullName);
+		}
 	
 	public String getFullNameByUserId(String userId) 
 		{
 		return userDao.getFullNameByUserId(userId);
 		}
-	
 	
 	public String getUserNameByUserId(String userId)
 		{

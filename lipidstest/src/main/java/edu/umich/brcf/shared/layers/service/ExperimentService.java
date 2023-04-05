@@ -95,6 +95,30 @@ public class ExperimentService
 		}
 	
 	
+	// issue 210 
+	public String  grabNumSamples (String expID)
+		{
+		return experimentDao.grabNumSamples(expID);
+		}
+	
+	// issue 210 
+	public List <Object []>  grabAssayType (String expID)
+		{
+		return experimentDao.grabAssayType(expID);
+		}
+	
+	public String  grabWfType (String expID)
+		{
+		return experimentDao.grabWfType(expID);
+		}
+	
+	public String  grabtheWorkFlow (String part1, String part2, String part3)
+		{
+		return experimentDao.grabtheWorkFlow(part1, part2, part3);
+		}
+	
+	
+	
 	public String experimentNameForId(String expId) 
 		{ 
 		return experimentDao.experimentNameForId(expId); 
@@ -496,7 +520,7 @@ public class ExperimentService
 		{
 		return experimentDao.experimentsWithCC();
 		}
-	
+
 	public List<String> assayA003A049DifferentSamples()
 		{
 		return experimentDao.assayA003A049DifferentSamples();

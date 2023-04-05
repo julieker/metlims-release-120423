@@ -12,6 +12,17 @@
  		<property name="assayDao" ref="assayDAO" />
  	</bean>
  	
+ 	<bean id="processTrackingService" class="edu.umich.brcf.shared.layers.service.ProcessTrackingService">
+ 		<property name="processTrackingDao" ref="processTrackingDAO" />
+ 		<property name="userDao" ref="userDAO" />
+ 		<property name="experimentDao" ref="experimentDAO" />
+ 		<property name="assayDao" ref="assayDAO" />
+ 	</bean>
+ 	
+ 	<bean id="meetingNotesService" class="edu.umich.brcf.shared.layers.service.MeetingNotesService">
+ 		<property name="meetingNotesDao" ref="meetingNotesDAO" />
+ 	</bean>
+ 	
  	<bean id="aliquotService" class="edu.umich.brcf.shared.layers.service.AliquotService">
  		<property name="aliquotDao" ref="aliquotDAO" />
  		<property name="sampleDao" ref="sampleDAO" />
@@ -87,6 +98,10 @@
  		
  		<!-- Issue 214 -->
  	 <bean id="metLIMSAutomatedMessageService" class="edu.umich.brcf.shared.layers.service.MetLIMSAutomatedMessageService">
+ 	 </bean>
+ 	 
+ 	 	<!-- Issue 214 -->
+ 	 <bean id="metLIMSTrackingAutomatedMessageService" class="edu.umich.brcf.shared.layers.service.MetLIMSTrackingAutomatedMessageService">
  	 </bean>
  	 	
        <!-- issue 94 -->

@@ -1,0 +1,62 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<wicket:head>
+    <title></title>
+   <link rel="stylesheet" type="text/css" href="css/style.css"/>
+   <link rel="stylesheet" type="text/css" href="dialog.css"/>
+   <style>
+       .feedbackMsg { color : red; font-weight : 600; text-align : left }    
+   </style>
+</wicket:head>
+
+<script language="JavaScript">
+function refreshParent() {
+	window.opener.location.href = window.opener.location.href;
+
+	  if (window.opener.progressWindow)
+			
+	 {
+	    window.opener.progressWindow.close()
+	  }
+	  window.close();
+}
+</script>
+<body onUnload="opener.location.reload()" class = "dialog_background">
+  
+  <p>
+	
+	<div>
+		<fieldset class = "dialog_fieldset" style = "height : 80%; margin-top : .5%; margin-bottom : .5%; width :90%; margin-left : 5%; margin-right : 5%">	
+			<legend class = "dialog_legend">
+		   		<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">Edit Task</span>
+		   </legend>
+  <center>
+   
+  <span wicket:id = "feedback" class = "feedbackMsg"> </span>
+  <form wicket:id = "editProcessTaskDetailForm" >        
+ 	    <table style = "width : 100%; margin-left : 0%; margin-right : 15%">
+ 	 	  	
+		  	  <tr>
+		  		<td >Task Description: :</td>
+		  		<td><textarea wicket:id = "taskDescNew" style = "overflow: scroll; width : 100%;  height : 90px" cols = "40" rows = "7" ></textarea></td>
+		  		
+		  	  </tr>
+	
+			</table>
+			 <table style = "width : 80%; margin-left : 10%; margin-right : 10%">
+		    <tr>
+			    <td style = "width : 20%"></td>
+			    <td nowrap style = "width : 60%">
+			    	<input wicket:id="saveChanges" type="submit"  style = "margin-right : 15px; width : 100px;" value="Save"/>&nbsp;&nbsp;
+			    	<!-- issue 464 -->
+			    	<input wicket:id="close" type="button" style = "margin-left : 15px; width : 100px;"  value="Close"/>
+			    </td>
+			    <td style = "width : 20%"></td>
+		    </tr>
+	    </table>
+			
+  </form>
+  </center>
+	</fieldset>
+	</div>
+</body>
+</html>

@@ -7,6 +7,7 @@
 package edu.umich.brcf.shared.layers.dao;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -17,6 +18,7 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Repository;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import edu.umich.brcf.shared.layers.domain.Client;
 import edu.umich.brcf.shared.layers.domain.Project;
 import edu.umich.brcf.shared.layers.domain.User;
@@ -146,11 +148,20 @@ public class UserDAO extends BaseDAO
 		return allUserNames(true);
 		}
 	
-
-	public List<String> allAdminNames()
+    public List<String> allAdminNames()
+    	{
+    	return allAdminNames(true);
+    	}
+    /// issue 210
+	public List<String> allAdminNames(boolean isNotTracking)
 		{
-		Query query = getEntityManager().createNativeQuery("select cast(u.last_name as VARCHAR2(30)), cast(u.first_name as"
-			+ " VARCHAR2(20)), cast(u.researcher_id as VARCHAR(6)) from Researcher  u where u.default_viewpoint = '99' order by u.last_name");
+		Query query;
+		if (isNotTracking)
+			query = getEntityManager().createNativeQuery("select cast(u.last_name as VARCHAR2(30)), cast(u.first_name as"
+					+ " VARCHAR2(20)), cast(u.researcher_id as VARCHAR(6)) from Researcher  u where u.default_viewpoint = '99'   order by u.last_name");
+		else	
+			query = getEntityManager().createNativeQuery("select cast(u.last_name as VARCHAR2(30)), cast(u.first_name as"
+			+ " VARCHAR2(20)), cast(u.researcher_id as VARCHAR(6)) from Researcher  u where trim(last_name) || ', ' || trim(first_name) in (select trim(full_name) from tracking_tasks_researcher) order by u.last_name");
 
 		List<Object[]> userList = query.getResultList();
 
@@ -160,8 +171,11 @@ public class UserDAO extends BaseDAO
 			String userId = (String) user[2];
 			String firstName = (String) user[1];
 			String lastName = (String) user[0];
-
-			fullNames.add(firstName + " " + lastName + " (" + userId + ")");
+            if (isNotTracking)
+            	fullNames.add(firstName + " " + lastName + " (" + userId + ")");
+            else 
+            	if (!fullNames.contains (lastName + ", " + firstName))
+            		fullNames.add(lastName + ", " + firstName);
 			}
 
 		return fullNames;
@@ -220,17 +234,31 @@ public class UserDAO extends BaseDAO
 		return user;
 		}
 	
-
 	public User loadUserByUserName(String userName)
+	{
+	List<User> userList = getEntityManager().createQuery("from User u where u.userName = :userName and  (u.deletedFlag is null or u.deletedFlag = false)")
+			.setParameter("userName", userName).getResultList();
+	
+	User user = (User) DataAccessUtils.requiredSingleResult(userList);
+	Hibernate.initialize(user.getViewpoint());
+	return user;
+	}
+	
+	// issue 210
+	public User loadUserByFullName(String fullName)
 		{
-		List<User> userList = getEntityManager().createQuery("from User u where u.userName = :userName and  (u.deletedFlag is null or u.deletedFlag = false)")
-				.setParameter("userName", userName).getResultList();
-		
+		List<User> userList = getEntityManager().createQuery("from User u where lastName || ', '  || firstName = ?1 and  (u.deletedFlag is null or u.deletedFlag = false)")
+				.setParameter(1, fullName).getResultList();
+		if (userList.size()> 1 )
+			{
+			List<User> firstUserList = Collections.singletonList  (userList.get(0));
+			userList= new ArrayList <User> ();
+			userList = firstUserList;
+			}
 		User user = (User) DataAccessUtils.requiredSingleResult(userList);
 		Hibernate.initialize(user.getViewpoint());
 		return user;
 		}
-
 	
 	public String getUserIdByUserName(String userName)
 		{
