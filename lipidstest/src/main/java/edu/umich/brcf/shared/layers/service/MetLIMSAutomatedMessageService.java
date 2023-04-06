@@ -25,7 +25,7 @@ import edu.umich.brcf.shared.layers.service.SystemConfigService;
 
 
 @Transactional
-public class MetLIMSAutomatedMessageService
+public class MetLIMSAutomatedMessageService 
 	{
 	 @Autowired
 	@SpringBean
@@ -50,12 +50,10 @@ public class MetLIMSAutomatedMessageService
 	//@Scheduled(cron = "0 5 13 * * * ")
     //  @Scheduled(cron = "0 */2 * * * * ")
 	//@Scheduled(cron="0 7 12 1 1/1 *")
-	//@Scheduled(cron="0 39 14 01 * ?")
-	@Scheduled(cron="0 32 10 20 * ?")
+	@Scheduled(cron="0 39 14 01 * ?")
      // Issue 214
 	public void sendExpiredSampleReport()
         {     	
-		System.out.println("i am here wow");
         String msg = " Samples between " +  sampleLowerAgeLimit + " and " + sampleUpperAgeLimit + " days old ";
         String htmlString = "<h3><b> "  + msg + " </b></h3> <br> <h4>" +  buildSampleExpireString(sampleService.getExpiredSamples(sampleLowerAgeLimit,sampleUpperAgeLimit))  + "</h4>";
         String mailTitle = "METLIMS between " +  sampleLowerAgeLimit + " and " + sampleUpperAgeLimit +   " days old ";
