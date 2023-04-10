@@ -299,6 +299,23 @@ public class EditProcessTrackingDetail extends WebPage
 									return;
 									}
 						
+						if (!processTrackingDetailsDTO.getStatus().equals("Completed") && !StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateCompleted()))
+								//	processTrackingDetailsDTO.getDateOnHold().compareTo(processTrackingDetailsDTO.getDateCompleted()) > 0  ) )
+										{
+										String errMsg =  "<span style=\"color:red;\">" + "There is a completed date.  Please set status to complete." +  "</span>";
+										EditProcessTrackingDetail.this.error(errMsg);
+										return;
+										}
+						
+						if (!processTrackingDetailsDTO.getStatus().equals("On hold") && !StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold())
+								 && StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateCompleted() ) )
+							//	processTrackingDetailsDTO.getDateOnHold().compareTo(processTrackingDetailsDTO.getDateCompleted()) > 0  ) )
+									{
+									String errMsg =  "<span style=\"color:red;\">" + "There is a on hold date.  Please set status to on hold." +  "</span>";
+									EditProcessTrackingDetail.this.error(errMsg);
+									return;
+									}
+						
 						if (!StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold()) && 
 								//processTrackingDetailsDTO.getDateStarted().compareTo(processTrackingDetailsDTO.getDateOnHold()) > 0  )
 								!StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateStarted()) &&

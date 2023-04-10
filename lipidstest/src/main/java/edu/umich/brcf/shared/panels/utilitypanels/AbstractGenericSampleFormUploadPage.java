@@ -137,20 +137,22 @@ public abstract class AbstractGenericSampleFormUploadPage extends WebPage
 						AbstractGenericSampleFormUploadPage.this.error("Saved " + nSaved + " samples from file: "+ upload.getClientFileName());
 						target.add(AbstractGenericSampleFormUploadPage.this.get("feedback"));
 						List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("sample_registration_notification_contact");
-						Experiment exp = experimentService.loadById(data.getExpId());		
+						Experiment exp = experimentService.loadById(data.getExpId());
 						String msg = "";
 						List <ProcessTrackingDetailsDTO> processTrackingDTOList =createAssignWorkFlowDetail(exp);
-						if (StringUtils.isNullOrEmpty(theWorkFlowIDStr))
-						    msg = nSaved + " samples have been registered for experiment - '"+ exp.getExpName()+" ("+exp.getExpID()+")'" 
+						if (StringUtils.isNullOrEmpty(theWorkFlowIDStr) || (processTrackingDTOList == null))
+							{
+							msg = nSaved + " samples have been registered for experiment - '"+ exp.getExpName()+" ("+exp.getExpID()+")'" 
 						    		  + " Experiment: " + exp.getExpID() + " has not been assigned to any workflow";
-						// issue 210
+						    
+							}
+							// issue 210
 						else
 							{
-							
 							msg = nSaved + " samples have been registered for experiment - '"+ exp.getExpName()+" ("+exp.getExpID()+")'" 
 						    + " <br> <br> Experiment: " + exp.getExpID() + " has been assigned to workflow(s):" + theWorkFlowIDLabel;						
 							}
-							if (!StringUtils.isNullOrEmpty(theWorkFlowIDStr))
+						if (!StringUtils.isNullOrEmpty(theWorkFlowIDStr))
 							try
 								{
 								processTrackingService.saveDefaultDTOs(processTrackingDTOList);
@@ -160,6 +162,7 @@ public abstract class AbstractGenericSampleFormUploadPage extends WebPage
 								System.out.println("Exception okay");
 								e.printStackTrace();
 								}
+					
 						List<Object[]> nList = new ArrayList<Object[]> ();
 						nList = processTrackingService.loadTasksAssignedForExp(exp.getExpID());	
 						metLIMSTrackingAutomatedMessageService.sendAssignedTasksExpReport(nList, msg, false);
@@ -202,16 +205,24 @@ public abstract class AbstractGenericSampleFormUploadPage extends WebPage
 			theWorkFlowIDLabel = "";
 			// issue 210
 			String numSamplesStr = experimentService.grabNumSamples(exp.getExpID());
-			
 			List <Object []> assayObjects = experimentService.grabAssayType(exp.getExpID());
-			String wfTypeStr = experimentService.grabWfType(exp.getExpID());
+			String wfTypeStr = "";
+			try 
+			    {
+			   	wfTypeStr = experimentService.grabWfType(exp.getExpID());
+			    }
+			catch (Exception e)
+				{
+				e.printStackTrace();
+				}
+			if (StringUtils.isNullOrEmpty(wfTypeStr))
+				return null;
 			String lWorkFlow = "";
 			for (Object [] iAssay : assayObjects)
 				{
 				lWorkFlow = experimentService.grabtheWorkFlow(numSamplesStr.toLowerCase().replace(" ", ""), iAssay[0].toString().toLowerCase().replace(" ", ""), wfTypeStr.toLowerCase().replace(" ", ""));
 				if (!theWorkFlowIDStr.contains(lWorkFlow) )
 					theWorkFlowIDStr = theWorkFlowIDStr + " " +  lWorkFlow;
-				///theWorkFlowIDStr = theWorkFlowIDStr + " " + experimentService.grabtheWorkFlow(numSamplesStr.toLowerCase().replace(" ", ""), iAssay[0].toString().toLowerCase().replace(" ", ""), wfTypeStr.toLowerCase().replace(" ", ""));
 				}
 		    int i = 0, idx = 0;
 		    theWorkFlowIDLabel = theWorkFlowIDStr;

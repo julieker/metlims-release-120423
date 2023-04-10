@@ -91,6 +91,8 @@ public class ExperimentDAO extends BaseDAO
 			query = getEntityManager().createNativeQuery (
 			" select distinct t1.matrix_type from matrix_tracking t1, sample t2, sample_type t3 " + 
 			 " where t1.matrix_name = t3.description and  t2.sample_type_id = t3.sample_type_id and t2.exp_id = ?1 and rownum = 1").setParameter(1,  expID);
+			if (query.getResultList().size() == 0)
+				return null;
 			String wfTypeStr = query.getResultList().get(0).toString();
 			return wfTypeStr;
 			

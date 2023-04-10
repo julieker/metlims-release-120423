@@ -64,7 +64,8 @@ public class MetLIMSTrackingAutomatedMessageService
 	
 	//@Scheduled(cron="0 10 10 23 * ?")
 	
-	@Scheduled(cron="0 51 11 * * WED")
+	//@Scheduled(cron="0 51 11 * * WED")
+	@Scheduled(cron="0 15 08 * * FRI")
 	
 	public void sendAssignedTasksReport()
         {     	
@@ -95,50 +96,62 @@ public class MetLIMSTrackingAutomatedMessageService
 	public void sendAssignedTasksExpReport(List<Object[]> nlist , String msgTitle, boolean isScheduled)
 	    {  
 		List<String> email_contacts = new ArrayList <String> ();
-		email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("task_notification");
-	   // String msg = " Metlims Tracking System:  Tasks for Experiment " + nlist.get(0)[5];
-	   // String msg = "Metlims Tracking System: List of all Experiments and Assigned Tasks <br><br>";
-		String msg = (isScheduled) ? "Metlims Tracking System: List of all Experiments and Assigned Tasks <br><br>" : " Metlims Tracking System:  Tasks for Experiment " + nlist.get(0)[5];
+		String mailAddress =  "metabolomics@med.umich.edu";
+		email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("task_notification");		
+		String msg = (isScheduled) ? "Metlims Tracking System: List of all Experiments and Assigned Tasks <br><br>" : " Metlims Tracking System:  Tasks for Experiment: " + (nlist.size() == 0 ? "No tasks for this Experiment:" : nlist.get(0)[5]);
 		String htmlString = "";	
 	    List <Object[]> newEachAssayList = new ArrayList <Object []> ();
 	    List <Object[]> listExpAssay = new ArrayList <Object []> ();
 	    List <Object[]> listExpAssayExp = new ArrayList <Object []> ();
 	    listExpAssay = processTrackingService.listExpAssay();
-	    listExpAssayExp = processTrackingService.listExpAssayExp(nlist.get(0)[5].toString());
+	    listExpAssayExp = nlist.size() == 0 ? new ArrayList <Object []> () : processTrackingService.listExpAssayExp(nlist.get(0)[5].toString());
 	    String mailTitle = " ";	    
-	    String mailAddress =  "metabolomics@med.umich.edu";
+	    
 	    if (!isScheduled)
 	    	{
+	    	///////////
+		    	if (nlist.size() == 0)
+		    	{
+			        for (String email_contact : email_contacts) 
+			    		{
+			    		htmlString =   "<h3><b> "  + msg + " " +   msgTitle + " </b></h3> <br> ";
+			    		METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "julieker@umich.edu", "METLIMS Tracking - METLIMS Sample Registration Message", msg, htmlString);
+			    		}
+		    	return;
+		    	
+		    	}
+	    	///////////
 		    if (email_contacts != null)
-				{
-		 		for (String email_contact : email_contacts)
-		 		    {
-		 			
-		 			htmlString = "";
-		 			try
-			 			{
-		 				for (Object[] llAssayExp: listExpAssayExp)
-	 						{
-		 					newEachAssayList = new ArrayList <Object []> ();
-		 					for (Object[]llist : nlist )
+					{
+			 		for (String email_contact : email_contacts)
+			 		    {
+			 			
+			 			htmlString = "";
+			 			try
+				 			{
+			 				for (Object[] llAssayExp: listExpAssayExp)
 		 						{
-		 						if (llist[6].toString().equals(llAssayExp[1].toString()))
-		 							{
-		 							newEachAssayList.add(llist);
-		 							}
+			 					newEachAssayList = new ArrayList <Object []> ();
+			 					for (Object[]llist : nlist )
+			 						{
+			 						if (llist[6].toString().equals(llAssayExp[1].toString()))
+			 							{
+			 							newEachAssayList.add(llist);
+			 							}
+			 						}
+			 					htmlString = htmlString +  "<h3><b> "  + msg + " " +   msgTitle + " </b></h3> <br> <h4>" +  buildTaskString(newEachAssayList, "List of assigned tasks for experiment:" + nlist.get(0)[5].toString()  + " and assay: " + llAssayExp[1])  + " </h4>";
 		 						}
-		 					htmlString = htmlString +  "<h3><b> "  + msg + " " +   msgTitle + " </b></h3> <br> <h4>" +  buildTaskString(newEachAssayList, "List of assigned tasks for experiment:" + nlist.get(0)[5].toString()  + " and assay: " + llAssayExp[1])  + " </h4>";
-	 						}
-			 			METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "julieker@umich.edu", "METLIMS Tracking - METLIMS Sample Registration Message", msg, htmlString);
-			 			}
-		 			catch (Exception e)
-			 			{
-			 			System.out.println("in except....");
-			 			e.printStackTrace();
-			 			}
-		 		    }    	
-				}
-		    return;
+				 			METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "julieker@umich.edu", "METLIMS Tracking - METLIMS Sample Registration Message", msg, htmlString);
+				 			}
+			 			catch (Exception e)
+				 			{
+				 			System.out.println("in except....");
+				 			e.printStackTrace();
+				 			}
+			 		    }
+			 		return;
+					}
+		    	
 	    	} 
 		if (email_contacts != null)
 			{
@@ -146,7 +159,6 @@ public class MetLIMSTrackingAutomatedMessageService
  			    {
  				for (Object[] lilexpAssay: listExpAssay)
  					{
- 					//System.out.print("in for loop here is size of nlist:" + nlist.size() + " " +  listExpAssay.size());
  					nlist = new ArrayList<Object[]> ();
  					nlist = processTrackingService.loadTasksAssignedForExpAndAssay(lilexpAssay[0].toString(),StringParser.parseId(lilexpAssay[1].toString()) );	
  					//mailTitle = "METLIMS Tasks for Experiment " + nlist.get(0)[5];
@@ -154,7 +166,6 @@ public class MetLIMSTrackingAutomatedMessageService
  					msgTitle = "Friday List of Tasks assigned for Experiment:" + nlist.get(0)[5].toString() + " Assay: " + nlist.get(0)[6].toString() + " Workflow:" + nlist.get(0)[8].toString();
  					htmlString = htmlString +  "<h3><b> "  + msg + " " +   msgTitle + " </b></h3> <br> <h4>" +  buildTaskString(nlist, "List of assigned tasks for experiment:" + nlist.get(0)[5].toString())  + "</h4>";
  					}
- 				//System.out.println("after for loop just before new message sender...");
  				METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "julieker@umich.edu", "METLIMS Tracking - Weekly task list" , msg, htmlString);
  				htmlString = "";
  			    }

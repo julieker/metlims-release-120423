@@ -15,6 +15,7 @@ import java.util.Map;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -90,7 +91,7 @@ public class ProgressTrackingDefaultPage extends WebPage
 	// issue 210
 	@SpringBean
 	SystemConfigService systemConfigService;
-	
+	boolean gModifyDefault = false;
 	boolean isPlusPressed = false;
 	private List<String> availableDaysExpected = Arrays.asList(new String[] {  "1", "2", "3", "4", "5", "6", "7"});
 	Object [] procTracObject;
@@ -155,6 +156,7 @@ public class ProgressTrackingDefaultPage extends WebPage
 	public void setProcessTrackingDetailsDTO(ProcessTrackingDetailsDTO processTrackingDetailsDTO)  { this.processTrackingDetailsDTO = processTrackingDetailsDTO; }
     List <String>  listOfTasks = new ArrayList <String> ();
 	Calendar dDateStarted;
+	ProgressTrackingDefaultForm progressTrackingDefaultForm;
 	
 	 @Override
 	 public void renderHead( IHeaderResponse response)
@@ -177,12 +179,13 @@ public class ProgressTrackingDefaultPage extends WebPage
 		{
 		
 		listOfTasks.addAll(processTrackingService.allTaskDesc());
+		gModifyDefault = modifyDefault;
 		for (String ltask : listOfTasks)
 			{
 			ProcessTracking lpt = processTrackingService.loadByPTbyTaskID(processTrackingService.grabTaskIdFromDesc(ltask));
 			daysExpectedMap.put(lpt.getTaskDesc(), lpt.getDaysRequired());
 			}		
-		add(new ProgressTrackingDefaultForm("progressTrackingDefaultForm", modifyDefault));
+		add(progressTrackingDefaultForm = new ProgressTrackingDefaultForm("progressTrackingDefaultForm", modifyDefault));
 		}
 	
 	public final class ProgressTrackingDefaultForm extends Form 
@@ -192,19 +195,45 @@ public class ProgressTrackingDefaultPage extends WebPage
 		String theblankinput;
 		String volaliquotUnits;
 	    String searchType;
+	    
 	    AjaxButton addAjaxButton = null;
+	    ModalWindow modal2= new ModalWindow("modal2");
 		public ProgressTrackingDefaultForm (String id, boolean modifyDefault)
 			{
 		
 			super(id, new CompoundPropertyModel(processTrackingDetailsDTO));	
-		    
+		    ///////////////////////////
+			
+			
+			// issue 210 confirm
+			final AbstractDefaultAjaxBehavior confirmBehavior = new 
+			        AbstractDefaultAjaxBehavior() 
+				        { 
+				        @Override 
+						protected void respond(AjaxRequestTarget target) 
+				            {           
+						    try 
+						        { 
+						    	// issue 233 
+						        saveTheDefault(target, gModifyDefault);
+						        } 
+						    catch (Exception e) 
+						        { 				        
+						        } 
+						     } 
+						 }; 
+			
+			
+			
+			add (confirmBehavior);
+			////////////////
 			itemIndex = 0;
 			aFeedback = new FeedbackPanel("feedback");
 			aFeedback.setEscapeModelStrings(false);		
 			add(aFeedback);	
 			processTrackingDTOAddedTasksMap = new HashMap<Integer, ProcessTrackingDetailsDTO>();
 	
-			final ModalWindow modal2= new ModalWindow("modal2");
+			
 			modal2.setInitialWidth(1500);
 	        modal2.setInitialHeight(600);
 	        modal2.setWidthUnit("em");
@@ -229,34 +258,22 @@ public class ProgressTrackingDefaultPage extends WebPage
 	            	}
 	        	}); 
 	        add(modal2);
+	         
 	        add( new AjaxButton ("saveDefault")
 	    		{
 	        	@Override
 	    		public void onSubmit(AjaxRequestTarget target)
 	    			{ 
-	        		List <ProcessTrackingDetailsDTO> listDto2 = createDTOAddedArray();
-	        		processTrackingService.deleteTracking(listDto2.get(0).getExpID(), listDto2.get(0).getAssayID());
-	        		String err = errcheck(listDto2);
-	        		if  (!StringUtils.isEmptyOrNull(err))
-	        			{
-	        			target.appendJavaScript(StringUtils.makeAlertMessage(err));
-	        			return;
-	        			}
-	        		processTrackingService.saveDefaultDTOs(listDto2, modifyDefault);
-	        		List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("assigned_task_notification");
-	        		// issue 210	        		
-	    			String msg = "Workflow: " +  listDto2.get(0).getWfID() +  " saved for experiment: " + expID  +  ".";
-	    			target.appendJavaScript(StringUtils.makeAlertMessage(msg));
-	    			modal2.close(target);
-	    			pressedPlus = false;
-	    			pressedDelete = false;
-	    			listOfTasks.clear();
-	    			listOfTasks.addAll(processTrackingService.allTaskDesc());
-	    			//////sendOutEmails (listDto2, email_contacts, mailer);
+	        		
+	        		if (processTrackingService.loadTasksAssignedForExpAndAssay(expID,StringParser.parseId(assayDesc )).size() > 0 )
+					    target.appendJavaScript("if (confirm(' You already have a workflow set up for this experiment and assay:"  + expID + " " + StringParser.parseId(assayDesc) + "" 
+							                           + " Are you sure you want to remove the existing workflow and create a new workflow?')) { " +  confirmBehavior.getCallbackScript() + " }"  );				        		
+	        		else 
+	        			saveTheDefault (target, gModifyDefault) ;
 	    			}
+	    			
 	    		});	
-	        
-	        
+	        	        
 	    	add( new AjaxLink<Void>("close")
 			{
 			public void onClick(AjaxRequestTarget target)
@@ -734,7 +751,6 @@ public class ProgressTrackingDefaultPage extends WebPage
     				pressedDelete = false;
 				  	/******************************************/  	
     				isPlusPressed = true;
-    				System.out.println("here is plus pressed true");
 					}
 				};
 			}
@@ -1048,6 +1064,29 @@ public class ProgressTrackingDefaultPage extends WebPage
 					}
 				}
 			}
+		
+		   public void saveTheDefault (AjaxRequestTarget target, boolean modifyDefault)
+	        {
+			   List <ProcessTrackingDetailsDTO> listDto2 = progressTrackingDefaultForm.createDTOAddedArray();
+       		processTrackingService.deleteTracking(listDto2.get(0).getExpID(), listDto2.get(0).getAssayID());
+       		String err = progressTrackingDefaultForm.errcheck(listDto2);
+       		if  (!StringUtils.isEmptyOrNull(err))
+       			{
+       			target.appendJavaScript(StringUtils.makeAlertMessage(err));
+       			return;
+       			}
+       		processTrackingService.saveDefaultDTOs(listDto2, modifyDefault);
+       		List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("assigned_task_notification");
+       		// issue 210	        		
+   			String msg = "Workflow: " +  listDto2.get(0).getWfID() +  " saved for experiment: " + expID  +  ".";
+   			target.appendJavaScript(StringUtils.makeAlertMessage(msg));
+   			progressTrackingDefaultForm.modal2.close(target);
+   			pressedPlus = false;
+   			pressedDelete = false;
+   			listOfTasks.clear();
+   			listOfTasks.addAll(processTrackingService.allTaskDesc());
+   			//////sendOutEmails (listDto2, email_contacts, mailer);	
+	        }
 		
 		protected String getMailTitle() { return "Metlims Workflow Task Assigned - Test email from Test"; }
 		protected String getMailAddress() { return "metabolomics@med.umich.edu"; }
