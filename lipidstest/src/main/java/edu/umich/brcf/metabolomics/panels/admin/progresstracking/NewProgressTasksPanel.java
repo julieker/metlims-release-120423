@@ -12,6 +12,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import edu.umich.brcf.metabolomics.layers.service.Mrc2SubmissionDataService;
 import edu.umich.brcf.shared.layers.service.SampleService;
+import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.panels.utilitypanels.ModalCreator;
 
 public class NewProgressTasksPanel extends Panel 
@@ -35,6 +36,14 @@ public class NewProgressTasksPanel extends Panel
 		// issue 39
 		return new IndicatingAjaxLink <Void>(linkID)
         	{
+			@Override
+			public boolean isEnabled()
+				{ 
+		        if ("tasklist".equals(linkID))
+				    return false;
+		        else
+		        	return true;
+				}
 	        @Override
             public void onClick(AjaxRequestTarget target)
             	{

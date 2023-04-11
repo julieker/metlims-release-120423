@@ -5,6 +5,7 @@
 package edu.umich.brcf.metabolomics.panels.admin.progresstracking;
 
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
@@ -77,7 +78,7 @@ import edu.umich.brcf.shared.util.StringParser;
 import edu.umich.brcf.shared.util.widgets.METWorksAjaxUpdatingDateTextField;
 
 
-public class GantChart extends WebPage implements IMarkupResourceStreamProvider
+public class GantChart extends WebPage implements IMarkupResourceStreamProvider 
 	{
 	@SpringBean
 	CompoundService compoundService;
@@ -493,9 +494,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 			 str = str + 
 			 "  ul .chart-li-" + (i) +  "{" +
 			// "  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (indexxofDate +  (daysBetween + 2 > 15 ? 15: daysBetween + 2) ) +      ";  grid-row:2; "   ;
-			"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (indexxofDate +  daysBetween + 2)  +      ";  grid-row:2; "   ;
-			  showit =  "  ul .chart-li-" + (i) +  "{" +
-					  "    grid-column:" +  (1+ indexxofDate ) + "/" + (indexxofDate +  (daysBetween + 2 > 15 ? 15: daysBetween + 2) ) +      ";  grid-row:2; "   ;  
+			"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (  (indexxofDate +  daysBetween + 2) > 15 ? 15 :  (indexxofDate +  daysBetween + 2) )  +      ";  grid-row:2; "   ;
+			  showit =  "  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (  (indexxofDate +  daysBetween + 2) > 15 ? 15 :  (indexxofDate +  daysBetween + 2) )  +      ";  grid-row:2; "   ;
 			 }
 		 str = str + "   background-color:#4C9A2A;" ;		 
 		 str = str + 
@@ -510,7 +510,7 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 			 str = str + 
 					  "  ul .chart-li-cmplt-" + (i) +  "{" +
 				//	  "    grid-column:" +  ( numDaysComplt > 14 ? 14 :  (1+ indexxofDate + numDaysComplt + 1)) + "/" + ( numDaysComplt > 14 ? 14 :  (indexxofDate +  numDaysComplt + 1)) +      ";  grid-row:2; "   ;
-				"    grid-column:" +   (1+ indexxofDate + numDaysComplt + 1) + "/" + ( indexxofDate +  numDaysComplt + 1) +      ";  grid-row:2; "   ;
+				"    grid-column:" +   (1+ indexxofDate + numDaysComplt + 1) + "/" + (     ( indexxofDate +  numDaysComplt + 1) > 15 ? 15 : ( indexxofDate +  numDaysComplt + 1)     ) +      ";  grid-row:2; "   ;
 			 str = str + "   background-color:#0000FF;" ;
 			 str = str + 
 			(numDaysComplt > 15 ? "    border-right: 1px ; border-style: dotted; " : "    border-right: 1px solid ") + " rgba(0, 0, 0, 0.3); height: 5px;" +
@@ -530,7 +530,7 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 				numDaysUntilComplete = 0;
 			 str = str + 
 					  "  ul .chart-li-onHold-" + (i) +  "{" +
-			 		  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1))  ) +      ";  grid-row:2; "   ;
+			 		  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
 			 str = str + "   background-color:#FF0000;" ;
 			 str = str + 
 					 "    border-right: 1px solid rgba(0, 0, 0, 0.3); height: 5px;" +
@@ -784,7 +784,7 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
     return new StringResourceStream(str);
 	}
 
-public GantChart (final String id)
+public GantChart (String id)
 	{
 	assignedTo = "";
 	add(gantChartForm = new GantChartForm("gantChartForm"));
@@ -792,7 +792,7 @@ public GantChart (final String id)
 	}
 
 
-public final class GantChartForm extends Form 
+public class GantChartForm extends Form 
 	{
 	String dateStartGantt;
     String dateEndGantt;
@@ -833,7 +833,7 @@ public void setDateEndGantt (String dateEndGantt)
 
 
 
-	public GantChartForm(final String id) 
+	public GantChartForm(String id) 
 		{
 		///////////////////
 		super(id, new CompoundPropertyModel(gantChart));	
@@ -909,7 +909,7 @@ public void setDateEndGantt (String dateEndGantt)
 		
 		add(ganttDateLink =  new IndicatingAjaxLink <Void>("dateRangeBtn") 
 		    {			
-			private static final long serialVersionUID = 1L;
+			
 			@Override
 			public boolean isEnabled()
 				{
@@ -931,7 +931,6 @@ public void setDateEndGantt (String dateEndGantt)
 		
 		add(ganttDateLink =  new IndicatingAjaxLink <Void>("AllUsersBtn") 
 	    {			
-		private static final long serialVersionUID = 1L;
 		@Override
 		public boolean isEnabled()
 			{
@@ -1000,7 +999,7 @@ public void setDateEndGantt (String dateEndGantt)
 	// issue 94	
 
 
-	private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior( final String event, final String response)
+	private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior(  String event,  String response)
 		{
 		return new AjaxFormComponentUpdatingBehavior(event)
 			{
@@ -1065,7 +1064,7 @@ public void setDateEndGantt (String dateEndGantt)
 			};
 		}
 		
-	private IndicatingAjaxLink <Void> buildRightArrow (final String id, int index)
+	private IndicatingAjaxLink <Void> buildRightArrow (String id, int index)
 		{
 		
 			return new IndicatingAjaxLink <Void> ("rightArrow")
@@ -1082,7 +1081,7 @@ public void setDateEndGantt (String dateEndGantt)
 			};
 		}
 	
-	private IndicatingAjaxLink <Void> buildLeftArrow (final String id, int index)
+	private IndicatingAjaxLink <Void> buildLeftArrow ( String id, int index)
 	{
 	
 		return new IndicatingAjaxLink <Void> ("leftArrow")
@@ -1196,7 +1195,7 @@ public void setDateEndGantt (String dateEndGantt)
 		}
 	 
 	 
-	 public DropDownChoice buildExperimentDropDown(final String id)
+	 public DropDownChoice buildExperimentDropDown( String id)
 		{
 		experimentDD =  new DropDownChoice<String>(id, new PropertyModel(this, "expID" ), new ArrayList <String> ())
 				{				
@@ -1244,14 +1243,14 @@ public void setDateEndGantt (String dateEndGantt)
 		modal2.setInitialHeight(790);
 		}
 	 
-	 private Page setPage(String linkID, final ModalWindow modal1, ProcessTrackingDetails ptd)
+	 private Page setPage(String linkID,  ModalWindow modal1, ProcessTrackingDetails ptd)
 		{
 		editProcessTrackingDetail = new EditProcessTrackingDetail (getPage(), new Model <ProcessTrackingDetails> (ptd), modal1, false);
         return editProcessTrackingDetail;
 		}  
 	 
 	 
-	 public DropDownChoice buildAssayDescDropDown(final String id)
+	 public DropDownChoice buildAssayDescDropDown( String id)
 		{
 			
 		assayDescDD =  new DropDownChoice<String>(id, new PropertyModel(this, "assayDescID" ), new ArrayList <String> ())
@@ -1264,7 +1263,7 @@ public void setDateEndGantt (String dateEndGantt)
 		
 		}
 	 
-	 public DropDownChoice buildUserAssignedDropDown(final String id)
+	 public DropDownChoice buildUserAssignedDropDown( String id)
 		{			
 		userNamesDD= new DropDownChoice(id, new PropertyModel<String>(this, "assignedTo"),   new ArrayList <String> ())
 		    {

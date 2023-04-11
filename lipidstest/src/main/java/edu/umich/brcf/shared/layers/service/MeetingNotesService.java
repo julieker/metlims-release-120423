@@ -69,7 +69,6 @@ public class MeetingNotesService
 		try
 			{
 			MeetingNotes mn = MeetingNotes.instance(DateUtils.calendarFromDateStr(dto.getDateEntered(), Aliquot.ALIQUOT_DATE_FORMAT), dto.getNotes(), user);	
-			System.out.println("in save here is the get note id:" + dto.getNoteID() + " " + dto.getNotes());
 			if (dto.getNoteID() == null || dto.getNoteID().equals("to be assigned"))
 				meetingNotesDao.createMeetingNote(mn);
 			else
