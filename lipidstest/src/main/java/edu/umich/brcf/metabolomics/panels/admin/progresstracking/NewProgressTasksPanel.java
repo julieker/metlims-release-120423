@@ -54,10 +54,8 @@ public class NewProgressTasksPanel extends Panel
                     public Page createPage()
 	                    {
 	                    if("tasklist".equals(linkID))
-	                    {
-	                    	System.out.println("trying to return new tasklist...");
+	                    
 	                    	return new ProgressTaskDetailPage(linkID);
-	                    }
 	                    return null;
 	                    }
 		            });

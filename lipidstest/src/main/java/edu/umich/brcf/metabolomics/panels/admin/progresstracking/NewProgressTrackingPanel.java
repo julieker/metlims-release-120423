@@ -46,7 +46,6 @@ public class NewProgressTrackingPanel extends Panel
 	            	{
                     public Page createPage()
 	                    {
-                    	System.out.println("hhhhhere is link id:" + linkID);
 	                    if("ViewAssignedInformation".equals(linkID))
 	                   // 	return new ProgressTrackingDetailPage(linkID);
 	                    	return new ProgressTrackingAdminDetailPage(linkID);	
