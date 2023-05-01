@@ -12,8 +12,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.MarkupContainer;
@@ -129,8 +131,9 @@ public class GantChart extends WebPage implements IMarkupResourceStreamProvider
 	boolean	isCurrent = false;
 	boolean isInProgress = false;
 	boolean isOnHold = false;
-	boolean allExpAssay = false;
-	boolean isAllExp = false;
+	
+	boolean allExpAssay = true; 
+	boolean isAllExp = true;
 	int gIndex = 0;
 	int ggIndex = 0;
 	 ModalWindow modal2 =new ModalWindow("modal2");;
@@ -139,6 +142,7 @@ public class GantChart extends WebPage implements IMarkupResourceStreamProvider
 	 long numDaysUntilComplete = 0L;
 	 DropDownChoice<String> userNamesDD;
 	 String assignedTo ;
+	 Map <String, String> sampleTypeMap =  new HashMap<String, String>();
      
 public boolean getIsCurrent ()
 	{
@@ -189,6 +193,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 	containerClassl = containerClass;
 	//MarkupFactory.get().getMarkupCache();
 	MarkupCache.get().clear();
+	//Map <String, String> sampleTypeMap =  new HashMap<String, String>();
+
 /////////////////////////////////////////////
 	Calendar mCalendar = Calendar.getInstance();    
 	mCalendar.add(Calendar.MONTH, 8);
@@ -263,10 +269,10 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 					  "    box-sizing: border-box;    " +
 					  "  }" +
 					  "  .container {" +
-					  "      max-width: 1200px;" +
-					  "      min-width: 650px;" +
+					  "      max-width: 1390px;" +
+					  "      min-width: 850px;" +
 					  "      margin: 0 auto;" +
-					  "      padding: 50px;      " +
+					  "      padding: 10px;      " +
 					  " border-radius: 10px; " +
 					  " display: grid; " + 
 					  " grid-row-gap: 0px;" + 
@@ -549,11 +555,11 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 				 
 				 str = str + 
 						 "  ul .chart-li-" + (i) +  "-comment {" +
-						 "    grid-column:" +  "15" + "/" + "15" +   ";  grid-row:1; "  ;
+					 "    grid-column:" +  "15" + "/" + "15" +   "; ; "  ;
 
 						 str = str + "   background-color:transparent;" ;
 						 str = str + 
-						 " border: none; width: 200px; height: 30px;" + 
+						 " border: none; width: 300px; height: 30px;" + 
 						 "  }";				 
 		}
 	//////////////////////////////////////////////////	
@@ -677,7 +683,7 @@ str = str + "          <span style=\"border:none\">" + todayStrList.get(0) + "</
 "          <span style=\"border:none\">  " + todayStrList.get(12) + "</span>" + 
 "          <span style=\"border:none\">  " + todayStrList.get(13) + "</span>" + 
 //"          <span style=\"border:none; width:200px; \"> " + "comments" + "</span>" + 
-"          <span style=\"border:none; width:200px;  \"> " + "comments" + "</span>" ; 
+"          <span style=\"border:none; height: 43px; width:401px;   \"> " + "comments" + "</span>" ; 
 
 
 
@@ -698,7 +704,7 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 "                               <span></span><span></span><span></span>" +
 "                               <span></span><span></span><span></span>  <span></span> " +  
 //"  <span > </span> <span > </span> <span style=\" width:200px; \"> </span>  " + 
- "  <span > </span> <span > </span> <span style=\" width:200px; \" > </span>  " + 
+ "  <span > </span> <span > </span> <span style=\" width:401px;height:43px;   \" > </span>  " + 
 "      </div>" ;
     
     
@@ -728,25 +734,37 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 		dCalendar.setTime(new Date(nList.get(indexLink).convertToDateString(nList.get(indexLink).getDateStarted())));
 		dCalendar.add(Calendar.DAY_OF_MONTH, daysExpected);
 		theEndingDate = sdf.format(dCalendar.getTime());
+	//// this is a test	List <Object[]> samplObjects = processTrackingService.grabSampleTypeStringFromList(ptd.getExperiment().getExpID(), ptd.getWorkflow().getWfID());
+    	///System.out.println("here is size of smpleobjects:" + samplObjects.size());
+		/////// call sample type string String sampleTypeStr = processTrackingService.grabSampleTypeStringFromList(ptd.getExperiment().getExpID(), ptd.getWorkflow().getWfID());
+    	//////System.out.println("here is sampletypestr:" + sampleTypeStr);
+    	String sampleTypeString = "";
     	
+    	// this is a test
+    /*	for (Object[] smpleobj : samplObjects)
+    		{
+    		sampleTypeString  = sampleTypeString + smpleobj[0] + " ,";
+    		} */
     	
-    	
+    	if (!StringUtils.isNullOrEmpty(sampleTypeString))	   
+    		sampleTypeString = sampleTypeString.substring(0,sampleTypeString.length()-1);
+    	//System.out.println("here is samplestring:" + sampleTypeString);
     	indexxofEndingDate = todayStrList.indexOf(theEndingDate.substring(0,5));
     	if (index == 0 )
 	        {
 		   prevWf = ptd.getWorkflow().getWfDesc();
 		   prevExpId = ptd.getExperiment().getExpID();
 		   prevAssayId = ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")";
-		   
+		   // issue 262
 		   str = str + 
    				" <span>" + ptd.getWorkflow().getWfDesc().replace("<", "&lt").replace(">", "&gt")  + " <br>" + 
-				     ptd.getExperiment().getExpID() + " " + ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")" + "</span>";
+				     ptd.getExperiment().getExpID() + " " + ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")"  + "<br>" + sampleTypeMap.get(ptd.getExperiment().getExpID()) +   "<br>" + "Contact and PI:" + ptd.getExperiment().getProject().getContactPerson().getFullNameByLast() + " " + ptd.getExperiment().getProject().getClient().getInvestigator().getFullNameByLast() + "</span>";
 		   
 	       }
 	    else if (!prevWf.equals(ptd.getWorkflow().getWfDesc()) || !prevExpId.equals(ptd.getExperiment().getExpID()) ||  !prevAssayId.equals(ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")") )
 	   	   {
 		   str = str + " <span>" + ptd.getWorkflow().getWfDesc().replace("<", "&lt").replace(">", "&gt")  + " <br>" + 
-			     ptd.getExperiment().getExpID() + " " + ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")" + "</span>";
+			     ptd.getExperiment().getExpID() + " " + ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")" + "<br>" + sampleTypeMap.get(ptd.getExperiment().getExpID()) +  "<br>" + "Contact and PI:" + ptd.getExperiment().getProject().getContactPerson().getFullNameByLast() + " " + ptd.getExperiment().getProject().getClient().getInvestigator().getFullNameByLast() +  "</span>";
 	       index = 0;
 	       prevWf = ptd.getWorkflow().getWfDesc();
 	       prevExpId = ptd.getExperiment().getExpID();
@@ -756,27 +774,38 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
     	str = str +    		
     				"<div>" + 
         			"  <a style=\"text-decoration:none;\" wicket:id= \"gchart" + Integer.toString(indexLink) + "\"   href=\"#\" > <div class=\"chart-row\">" +
-        			"        <div style=\"text-decoration:none;font-size: 15px;font-weight: bold;color:black; \"  class=\"chart-row-item-big\">" + (index + 1) + ". " + ptd.getProcessTracking().getTaskDesc() + "\n" + "<br>"  + "Assigned To:" +  ptd.getAssignedTo().getFullName() +   "</div>" ;		
+        			"        <div style=\"text-decoration:none;font-size: 15px;font-weight: bold;color:black; \"  class=\"chart-row-item-big\">" + (index + 1) + ". " + ptd.getProcessTracking().getTaskDesc() + "\n" + "<br>"  + "Assigned To:" +  ptd.getAssignedTo().getFullName() +  "</div>" ;		
     				
-    		String truncComment = StringUtils.isNullOrEmpty(nList.get(index).getComments()) ||  nList.get(index).getComments().length() < 50 ? nList.get(index).getComments() : nList.get(index).getComments().substring(0, 50);
+    		String truncComment = StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ||  nList.get(indexLink).getComments().length() <= 50 ? nList.get(indexLink).getComments() : nList.get(indexLink).getComments().substring(0, 50);
     		if (StringUtils.isNullOrEmpty(truncComment))
     			truncComment = "";
     		/// resume here
+    		
     		if (indexxofDate >= 0  && indexxofEndingDate>= 0 )		           
-		 			str = str + "        <ul class=\"chart-row-bars\">" +
-		 			( nList.get(indexLink).getStatus().equals("In queue") ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" ) +		 					
-		 		(nList.get(indexLink).getDateCompleted() != null ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-		 		(nList.get(indexLink).getDateOnHold() != null ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-		 		" <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" +  
-		 	     	" <li style= \" width:200px; color:black;text-align:center;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">" +  truncComment +  "</li> " +
-	
-		 		"                               </ul>" ;
-    		str = str + "      </div> </a></div>";    	
+	 			str = str + "        <ul class=\"chart-row-bars\">" +
+	 			( nList.get(indexLink).getStatus().equals("In queue") ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" ) +		 					
+	 		(nList.get(indexLink).getDateCompleted() != null ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
+	 		(nList.get(indexLink).getDateOnHold() != null ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
+	 		"  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" +	 		
+	 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
+	 	  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
+	 		"                               </ul>" ;
+    		
+    		else 
+    			str = str + "        <ul class=\"chart-row-bars\"  style= \"background-color: transparent; \" >" +
+    		 		 " <li  style= \" display:none; \">" +   "</li>"  +	
+    		 		 " <li style= \" display:none; \">" +   "</li>"  +	
+    		 		 " <li style= \" display:none; \">" +   "</li>"  +	
+    		 	  " <li style= \" display:block; width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
+    		 		"                               </ul>" ;
+		str = str + "      </div> </a></div>";
+    		
+    		
+    		
     	    index++;
     	    indexLink++;
     	
     	} // end of for loop
-
         str = str + 
         		"    </div>" +
         		"" +
@@ -787,6 +816,7 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 public GantChart (String id)
 	{
 	assignedTo = "";
+	sampleTypeMap =  processTrackingService.createSampleTypeStringFromList();
 	add(gantChartForm = new GantChartForm("gantChartForm"));
     
 	}
@@ -796,6 +826,7 @@ public class GantChartForm extends Form
 	{
 	String dateStartGantt;
     String dateEndGantt;
+    
    // boolean	isCurrent;
     
     
@@ -839,7 +870,7 @@ public void setDateEndGantt (String dateEndGantt)
 		super(id, new CompoundPropertyModel(gantChart));	
 		getMarkupResourceStream(markupContainer, containerClassl) ;
 	    nList = new ArrayList <ProcessTrackingDetails> () ;
-	    
+	    nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold);
 	    for (int i=0 ; i<= nList.size();i++ )
 		 	{
 	    	try
@@ -1015,6 +1046,7 @@ public void setDateEndGantt (String dateEndGantt)
 					    break;
 					case "updateExperiment" :
 						allExpAssay = false;
+						isAllExp = false;
 						assayDescDD.setChoices (assayService.allAssayNamesForExpId(expID, false));	
 						MarkupCache.get().clear();
 				    	    getMarkupResourceStream(markupContainer, containerClassl) ;
@@ -1022,6 +1054,7 @@ public void setDateEndGantt (String dateEndGantt)
 						break;
 					case "updateAssayDesc" :
 						allExpAssay = false;
+						isAllExp = false;
 						assayDescDD.setChoices (assayService.allAssayNamesForExpId(expID, false));	
 						MarkupCache.get().clear();
 				    	    getMarkupResourceStream(markupContainer, containerClassl) ;
@@ -1045,6 +1078,7 @@ public void setDateEndGantt (String dateEndGantt)
 					    	    getMarkupResourceStream(markupContainer, containerClassl) ;
 					    	    target.add(gantChartForm);
 					    	    target.add(gantChart);
+					    	    
 					    	    for (int i=0 ; i< nList.size();i++ )
 								 	{
 							    	ggIndex = i;

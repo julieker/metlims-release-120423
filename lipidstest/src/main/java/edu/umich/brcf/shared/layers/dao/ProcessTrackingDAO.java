@@ -6,7 +6,10 @@
 package edu.umich.brcf.shared.layers.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.persistence.Query;
 //import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.stereotype.Repository;
@@ -60,9 +63,59 @@ public class ProcessTrackingDAO extends BaseDAO
 	public String grabSampleType(String wfID, String expID)
 		{
 		Query query = getEntityManager().createNativeQuery("select distinct description from sample_type t1, sample t2, tracking_tasks_details t3 "
-				+ " where t1.sample_type_id = t2.sample_type_id and t2.exp_id = t3.exp_id and t3.wf_id =  ?1 and t3.exp_id = ?2").setParameter(1, wfID).setParameter(2, expID);
-		return  query.getResultList().size() == 0 ? " " :query.getResultList().get(0).toString();
+				+ " where t1.sample_type_id = t2.sample_type_id and t2.exp_id = t3.exp_id and t3.wf_id =  ?1 and t3.exp_id = ?2").setParameter(1, wfID).setParameter(2, expID);		
+		return  query.getResultList().size() == 0 ? " " :query.getResultList().get(0).toString();		
+		}
+	
+	// issue 262
+	public Map <String, String>  createSampleTypeStringFromList( )
+		{
+		Map <String, String> sampleTypeMap =  new HashMap<String, String>();
+		String sampleTypeString = "";
+		Query query = getEntityManager().createNativeQuery("select distinct cast(description as VARCHAR2(150)), exp_id from sample_type t1, sample t2 "
+				+ " where t1.sample_type_id = t2.sample_type_id and exp_id in (select exp_id from tracking_tasks_details) ");		
 		
+		List <Object []> sampleTypeObjs = query.getResultList();
+	    
+		Query queryExp = getEntityManager().createNativeQuery("select distinct exp_id from tracking_tasks_details");
+		
+		for (Object sExp : queryExp.getResultList())
+		    {
+			sampleTypeString = "";
+			for (Object [] obj : sampleTypeObjs)
+				{
+				if (!obj[1].toString().equals(sExp.toString()))
+					continue;
+				sampleTypeString = sampleTypeString + obj[0].toString() +  ", ";
+				}
+			if (!StringUtils.isNullOrEmpty(sampleTypeString))	
+			    {
+				sampleTypeString = sampleTypeString.trim();
+	    		sampleTypeString = sampleTypeString.substring(0,sampleTypeString.length()-1);
+	    		sampleTypeMap.put(sExp.toString(), sampleTypeString);
+			    }
+			}
+	     return sampleTypeMap;
+		 }
+	
+	public List <Object[]> grabSampleTypeStringFromList( String expID,String wfID)
+		{
+		String sampleTypeString = "";
+		Query query = getEntityManager().createNativeQuery("select distinct cast(description as VARCHAR2(150)), t2.sample_type_id from sample_type t1, sample t2, tracking_tasks_details t3 "
+				+ " where t1.sample_type_id = t2.sample_type_id and t2.exp_id = t3.exp_id and t3.wf_id =  ?1 and t3.exp_id = ?2").setParameter(1, wfID).setParameter(2, expID);		
+		
+		List <Object []> sampleTypeObjs = query.getResultList();
+	    
+		
+		//System.out.println("-----HERE IS Sample type:" +  sampleTypeObjs.get(0)[0]);
+		//System.out.println("here is sampleTypeObj.size:" + sampleTypeObjs.size());
+		
+		if (query.getResultList().size() == 0) 
+			return new ArrayList <Object[]> ();
+		int i = 0;
+		
+		
+	    return  sampleTypeObjs;
 		}
 	
 	public String existsOnHold(String wfID)
@@ -161,7 +214,7 @@ public class ProcessTrackingDAO extends BaseDAO
 		
 		if (allExpAssay )
 			{
-			ptdList =  getEntityManager().createQuery("from ProcessTrackingDetails pd  order by  workflow.wfID , experiment.expID, assay.assayId, detailOrder  ")
+			ptdList =  getEntityManager().createQuery("from ProcessTrackingDetails pd  order by  workflow.wfDesc , experiment.expID, assay.assayId, detailOrder  ")
 			.getResultList();
 			}
 		else if (StringUtils.isNullOrEmpty(expId) || StringUtils.isNullOrEmpty(assayDescId))
@@ -194,12 +247,12 @@ public class ProcessTrackingDAO extends BaseDAO
 						(StringUtils.isNullOrEmpty(assignedTo)  && ptd.getStatus().equals("On hold")))
 						ptdListWF.add(ptd);
 				}
-			else if (!StringUtils.isNullOrEmpty(assignedTo))
+			else if (!StringUtils.isNullOrEmpty(assignedTo) && !assignedTo.equals("All Users"))
 				{
 				if (ptd.getAssignedTo().getFullNameByLast().equals(assignedTo)    )
 					ptdListWF.add(ptd);
 				}
-			else if (StringUtils.isNullOrEmpty(assignedTo))
+			else if (StringUtils.isNullOrEmpty(assignedTo) || assignedTo.equals("All Users"))
 				ptdListWF.add(ptd);
 			}
 		return ptdListWF;
@@ -360,6 +413,13 @@ public class ProcessTrackingDAO extends BaseDAO
 		query.executeUpdate();
 		}
 	
+	// issue 262
+	public void deleteTrackingDetails (String jobid)
+		{
+		String queryString = "delete from tracking_tasks_details where job_id = ?1";
+		Query query = getEntityManager().createNativeQuery(queryString).setParameter(1, jobid);		
+		query.executeUpdate();
+		}
 	
 	public void deleteTracking (String expID, String assay_id)
 		{

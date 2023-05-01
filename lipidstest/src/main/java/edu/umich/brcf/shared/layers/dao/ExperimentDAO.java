@@ -108,13 +108,14 @@ public class ExperimentDAO extends BaseDAO
 			query = getEntityManager().createNativeQuery (
 			" select wf_desc from workflow  " + 
 			 " where lower(replace(trim (wf_desc),' ','')) like '%" + part1 + "%'  and " + 
-			        " lower(replace(trim (wf_desc),' ','')) like '%" + part2 + "%'  and " + 
+			        " lower(replace(trim (wf_desc),' ','')) like '" + part2 + "%'  and " + 
 			        " lower(replace(trim (wf_desc),' ','')) like '%" + part3 + "%'   "
 			 );
 			
+			// issue 262
 			String qstring = " select wf_id from workflow  " + 
 					 " where lower(replace(trim (wf_desc),' ','')) like '%" + part1 + "%'  and " + 
-				        " lower(replace(trim (wf_desc),' ','')) like '%" + part2 + "%'  and " + 
+				        " lower(replace(trim (wf_desc),' ','')) like '" +  part2 + "%'  and " + 
 				        " lower(replace(trim (wf_desc),' ','')) like '%" + part3 + "%'   ";	
 			String workflowStr= query.getResultList().get(0).toString();
 			return workflowStr;

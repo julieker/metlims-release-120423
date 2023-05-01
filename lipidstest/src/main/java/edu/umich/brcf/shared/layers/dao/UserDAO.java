@@ -150,22 +150,27 @@ public class UserDAO extends BaseDAO
 	
     public List<String> allAdminNames()
     	{
+    	System.out.println("okay in alladmin");
     	return allAdminNames(true);
     	}
     /// issue 210
 	public List<String> allAdminNames(boolean isNotTracking)
 		{
 		Query query;
+		ArrayList<String> fullNames = new ArrayList<String>();
 		if (isNotTracking)
 			query = getEntityManager().createNativeQuery("select cast(u.last_name as VARCHAR2(30)), cast(u.first_name as"
 					+ " VARCHAR2(20)), cast(u.researcher_id as VARCHAR(6)) from Researcher  u where u.default_viewpoint = '99'   order by u.last_name");
 		else	
+			{
 			query = getEntityManager().createNativeQuery("select cast(u.last_name as VARCHAR2(30)), cast(u.first_name as"
 			+ " VARCHAR2(20)), cast(u.researcher_id as VARCHAR(6)) from Researcher  u where trim(last_name) || ', ' || trim(first_name) in (select trim(full_name) from tracking_tasks_researcher) order by u.last_name");
-
+			fullNames.add("All Users");
+			}
 		List<Object[]> userList = query.getResultList();
 
-		ArrayList<String> fullNames = new ArrayList<String>();
+		
+		
 		for (Object[] user : userList)
 			{
 			String userId = (String) user[2];
@@ -177,7 +182,7 @@ public class UserDAO extends BaseDAO
             	if (!fullNames.contains (lastName + ", " + firstName))
             		fullNames.add(lastName + ", " + firstName);
 			}
-
+       
 		return fullNames;
 		}
 	

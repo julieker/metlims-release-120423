@@ -3,6 +3,8 @@ package edu.umich.brcf.shared.layers.service;
 
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.transaction.annotation.Transactional;
 import edu.umich.brcf.shared.layers.dao.AssayDAO;
 import edu.umich.brcf.shared.layers.dao.ExperimentDAO;
@@ -30,9 +32,12 @@ public class ProcessTrackingService
 	ExperimentDAO experimentDao;
 	AssayDAO assayDao;
 
-	
-	
-	
+	// issue 262
+	public void deleteTrackingDetails (String jobid)
+		{
+		processTrackingDao.deleteTrackingDetails(jobid);
+		}
+		
 	public void setExperimentDao(ExperimentDAO experimentDao) 
 	    {
 		this.experimentDao = experimentDao;
@@ -61,6 +66,12 @@ public class ProcessTrackingService
 	public AssayDAO getAssayDao()
 	    {
 		return assayDao;
+		}
+	
+	
+	public List <Object[]> grabSampleTypeStringFromList(String expID, String wfID )
+		{
+		return processTrackingDao.grabSampleTypeStringFromList(expID, wfID );
 		}
 	
 	public String grabSampleType(String wfID, String expID)
@@ -101,6 +112,12 @@ public class ProcessTrackingService
 		{
 		return processTrackingDao.loadAllTasksAssigned(expId,assayDescId, allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold);
 		}
+	
+	// issue 262
+	public Map <String, String> createSampleTypeStringFromList ()
+	 	{
+		 return processTrackingDao.createSampleTypeStringFromList();
+	 	}
 	
 	 public List<Object []> loadTasksAssignedForUser(String email)
 	    {

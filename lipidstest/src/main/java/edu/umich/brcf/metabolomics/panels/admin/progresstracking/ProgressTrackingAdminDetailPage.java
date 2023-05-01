@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.markup.MarkupCache;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -70,7 +70,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 	DropDownChoice<String> userNamesDD;
 	DropDownChoice<String> experimentDD;
 	DropDownChoice<String> assayDescDD;
-	
+	AbstractDefaultAjaxBehavior confirmBehavior;
 	String assignedTo ;
 	String status ;
 	WebMarkupContainer container;
@@ -86,12 +86,13 @@ public class ProgressTrackingAdminDetailPage extends WebPage
     boolean onHold = true;
     boolean inProgress = true;
     boolean completed = false;
-    boolean inQueue = false;
+    boolean inQueue = true; // issue 262
     String wfDescString;
     boolean collapse = false;
     String expID;
     Boolean existsOnHold = false;
     String assayDescID;
+    ProcessTrackingDetails gPtd;
    
     Map<String, Boolean> collapseMap = new HashMap<String, Boolean> ();
 	
@@ -106,6 +107,27 @@ public class ProgressTrackingAdminDetailPage extends WebPage
        //////// add(buildLinkToEditTracking("addTrackingAdmin", null,modal2));
       
         ///////////////////////////////////////////////////////
+        
+     // issue 262
+    	  confirmBehavior = new 
+    	        AbstractDefaultAjaxBehavior() 
+    		        { 
+    		        @Override 
+    				protected void respond(AjaxRequestTarget target) 
+    		            {           
+    				    try 
+    				        { 
+    				    	// issue 233 
+    				        processTrackingService.deleteTrackingDetails(gPtd.getJobid());
+    				        target.add(progressTrackingAdminDetailPage);
+    				        } 
+    				    catch (Exception e) 
+    				        { 				        
+    				        } 
+    				     } 
+    				 }; 
+        
+        add (confirmBehavior);
         
     	add(new AjaxCheckBox("onHold", new PropertyModel<Boolean>(this, "onHold"))
 			{
@@ -303,6 +325,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 						listItem.add(new Label("comments", new Model(edu.umich.brcf.shared.util.io.StringUtils.isEmptyOrNull(procTracDetails.getComments()) ? "" : (  procTracDetails.getComments().length() > 20 ?  procTracDetails.getComments().substring(0,20) :  procTracDetails.getComments()          )    )));				
 						listItem.add(new Label("status", new Model(procTracDetails.getStatus())));		
 						listItem.add(buildLinkToEditTracking("editTrackingAdmin",procTracDetails,modal2));	
+						listItem.add(buildLinkToDeleteTracking("deleteTrackingAdmin",procTracDetails,modal2));	
 						}   
 					});			
     	        }
@@ -332,11 +355,6 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		// issue 39
 		 AjaxLink lnk =  new AjaxLink<Void> (id)
 			{
-		//	@Override 
-			/*public boolean isEnabled()
-				{
-				return ! (id.equals("editMixture") && mixtureService.isMixturesSecondaryMixture(mix.getMixtureId()));
-				}*/
 			@Override
 			public void onClick(AjaxRequestTarget target)
 				{
@@ -346,6 +364,27 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 					public Page createPage() {   return setPage(id, modal1, ptd);   }
 					});	
 				    	modal1.show(target); 
+				}
+			};
+		return lnk;
+		} 
+	
+	
+	
+	
+	private AjaxLink buildLinkToDeleteTracking(final String id, final ProcessTrackingDetails ptd, final ModalWindow modal1 ) 
+		{
+		// issue 39
+		 AjaxLink lnk =  new AjaxLink<Void> (id)
+			{
+		
+			@Override
+			public void onClick(AjaxRequestTarget target)
+				{
+				gPtd = ptd;
+				//////gPtd = processTrackingService.loadById(ptd.getJobid());
+				target.appendJavaScript("if (confirm(' Are you sure you want to remove task:"  + gPtd.getProcessTracking().getTaskDesc() +  
+                         " ')) { " +  confirmBehavior.getCallbackScript() + " }"  );					
 				}
 			};
 		return lnk;
@@ -417,15 +456,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 	 public DropDownChoice buildExperimentDropDown(final String id)
 		{
 		
-		/*LoadableDetachableModel <List<String>> workFlowModel = new LoadableDetachableModel<List<String>>() 
-			{
-			@Override
-			protected List<String> load() { return processTrackingService.loadAllWorkFlows();  }
-			}; */
-	//	experimentDD =  new DropDownChoice<String>(id, new PropertyModel(processTrackingDetailsDTO, "wfID" ))
-	//			{
-			
-	//			};
+		
 	
 		experimentDD =  new DropDownChoice<String>(id, new PropertyModel(this, "expID" ), new ArrayList <String> ())
 				{				
@@ -481,18 +512,5 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 			{
 			this.assayDescID = assayDescID;
 			}
-	/*	private List <ProcessTrackingDetails> getTrackingListForExpAssay (List <ProcessTrackingDetails> ptList, String expid, String assay)
-			{
-			List <ProcessTrackingDetails> ptListCriteria  = new ArrayList <ProcessTrackingDetails> ();
-			
-			for (ProcessTrackingDetails pt : ptList)
-				{
-				if (pt.getAssay().equals(assay ) && pt.getAssay().equals(expid ))
-				    {
-					ptListCriteria.add(pt);
-					
-					}
-				}
-			return ptListCriteria;
-			}*/
+	
 	}
