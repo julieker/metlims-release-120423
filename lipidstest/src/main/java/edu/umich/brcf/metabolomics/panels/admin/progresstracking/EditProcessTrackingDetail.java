@@ -226,7 +226,10 @@ public class EditProcessTrackingDetail extends WebPage
 				;			
 			userNamesDD.setOutputMarkupId(true);
 			add(userNamesDD);
-			userNamesDD.setChoices(userService.allAdminNames(false));	
+			// issue 262
+			List <String> adminNamesAssignedToList = userService.allAdminNames(false);
+			adminNamesAssignedToList.remove("All Users");
+			userNamesDD.setChoices(adminNamesAssignedToList);	
 			userNamesDD.setRequired(true);	
 			
 			// issue 79

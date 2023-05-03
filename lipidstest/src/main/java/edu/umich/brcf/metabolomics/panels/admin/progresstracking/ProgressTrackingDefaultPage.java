@@ -476,7 +476,10 @@ public class ProgressTrackingDefaultPage extends WebPage
 		    		{
 		    		setAssignedTo(lProcessTrackingDetailsDTO.getAssignedTo());		
 		    		DropDownChoice userDDAssignTasks = new DropDownChoice<String>(id, new PropertyModel(lProcessTrackingDetailsDTO, "assignedTo" ));
-		    		userDDAssignTasks.setChoices(userService.allAdminNames(false));		    		  	
+		    		// issue 262
+		    		List <String> listAssignedTo = userService.allAdminNames(false);
+		    		listAssignedTo.remove("All Users");
+		    		userDDAssignTasks.setChoices(listAssignedTo);		    		  	
 		    		return userDDAssignTasks;
 		    		}           	
 
@@ -524,7 +527,11 @@ public class ProgressTrackingDefaultPage extends WebPage
 	    				
 	    				      setAssignedTo (lProcessTrackingDetailsDTO.getAssignedTo());
 	    					  DropDownChoice userNamesDDAssigned = new DropDownChoice<String>("assignedToa", new PropertyModel(lpDTO, "assignedTo" ), new ArrayList <String> () );
-	    					  userNamesDDAssigned.setChoices(userService.allAdminNames(false));
+	    					  
+	    					  
+	    					  List <String> listAssignedTo = userService.allAdminNames(false);
+	    			    	  listAssignedTo.remove("All Users");
+	    					  userNamesDDAssigned.setChoices(listAssignedTo);
 	    					  
 	    					   if (userNamesDDAssigned != null)
 	    						   userNamesDDAssigned.add(buildStandardFormComponentUpdateBehavior("change", "updateUserAddTasks", lProcessTrackingDetailsDTO.getTaskDesc(), lProcessTrackingDetailsDTO.getAssignedTo(), lProcessTrackingDetailsDTO , itemIndex));
