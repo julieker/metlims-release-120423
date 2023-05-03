@@ -1075,6 +1075,13 @@ public class ProgressTrackingDefaultPage extends WebPage
        			target.appendJavaScript(StringUtils.makeAlertMessage(err));
        			return;
        			}
+       		int idxForOrder = 1;
+       		// issue 262
+    		for (ProcessTrackingDetailsDTO  lAddedTask : listDto2 )
+    			{
+    			lAddedTask.setDetailOrder(idxForOrder);
+    			idxForOrder++;
+    			}      		
        		processTrackingService.saveDefaultDTOs(listDto2, modifyDefault);
        		List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("assigned_task_notification");
        		// issue 210	        		

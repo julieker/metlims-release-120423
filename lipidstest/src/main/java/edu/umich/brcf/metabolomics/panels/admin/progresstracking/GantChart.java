@@ -770,11 +770,12 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 	       prevExpId = ptd.getExperiment().getExpID();
 	       prevAssayId = ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")";
 	   	   }
-    	   
+    	 
+    	// issue 262
     	str = str +    		
     				"<div>" + 
         			"  <a style=\"text-decoration:none;\" wicket:id= \"gchart" + Integer.toString(indexLink) + "\"   href=\"#\" > <div class=\"chart-row\">" +
-        			"        <div style=\"text-decoration:none;font-size: 15px;font-weight: bold;color:black; \"  class=\"chart-row-item-big\">" + (index + 1) + ". " + ptd.getProcessTracking().getTaskDesc() + "\n" + "<br>"  + "Assigned To:" +  ptd.getAssignedTo().getFullName() +  "</div>" ;		
+        			"        <div style=\"text-decoration:none;font-size: 15px;font-weight: bold;color:black; \"  class=\"chart-row-item-big\">" + (index + 1) + ". " + ptd.getProcessTracking().getTaskDesc().replace("<","&lt").replace(">", "&gt") + "\n" + "<br>"  + "Assigned To:" +  ptd.getAssignedTo().getFullName() +  "</div>" ;		
     				
     		String truncComment = StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ||  nList.get(indexLink).getComments().length() <= 50 ? nList.get(indexLink).getComments() : nList.get(indexLink).getComments().substring(0, 50);
     		if (StringUtils.isNullOrEmpty(truncComment))
