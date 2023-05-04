@@ -96,11 +96,11 @@ public class AdminPanel extends Panel
 			 public boolean isVisible() { return true; }
 			 });
 		 
-		 
-		 tabs.add(new AbstractTab(new Model("PROGRESS TRACKING")) 
+		 // issue 262
+		/* tabs.add(new AbstractTab(new Model("PROGRESS TRACKING")) 
 			 { 
 			 public Panel getPanel(String panelId) {  return new LaunchProgressTrackingToolsPanel(panelId); }
-			 });
+			 }); */
 		 
 		return tabs;
 		}

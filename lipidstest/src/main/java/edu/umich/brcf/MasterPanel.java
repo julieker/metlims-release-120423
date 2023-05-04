@@ -7,7 +7,9 @@ package edu.umich.brcf;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -19,14 +21,13 @@ import org.wicketstuff.security.extensions.markup.html.tabs.ISecureTab;
 import org.wicketstuff.security.extensions.markup.html.tabs.SecureTabbedPanel;
 
 import edu.umich.brcf.metabolomics.panels.admin.AdminPanel;
+import edu.umich.brcf.metabolomics.panels.admin.progresstracking.LaunchProgressTrackingToolsPanel;
 import edu.umich.brcf.metabolomics.panels.lims.LimsPanel;
 import edu.umich.brcf.metabolomics.panels.lipidshome.LimsPanel2;
 import edu.umich.brcf.metabolomics.panels.lipidshome.LipidsMainTabPanel;
 import edu.umich.brcf.metabolomics.panels.workflow.WorkflowMainPanel;
 import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.panels.utilitypanels.IllegalBrowserPanel;
-
-
 
 public class MasterPanel extends Panel
 	{
@@ -61,7 +62,14 @@ public class MasterPanel extends Panel
 			 //tabs.add(getLipidsMainTabPanel(stp));
 			 tabs.add(getAdminPanel());
 			 tabs.add(getLimsPanel2());
-			 }
+			 // issue 262
+			 String ptrackString = "PROGRESS-TRACKING";
+			 ptrackString = StringUtils.leftPad(ptrackString, 21);
+			  tabs.add(new AbstractTab(new Model(ptrackString)) 
+				 { 
+					 public Panel getPanel(String panelId) {  return new LaunchProgressTrackingToolsPanel(panelId); }
+					 }); 
+				 } 
 		
 		stp.setSelectedTab(0);
 		
@@ -94,6 +102,9 @@ public class MasterPanel extends Panel
 		}
 	
 	
+	//// issue 262
+	
+	
 	private ISecureTab getLipidsMainTabPanel(final SecureTabbedPanel parent)
 		{
 		return new ISecureTab() 
@@ -107,7 +118,7 @@ public class MasterPanel extends Panel
 				return panel;
 				}
 	
-			public IModel getTitle() { return new Model("    DATA     "); }
+			public IModel getTitle() { return new Model("    DATA       "); }
 	
 			public Class getPanel() { return LipidsMainTabPanel.class; }
 			
@@ -137,8 +148,7 @@ public class MasterPanel extends Panel
 			public boolean isVisible() { return true; }
 			};
 		}
-			
-	
+		
 	private ISecureTab getLimsPanel()
 		{
 		return new ISecureTab() 
@@ -196,7 +206,7 @@ public class MasterPanel extends Panel
 				return panel;
 				}
 	
-			public IModel getTitle() { return new Model("     DATA     "); }
+			public IModel getTitle() { return new Model("     DATA       "); }
 	
 			public Class getPanel() { return LimsPanel2.class; }
 			
