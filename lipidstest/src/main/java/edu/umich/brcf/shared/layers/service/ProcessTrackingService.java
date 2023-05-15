@@ -144,8 +144,6 @@ public class ProcessTrackingService
 		return processTrackingDao.loadTasksAssignedForExpAndAssay(expid, assayId);
 		}
 	 
-	
-	
 	public List<String> loadAllWFsAssigned(String expID)
 		{
 		return processTrackingDao.loadAllWFsAssigned(expID);
@@ -361,5 +359,27 @@ public class ProcessTrackingService
 		{
 		processTrackingDao.deleteTracking(expID, assayID);
 		}
+
+	// issue 269
+	public List<String> grabUsersWithAssignedTasks ()
+		{
+		return processTrackingDao.grabUsersWithAssignedTasks();
+		}
 	
+	 public List<Object []> loadTasksAssignedForExpAssay(String expId, String assayId)
+	 	{
+		 return processTrackingDao.loadTasksAssignedForExpAssay(expId, assayId);
+	 	}
+	 
+	 // issue 269
+	 public List<Object []> loadTasksAssignedForUserExpAssay(String email, String expId, String assayId)
+		{
+		 return processTrackingDao.loadTasksAssignedForUserExpAssay(email, expId, assayId);
+		}
+	 
+	 // issue 269
+	 public  List<Object []> listExpAssayForUser(String email)
+		{
+		 return processTrackingDao.listExpAssayForUser(email);
+		}
     }

@@ -343,7 +343,7 @@ public class EditProcessTrackingDetail extends WebPage
 						gPtd = ptd;
 						int diffDaysExp = Integer.parseInt(ptd.getDaysExpected())- Integer.parseInt(originalDaysExpStr);
 						if (diffDaysExp != 0)
-						 moveDependentTasks(ptd, diffDaysExp);	
+						    moveDependentTasks(ptd, diffDaysExp);	
 						amountToMove = diffDaysExp;
 						if ((originalCompletedDate == null && ptd.getDateOnHold() == null && ptd.getDateCompleted() != null) ||  ( ptd.getDateCompleted() != null && ptd.getDateOnHold() == null ))
 							{
@@ -351,13 +351,23 @@ public class EditProcessTrackingDetail extends WebPage
 							if (originalCompletedDate == null)
 								{
 								dayCompletedToAdd = ChronoUnit.DAYS.between(originalCompletingDate.toInstant(),ptd.getDateCompleted().toInstant());
-								 moveDependentTasks(ptd, (int) dayCompletedToAdd * ptd.getDateCompleted().compareTo(originalCompletingDate));								
-								amountToMove = (int) dayCompletedToAdd * ptd.getDateCompleted().compareTo(originalCompletingDate);
+								if (ptd.getDateCompleted() != null && ptd.getDateStarted()!= null && ptd.getDateCompleted().compareTo(ptd.getDateStarted()) == 0)
+									{   
+									moveDependentTasks(ptd, 0);
+									amountToMove = 0;
+									}
+								else
+									{
+									moveDependentTasks(ptd, (int) dayCompletedToAdd * ptd.getDateCompleted().compareTo(originalCompletingDate));								
+									amountToMove = (int) dayCompletedToAdd * ptd.getDateCompleted().compareTo(originalCompletingDate);
+									}
+									// issue 269
+											
 								}
 							else
 								{
 								dayCompletedToAdd = ChronoUnit.DAYS.between(originalCompletedDate.toInstant(),ptd.getDateCompleted().toInstant());
-								 moveDependentTasks(ptd, (int) dayCompletedToAdd);
+								moveDependentTasks(ptd, (int) dayCompletedToAdd);
 								amountToMove = (int) dayCompletedToAdd;
 								}							
 							}
@@ -365,7 +375,7 @@ public class EditProcessTrackingDetail extends WebPage
 						if (ptd.getDateOnHold() != null && ptd.getDateCompleted() == null && originalOnHoldDate == null)
 							{
 							dayOnHoldToAdd = ChronoUnit.DAYS.between(ptd.getDateStarted().toInstant(),ptd.getDateOnHold().toInstant());
-							 moveDependentTasks(ptd, (int) dayOnHoldToAdd -1);
+							moveDependentTasks(ptd, (int) dayOnHoldToAdd -1);
 							amountToMove =(int) dayOnHoldToAdd -1;
 							amountToMove = (int) dayOnHoldToAdd -1;
 							}
@@ -425,14 +435,14 @@ public class EditProcessTrackingDetail extends WebPage
 			List<ProcessTrackingDetails> nList = new ArrayList <ProcessTrackingDetails> () ;
 			nList = processTrackingService.loadAllTasksAssigned(ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), false, null);
 			int trackingOrder = ptd.getDetailOrder();
-			int bi = 0;
-			if (ptd.getDateCompleted() != null && ptd.getDateStarted()!= null && ptd.getDateCompleted().compareTo(ptd.getDateStarted()) == 0)
-				return;
+			int bi = 0;			
+		  //  if (ptd.getDateCompleted() != null && ptd.getDateStarted()!= null && ptd.getDateCompleted().compareTo(ptd.getDateStarted()) == 0)
+		  //      diffNewOrig = 0;	
 			for (int i = trackingOrder; i<nList.size(); i++)
 				{
 				nList.get(i).updateDaysExpected(diffNewOrig);
 				if ((bi == 0 && (i-1) < 0) || bi == 0 && !nList.get(i-1).getStatus().equals("On hold"))
-				    nList.get(i).updateStatus();
+					nList.get(i).updateStatus();
 				bi++;
 				}
 			}

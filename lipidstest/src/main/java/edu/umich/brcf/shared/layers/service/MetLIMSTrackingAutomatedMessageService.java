@@ -1,7 +1,10 @@
 package edu.umich.brcf.shared.layers.service;
 import java.util.ArrayList;
+import java.util.HashMap;
 // issue 358
 import java.util.List;
+import java.util.Map;
+
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,23 +68,39 @@ public class MetLIMSTrackingAutomatedMessageService
 	//@Scheduled(cron="0 10 10 23 * ?")
 	
 	//@Scheduled(cron="0 51 11 * * WED")
-	@Scheduled(cron="0 15 08 * * FRI")
-	
+	//@Scheduled(cron="0 43 16 * * SUN")
+	  @Scheduled(cron="0 05 16 * * MON")
 	public void sendAssignedTasksReport()
         {     	
         String msg = " Metlims Tracking System:  Your tasks ";
         String htmlString = "";
-        
+        String activeOrOnHoldTask = "";
         String mailTitle = "METLIMS TRACKING your Friday tasks \n";
         String mailAddress =  "metabolomics@med.umich.edu";
         List<Object[]> nList = new ArrayList<Object[]> ();
-    	List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("task_notification");	       
-    	if (email_contacts != null)
+        List<Object[]> nListStudy = new ArrayList<Object[]> ();
+        List<Object[]> nListExpAssayUser = new ArrayList<Object[]> ();
+        String prev = " ";
+        String preva = " ";
+        
+        Map <String, String> theCurrentTaskMap = buildCurrentTaskMap();
+        
+    	//List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("task_notification");	       
+        List<String> email_contacts = processTrackingService.grabUsersWithAssignedTasks();
+        if (email_contacts != null)
  			for (String email_contact : email_contacts)
  			    {
- 				nList = processTrackingService.loadTasksAssignedForUser(email_contact);
- 				htmlString = "<h3><b> "  + msg + " </b></h3> <br> <h4>" +  buildTaskString(nList, "List of your assigned tasks")  + "</h4>";
- 				METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "julieker@umich.edu", mailTitle, msg, htmlString);
+ 				nListExpAssayUser = processTrackingService.listExpAssayForUser(email_contact);				
+ 			    nList = processTrackingService.loadTasksAssignedForUser(email_contact);
+                htmlString = "";
+                String taskInfoStr = "";
+ 				for (Object[] lObj: nListExpAssayUser)
+ 				    {
+ 					nListStudy = processTrackingService.loadTasksAssignedForUserExpAssay(email_contact, (String) lObj[0], (String) lObj[1]);
+ 					htmlString = htmlString + "<h3><b> "  + msg + " </b></h3> <br> <h4>" +  buildTaskString(nListStudy, "List of your assigned tasks " + " for " + (String) lObj[0]  + " " +  (String) lObj[1] + " <br> " + theCurrentTaskMap.get((String) lObj[0] + (String) lObj[1]) ) + "</h4>";				
+ 				    }
+ 					
+ 				METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, email_contact, mailTitle, msg, htmlString);
  			    }
     	nList = processTrackingService.loadTasksAssignedForExp(nList.get(0)[5].toString());												
 		//msg = "Friday List of Tasks assigned for Experiment"  + nList.get(0)[5].toString() + " Workflow:" + nList.get(0)[6].toString();
@@ -115,7 +134,7 @@ public class MetLIMSTrackingAutomatedMessageService
 			        for (String email_contact : email_contacts) 
 			    		{
 			    		htmlString =   "<h3><b> "  + msg + " " +   msgTitle + " </b></h3> <br> ";
-			    		METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "julieker@umich.edu", "METLIMS Tracking - METLIMS Sample Registration Message", msg, htmlString);
+			    		METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, email_contact, "METLIMS Tracking - METLIMS Sample Registration Message", msg, htmlString);
 			    		}
 		    	return;
 		    	
@@ -141,7 +160,7 @@ public class MetLIMSTrackingAutomatedMessageService
 			 						}
 			 					htmlString = htmlString +  "<h3><b> "  + msg + " " +   msgTitle + " </b></h3> <br> <h4>" +  buildTaskString(newEachAssayList, "List of assigned tasks for experiment:" + nlist.get(0)[5].toString()  + " and assay: " + llAssayExp[1])  + " </h4>";
 		 						}
-				 			METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "julieker@umich.edu", "METLIMS Tracking - METLIMS Sample Registration Message", msg, htmlString);
+				 			METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, email_contact, "METLIMS Tracking - METLIMS Sample Registration Message", msg, htmlString);
 				 			}
 			 			catch (Exception e)
 				 			{
@@ -153,24 +172,40 @@ public class MetLIMSTrackingAutomatedMessageService
 					}
 		    	
 	    	} 
-		if (email_contacts != null)
-			{
- 			for (String email_contact : email_contacts)
- 			    {
- 				for (Object[] lilexpAssay: listExpAssay)
- 					{
- 					nlist = new ArrayList<Object[]> ();
- 					nlist = processTrackingService.loadTasksAssignedForExpAndAssay(lilexpAssay[0].toString(),StringParser.parseId(lilexpAssay[1].toString()) );	
- 					//mailTitle = "METLIMS Tasks for Experiment " + nlist.get(0)[5];
- 					mailTitle = "";
- 					msgTitle = "Friday List of Tasks assigned for Experiment:" + nlist.get(0)[5].toString() + " Assay: " + nlist.get(0)[6].toString() + " Workflow:" + nlist.get(0)[8].toString();
- 					htmlString = htmlString +  "<h3><b> "  + msg + " " +   msgTitle + " </b></h3> <br> <h4>" +  buildTaskString(nlist, "List of assigned tasks for experiment:" + nlist.get(0)[5].toString())  + "</h4>";
- 					}
- 				METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "julieker@umich.edu", "METLIMS Tracking - Weekly task list" , msg, htmlString);
- 				htmlString = "";
- 			    }
-		}
+			if (email_contacts != null)
+				{
+	 			//for (String email_contact : email_contacts)
+	 			   // {
+	 				for (Object[] lilexpAssay: listExpAssay)
+	 					{
+	 					nlist = new ArrayList<Object[]> ();
+	 					nlist = processTrackingService.loadTasksAssignedForExpAndAssay(lilexpAssay[0].toString(),StringParser.parseId(lilexpAssay[1].toString()) );	
+	 					//mailTitle = "METLIMS Tasks for Experiment " + nlist.get(0)[5];
+	 					mailTitle = "";
+	 					msgTitle = "Friday List of Tasks assigned for Experiment:" + nlist.get(0)[5].toString() + " Assay: " + nlist.get(0)[6].toString() + " Workflow:" + nlist.get(0)[8].toString();
+	 					htmlString = htmlString +  "<h3><b> "  + msg + " " +   msgTitle + " </b></h3> <br> <h4>" +  buildTaskString(nlist, "List of assigned tasks for experiment:" + nlist.get(0)[5].toString())  + "</h4>";
+	 					}
+	 				METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "mkachman@med.umich.edu", "METLIMS Tracking - Weekly task list" , msg, htmlString);
+	 				METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender2=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "julieker@umich.edu", "METLIMS Tracking - Weekly task list" , msg, htmlString);
+	 				htmlString = "";
+	 			  //  }
+			}
 	     } 
+	
+	
+    public Map <String, String> buildCurrentTaskMap ()
+		 {
+		 Map <String, String> currentTaskMap =  new HashMap<String, String>();
+		 List <Object []> expAssayObjs = processTrackingService.listExpAssay();
+		 Object [] currentTaskObj;
+		 for (Object [] lobj : expAssayObjs)
+		 	 {	
+		     currentTaskObj = processTrackingService.loadTasksAssignedForExpAssay((String) lobj[0], StringParser.parseId((String) lobj[1])     ).get(0);
+		     String cTaskInfo = "Currently " +  (String) currentTaskObj[3] + " " + (String) currentTaskObj[0];
+		     currentTaskMap.put((String) currentTaskObj[4]+  StringParser.parseId( (String) currentTaskObj[5])  , cTaskInfo);
+		 	}    	 
+		 return currentTaskMap;
+		 }
 	
 	 public  String buildTaskString (List<Object[]> sList, String titleStr )
          {

@@ -106,10 +106,6 @@ public class ProcessTrackingDAO extends BaseDAO
 		
 		List <Object []> sampleTypeObjs = query.getResultList();
 	    
-		
-		//System.out.println("-----HERE IS Sample type:" +  sampleTypeObjs.get(0)[0]);
-		//System.out.println("here is sampleTypeObj.size:" + sampleTypeObjs.size());
-		
 		if (query.getResultList().size() == 0) 
 			return new ArrayList <Object[]> ();
 		int i = 0;
@@ -281,8 +277,60 @@ public class ProcessTrackingDAO extends BaseDAO
 				 " detail_order, " + 
 				 " wf_desc " + 
 				 " from tracking_tasks_details t1, tracking_tasks t2 , researcher t3, assays t4, workflow t5 " + 
-				 " where t1.task_id = t2.task_id  and t3.researcher_id = t1.assigned_to  and email = ?1 and t5.wf_id = t1.wf_id and t4.assay_id = t1.assay_id and status != 'Completed' order by exp_id, assayid"
+				 " where t1.task_id = t2.task_id  and t3.researcher_id = t1.assigned_to  and email = ?1 and t5.wf_id = t1.wf_id and t4.assay_id = t1.assay_id and status != 'Completed' order by exp_id, assayid, detail_order"
 				 ).setParameter(1, email)
+				.getResultList();	
+		return defaultList;
+		}
+	 
+	 // issue 269
+	 ////////////
+	 public List<Object []> loadTasksAssignedForUserExpAssay(String email, String expId, String assayId)
+		{
+		List<Object []> defaultList =  getEntityManager().createNativeQuery(" select last_name || ',' || first_name uname, "
+				 + " task_desc,  " + 
+				 "  to_char(date_started, 'mm/dd/yyyy') date_started,  "  + 
+				 "  to_char(date_onhold, 'mm/dd/yyyy') date_onHold,  "  + 
+				 " status,  " + 
+				 "exp_id,    " + 
+				 "    assay_name || ' (' || t4.assay_id || ')' assayid,   " + 
+				 " detail_order, " + 
+				 " wf_desc " + 
+				 " from tracking_tasks_details t1, tracking_tasks t2 , researcher t3, assays t4, workflow t5 " + 
+				 " where t1.task_id = t2.task_id  and t3.researcher_id = t1.assigned_to  and email = ?1  and t1.exp_id = ?2  and t1.assay_id = ?3 and t5.wf_id = t1.wf_id and t4.assay_id = t1.assay_id and status != 'Completed' order by exp_id, assayid, detail_order"
+				 ).setParameter(1, email).setParameter(2,  expId).setParameter(3,  assayId)
+				.getResultList();	
+		return defaultList;
+		}
+	 
+	 public List<Object []> listExpAssayForUser(String email)
+		{
+		List<Object []> expAssayList =  getEntityManager().createNativeQuery(" select "				
+				+  " distinct exp_id,    " 
+				+  " t4.assay_id    " + 
+				 " from tracking_tasks_details t1, tracking_tasks t2 , researcher t3, assays t4, workflow t5 " + 
+				 " where t1.task_id = t2.task_id  and t3.researcher_id = t1.assigned_to and email = ?1 and t5.wf_id = t1.wf_id and t4.assay_id = t1.assay_id and status != 'Completed' order by 1,2 "
+				 )
+				.setParameter(1,email).getResultList();	
+		return expAssayList;
+		}
+	 
+	 
+	 // issue 269
+	 public List<Object []> loadTasksAssignedForExpAssay(String expId, String assayId)
+		{
+		List<Object []> defaultList =  getEntityManager().createNativeQuery(" select "
+				 + " task_desc,  " + 
+				 "  to_char(date_started, 'mm/dd/yyyy') date_started,  "  + 
+				 "  to_char(date_onhold, 'mm/dd/yyyy') date_onHold,  "  + 
+				 " status,  " + 
+				 "exp_id,    " + 
+				 "    assay_name || ' (' || t4.assay_id || ')' assayid,   " + 
+				 " detail_order, " + 
+				 " wf_desc " + 
+				 " from tracking_tasks_details t1, tracking_tasks t2 , assays t4, workflow t5 " + 
+				 " where t1.exp_id = ?1 and t1.assay_id= ?2 and t1.task_id = t2.task_id  and t5.wf_id = t1.wf_id and t4.assay_id = t1.assay_id and status != 'Completed' order by exp_id, assayid, detail_order"
+				 ).setParameter(1, expId).setParameter(2, assayId)
 				.getResultList();	
 		return defaultList;
 		}
@@ -383,6 +431,17 @@ public class ProcessTrackingDAO extends BaseDAO
 		return ptList;
 		}
 	/////////////////////////////////////////////
+	
+	public List<String> grabUsersWithAssignedTasks ()
+		{
+		Query query2 = getEntityManager().createNativeQuery ("select distinct email from researcher t1, tracking_tasks_researcher t2 " + 
+									" where t1.researcher_id = t2.researcher_id and " + 
+				                    " t1.researcher_id in (select distinct assigned_to from tracking_tasks_details where status != 'Completed')   "		
+				);
+		return query2.getResultList();
+		}
+	
+	
 	
 	public List<String> allAssayNamesForExpIdInTracking (String eid, boolean skipAbsciex)
 		{
