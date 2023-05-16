@@ -69,7 +69,8 @@ public class MetLIMSTrackingAutomatedMessageService
 	
 	//@Scheduled(cron="0 51 11 * * WED")
 	//@Scheduled(cron="0 43 16 * * SUN")
-	  @Scheduled(cron="0 05 16 * * MON")
+	//  @Scheduled(cron="0 05 16 * * MON")
+	    @Scheduled(cron="0 00 08 * * FRI")
 	public void sendAssignedTasksReport()
         {     	
         String msg = " Metlims Tracking System:  Your tasks ";
