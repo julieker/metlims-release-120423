@@ -4,8 +4,6 @@
  */
 package edu.umich.brcf.metabolomics.panels.admin.progresstracking;
 
-
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
@@ -14,68 +12,39 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-
-import org.apache.wicket.Application;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
-import org.apache.wicket.Session;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
-import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.IMarkupResourceStreamProvider;
 import org.apache.wicket.markup.MarkupCache;
-import org.apache.wicket.markup.MarkupFactory;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.StringResourceStream;
-
-import com.googlecode.wicket.jquery.core.JQueryBehavior;
-import com.googlecode.wicket.jquery.core.Options;
-import com.googlecode.wicket.jquery.ui.widget.dialog.DialogButton;
 import com.mysql.jdbc.StringUtils;
-
 import edu.umich.brcf.metabolomics.layers.domain.Compound;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.metabolomics.layers.service.InventoryService;
-import edu.umich.brcf.metabolomics.panels.admin.progresstracking.ProgressTrackingDefaultPage.ProgressTrackingDefaultForm;
-import edu.umich.brcf.metabolomics.panels.lims.mixtures.MixtureAliquotDetail;
-import edu.umich.brcf.metabolomics.panels.lims.mixtures.MixturesAdd;
-import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.MotrpacOptionsDialog;
-import edu.umich.brcf.shared.layers.domain.Inventory;
-import edu.umich.brcf.shared.layers.domain.Mixture;
 import edu.umich.brcf.shared.layers.domain.ProcessTracking;
 import edu.umich.brcf.shared.layers.domain.ProcessTrackingDetails;
-import edu.umich.brcf.shared.layers.domain.Workflow;
-import edu.umich.brcf.shared.layers.dto.ProcessTrackingDetailsDTO;
 import edu.umich.brcf.shared.layers.service.AliquotService;
 import edu.umich.brcf.shared.layers.service.AssayService;
 import edu.umich.brcf.shared.layers.service.MixtureService;
 import edu.umich.brcf.shared.layers.service.ProcessTrackingService;
 import edu.umich.brcf.shared.layers.service.UserService;
-import edu.umich.brcf.shared.panels.login.MedWorksSession;
 import edu.umich.brcf.shared.util.StringParser;
 import edu.umich.brcf.shared.util.widgets.METWorksAjaxUpdatingDateTextField;
 
@@ -143,7 +112,18 @@ public class GantChart extends WebPage implements IMarkupResourceStreamProvider
 	 DropDownChoice<String> userNamesDD;
 	 String assignedTo ;
 	 Map <String, String> sampleTypeMap =  new HashMap<String, String>();
-     
+ 
+	 
+	/* @Override
+	 public void renderHead( IHeaderResponse response)
+	     {
+	     super.renderHead(response);
+        	// response.render(OnDomReadyHeaderItem.forScript( " alert('hi'); document.getElementById('scroll-to-bottom').scrollTop= document.getElementById('scroll-to-bottom').scrollHeight; alert('okay here is the ehight' +  document.getElementById('scroll-to-bottom').scrollHeight);"));
+        	 
+	     response.render(OnDomReadyHeaderItem.forScript( " alert('hi');     window.scrollBy(0, -10);    alert('okay here is the ehight' +  document.getElementById('scroll-to-bottom').scrollHeight);"));
+	           System.out.println("I just did the render....");
+	 	 } */
+	 
 public boolean getIsCurrent ()
 	{
 	return isCurrent;
@@ -570,7 +550,7 @@ str = str +
 "</style>" +
 "</head>" +
 "" +
-"<form wicket:id = \"gantChartForm\" > " + 
+"<form  wicket:id = \"gantChartForm\" > " + 
 " <span style=\"  border: none; \"> " + " Start: </span> " + 
 "<span style=\"outline: 1px solid rgba(0, 0, 0, 0.3)\"> <input style=\"   background-color:#FFFFFF;   \" wicket:id=\"dateStartGantt\" type=\"text\" value=\"date\"  size=\"10\"> </span> " + 
 "<span style=\"  border: none; \"> " + "&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; End: </span> " + 
@@ -583,7 +563,6 @@ str = str +
 "  <select wicket:id = \"experimentDropDown\" style = \"margin-left : 15px; width : 100px;\" ></select> &nbsp;&nbsp;&nbsp; " + 
 " <span style=\"border:none\">   Assay:  </span>  " + 
 "  <select wicket:id = \"assayDescDropDown\" style = \"margin-left : 15px; width : 100px;\" ></select> &nbsp;&nbsp;&nbsp; " + 
-" <span style= \"border: none; \"> All Experiments? </span> <input style=\"   background-color: #D3D3D3;   \" wicket:id=\"allExpChkBox\" type=\"checkbox\" value=\"View Current?\"  size=\"20\"> " + 
 " <span style=\"border:none\">  &nbsp;&nbsp;  Assigned To:  </span>  " + 
 "  <select wicket:id = \"assignedToDropDown\" style = \"margin-left : 15px; width : 100px;\" ></select>  " +
 " <span style=\"outline: 1px solid ;  \"> <input style=\"   background-color: #D3D3D3;   \" wicket:id=\"AllUsersBtn\" type=\"submit\" value=\"All Users \"  size=\"10\"> </span> " + 
@@ -591,7 +570,7 @@ str = str +
 "<br> <br>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <button wicket:id = \"leftArrow\"  type= \"submit\"  >   <span>  &#x2190;  </span>     </button>   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <button wicket:id = \"rightArrow\"  type= \"submit\"  >   <span>  &#x2192;  </span>  </button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style= \"border: none; \"> View Current and Future? </span> <input style=\"   background-color: #D3D3D3;   \" wicket:id=\"currentChkBox\" type=\"checkbox\" value=\"View Current?\"  size=\"20\">   &nbsp;&nbsp;&nbsp;&nbsp; <span style= \"border: none; \"> View In Progress? </span> <input style=\"   background-color: #D3D3D3;   \" wicket:id=\"inProgressChkBox\" type=\"checkbox\" value=\"View Current?\"  size=\"20\">   <span style= \"border: none; \"> View On Hold? </span>  <input style=\"   background-color: #D3D3D3;   \" wicket:id=\"onHoldChkBox\" type=\"checkbox\" value=\"View Current?\"  size=\"20\">      " + 
 
 
-"<br> <br>     <div class=\"container\">" +
+"<br> <br>     <div id = \"scroll-to-bottom\" class=\"container\">" +
 
 "<div wicket:id=\"modal2\"></div>" +
 /////////////////////////////////////////////////////
@@ -660,7 +639,7 @@ str = str +
 
 
 
-"      <div class=\"chart\">" ;
+"      <div  class=\"chart\">" ;
 
 str = str + "      <div  class=\"chart-row chart-period  \">" ;
 ///////////////////////////
@@ -761,8 +740,39 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 				     ptd.getExperiment().getExpID() + " " + ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")"  + "<br>" + sampleTypeMap.get(ptd.getExperiment().getExpID()) +   "<br>" + "Contact and PI:" + ptd.getExperiment().getProject().getContactPerson().getFullNameByLast() + " " + ptd.getExperiment().getProject().getClient().getInvestigator().getFullNameByLast() + "</span>";
 		   
 	       }
+    	// issue 273
 	    else if (!prevWf.equals(ptd.getWorkflow().getWfDesc()) || !prevExpId.equals(ptd.getExperiment().getExpID()) ||  !prevAssayId.equals(ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")") )
 	   	   {
+	    	str = str + "      <div  class=\"chart-row chart-period  \">" ;
+	    	str = str + "          <div class=\"chart-row-item-big\"></div> " ;
+	    	// issue 269
+	    	
+	    	str = str + "          <span style=\"border:none\">" + todayStrList.get(0) + "</span>" + 
+	    			"          <span style=\"border:none\"> " + todayStrList.get(1) + "</span>" + 
+	    			"          <span style=\"border:none\">" + todayStrList.get(2)  + "</span>" +
+	    			"          <span style=\"border:none\"> " + todayStrList.get(3) + "</span>" + 
+	    			"          <span style=\"border:none\"> " + todayStrList.get(4) + "</span>" + 
+	    			"          <span style=\"border:none\"> " + todayStrList.get(5) + "</span>" + 
+	    			"          <span style=\"border:none\"> " + todayStrList.get(6) + "</span>" + 
+	    			"          <span style=\"border:none\"> " + todayStrList.get(7) + "</span>" + 
+	    			"          <span style=\"border:none\"> " + todayStrList.get(8) + "</span>" + 
+	    			"          <span style=\"border:none\"> " + todayStrList.get(9) + "</span>" + 
+	    			"          <span style=\"border:none\">  " + todayStrList.get(10) + "</span>" + 
+	    			"          <span style=\"border:none\"  > " + todayStrList.get(11) + "</span>" + 
+	    			"          <span style=\"border:none\">  " + todayStrList.get(12) + "</span>" + 
+	    			"          <span style=\"border:none\">  " + todayStrList.get(13) + "</span>" + 
+	    			//"          <span style=\"border:none; width:200px; \"> " + "comments" + "</span>" + 
+	    			"          <span style=\"border:none; height: 43px; width:401px;   \"> " + "comments" + "</span>" ; 
+	    	
+	    	
+	    	        str = str + "      </div>" ;
+	    	
+	    	
+	    	
+	    	
+	    	
+	    	
+	    	
 		   str = str + " <span>" + ptd.getWorkflow().getWfDesc().replace("<", "&lt").replace(">", "&gt")  + " <br>" + 
 			     ptd.getExperiment().getExpID() + " " + ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")" + "<br>" + sampleTypeMap.get(ptd.getExperiment().getExpID()) +  "<br>" + "Contact and PI:" + ptd.getExperiment().getProject().getContactPerson().getFullNameByLast() + " " + ptd.getExperiment().getProject().getClient().getInvestigator().getFullNameByLast() +  "</span>";
 	       index = 0;
@@ -1045,7 +1055,18 @@ public void setDateEndGantt (String dateEndGantt)
 						// issue 13
 					case "updateEndDate" :
 					    break;
+					    // issue 273
 					case "updateExperiment" :
+						if (expID.equals ("All Experiments") )
+							{
+							allExpAssay = true;
+							expID = "All Experiments";
+							assayDescID = null;
+							MarkupCache.get().clear();
+				    	    getMarkupResourceStream(markupContainer, containerClassl) ;
+				    	    target.add(gantChart); 
+				    	    break;
+							}
 						allExpAssay = false;
 						isAllExp = false;
 						assayDescDD.setChoices (assayService.allAssayNamesForExpId(expID, false));	
@@ -1234,9 +1255,16 @@ public void setDateEndGantt (String dateEndGantt)
 		{
 		experimentDD =  new DropDownChoice<String>(id, new PropertyModel(this, "expID" ), new ArrayList <String> ())
 				{				
-				};				
-	 	experimentDD.setChoices (processTrackingService.loadAllAssignedExperiments())	;		
-		return experimentDD;
+				};	
+	    
+		List <String> expList = new ArrayList <String> ();
+		// issue 273
+		expList.add("All Experiments");
+		expList.addAll(processTrackingService.loadAllAssignedExperiments());
+	 	experimentDD.setChoices (expList)	;		
+		if (allExpAssay)
+			expID = "All Experiments";
+	 	return experimentDD;
 		
 		}
 	 

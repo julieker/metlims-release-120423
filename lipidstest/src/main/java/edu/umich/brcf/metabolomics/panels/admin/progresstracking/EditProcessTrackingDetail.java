@@ -7,6 +7,7 @@
 // issue 61
 package edu.umich.brcf.metabolomics.panels.admin.progresstracking;
 
+import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 
 /*****************
@@ -27,7 +28,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.markup.html.WebMarkupContainer;
+
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -99,6 +100,8 @@ public class EditProcessTrackingDetail extends WebPage
 	public ProcessTrackingDetailsDTO getProcessTrackingDetailsDTO() { return processTrackingDetailsDTO; }
 	public void setProcessTrackingDetailsDTO(ProcessTrackingDetailsDTO processTrackingDetailsDTO)  { this.processTrackingDetailsDTO = processTrackingDetailsDTO; }
 		
+
+	
 	public EditProcessTrackingDetail(Page backPage, final ModalWindow window) 
 		{		
 		aFeedback = new FeedbackPanel("feedback");
@@ -278,20 +281,24 @@ public class EditProcessTrackingDetail extends WebPage
 						if (!StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateStarted()))
 							lCalStartDate.setTime(new Date(processTrackingDetailsDTO.getDateStarted()));
 						
+						// issue 273
 						if (processTrackingDetailsDTO.getStatus().equals("On hold")  &&  
 						    StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold()))
 						    {
-							String errMsg =  "<span style=\"color:red;\">" + "Please enter in an on hold date" +  "</span>";
-							EditProcessTrackingDetail.this.error(errMsg);
-							return;
+							Calendar dateToConvert = Calendar.getInstance();							
+							SimpleDateFormat sdfH = new SimpleDateFormat("MM/dd/yyyy");
+							String dateHoldString =   sdfH.format(dateToConvert.getTime());
+							processTrackingDetailsDTO.setDateOnHold(dateHoldString);
 						    }
+						// issue 273
 						if (processTrackingDetailsDTO.getStatus().equals("Completed")  &&  
-							    StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateCompleted()))
-							    {
-								String errMsg =  "<span style=\"color:red;\">" + "Please enter in a completed date" +  "</span>";
-								EditProcessTrackingDetail.this.error(errMsg);
-								return;
-							    }
+						    StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateCompleted()))
+						    {
+							Calendar dateToConvert = Calendar.getInstance();
+							SimpleDateFormat sdfC = new SimpleDateFormat("MM/dd/yyyy");
+							String dateCompleteString =   sdfC.format(dateToConvert.getTime());
+							processTrackingDetailsDTO.setDateCompleted(dateCompleteString);
+						    }
 						if (!StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateCompleted()) && 
 							//	processTrackingDetailsDTO.getDateOnHold().compareTo(processTrackingDetailsDTO.getDateCompleted()) > 0  )
 								!StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold()) &&

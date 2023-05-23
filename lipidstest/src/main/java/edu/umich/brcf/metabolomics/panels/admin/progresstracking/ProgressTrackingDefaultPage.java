@@ -11,9 +11,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -26,7 +23,6 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -824,11 +820,11 @@ public class ProgressTrackingDefaultPage extends WebPage
 			List <ProcessTrackingDetailsDTO> theDtoList = new ArrayList <ProcessTrackingDetailsDTO> ();
 			index = 0;
 			int ii = 0;
-			int iDate = 0;
+			int idxx = 0;
 			int totalDaysExpectedToSpan = 0;
 			for ( TextField tf : taskDescTextFieldList)
 				{
-				iDate ++ ;
+				idxx ++ ;
 				ProcessTrackingDTO processTrackingDTO = new ProcessTrackingDTO();
 				processTrackingDTO.setTaskDesc(tf.getDefaultModelObjectAsString());
 				ProcessTracking pt;
@@ -859,7 +855,11 @@ public class ProgressTrackingDefaultPage extends WebPage
 				lilProcessTrackingDetailsDTO.setWfID(workflowDD.getDefaultModelObjectAsString());
 				lilProcessTrackingDetailsDTO.setAssayID(StringParser.parseId(assayDescDD.getDefaultModelObjectAsString()));
 				lilProcessTrackingDetailsDTO.setComments(commentTextAreaList.get(index).getDefaultModelObjectAsString());
-				lilProcessTrackingDetailsDTO.setStatus("In queue");
+				//// issue 273
+				if (idxx == 1)
+					lilProcessTrackingDetailsDTO.setStatus("In progress");
+				else 
+					lilProcessTrackingDetailsDTO.setStatus("In queue");
 				totalDaysExpectedToSpan = totalDaysExpectedToSpan + Integer.parseInt(daysExpectedDDLList.get(index).getDefaultModelObjectAsString());
 				theDtoList.add(lilProcessTrackingDetailsDTO);
 				

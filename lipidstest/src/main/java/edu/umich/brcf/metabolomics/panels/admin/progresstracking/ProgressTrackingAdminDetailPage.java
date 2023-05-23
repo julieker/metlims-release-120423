@@ -27,6 +27,8 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import com.mysql.jdbc.StringUtils;
+
 import edu.umich.brcf.metabolomics.layers.domain.Compound;
 import edu.umich.brcf.metabolomics.layers.service.CompoundService;
 import edu.umich.brcf.metabolomics.layers.service.InventoryService;
@@ -104,10 +106,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
         modal2.setInitialHeight(600);
         modal2.setWidthUnit("em");
         modal2.setHeightUnit("em"); 
-       //////// add(buildLinkToEditTracking("addTrackingAdmin", null,modal2));
       
-        ///////////////////////////////////////////////////////
-        
      // issue 262
     	  confirmBehavior = new 
     	        AbstractDefaultAjaxBehavior() 
@@ -127,8 +126,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
     				     } 
     				 }; 
         
-        add (confirmBehavior);
-        
+        add (confirmBehavior);       
     	add(new AjaxCheckBox("onHold", new PropertyModel<Boolean>(this, "onHold"))
 			{
 			public void onUpdate(AjaxRequestTarget target)
@@ -159,9 +157,6 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 			}
 		}); 	
      	
-     	
-///////////////////////////////////////////////////
-    	
 		add(new AjaxCheckBox("completed", new PropertyModel<Boolean>(this, "completed"))
 			{
 			public void onUpdate(AjaxRequestTarget target)
@@ -177,20 +172,12 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 			;			
 		userNamesDD.setOutputMarkupId(true);
 		add(userNamesDD);
-		userNamesDD.setChoices(userService.allAdminNames(false));	
-		
+		userNamesDD.setChoices(userService.allAdminNames(false));			
 		userNamesDD.add(buildStandardFormComponentUpdateBehavior("change", "updateUser"));
-
-		add(experimentDD = buildExperimentDropDown("experimentDropDown"));
-		
-		
+		add(experimentDD = buildExperimentDropDown("experimentDropDown"));		
 		 add(assayDescDD = buildAssayDescDropDown("assayDescDropDown"));
 		experimentDD.add(buildStandardFormComponentUpdateBehavior("change", "updateExperiment"));
 		assayDescDD.add(buildStandardFormComponentUpdateBehavior("change", "updateAssayDesc"));
-		
-		lnkResetAssignTo = buildResetAssignToSearch("resetAssignedTo");
-		
-        add (lnkResetAssignTo );
       
         modal2.setWindowClosedCallback(new ModalWindow.WindowClosedCallback()
         	{
@@ -216,15 +203,13 @@ public class ProgressTrackingAdminDetailPage extends WebPage
     	
     	add ( listViewWF = new ListView ("wfDetail", new PropertyModel (this , "wfDetail"))
     	    {
-    		//////////////////////////
-    	
+    		//////////////////////////   	
     		private AjaxLink buildLinkWF(final String linkID, Workflow wf) 
     		{
     		// issue 39
     		AjaxLink wfLink;
     		wfLink =  new AjaxLink <Void>(linkID)
-    			{	
-    		
+    			{	    		
     			@Override
     			public void onClick(AjaxRequestTarget target)
     				{				
@@ -282,8 +267,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    		// issue 39
 		    		AjaxLink expLink;
 		    		expLink =  new AjaxLink <Void>(linkID)
-		    			{	
-		    		
+		    			{			    		
 		    			@Override
 		    			public void onClick(AjaxRequestTarget target)
 		    				{				
@@ -305,9 +289,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    		}
 		        	
 					public void populateItem(final ListItem listItem) 
-						{
-						
-				
+						{				
 						//listItem.setEscapeModelStrings(false) ;
 						final ProcessTrackingDetails procTracDetails = (ProcessTrackingDetails) listItem.getModelObject();		
 					    if (procTracDetails.getStatus().equals("On hold"))
@@ -331,24 +313,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
     	        }
     		});
 		    }
-	
-	private AjaxLink <Void> buildResetAssignToSearch(final String id ) 
-		{
-		// issue 39
-		 AjaxLink lnk =  new AjaxLink <Void> (id)
-			{
-	
-			@Override
-			public void onClick(AjaxRequestTarget target)
-				{
-				assignedTo = "";	
-				target.add(progressTrackingAdminDetailPage);
-				}
-			};
-		return lnk;
-		} 
-	
-	
+			
 	// issue 94	
 	private AjaxLink buildLinkToEditTracking(final String id, final ProcessTrackingDetails ptd, final ModalWindow modal1 ) 
 		{
@@ -368,16 +333,12 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 			};
 		return lnk;
 		} 
-	
-	
-	
-	
+
 	private AjaxLink buildLinkToDeleteTracking(final String id, final ProcessTrackingDetails ptd, final ModalWindow modal1 ) 
 		{
 		// issue 39
 		 AjaxLink lnk =  new AjaxLink<Void> (id)
-			{
-		
+			{		
 			@Override
 			public void onClick(AjaxRequestTarget target)
 				{
@@ -431,16 +392,30 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    	{
 		    	List<String> newAliquotList = new ArrayList<String>();
 		    	switch (response)
-		        	{
-		    	   
+		        	{		    	   
 		    	    case "updateUser" : 
+		    	    	if (assignedTo.equals("All Users"))
+		    	    		assignedTo = "";
+		    	    	target.add(userNamesDD);
 		    	    	target.add(progressTrackingAdminDetailPage);
 		    	    	break;
 		    	    case "updateStatus" : 
 		    	    	target.add(progressTrackingAdminDetailPage);
 		    	    	break;
+		    	    	// issue 273
 		    	    case "updateExperiment" : 
-		    	    	assayDescDD.setChoices (processTrackingService.allAssayNamesForExpIdInTracking(expID, false));	
+		    	    	// issue 273
+		    	    	 if (expID.contentEquals("All Experiments"))
+		    	    		{	
+		    	    		expID = null;
+		    	    		target.add(experimentDD);
+		    	    		}
+		    	    	newAliquotList.add("Choose One");
+		    	    	newAliquotList.addAll(processTrackingService.allAssayNamesForExpIdInTracking(expID, false));
+		    	    	//assayDescDD.setChoices (processTrackingService.allAssayNamesForExpIdInTracking(expID, false));
+		    	    	assayDescDD.setChoices (newAliquotList);
+		    	    	assayDescID = " " ;
+		    	    	target.add(assayDescDD);
 		    	    	target.add(progressTrackingAdminDetailPage);
 		    	    	break;
 		    	    case "updateAssayDesc" :
@@ -452,20 +427,17 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    };
 		}
 	
-	
+	// issue 273
 	 public DropDownChoice buildExperimentDropDown(final String id)
 		{
-		
-		
-	
+		List <String> expList = new ArrayList <String> ();
+		expList.add("All Experiments");
+		expList.addAll(processTrackingService.loadAllAssignedExperiments());
 		experimentDD =  new DropDownChoice<String>(id, new PropertyModel(this, "expID" ), new ArrayList <String> ())
 				{				
-				};		
-	 	experimentDD.setChoices (processTrackingService.loadAllAssignedExperiments())	;	
-				
-				
-		return experimentDD;
-		
+				};							
+	    experimentDD.setChoices (expList)	;
+		return experimentDD;		
 		}
 	
 	    public String getExpID ()
@@ -479,23 +451,17 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 			}
 	    
 		 public DropDownChoice buildAssayDescDropDown(final String id)
-			{
-				
+			{				
 			assayDescDD =  new DropDownChoice<String>(id, new PropertyModel(this, "assayDescID" ), new ArrayList <String> ())
 					{				
 					};		
-					assayDescDD.setChoices (processTrackingService.allAssayNamesForExpIdInTracking(expID, false))	;	
-					
-					
-			return assayDescDD;
-			
-			}
-	 
+					assayDescDD.setChoices (processTrackingService.allAssayNamesForExpIdInTracking(expID, false))	;						
+			return assayDescDD;			
+			}	 
 		public String getAssignedTo() { return assignedTo; }
 		public void setAssignedTo (String e) { assignedTo = e; }
 		public String getStatus() { return status; }
-		public void setStatus (String e) { status = e; }
-		
+		public void setStatus (String e) { status = e; }		
 		public boolean getOnHold() { return onHold; }
 		public void setOnHold (boolean e) { onHold = e; }
 		public boolean getInProgress() { return inProgress; }

@@ -265,7 +265,11 @@ public abstract class AbstractGenericSampleFormUploadPage extends WebPage
 						lilProcessTrackingDetailsDTO.setWfID(theWorkFlowIDStr);
 						lilProcessTrackingDetailsDTO.setAssayID(iAssay[1].toString());
 						lilProcessTrackingDetailsDTO.setComments(" ");
-						lilProcessTrackingDetailsDTO.setStatus("In queue");
+						// issue 273
+						if (idx == 0)
+							lilProcessTrackingDetailsDTO.setStatus("In progress");
+						else
+							lilProcessTrackingDetailsDTO.setStatus("In queue");
 						totalDaysExpectedToSpan = totalDaysExpectedToSpan + Integer.parseInt(tobj[8].toString());
 						theDtoList.add(lilProcessTrackingDetailsDTO);	
 						idx++;

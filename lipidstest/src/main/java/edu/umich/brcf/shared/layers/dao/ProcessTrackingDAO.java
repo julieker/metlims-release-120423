@@ -207,14 +207,15 @@ public class ProcessTrackingDAO extends BaseDAO
 		List<ProcessTrackingDetails> ptdListWFOnHold = new ArrayList <ProcessTrackingDetails> ();
 		List<ProcessTrackingDetails> ptdList = new ArrayList <ProcessTrackingDetails> ();
 		ProcessTrackingDetails pd;
-		
+		// issue 273
 		if (allExpAssay )
 			{
-			ptdList =  getEntityManager().createQuery("from ProcessTrackingDetails pd  order by  workflow.wfDesc , experiment.expID, assay.assayId, detailOrder  ")
+			ptdList =  getEntityManager().createQuery("from ProcessTrackingDetails pd  order by   experiment.expID, assay.assayId, detailOrder  ")
 			.getResultList();
 			}
 		else if (StringUtils.isNullOrEmpty(expId) || StringUtils.isNullOrEmpty(assayDescId))
-			return ptdListWF;
+			//return ptdListWF;
+			 ptdList =  getEntityManager().createQuery("from ProcessTrackingDetails pd where pd.experiment.expID = ?1  order by experiment.expID, assay.assayId, detailOrder  ").setParameter(1,  expId).getResultList();
 		else 
 		    ptdList =  getEntityManager().createQuery("from ProcessTrackingDetails pd where pd.experiment.expID = ?1 and pd.assay.assayId= ?2 order by detailOrder  ").setParameter(1,  expId).setParameter(2, assayDescId)
 				.getResultList();
