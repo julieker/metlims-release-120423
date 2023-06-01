@@ -87,6 +87,9 @@ public class ProgressTrackingDefaultPage extends WebPage
 	// issue 210
 	@SpringBean
 	SystemConfigService systemConfigService;
+	boolean noAssay = false;
+	boolean noExp = false;
+	boolean noWf = false;
 	boolean gModifyDefault = false;
 	boolean isPlusPressed = false;
 	private List<String> availableDaysExpected = Arrays.asList(new String[] {  "1", "2", "3", "4", "5", "6", "7"});
@@ -258,14 +261,39 @@ public class ProgressTrackingDefaultPage extends WebPage
 	        add( new AjaxButton ("saveDefault")
 	    		{
 	        	@Override
+	        	// issue 279
 	    		public void onSubmit(AjaxRequestTarget target)
 	    			{ 
-	        		
+	        		if (StringUtils.isEmptyOrNull(expID))
+	        			{
+	        			target.appendJavaScript(StringUtils.makeAlertMessage("Please choose an experiment"));
+	        			noExp = true;
+	        			return;
+	        			}
+	        		if (StringUtils.isEmptyOrNull(assayDesc))
+	        			{
+	        			target.appendJavaScript(StringUtils.makeAlertMessage("Please choose an assay"));
+	        			noAssay = true;
+	        			return;
+	        			}
+	        		if (StringUtils.isEmptyOrNull(wfID))
+	        			{
+	        			target.appendJavaScript(StringUtils.makeAlertMessage("Please choose a workflow"));
+	        			noWf = true;
+	        			return;
+	        			}
 	        		if (processTrackingService.loadTasksAssignedForExpAndAssay(expID,StringParser.parseId(assayDesc )).size() > 0 )
 					    target.appendJavaScript("if (confirm(' You already have a workflow set up for this experiment and assay:"  + expID + " " + StringParser.parseId(assayDesc) + "" 
 							                           + " Are you sure you want to remove the existing workflow and create a new workflow?')) { " +  confirmBehavior.getCallbackScript() + " }"  );				        		
-	        		else 
+	        		else
+	        			{
+	        		   	itemIndex = 0;
+		    	    	indexUserDDLista = 0;      
+		    	    	indexUserDDList  = 0;
+	        			resetPlusComponents();
+	        			target.add(progressTrackingDefaultPage);
 	        			saveTheDefault (target, gModifyDefault) ;
+	        			}
 	    			}
 	    			
 	    		});	
@@ -766,6 +794,7 @@ public class ProgressTrackingDefaultPage extends WebPage
 				};
 				
 			expDD.setChoices(experimentService.expIdsByInceptionDate());
+		//	expDD.setRequired(true);
 			return expDD;
 			}
 		
@@ -790,7 +819,9 @@ public class ProgressTrackingDefaultPage extends WebPage
 					};		
 		 	assayDescDD.setChoices (assayService.allAssayNamesForExpId(expID, false))	;	
 					
-					
+		//	assayDescDD.setRequired(true);
+		 	
+		 	assayDescDD.add(buildStandardFormComponentUpdateBehavior("change", "updateAssay", null, null));
 			return assayDescDD;
 			
 			}
@@ -889,18 +920,22 @@ public class ProgressTrackingDefaultPage extends WebPage
 			    	    	processTrackingDTOMap.put(taskDesc, processTrackingDetailsDTO);
 			    	    	break;
 			    	    case "updateExperiment" :
+			    	    	
 			    	    	assayDescDD.setChoices (assayService.allAssayNamesForExpId(expID, false))	;
 			    	    	indexUserDDList = 0;
 						  	indexUserDDLista = 0;
 						  	itemIndex = 0;
 						  	////// issue 210 resetting.....
-						  	resetPlusComponents();
+						  	resetPlusComponents();     
 			    	    	target.add(progressTrackingDefaultPage);
 			    	    	break;	
-			    	    case "updateAssay" :
+			    	   // issue 279 	
+			    	    case "updateAssay" :  
 			    	      	////// issue 210 resetting.....
-						  	resetPlusComponents();
-			    	        break;
+			    	    	itemIndex = 0;
+			    	    	indexUserDDLista = 0;      
+			    	    	indexUserDDList  = 0;
+			    	    	break;  
 			    	    case "updateWorkFlow" :
     		    	    	List<Object[]> nList = processTrackingService.loadAllDefaultTasksAssigned(wfID);
     		    	    	addedTasks = new ArrayList <ProcessTrackingDetailsDTO> ();
@@ -908,7 +943,7 @@ public class ProgressTrackingDefaultPage extends WebPage
     					  	indexUserDDLista = 0;
     					  	itemIndex = 0;
     					  	////// issue 210 resetting.....
-						  	resetPlusComponents();
+    					  	resetPlusComponents();
     		    	    	for (Object [] lObj : nList)
         						{
         						ProcessTrackingDetailsDTO ptd = new ProcessTrackingDetailsDTO();
@@ -919,8 +954,7 @@ public class ProgressTrackingDefaultPage extends WebPage
         						addedTasks.add(ptd);
         						}
     		    	    	target.add(progressTrackingDefaultPage);
-			    	    	target.add(progressTrackingDefaultPage);
-			    	    	break	;
+			    	    	break	; 
 			    	    case "updateUser" :    	
 			    	    	processTrackingDetailsDTO.setAssignedTo(assignedToString);
 			    	    	processTrackingDTOMap.put(taskDesc, processTrackingDetailsDTO);
@@ -1073,24 +1107,43 @@ public class ProgressTrackingDefaultPage extends WebPage
 			}
 		
 		   public void saveTheDefault (AjaxRequestTarget target, boolean modifyDefault)
-	        {
-			   List <ProcessTrackingDetailsDTO> listDto2 = progressTrackingDefaultForm.createDTOAddedArray();
-       		processTrackingService.deleteTracking(listDto2.get(0).getExpID(), listDto2.get(0).getAssayID());
-       		String err = progressTrackingDefaultForm.errcheck(listDto2);
-       		if  (!StringUtils.isEmptyOrNull(err))
-       			{
-       			target.appendJavaScript(StringUtils.makeAlertMessage(err));
-       			return;
-       			}
+	           {
+			   noAssay= false;
+			   noWf = false;
+			   noExp = false;
+			   List <ProcessTrackingDetailsDTO> listDto2 = new ArrayList <ProcessTrackingDetailsDTO> ();
+			     		   
+       		   try
+	       		   {
+       			   listDto2 = progressTrackingDefaultForm.createDTOAddedArray(); 
+				   processTrackingService.deleteTracking(listDto2.get(0).getExpID(), listDto2.get(0).getAssayID());
+	       		   }
+       		   catch (Exception e)
+       		   	   {
+       			   e.printStackTrace();
+       		       }
+			   String err = progressTrackingDefaultForm.errcheck(listDto2);
+       		   if  (!StringUtils.isEmptyOrNull(err))
+       			  {
+       			  target.appendJavaScript(StringUtils.makeAlertMessage(err));
+       			  return;
+       			  }
        		int idxForOrder = 1;
        		// issue 262
     		for (ProcessTrackingDetailsDTO  lAddedTask : listDto2 )
     			{
     			lAddedTask.setDetailOrder(idxForOrder);
     			idxForOrder++;
-    			}      		
-       		processTrackingService.saveDefaultDTOs(listDto2, modifyDefault);
-       		List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("assigned_task_notification");
+    			}  
+    		try
+    			{
+    			processTrackingService.saveDefaultDTOs(listDto2, modifyDefault);
+    			}
+    		catch (Exception e)
+    			{
+    			e.printStackTrace();
+    			}
+    		List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("assigned_task_notification");
        		// issue 210	        		
    			String msg = "Workflow: " +  listDto2.get(0).getWfID() +  " saved for experiment: " + expID  +  ".";
    			target.appendJavaScript(StringUtils.makeAlertMessage(msg));
