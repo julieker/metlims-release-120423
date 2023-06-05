@@ -287,11 +287,11 @@ public class ProgressTrackingDefaultPage extends WebPage
 							                           + " Are you sure you want to remove the existing workflow and create a new workflow?')) { " +  confirmBehavior.getCallbackScript() + " }"  );				        		
 	        		else
 	        			{
-	        		   	itemIndex = 0;
-		    	    	indexUserDDLista = 0;      
-		    	    	indexUserDDList  = 0;
-	        			resetPlusComponents();
-	        			target.add(progressTrackingDefaultPage);
+	        		   //	itemIndex = 0;
+		    	    	//indexUserDDLista = 0;      
+		    	    	//indexUserDDList  = 0;
+	        			//resetPlusComponents();
+	        			//target.add(progressTrackingDefaultPage);
 	        			saveTheDefault (target, gModifyDefault) ;
 	        			}
 	    			}
