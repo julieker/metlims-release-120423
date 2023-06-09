@@ -247,7 +247,8 @@ public class ProgressTrackingAdminDetailPage extends WebPage
     		//////change 	if (!wf.getCollapse() && wf.getProcessTrackingDetailsList().size() >0 )
         	//////		expID =  wf.getProcessTrackingDetailsList().get(0).getExperiment().getExpID();
     			wfItem.add(new Label("eLabel", new Model(wf.getCollapse() ? expID : "")));
-    			wfItem.add(new Label("assignedDate", new Model(wf.getCollapse() ? processTrackingService.grabMinDateAssigned(wf.getWfID()) : "")));
+    			////// for issue 277
+    			wfItem.add(new Label("startDate", new Model(wf.getCollapse() ? processTrackingService.grabMinDateStarted(wf.getWfID()) : "")));
     			wfItem.add(new Label("onHoldStatus", new Model (wf.getCollapse()? processTrackingService.existsOnHold(wf.getWfID()) : "")));  
     			
     			wfItem.add(buildLinkWF("wfLink", wf));
@@ -298,8 +299,6 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 						final Project withDocs = projectService.loadById(procTracDetails.getExperiment().getProject().getProjectID());
 						listItem.add(buildLinkExp("eLink", modal2, withDocs, procTracDetails.getExperiment().getExpID()));
 						listItem.add(new Label("taskdescription", new Model(procTracDetails.getProcessTracking().getTaskDesc())));
-						//listItem.add(new Label("dateassigned", new Model(procTracDetails.getDateStarted()))); // issue 118
-						listItem.add(new Label("dateAssigned", new Model( procTracDetails.convertToDateString( procTracDetails.getDateAssigned() ))));     
 						listItem.add(new Label("dateStarted", new Model( procTracDetails.convertToDateString( procTracDetails.getDateStarted() ))));
 						listItem.add(new Label("assignedto", new Model( procTracDetails.getAssignedTo().getFullName())));
 						//listItem.add(new Label("datecompleted", new Model(procTracDetails.convertToCreateDateString(procTracDetails.getDateCompleted())));				

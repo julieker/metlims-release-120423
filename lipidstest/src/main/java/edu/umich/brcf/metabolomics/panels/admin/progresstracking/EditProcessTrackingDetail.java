@@ -190,6 +190,12 @@ public class EditProcessTrackingDetail extends WebPage
 			METWorksAjaxUpdatingDateTextField dateFldStarted =  new METWorksAjaxUpdatingDateTextField("dateStarted", new PropertyModel<String>(processTrackingDetailsDTO, "dateStarted"), "dateStarted")
 				{
 				@Override
+			    public boolean isEnabled()
+			    	{
+			    	return false;
+			    	}
+			   
+				@Override
 				protected void onUpdate(AjaxRequestTarget target)  
 			        { 
 			        }
@@ -207,21 +213,7 @@ public class EditProcessTrackingDetail extends WebPage
 				};		
 			dateFldOnHold.setDefaultStringFormat(ProcessTracking.ProcessTracking_DATE_FORMAT);
 			add(dateFldOnHold);
-		
-			METWorksAjaxUpdatingDateTextField dateFldAssigned =  new METWorksAjaxUpdatingDateTextField("dateAssigned", new PropertyModel<String>(processTrackingDetailsDTO, "dateAssigned"), "dateAssigned")
-				{
-				@Override
-				protected void onUpdate(AjaxRequestTarget target)  
-			        { 
-			        }
-			    public boolean isEnabled()
-			    	{
-			    	return (userService.isAccountAdmin(((MedWorksSession) Session.get()).getCurrentUserId()));
-			    	}					
-				};		
-			dateFldAssigned.setDefaultStringFormat(ProcessTracking.ProcessTracking_DATE_FORMAT);
-			add(dateFldAssigned);
-			dateFldAssigned.setRequired(true);			
+			// issue 277		
 			userNamesDD= new DropDownChoice("assignedTo",    userNamesChoices)
 			    {
 				
@@ -350,8 +342,11 @@ public class EditProcessTrackingDetail extends WebPage
 						gPtd = ptd;
 						int diffDaysExp = Integer.parseInt(ptd.getDaysExpected())- Integer.parseInt(originalDaysExpStr);
 						if (diffDaysExp != 0)
-						    moveDependentTasks(ptd, diffDaysExp);	
-						amountToMove = diffDaysExp;
+							{
+						   // moveDependentTasks(ptd, diffDaysExp);							
+							amountToMove = diffDaysExp;
+							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder());
+							}
 						if ((originalCompletedDate == null && ptd.getDateOnHold() == null && ptd.getDateCompleted() != null) ||  ( ptd.getDateCompleted() != null && ptd.getDateOnHold() == null ))
 							{
 							originalCompletingDate.add(Calendar.DAY_OF_MONTH, Integer.parseInt(originalDaysExpStr));							
@@ -360,31 +355,34 @@ public class EditProcessTrackingDetail extends WebPage
 								dayCompletedToAdd = ChronoUnit.DAYS.between(originalCompletingDate.toInstant(),ptd.getDateCompleted().toInstant());
 								if (ptd.getDateCompleted() != null && ptd.getDateStarted()!= null && ptd.getDateCompleted().compareTo(ptd.getDateStarted()) == 0)
 									{   
-									moveDependentTasks(ptd, 0);
+									//moveDependentTasks(ptd, 0);									
 									amountToMove = 0;
+									processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder());
 									}
 								else
 									{
-									moveDependentTasks(ptd, (int) dayCompletedToAdd * ptd.getDateCompleted().compareTo(originalCompletingDate));								
+									//moveDependentTasks(ptd, (int) dayCompletedToAdd * ptd.getDateCompleted().compareTo(originalCompletingDate));								
 									amountToMove = (int) dayCompletedToAdd * ptd.getDateCompleted().compareTo(originalCompletingDate);
+									processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder());
 									}
-									// issue 269
-											
+									// issue 269									
 								}
 							else
 								{
 								dayCompletedToAdd = ChronoUnit.DAYS.between(originalCompletedDate.toInstant(),ptd.getDateCompleted().toInstant());
-								moveDependentTasks(ptd, (int) dayCompletedToAdd);
+								//moveDependentTasks(ptd, (int) dayCompletedToAdd);
 								amountToMove = (int) dayCompletedToAdd;
+								processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder());
 								}							
 							}
 						
 						if (ptd.getDateOnHold() != null && ptd.getDateCompleted() == null && originalOnHoldDate == null)
 							{
 							dayOnHoldToAdd = ChronoUnit.DAYS.between(ptd.getDateStarted().toInstant(),ptd.getDateOnHold().toInstant());
-							moveDependentTasks(ptd, (int) dayOnHoldToAdd -1);
+							//moveDependentTasks(ptd, (int) dayOnHoldToAdd -1);
 							amountToMove =(int) dayOnHoldToAdd -1;
-							amountToMove = (int) dayOnHoldToAdd -1;
+							//amountToMove = (int) dayOnHoldToAdd -1;
+							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder());
 							}
 						
 						if (ptd.getDateOnHold() != null && ptd.getDateCompleted() == null && originalOnHoldDate != null)
@@ -392,22 +390,25 @@ public class EditProcessTrackingDetail extends WebPage
 							
 							//dayOnHoldToAdd = ChronoUnit.DAYS.between(ptd.getDateStarted().toInstant(),ptd.getDateOnHold().toInstant());
 							dayOnHoldToAdd = ChronoUnit.DAYS.between(originalOnHoldDate.toInstant(),ptd.getDateOnHold().toInstant());
-							 moveDependentTasks(ptd, (int) dayOnHoldToAdd );
+							// moveDependentTasks(ptd, (int) dayOnHoldToAdd );
 							amountToMove = (int) dayOnHoldToAdd -1;
+							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder());
 							}
 						
 						if (ptd.getDateOnHold() != null && ptd.getDateCompleted() != null && originalCompletedDate == null)
 							{
 							dayOnHoldToAdd = ChronoUnit.DAYS.between(ptd.getDateOnHold().toInstant(),ptd.getDateCompleted().toInstant());
-							 moveDependentTasks(ptd, (int) dayOnHoldToAdd );
+							// moveDependentTasks(ptd, (int) dayOnHoldToAdd );
 							amountToMove = (int) dayOnHoldToAdd -1;
+							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder());
 							} 
 						
 						if (ptd.getDateOnHold() != null && ptd.getDateCompleted() != null && originalCompletedDate != null)
 							{
 							dayOnHoldToAdd = ChronoUnit.DAYS.between(originalCompletedDate.toInstant(),ptd.getDateCompleted().toInstant());
-							 moveDependentTasks(ptd, (int) dayOnHoldToAdd );
+							 //moveDependentTasks(ptd, (int) dayOnHoldToAdd );
 							amountToMove = (int) dayOnHoldToAdd -1;
+							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder());
 							} 
 					
 						if (ptd.getJobid() != null && (processTrackingDetailsDTO.getJobID()== null || processTrackingDetailsDTO.getJobID().equals("to be assigned")))

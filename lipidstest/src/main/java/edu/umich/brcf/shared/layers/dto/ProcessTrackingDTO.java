@@ -37,18 +37,7 @@ public class ProcessTrackingDTO implements Serializable
 		return new ProcessTrackingDTO(processTracking.getTaskDesc(), processTracking.getProcessTrackingId());
 		}	
 	// issue 61 2020
-	
-	
-    private List <String> aliquotVolumeUnitList; // issue 196
-    private List<String> mixtureVolumeUnitList;  // issue 196
-    private List<Character> dryRetiredList; // issue 199
-    private String jobID;
     private String dateStarted;
-    private String dateCompleted;
-    private String dateAssigned;
-    private String trackingId;
-    private String assignedTo;
-    private String comments;
     private String taskDescNew;
     private String taskID;
     

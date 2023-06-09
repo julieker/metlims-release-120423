@@ -76,20 +76,6 @@ public class DefaultTrackingTasks implements Serializable
 	 //issue 196
 		}
 	
-	/* public void update(DefaultTrackingTasksDTO processTrackingDetailsDto, User assignedToUser, Calendar dateCompleted)
-		{		
-		this.comments = processTrackingDetailsDto.getComments();
-		this.dateCompleted = (StringUtils.isEmptyOrNull(processTrackingDetailsDto.getDateCompleted()) ? null : CalendarUtils.calendarFromString(processTrackingDetailsDto.getDateCompleted(),ProcessTracking.ProcessTracking_DATE_FORMAT) );
-		this.dateStarted = (StringUtils.isEmptyOrNull(processTrackingDetailsDto.getDateStarted()) ? null : CalendarUtils.calendarFromString(processTrackingDetailsDto.getDateStarted(),ProcessTracking.ProcessTracking_DATE_FORMAT) );
-		this.assignedTo = assignedToUser;
-		this.dateAssigned = (StringUtils.isEmptyOrNull(processTrackingDetailsDto.getDateAssigned()) ? null : CalendarUtils.calendarFromString(processTrackingDetailsDto.getDateAssigned(),ProcessTracking.ProcessTracking_DATE_FORMAT) );	
-		this.status = processTrackingDetailsDto.getStatus();
-		this.daysExpected = processTrackingDetailsDto.getDaysExpected();
-		this.detailOrder = processTrackingDetailsDto.getDetailOrder();
-		this.dateOnHold = (StringUtils.isEmptyOrNull(processTrackingDetailsDto.getDateOnHold()) ? null : CalendarUtils.calendarFromString(processTrackingDetailsDto.getDateOnHold(),ProcessTracking.ProcessTracking_DATE_FORMAT) );
-		} */
-
-	
 	public String getDefaultTaskId()
 		{
 		return defaultTaskId;

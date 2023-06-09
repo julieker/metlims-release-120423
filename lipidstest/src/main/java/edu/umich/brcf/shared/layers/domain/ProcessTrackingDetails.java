@@ -43,10 +43,10 @@ public class ProcessTrackingDetails implements Serializable
 	private Experiment experiment;
 	
 	
-	public static ProcessTrackingDetails instance( String jobid, ProcessTracking processTracking, Calendar dateStarted, Calendar dateCompleted, String comments,  User assignedTo, Calendar dateAssigned, Experiment experiment, Workflow workflow, String status, Assay assay, String daysExpected, Integer detailOrder , Calendar dateOnHold) 
+	public static ProcessTrackingDetails instance( String jobid, ProcessTracking processTracking, Calendar dateStarted, Calendar dateCompleted, String comments,  User assignedTo,  Experiment experiment, Workflow workflow, String status, Assay assay, String daysExpected, Integer detailOrder , Calendar dateOnHold) 
 		{
 		//System.out.println("here is days expected:" + daysExpected);
-		return new ProcessTrackingDetails(jobid,  processTracking,  dateStarted,  dateCompleted,  comments,  assignedTo, dateAssigned, experiment, workflow, status, assay, daysExpected, detailOrder, dateOnHold);
+		return new ProcessTrackingDetails(jobid,  processTracking,  dateStarted,  dateCompleted,  comments,  assignedTo, experiment, workflow, status, assay, daysExpected, detailOrder, dateOnHold);
 		}
 
 	@Id()
@@ -87,9 +87,7 @@ public class ProcessTrackingDetails implements Serializable
 	@Column(name = "DAYS_EXPECTED", nullable = true, columnDefinition = "VARCHAR2(5)")
 	private String daysExpected;
 	
-	@Basic()
-	@Column(name = "DATE_ASSIGNED", nullable = true)
-	private Calendar dateAssigned ;
+
 	@Basic()
 	@Column(name = "COMMENTS", nullable = true)
 	private String comments;
@@ -109,15 +107,14 @@ public class ProcessTrackingDetails implements Serializable
 	
 	public ProcessTrackingDetails() {  }
 	
-	private ProcessTrackingDetails(String jobid, ProcessTracking processTracking, Calendar dateStarted, Calendar dateCompleted, String comments,  User assignedTo, Calendar dateAssigned, Experiment experiment, Workflow workflow, String status, Assay assay, String daysExpected, Integer detailOrder, Calendar dateOnHold)
+	private ProcessTrackingDetails(String jobid, ProcessTracking processTracking, Calendar dateStarted, Calendar dateCompleted, String comments,  User assignedTo,  Experiment experiment, Workflow workflow, String status, Assay assay, String daysExpected, Integer detailOrder, Calendar dateOnHold)
 		{
 		this.jobid = jobid;
 		this.processTracking = processTracking;
 		this.dateStarted = dateStarted;
 		this.dateCompleted = dateCompleted;
 		this.comments = comments;
-		this.assignedTo = assignedTo;
-		this.dateAssigned = dateAssigned;	
+		this.assignedTo = assignedTo;	
 		this.experiment = experiment;
 		this.workflow = workflow;
 		this.status = status;
@@ -134,8 +131,7 @@ public class ProcessTrackingDetails implements Serializable
 		this.comments = processTrackingDetailsDto.getComments();
 		this.dateCompleted = (StringUtils.isEmptyOrNull(processTrackingDetailsDto.getDateCompleted()) ? null : CalendarUtils.calendarFromString(processTrackingDetailsDto.getDateCompleted(),ProcessTracking.ProcessTracking_DATE_FORMAT) );
 		this.dateStarted = (StringUtils.isEmptyOrNull(processTrackingDetailsDto.getDateStarted()) ? null : CalendarUtils.calendarFromString(processTrackingDetailsDto.getDateStarted(),ProcessTracking.ProcessTracking_DATE_FORMAT) );
-		this.assignedTo = assignedToUser;
-		this.dateAssigned = (StringUtils.isEmptyOrNull(processTrackingDetailsDto.getDateAssigned()) ? null : CalendarUtils.calendarFromString(processTrackingDetailsDto.getDateAssigned(),ProcessTracking.ProcessTracking_DATE_FORMAT) );	
+		this.assignedTo = assignedToUser;	
 		this.status = processTrackingDetailsDto.getStatus();
 		this.daysExpected = processTrackingDetailsDto.getDaysExpected();
 		this.detailOrder = processTrackingDetailsDto.getDetailOrder();
@@ -203,17 +199,7 @@ public class ProcessTrackingDetails implements Serializable
 		this.dateOnHold = dateOnHold;
 		}
 	///////////////////////////
-	
-	public Calendar getDateAssigned()
-		{
-		return dateAssigned;
-		}
-
-	public void setDateAssigned(Calendar dateAssigned)
-		{
-		this.dateAssigned = dateAssigned;
-		}
-	
+		
 	public Calendar getDateCompleted()
 		{
 		return dateCompleted;

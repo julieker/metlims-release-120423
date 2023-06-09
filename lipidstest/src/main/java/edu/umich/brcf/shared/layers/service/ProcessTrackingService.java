@@ -79,9 +79,9 @@ public class ProcessTrackingService
 		return processTrackingDao.grabSampleType(wfID, expID);
 		}
 	
-	public String grabMinDateAssigned(String wfID)
+	public String grabMinDateStarted(String wfID)
 		{
-		return  processTrackingDao.grabMinDateAssigned(wfID);		
+		return  processTrackingDao.grabMinDateStarted(wfID);		
 		}
 	
 	public String existsOnHold(String wfID)
@@ -292,7 +292,10 @@ public class ProcessTrackingService
 		    if (pt.getDaysRequired() == null)
 		    	pt.setDaysRequired(1);
 			Experiment experiment = StringUtils.isEmptyOrNull(dto.getExpID()) ? null : experimentDao.loadById(dto.getExpID()) ;
-		    ProcessTrackingDetails ptd  = ProcessTrackingDetails.instance(dto.getJobID(), pt, dto.getDateStarted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateStarted()),  dto.getDateCompleted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateCompleted()), dto.getComments(),  user, DateUtils.calendarFromDateStr(dto.getDateAssigned()) , experiment, workflow, dto.getStatus(), a, dto.getDaysExpected() , dto.getDetailOrder(), dto.getDateOnHold() == null ? null : DateUtils.calendarFromDateStr(dto.getDateOnHold()));				
+		  //  ProcessTrackingDetails ptd  = ProcessTrackingDetails.instance(dto.getJobID(), pt, dto.getDateStarted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateStarted()),  dto.getDateCompleted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateCompleted()), dto.getComments(),  user, DateUtils.calendarFromDateStr(dto.getDateAssigned()) , experiment, workflow, dto.getStatus(), a, dto.getDaysExpected() , dto.getDetailOrder(), dto.getDateOnHold() == null ? null : DateUtils.calendarFromDateStr(dto.getDateOnHold()));	
+			// issue 277
+		//	ProcessTrackingDetails ptd  = ProcessTrackingDetails.instance(dto.getJobID(), pt, dto.getDateStarted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateStarted()),  dto.getDateCompleted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateCompleted()), dto.getComments(),  user, null , experiment, workflow, dto.getStatus(), a, dto.getDaysExpected() , dto.getDetailOrder(), dto.getDateOnHold() == null ? null : DateUtils.calendarFromDateStr(dto.getDateOnHold()));
+			ProcessTrackingDetails ptd  = ProcessTrackingDetails.instance(dto.getJobID(), pt, dto.getDateStarted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateStarted()),  dto.getDateCompleted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateCompleted()), dto.getComments(),  user,  experiment, workflow, dto.getStatus(), a, dto.getDaysExpected() , dto.getDetailOrder(), dto.getDateOnHold() == null ? null : DateUtils.calendarFromDateStr(dto.getDateOnHold()));
 			if (dto.getJobID() == null || dto.getJobID().equals("to be assigned"))
 				{
 				processTrackingDao.createProcessTracking(ptd);
@@ -382,4 +385,23 @@ public class ProcessTrackingService
 		{
 		 return processTrackingDao.listExpAssayForUser(email);
 		}
+	 
+	 public void doMoveAhead(String wfID, String expID, String assayId, int increment, int trackingorder)
+	 	{
+		 processTrackingDao.doMoveAhead (wfID, expID, assayId, increment, trackingorder) ;
+	 	}
+	 
+	 // issue 277
+	 public String  grabNumberOfSamplesForEmail (String expID)
+		{
+		return processTrackingDao.grabNumberOfSamplesForEmail(expID) ;
+		}
+	 
+	 // issue 277
+	 public String  grabSampleTypeForEmail (String expID)
+	 	{
+		return processTrackingDao.grabSampleTypeForEmail(expID);
+	 	}
+	 
+	
     }

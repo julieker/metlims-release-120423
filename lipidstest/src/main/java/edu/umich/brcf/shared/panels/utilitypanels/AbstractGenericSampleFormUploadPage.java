@@ -248,7 +248,7 @@ public abstract class AbstractGenericSampleFormUploadPage extends WebPage
 						{
 						ProcessTrackingDetailsDTO lilProcessTrackingDetailsDTO = new ProcessTrackingDetailsDTO();
 						lilProcessTrackingDetailsDTO.setTaskDesc(tobj[1].toString());
-						lilProcessTrackingDetailsDTO.setDateAssigned(tobj[2].toString());
+						// issue 277 get rid of date assigned
 						lilProcessTrackingDetailsDTO.setAssignedTo(tobj[6].toString());						
 						lilProcessTrackingDetailsDTO.setExpID(exp.getExpID());
 						lilProcessTrackingDetailsDTO.setAssayID(iAssay[1].toString());

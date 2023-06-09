@@ -139,7 +139,12 @@ th:first-child div{
 		   	          <select wicket:id = "assayDescDropDown" style = "margin-left : 15px; width : 100px;" ></select> &nbsp;&nbsp;&nbsp;
 		   	         <select wicket:id = "wfDropDown" style = "margin-left : 15px; width : 100px;" ></select> &nbsp;&nbsp;&nbsp;
 		   	 
+		   	         <span>  Workflow Start Date:</span>
+		  		     <td><input wicket:id="dateStarted" type="text" value="date"  size="20"></td>
+		  
+		   	 
 		   	     	<input wicket:id="close" type="button" style = "margin-left : 15px; width : 100px;"  value="Close"/>
+		   	     	
 		  	
 		   	     	<input wicket:id="saveDefault" type="button" style = "margin-left : 15px; width : 100px;"  value="Save Workflow"/>
            
@@ -164,8 +169,8 @@ th:first-child div{
           
           
           <th>
-            Date Assigned
-            <div>Date Assigned</div>
+            Date Started
+            <div>Date Started</div>
           </th>
           
           <th>
@@ -248,7 +253,7 @@ th:first-child div{
            <input wicket:id="saveTaskDesc" type="submit" style = "margin-left : 15px; width : 100px;"  value="Done"/>   
           -->
           </td>
-         <td> <input wicket:id="dateAssignedda" type="text" value="date"  size="10">  </td>
+         <td> <input wicket:id="dateStarteda" type="text" value="date"  size="10">  </td>
 		 <td><select wicket:id = "daysExpected">Huckleberry Finn</select></td>
           <td><select wicket:id = "assignedToa">Huckleberry Finn</select></td>
            
@@ -276,27 +281,7 @@ th:first-child div{
          
         </tr>
       
-        <tr wicket:id = "trackingDetail" >
-        <td></td>
-          <td><span wicket:id = "taskdescription">Huckleberry Finn</span></td>
-         <td> <input wicket:id="dateAssignedd" type="text" value="date"  size="20">  </td>
-		 
-          <td><select wicket:id = "assignedTo">Huckleberry Finn</select></td>
-         
-           <td><textarea wicket:id = "comments" style = "overflow: scroll; width : 100%;  height : 90px" cols = "40" rows = "7" ></textarea>
-             </td>
-           <!--  
-           <td> <a wicket:id = "editTrackingAdmin" href="#">edit</a> </td>
-           -->
-           
-         <td>
-         </td>
-         <td>
-         </td>
-         
-         
-         
-        </tr>
+      
       </tbody>
     </table>
     

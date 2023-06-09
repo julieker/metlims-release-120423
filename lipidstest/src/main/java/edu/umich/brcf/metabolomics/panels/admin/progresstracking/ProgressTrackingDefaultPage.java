@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +119,7 @@ public class ProgressTrackingDefaultPage extends WebPage
 	// issue 118
 	;
 	ProgressTrackingDefaultPage progressTrackingDefaultPage = this;
-	
+	int gTotalDaysExpectedToSpan = 0;
 	List<String> userNamesChoices = new ArrayList<String>();
 	List<String> wfChoices = new ArrayList<String>();
 	
@@ -133,14 +134,12 @@ public class ProgressTrackingDefaultPage extends WebPage
     List <DropDownChoice> userDDList = new ArrayList <DropDownChoice> ();
     
     List <DropDownChoice> tUserDDList = new ArrayList <DropDownChoice> ();
-   
-    List <METWorksAjaxUpdatingDateTextField> dateAssignedList = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
-    List <METWorksAjaxUpdatingDateTextField> tDateAssignedList = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
+  
     List <DropDownChoice> daysExpectedDDLList = new ArrayList <DropDownChoice> ();
     List <DropDownChoice> userDDListadd = new ArrayList <DropDownChoice> ();
     List <DropDownChoice> tuserDDListadd = new ArrayList <DropDownChoice> ();
-    List <METWorksAjaxUpdatingDateTextField> dateAssignedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
-    List <METWorksAjaxUpdatingDateTextField> orgDateAssignedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
+    List <METWorksAjaxUpdatingDateTextField> dateStartedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
+    List <METWorksAjaxUpdatingDateTextField> orgDateStartedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
     List <DropDownChoice> orgdaysExpectedDDList = new ArrayList <DropDownChoice> ();
     List <TextField> taskDescTextFieldList = new ArrayList <TextField> ();
     List <TextField> orgTaskDescTextFieldList = new ArrayList <TextField> ();
@@ -156,6 +155,7 @@ public class ProgressTrackingDefaultPage extends WebPage
     List <String>  listOfTasks = new ArrayList <String> ();
 	Calendar dDateStarted;
 	ProgressTrackingDefaultForm progressTrackingDefaultForm;
+	METWorksAjaxUpdatingDateTextField dateFldStarted;
 	
 	 @Override
 	 public void renderHead( IHeaderResponse response)
@@ -221,18 +221,30 @@ public class ProgressTrackingDefaultPage extends WebPage
 						        } 
 						     } 
 						 }; 
-			
-			
-			
+
+			// issue 277
+		    dateFldStarted =  new METWorksAjaxUpdatingDateTextField("dateStarted", new PropertyModel<String>(processTrackingDetailsDTO, "dateStarted"), "dateStarted")
+				{			   
+				@Override
+				protected void onUpdate(AjaxRequestTarget target)  
+			        { 
+			        }
+				};
+			Calendar wfCurrentDate = Calendar.getInstance();
+			SimpleDateFormat sdfi = new SimpleDateFormat("MM/dd/yyyy");
+			String dateWfStartString =   sdfi.format(wfCurrentDate.getTime());			 
+			dateFldStarted.setDefaultStringFormat(ProcessTracking.ProcessTracking_DATE_FORMAT);
+			dateFldStarted.setDefaultModelObject(dateWfStartString);
+			dateFldStarted.setRequired(true);			
+			add(dateFldStarted);
+			dateFldStarted.add(buildStandardFormComponentUpdateBehavior("change", "updateWFDate", null, null));
 			add (confirmBehavior);
 			////////////////
 			itemIndex = 0;
 			aFeedback = new FeedbackPanel("feedback");
 			aFeedback.setEscapeModelStrings(false);		
 			add(aFeedback);	
-			processTrackingDTOAddedTasksMap = new HashMap<Integer, ProcessTrackingDetailsDTO>();
-	
-			
+			processTrackingDTOAddedTasksMap = new HashMap<Integer, ProcessTrackingDetailsDTO>();			
 			modal2.setInitialWidth(1500);
 	        modal2.setInitialHeight(600);
 	        modal2.setWidthUnit("em");
@@ -258,45 +270,47 @@ public class ProgressTrackingDefaultPage extends WebPage
 	        	}); 
 	        add(modal2);
 	         
+	        
 	        add( new AjaxButton ("saveDefault")
-	    		{
-	        	@Override
-	        	// issue 279
-	    		public void onSubmit(AjaxRequestTarget target)
-	    			{ 
-	        		if (StringUtils.isEmptyOrNull(expID))
-	        			{
-	        			target.appendJavaScript(StringUtils.makeAlertMessage("Please choose an experiment"));
-	        			noExp = true;
-	        			return;
-	        			}
-	        		if (StringUtils.isEmptyOrNull(assayDesc))
-	        			{
-	        			target.appendJavaScript(StringUtils.makeAlertMessage("Please choose an assay"));
-	        			noAssay = true;
-	        			return;
-	        			}
-	        		if (StringUtils.isEmptyOrNull(wfID))
-	        			{
-	        			target.appendJavaScript(StringUtils.makeAlertMessage("Please choose a workflow"));
-	        			noWf = true;
-	        			return;
-	        			}
-	        		if (processTrackingService.loadTasksAssignedForExpAndAssay(expID,StringParser.parseId(assayDesc )).size() > 0 )
-					    target.appendJavaScript("if (confirm(' You already have a workflow set up for this experiment and assay:"  + expID + " " + StringParser.parseId(assayDesc) + "" 
-							                           + " Are you sure you want to remove the existing workflow and create a new workflow?')) { " +  confirmBehavior.getCallbackScript() + " }"  );				        		
-	        		else
-	        			{
-	        		   //	itemIndex = 0;
-		    	    	//indexUserDDLista = 0;      
-		    	    	//indexUserDDList  = 0;
-	        			//resetPlusComponents();
-	        			//target.add(progressTrackingDefaultPage);
-	        			saveTheDefault (target, gModifyDefault) ;
-	        			}
-	    			}
-	    			
-	    		});	
+    		{
+        	@Override
+        	// issue 279
+    		public void onSubmit(AjaxRequestTarget target)
+    			{ 
+        		if (StringUtils.isEmptyOrNull(expID))
+        			{
+        			target.appendJavaScript(StringUtils.makeAlertMessage("Please choose an experiment"));
+        			noExp = true;
+        			return;
+        			}
+        		if (StringUtils.isEmptyOrNull(assayDesc))
+        			{
+        			target.appendJavaScript(StringUtils.makeAlertMessage("Please choose an assay"));
+        			noAssay = true;
+        			return;
+        			}
+        		if (StringUtils.isEmptyOrNull(wfID))
+        			{
+        			target.appendJavaScript(StringUtils.makeAlertMessage("Please choose a workflow"));
+        			noWf = true;
+        			return;
+        			}
+        		if (processTrackingService.loadTasksAssignedForExpAndAssay(expID,StringParser.parseId(assayDesc )).size() > 0 )
+				    target.appendJavaScript("if (confirm(' You already have a workflow set up for this experiment and assay:"  + expID + " " + StringParser.parseId(assayDesc) + "" 
+						                           + " Are you sure you want to remove the existing workflow and create a new workflow?')) { " +  confirmBehavior.getCallbackScript() + " }"  );				        		
+        		else
+        			{
+        		   //	itemIndex = 0;
+	    	    	//indexUserDDLista = 0;      
+	    	    	//indexUserDDList  = 0;
+        			//resetPlusComponents();
+        			//target.add(progressTrackingDefaultPage);
+        			saveTheDefault (target, gModifyDefault) ;
+        			}
+    			}
+    			
+    		});	
+	        
 	        	        
 	    	add( new AjaxLink<Void>("close")
 			{
@@ -330,7 +344,7 @@ public class ProgressTrackingDefaultPage extends WebPage
 	        				tTaskDescTextFieldList.addAll(taskDescTextFieldList);
 	        				
 	        			   /******************************************/ 
-	        			    dateAssignedListadd.remove(indexx);
+	        			    dateStartedListadd.remove(indexx);
     						userDDListadd.remove(indexx);
     						tTaskDescTextFieldList.remove(indexx);
     						commentTextAreaList.remove(indexx);
@@ -348,14 +362,14 @@ public class ProgressTrackingDefaultPage extends WebPage
 	        				tuserDDListadd.addAll(userDDListadd);
 	        				orgTaskDescTextFieldList = new ArrayList <TextField> ();
 	        				orgTaskDescTextFieldList.addAll(taskDescTextFieldList);
-	        				orgDateAssignedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
-	        				orgDateAssignedListadd.addAll(dateAssignedListadd);
+	        				orgDateStartedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
+	        				orgDateStartedListadd.addAll(dateStartedListadd);
 	        				
 	        				indexUserDDList= 0;
 	        				indexUserDDLista= 0;
 	        				itemIndex = 0;
 	        				taskDescTextFieldList = new ArrayList <TextField> ();
-	        				dateAssignedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
+	        				dateStartedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
 	        				userDDListadd = new ArrayList <DropDownChoice> ();
 	        				commentTextAreaList  = new ArrayList <TextArea> ();
 	        					
@@ -389,7 +403,7 @@ public class ProgressTrackingDefaultPage extends WebPage
 			        						{
 			        						ProcessTrackingDetailsDTO ptd = new ProcessTrackingDetailsDTO();
 			        						ptd.setTaskDesc(lObj[1].toString());
-			        						ptd.setDateAssigned(lObj[2].toString());
+			        						ptd.setDateStarted(lObj[2].toString());
 			        						ptd.setAssignedTo(lObj[6].toString());
 			        						ptd.setDetailOrder(Integer.parseInt(lObj[8].toString()));
 			        						addedTasks.add(ptd);
@@ -423,7 +437,7 @@ public class ProgressTrackingDefaultPage extends WebPage
 						    		{	
 						    		ProcessTrackingDetailsDTO pd = addedTasks.get(index);
 						    		TextField tf = taskDescTextFieldList.get(index);
-						    		METWorksAjaxUpdatingDateTextField df = dateAssignedListadd.get(index);
+						    		METWorksAjaxUpdatingDateTextField df = dateStartedListadd.get(index);
 						    		DropDownChoice ua = userDDListadd.get(index);
 						    		TextArea cmt = commentTextAreaList.get(index);
 						    		Integer lDorder = addedTasks.get(index).getDetailOrder();
@@ -436,8 +450,8 @@ public class ProgressTrackingDefaultPage extends WebPage
 						    	    addedTasks.get(index-1).setDetailOrder(lDorderPrev);
 						    	    taskDescTextFieldList.set(index, taskDescTextFieldList.get(index-1));
 						    	    taskDescTextFieldList.set(index-1, tf);
-						    	    dateAssignedListadd.set(index,dateAssignedListadd.get(index-1));
-						    	    dateAssignedListadd.set(index-1,  df);
+						    	    dateStartedListadd.set(index,dateStartedListadd.get(index-1));
+						    	    dateStartedListadd.set(index-1,  df);
 						    	    userDDListadd.set(index,  userDDListadd.get(index-1) );
 						    	    userDDListadd.set(index-1, ua);
 						    	    commentTextAreaList.set(index,  commentTextAreaList.get(index-1) );
@@ -465,7 +479,7 @@ public class ProgressTrackingDefaultPage extends WebPage
     				    		{
     				    		ProcessTrackingDetailsDTO pd = addedTasks.get(index);
     				    		TextField tf = taskDescTextFieldList.get(index);
-    				    		METWorksAjaxUpdatingDateTextField df = dateAssignedListadd.get(index);
+    				    		METWorksAjaxUpdatingDateTextField df = dateStartedListadd.get(index);
     				    		DropDownChoice ua = userDDListadd.get(index);
     				    		TextArea cmt = commentTextAreaList.get(index);
     				    		Integer lDorder = addedTasks.get(index).getDetailOrder();
@@ -480,8 +494,8 @@ public class ProgressTrackingDefaultPage extends WebPage
     				    	    addedTasks.get(index+1).setDetailOrder(lDorderNext);    				    	    
     				    	    taskDescTextFieldList.set(index, taskDescTextFieldList.get(index+1));
     				    	    taskDescTextFieldList.set(index+1, tf);
-    				    	    dateAssignedListadd.set(index,dateAssignedListadd.get(index+1));
-    				    	    dateAssignedListadd.set(index+1,  df);
+    				    	    dateStartedListadd.set(index,dateStartedListadd.get(index+1));
+    				    	    dateStartedListadd.set(index+1,  df);
     				    	    userDDListadd.set(index,  userDDListadd.get(index+1) );
     				    	    userDDListadd.set(index+1, ua);
     				    	    commentTextAreaList.set(index,  commentTextAreaList.get(index+1) );
@@ -508,8 +522,7 @@ public class ProgressTrackingDefaultPage extends WebPage
 		    		}           	
 
 	    			public void populateItem(final ListItem listItem) 
-						{
-	    				  
+						{ 
 	    				listItem.add (buildDownArrow ("downArrow", itemIndex ));
 	    				listItem.add (buildUpArrow ("upArrow", itemIndex )); 
 	    				lProcessTrackingDetailsDTO = (ProcessTrackingDetailsDTO) listItem.getModelObject();		
@@ -519,11 +532,12 @@ public class ProgressTrackingDefaultPage extends WebPage
 	    						{
 	    					
 	    						});
+	    				
 	    				taskDescTxt.setDefaultModelObject(addedTasks.get(itemIndex).getTaskDesc())	;	
 	    				listItem.add(taskDescTxt);		
 	    				taskDescTextFieldList.add(taskDescTxt);
 	    				listItem.add(buildDeleteButton("deleteButton", indexUserDDLista, lProcessTrackingDetailsDTO));
-	    				METWorksAjaxUpdatingDateTextField dateFldAssigned =  new METWorksAjaxUpdatingDateTextField("dateAssignedda", new PropertyModel<String>(lpDTO, "dateAssigned"), "dateAssignedda")
+	    				METWorksAjaxUpdatingDateTextField ldateFldStarted =  new METWorksAjaxUpdatingDateTextField("dateStarteda", new PropertyModel<String>(lpDTO, "dateStarted"), "dateStarteda")
 		    				{
 		    				@Override
 		    				protected void onUpdate(AjaxRequestTarget target)  
@@ -536,23 +550,24 @@ public class ProgressTrackingDefaultPage extends WebPage
 		    						
 		    				};		
 						
-	    				dateFldAssigned.setDefaultStringFormat(ProcessTracking.ProcessTracking_DATE_FORMAT);
-	    				dateFldAssigned.add(buildStandardFormComponentUpdateBehavior("change", "updateProcessTrackingDTOMapaa", lProcessTrackingDetailsDTO.getTaskDesc(), null, lProcessTrackingDetailsDTO, itemIndex));
-	    				dateFldAssigned.setDefaultModelObject(addedTasks.get(itemIndex).getDateAssigned());
-	    				//dateFldAssigned.setRequired(true); 
-	    				Calendar dateToConvert = Calendar.getInstance();
+		    				// issue 277
+	    				ldateFldStarted.setDefaultStringFormat(ProcessTracking.ProcessTracking_DATE_FORMAT);
+	    				ldateFldStarted.add(buildStandardFormComponentUpdateBehavior("change", "updateProcessTrackingDTOMapaa", lProcessTrackingDetailsDTO.getTaskDesc(), null, lProcessTrackingDetailsDTO, itemIndex));
+	    				// issue 277
+	    				//ldateFldStarted.setDefaultModelObject(dateFldStarted.getDefaultModelObjectAsString());
+	    				//dateFldAssigned.setRequired(true); 	    				
+	    				Calendar dDateStarted = Calendar.getInstance();
+	    				dDateStarted.setTime(new Date (dateFldStarted.getDefaultModelObjectAsString()));
+	    				dDateStarted.add(Calendar.DAY_OF_MONTH, gTotalDaysExpectedToSpan);
 	    				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-	    				processTrackingDetailsDTO.setDateAssigned ( dateToConvert == null ? "" : sdf.format(dateToConvert.getTime()));
-	    				lpDTO.setDateAssigned ( dateToConvert == null ? "" : sdf.format(dateToConvert.getTime()));
-	    				
-	    				listItem.add(dateFldAssigned);
-	    				dateAssignedListadd.add(dateFldAssigned);
-	    				
-	    				
+	    				String datestr = sdf.format(dDateStarted.getTime());
+	    				ldateFldStarted.setDefaultModelObject(datestr);	
+	    				Calendar dateToConvert = Calendar.getInstance();
+	    				lpDTO.setDateStarted(ldateFldStarted.getDefaultModelObjectAsString());
+	    				listItem.add(ldateFldStarted);
+	    				dateStartedListadd.add(ldateFldStarted);			
 	    				      setAssignedTo (lProcessTrackingDetailsDTO.getAssignedTo());
-	    					  DropDownChoice userNamesDDAssigned = new DropDownChoice<String>("assignedToa", new PropertyModel(lpDTO, "assignedTo" ), new ArrayList <String> () );
-	    					  
-	    					  
+	    					  DropDownChoice userNamesDDAssigned = new DropDownChoice<String>("assignedToa", new PropertyModel(lpDTO, "assignedTo" ), new ArrayList <String> () );	    					  
 	    					  List <String> listAssignedTo = userService.allAdminNames(false);
 	    			    	  listAssignedTo.remove("All Users");
 	    					  userNamesDDAssigned.setChoices(listAssignedTo);
@@ -596,112 +611,22 @@ public class ProgressTrackingDefaultPage extends WebPage
 	    				
 	    				if (pressedDelete || pressedPlus || pressedDown || pressedUp ) 
 							{
-							if (orgTaskDescTextFieldList.size() > 0 && indexUserDDLista < orgDateAssignedListadd.size())
+							if (orgTaskDescTextFieldList.size() > 0 && indexUserDDLista < orgDateStartedListadd.size())
 								{
 		    					userDDListadd.get(indexUserDDLista).setDefaultModelObject(tuserDDListadd .get(indexUserDDLista).getDefaultModelObject());		
-								dateAssignedListadd.get(indexUserDDLista).setDefaultModelObject(orgDateAssignedListadd.get(indexUserDDLista).getDefaultModelObject());
+								dateStartedListadd.get(indexUserDDLista).setDefaultModelObject(orgDateStartedListadd.get(indexUserDDLista).getDefaultModelObject());
 								taskDescTextFieldList.get(indexUserDDLista).setDefaultModelObject(orgTaskDescTextFieldList .get(indexUserDDLista).getDefaultModelObject());
 								commentTextAreaList.get(indexUserDDLista).setDefaultModelObject(orgcommentTextAreaList .get(indexUserDDLista).getDefaultModelObject());
 								}
 							
 							indexUserDDLista++;
-							}   	
+							} 
+	    				gTotalDaysExpectedToSpan = gTotalDaysExpectedToSpan + Integer.parseInt(lpDTO.getDaysExpected());; 
 						}
 	    			});
 	   
-	        add(listViewProgressTracking = new ListView("trackingDetail", new PropertyModel(this, "trackingDetail")) 
-				{
-	        	public String getAssignedTo() { return assignedTo; }
-	        	public void setAssignedTo (String u) { assignedTo = u; }
-	        	
-	        private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehavior(String event, final String response, String taskDesc, String assignedToString, DropDownChoice userdd , METWorksAjaxUpdatingDateTextField dateFldAssigned )
-				{
-				return new AjaxFormComponentUpdatingBehavior(event)
-			        {
-				    @Override
-				    protected void onUpdate(AjaxRequestTarget target)
-				    	{
-				    	List<String> newAliquotList = new ArrayList<String>();
-				    	//int i=0;
-				    	switch (response)
-				        	{
-				    	    case "updateDateAssigned" :
-				    	    	break	;
-				    	    
-				    	    case "updateExperiment" :
-				    	    	break;	
-				    	    case "updateWorkFlow" :
-				    	    	target.add(progressTrackingDefaultPage);
-				    	    	break	;
-				    	    case "updateUser" : 
-				    	    	break;	
-				    	    case "updateUserAddTasks" :
-				    	        processTrackingDetailsDTO.setAssignedTo(assignedToString);
-					    	}
-				    	}
-				    };
-				} 
-	        	
-	        	
-	        	public DropDownChoice buildUserDropDown(final String id, String userAssignedStr, ProcessTrackingDetailsDTO lpDTO)
-		    		{
-	        		ProcessTrackingDetailsDTO llDto = new ProcessTrackingDetailsDTO();;
-	        		String userLocalString = userAssignedStr;
-	        		
-	        		llDto.setAssignedTo(lpDTO.getAssignedTo());
-		    		setAssignedTo(userAssignedStr);
-		    		DropDownChoice userDropDwn = new DropDownChoice<String>(id,  new PropertyModel (lpDTO, "assignedTo"), new ArrayList <String> ());
-		            userDropDwn.setChoices (userService.allAdminNames(false));
-		    	    return userDropDwn;
-		    		}
-	        	
-				public void populateItem(final ListItem listItem) 
-					{
-					procTracObject = (Object []) listItem.getModelObject();
-					ProcessTrackingDetailsDTO lpDTO = new ProcessTrackingDetailsDTO();
-					listItem.add(new Label("taskdescription",new Model(procTracObject[1].toString())));
-					processTrackingDetailsDTO.setDateAssigned(procTracObject[2].toString());			
-					processTrackingDetailsDTO.setTaskDesc(procTracObject[1].toString());
-					lpDTO.setAssignedTo(procTracObject[6].toString());
-					METWorksAjaxUpdatingDateTextField dateFldAssigned =  new METWorksAjaxUpdatingDateTextField("dateAssignedd", new PropertyModel<String>(lpDTO, "dateAssigned"), "dateAssignedd")
-						{
-						@Override
-						protected void onUpdate(AjaxRequestTarget target)  
-					        {
-					        }
-					    public boolean isEnabled()
-						    {
-						    return (userService.isAccountAdmin(((MedWorksSession) Session.get()).getCurrentUserId()));
-					    	}
-								
-						};	
-						
-					dateFldAssigned.setDefaultStringFormat(ProcessTracking.ProcessTracking_DATE_FORMAT);
-					dateFldAssigned.add(buildStandardFormComponentUpdateBehavior("change", "updateDateAssigned", procTracObject[1].toString(), null, null,dateFldAssigned));
-					
-					listItem.add(dateFldAssigned);
-				
-					User user = userService.loadById(procTracObject[6].toString());
-					
-				   setAssignedTo (procTracObject[6].toString());
-				   DropDownChoice<String> userNamesDD;
-				   listItem.add(userNamesDD = buildUserDropDown("assignedTo", assignedTo, lpDTO ));
-				   setAssignedTo (processTrackingDetailsDTO.getAssignedTo());
-			       userNamesDD.add(buildStandardFormComponentUpdateBehavior("change", "updateUser", procTracObject[1].toString(), lpDTO.getAssignedTo(), userNamesDD, dateFldAssigned));
-			       lpDTO.setDateAssigned(procTracObject[2].toString()); 
-			        userDDList.add(userNamesDD);
-			        dateAssignedList.add(dateFldAssigned);
-					textAreaNotes = new TextArea("comments", new Model(procTracObject[5].toString()));
-				    listItem.add(textAreaNotes)	;			
-					textAreaNotes.add(StringValidator.maximumLength(4000));
-					if (pressedPlus) 
-						{
-						userDDList.get(indexUserDDList).setDefaultModelObject(tUserDDList.get(indexUserDDList).getDefaultModelObject());	
-						dateAssignedList.get(indexUserDDList).setDefaultModelObject(tDateAssignedList.get(indexUserDDList).getDefaultModelObject());
-						indexUserDDList++;
-						}
-					}   
-				});			
+	    	   /////////////////////// delete from here 
+                   ///////////// delete from here 
 	        }
 	
 		private AjaxFormComponentUpdatingBehavior buildStandardFormComponentUpdateBehaviorModified(String event, final String response, String taskDesc, String assignedToString, ProcessTrackingDetailsDTO lProcessTrackingDetailsDTO, int indexx)
@@ -743,11 +668,8 @@ public class ProgressTrackingDefaultPage extends WebPage
 					{
 					
 					tUserDDList = new ArrayList <DropDownChoice> ();
-					tDateAssignedList = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
-					
-					
 					/*************************************************/			
-					orgDateAssignedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
+					orgDateStartedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
 					tuserDDListadd = new ArrayList <DropDownChoice> ();
 					orgTaskDescTextFieldList = new ArrayList <TextField> ();					
 					orgcommentTextAreaList = new ArrayList <TextArea> ();
@@ -758,10 +680,10 @@ public class ProgressTrackingDefaultPage extends WebPage
 				  	indexUserDDLista = 0;
 				  	itemIndex = 0;
 				  	tUserDDList.addAll(userDDList);
-				  	tDateAssignedList.addAll(dateAssignedList);
+				  	
 				  	orgcommentTextAreaList.addAll(commentTextAreaList);
 				  	/**********************************************/
-				  	orgDateAssignedListadd.addAll (dateAssignedListadd);
+				  	orgDateStartedListadd.addAll (dateStartedListadd);
 				  	tuserDDListadd.addAll(userDDListadd);
 				  	orgTaskDescTextFieldList.addAll(taskDescTextFieldList);	
 				  
@@ -770,14 +692,13 @@ public class ProgressTrackingDefaultPage extends WebPage
 				  	target.add(progressTrackingDefaultPage);
 				  	/////////////////////
 				  	daysExpectedDDLList = new ArrayList <DropDownChoice> ();
-				  	dateAssignedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
+				  	dateStartedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
 				  	userDDListadd = new ArrayList <DropDownChoice> ();
 				  	taskDescTextFieldList = new ArrayList <TextField> ();
 				  	commentTextAreaList = new ArrayList <TextArea> ();
 				  	/***********************************************/
 				  	
 				  	userDDList = new ArrayList <DropDownChoice> ();
-				  	dateAssignedList = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
 				  	pressedPlus = true;
     				pressedDelete = false;
 				  	/******************************************/  	
@@ -794,7 +715,6 @@ public class ProgressTrackingDefaultPage extends WebPage
 				};
 				
 			expDD.setChoices(experimentService.expIdsByInceptionDate());
-		//	expDD.setRequired(true);
 			return expDD;
 			}
 		
@@ -819,9 +739,7 @@ public class ProgressTrackingDefaultPage extends WebPage
 					};		
 		 	assayDescDD.setChoices (assayService.allAssayNamesForExpId(expID, false))	;	
 					
-		//	assayDescDD.setRequired(true);
-		 	
-		 	assayDescDD.add(buildStandardFormComponentUpdateBehavior("change", "updateAssay", null, null));
+					
 			return assayDescDD;
 			
 			}
@@ -831,18 +749,15 @@ public class ProgressTrackingDefaultPage extends WebPage
 		public String getWfID() { return wfID; }
 		public void setWfID (String w) { wfID = w; }
 		public String getAssayDesc() { return assayDesc; }
-		public void setAssayDesc (String a) { assayDesc = a; }
-		
+		public void setAssayDesc (String a) { assayDesc = a; }	
 		public String getSearchType()
 			{
 			return searchType;
-			}
-	
+			}	
 		public void setSearchType(String searchType)
 			{
 			this.searchType = searchType;
-			}
-		
+			}		
 		private List <ProcessTrackingDetailsDTO> createDTOAddedArray()
 			{
 			int index = 0;
@@ -853,56 +768,64 @@ public class ProgressTrackingDefaultPage extends WebPage
 			int ii = 0;
 			int idxx = 0;
 			int totalDaysExpectedToSpan = 0;
-			for ( TextField tf : taskDescTextFieldList)
+			try 
+			///////////////////////////////////////////////
 				{
-				idxx ++ ;
-				ProcessTrackingDTO processTrackingDTO = new ProcessTrackingDTO();
-				processTrackingDTO.setTaskDesc(tf.getDefaultModelObjectAsString());
-				ProcessTracking pt;
-				listOfTasks.addAll(processTrackingService.allTaskDesc());
-				if (listOfTasks.contains(tf.getDefaultModelObjectAsString()))
+				for ( TextField tf : taskDescTextFieldList)
 					{
-					String taskid = processTrackingService.grabTaskIdFromDesc(tf.getDefaultModelObjectAsString());
+					idxx ++ ;
+					ProcessTrackingDTO processTrackingDTO = new ProcessTrackingDTO();
+					processTrackingDTO.setTaskDesc(tf.getDefaultModelObjectAsString());
+					ProcessTracking pt;
+					listOfTasks.addAll(processTrackingService.allTaskDesc());
+					if (listOfTasks.contains(tf.getDefaultModelObjectAsString()))
+						{
+						String taskid = processTrackingService.grabTaskIdFromDesc(tf.getDefaultModelObjectAsString());
+						}
+					else
+						{
+						pt = processTrackingService.saveTask(processTrackingDTO);	
+						}
+					ProcessTrackingDetailsDTO lilProcessTrackingDetailsDTO = new ProcessTrackingDetailsDTO ();
+					lilProcessTrackingDetailsDTO.setTaskDesc (tf.getDefaultModelObjectAsString());
+					lilProcessTrackingDetailsDTO.setExpID(expID);
+					lilProcessTrackingDetailsDTO.setAssayID(assayDescDD.getDefaultModelObjectAsString());
+					lilProcessTrackingDetailsDTO.setDaysExpected(daysExpectedDDLList.get(index).getDefaultModelObjectAsString());
+					// issue 277
+					dDateStarted = Calendar.getInstance();
+					dDateStarted.setTime(new Date (dateFldStarted.getDefaultModelObjectAsString()));
+					dDateStarted.add(Calendar.DAY_OF_MONTH, totalDaysExpectedToSpan);
+					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+					String datestr = sdf.format(dDateStarted.getTime());				
+					lilProcessTrackingDetailsDTO.setDetailOrder(addedTasks.get(index).getDetailOrder());
+					lilProcessTrackingDetailsDTO.setDateStarted(datestr);
+					lilProcessTrackingDetailsDTO.setAssignedTo(userDDListadd.get(index).getDefaultModelObjectAsString());
+					workflowDD.setEscapeModelStrings(false);
+					lilProcessTrackingDetailsDTO.setWfID(workflowDD.getDefaultModelObjectAsString());
+					lilProcessTrackingDetailsDTO.setAssayID(StringParser.parseId(assayDescDD.getDefaultModelObjectAsString()));
+					lilProcessTrackingDetailsDTO.setComments(commentTextAreaList.get(index).getDefaultModelObjectAsString());
+					//// issue 273
+					if (idxx == 1)
+						lilProcessTrackingDetailsDTO.setStatus("In progress");
+					else 
+						lilProcessTrackingDetailsDTO.setStatus("In queue");
+					totalDaysExpectedToSpan = totalDaysExpectedToSpan + Integer.parseInt(daysExpectedDDLList.get(index).getDefaultModelObjectAsString());
+					theDtoList.add(lilProcessTrackingDetailsDTO);
+					
+					// issue 210
+				//	List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("assigned_task_notification");
+					String msg = "";	
+					index++;
+					ii++;
+					
 					}
-				else
-					{
-					pt = processTrackingService.saveTask(processTrackingDTO);	
-					}
-				ProcessTrackingDetailsDTO lilProcessTrackingDetailsDTO = new ProcessTrackingDetailsDTO ();
-				lilProcessTrackingDetailsDTO.setTaskDesc (tf.getDefaultModelObjectAsString());
-				lilProcessTrackingDetailsDTO.setExpID(expID);
-				lilProcessTrackingDetailsDTO.setAssayID(assayDescDD.getDefaultModelObjectAsString());
-				lilProcessTrackingDetailsDTO.setDaysExpected(daysExpectedDDLList.get(index).getDefaultModelObjectAsString());
-				dDateStarted = Calendar.getInstance();
-				dDateStarted.add(Calendar.DAY_OF_MONTH, totalDaysExpectedToSpan);
-				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-				String datestr = sdf.format(dDateStarted.getTime());
-				
-				lilProcessTrackingDetailsDTO.setDetailOrder(addedTasks.get(index).getDetailOrder());
-				lilProcessTrackingDetailsDTO.setDateStarted(datestr);
-				lilProcessTrackingDetailsDTO.setAssignedTo(userDDListadd.get(index).getDefaultModelObjectAsString());
-				lilProcessTrackingDetailsDTO.setDateAssigned(dateAssignedListadd.get(index).getDefaultModelObjectAsString());
-				workflowDD.setEscapeModelStrings(false);
-				lilProcessTrackingDetailsDTO.setWfID(workflowDD.getDefaultModelObjectAsString());
-				lilProcessTrackingDetailsDTO.setAssayID(StringParser.parseId(assayDescDD.getDefaultModelObjectAsString()));
-				lilProcessTrackingDetailsDTO.setComments(commentTextAreaList.get(index).getDefaultModelObjectAsString());
-				//// issue 273
-				if (idxx == 1)
-					lilProcessTrackingDetailsDTO.setStatus("In progress");
-				else 
-					lilProcessTrackingDetailsDTO.setStatus("In queue");
-				totalDaysExpectedToSpan = totalDaysExpectedToSpan + Integer.parseInt(daysExpectedDDLList.get(index).getDefaultModelObjectAsString());
-				theDtoList.add(lilProcessTrackingDetailsDTO);
-				
-				// issue 210
-			//	List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("assigned_task_notification");
-				String msg = "";	
-				index++;
-				ii++;
-				
 				}
-			List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("assigned_task_notification");
-			
+			/////////////////////////////////////////////////////
+			catch (Exception e)
+				{
+				e.printStackTrace();	
+				}
+			List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("assigned_task_notification");			
 			return theDtoList;
 			}
 	
@@ -916,26 +839,32 @@ public class ProgressTrackingDefaultPage extends WebPage
 			    	List<String> newAliquotList = new ArrayList<String>();
 			    	switch (response)
 			        	{
+			        	case "updateWFDate" :
+			        		itemIndex = 0;
+			        		indexUserDDList = 0;
+						  	indexUserDDLista = 0;
+						  	taskDescTextFieldList = new ArrayList <TextField> ();
+						  	gTotalDaysExpectedToSpan = 0;
+						  	resetPlusComponents(); // issue 277 fix internal error
+			        		target.add(progressTrackingDefaultPage);
 			    	    case "updateProcessTrackingDTOMap" :
 			    	    	processTrackingDTOMap.put(taskDesc, processTrackingDetailsDTO);
 			    	    	break;
 			    	    case "updateExperiment" :
-			    	    	
 			    	    	assayDescDD.setChoices (assayService.allAssayNamesForExpId(expID, false))	;
 			    	    	indexUserDDList = 0;
 						  	indexUserDDLista = 0;
 						  	itemIndex = 0;
 						  	////// issue 210 resetting.....
-						  	resetPlusComponents();     
+						  	resetPlusComponents();
 			    	    	target.add(progressTrackingDefaultPage);
 			    	    	break;	
-			    	   // issue 279 	
-			    	    case "updateAssay" :  
+			    	    case "updateAssay" :
 			    	      	////// issue 210 resetting.....
-			    	    	itemIndex = 0;
+			    	     	itemIndex = 0;
 			    	    	indexUserDDLista = 0;      
 			    	    	indexUserDDList  = 0;
-			    	    	break;  
+			    	        break;
 			    	    case "updateWorkFlow" :
     		    	    	List<Object[]> nList = processTrackingService.loadAllDefaultTasksAssigned(wfID);
     		    	    	addedTasks = new ArrayList <ProcessTrackingDetailsDTO> ();
@@ -943,18 +872,19 @@ public class ProgressTrackingDefaultPage extends WebPage
     					  	indexUserDDLista = 0;
     					  	itemIndex = 0;
     					  	////// issue 210 resetting.....
-    					  	resetPlusComponents();
+						  	resetPlusComponents();
     		    	    	for (Object [] lObj : nList)
         						{
         						ProcessTrackingDetailsDTO ptd = new ProcessTrackingDetailsDTO();
         						ptd.setTaskDesc(lObj[1].toString());
-        						ptd.setDateAssigned(lObj[2].toString());
+        						ptd.setDateStarted(lObj[2].toString());
         						ptd.setAssignedTo(lObj[6].toString());
         						ptd.setDetailOrder(Integer.parseInt(lObj[7].toString()));
         						addedTasks.add(ptd);
         						}
     		    	    	target.add(progressTrackingDefaultPage);
-			    	    	break	; 
+			    	    	target.add(progressTrackingDefaultPage);
+			    	    	break	;
 			    	    case "updateUser" :    	
 			    	    	processTrackingDetailsDTO.setAssignedTo(assignedToString);
 			    	    	processTrackingDTOMap.put(taskDesc, processTrackingDetailsDTO);
@@ -990,15 +920,15 @@ public class ProgressTrackingDefaultPage extends WebPage
 			orgcommentTextAreaList  = new ArrayList <TextArea> ();
 			orgcommentTextAreaList.addAll(commentTextAreaList);
 			
-			orgDateAssignedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
-			orgDateAssignedListadd.addAll(dateAssignedListadd);
+			orgDateStartedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
+			orgDateStartedListadd.addAll(dateStartedListadd);
 			orgdaysExpectedDDList.addAll(daysExpectedDDLList);
 			
 			indexUserDDList= 0;
 			indexUserDDLista= 0;
 			
 			taskDescTextFieldList = new ArrayList <TextField> ();
-			dateAssignedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
+			dateStartedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
 			userDDListadd = new ArrayList <DropDownChoice> ();
 			commentTextAreaList = new ArrayList <TextArea> ();
 			daysExpectedDDLList = new ArrayList <DropDownChoice> ();
@@ -1022,12 +952,12 @@ public class ProgressTrackingDefaultPage extends WebPage
 			orgcommentTextAreaList.addAll(commentTextAreaList);
 			orgdaysExpectedDDList = new ArrayList <DropDownChoice> ();
 			orgdaysExpectedDDList.addAll(daysExpectedDDLList);
-			orgDateAssignedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
-			orgDateAssignedListadd.addAll(dateAssignedListadd);			
+			orgDateStartedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
+			orgDateStartedListadd.addAll(dateStartedListadd);			
 			indexUserDDList= 0;
 			indexUserDDLista= 0;
 			taskDescTextFieldList = new ArrayList <TextField> ();
-			dateAssignedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
+			dateStartedListadd = new ArrayList <METWorksAjaxUpdatingDateTextField> ();
 			userDDListadd = new ArrayList <DropDownChoice> ();
 			commentTextAreaList = new ArrayList <TextArea> ();
 			//////////////////////////////	
@@ -1060,8 +990,7 @@ public class ProgressTrackingDefaultPage extends WebPage
 			{
 			return addedTasks;
 			}
-		
-		
+				
 		public String  errcheck(List <ProcessTrackingDetailsDTO> listDto2)
 			{
 			int i = 0;
@@ -1074,10 +1003,6 @@ public class ProgressTrackingDefaultPage extends WebPage
 				if (StringUtils.isEmptyOrNull(pt.getAssignedTo()))
 					{
 					return "Assigned To is blank for row number:" + (i+1) + " Please choose Assigned To. ";
-					}
-				if (StringUtils.isEmptyOrNull(pt.getDateAssigned()))
-					{
-					return "Date Assigned is blank for row number:" + (i+1) + " Please choose Date Assigned. ";
 					}
 				i++;
 				}
@@ -1107,53 +1032,38 @@ public class ProgressTrackingDefaultPage extends WebPage
 			}
 		
 		   public void saveTheDefault (AjaxRequestTarget target, boolean modifyDefault)
-	           {
-			   noAssay= false;
-			   noWf = false;
-			   noExp = false;
-			   List <ProcessTrackingDetailsDTO> listDto2 = new ArrayList <ProcessTrackingDetailsDTO> ();
-			     		   
-       		   try
-	       		   {
-       			   listDto2 = progressTrackingDefaultForm.createDTOAddedArray(); 
-				   processTrackingService.deleteTracking(listDto2.get(0).getExpID(), listDto2.get(0).getAssayID());
-	       		   }
-       		   catch (Exception e)
-       		   	   {
-       			   e.printStackTrace();
-       		       }
-			   String err = progressTrackingDefaultForm.errcheck(listDto2);
-       		   if  (!StringUtils.isEmptyOrNull(err))
-       			  {
-       			  target.appendJavaScript(StringUtils.makeAlertMessage(err));
-       			  return;
-       			  }
-       		int idxForOrder = 1;
-       		// issue 262
-    		for (ProcessTrackingDetailsDTO  lAddedTask : listDto2 )
-    			{
-    			lAddedTask.setDetailOrder(idxForOrder);
-    			idxForOrder++;
-    			}  
-    		try
-    			{
-    			processTrackingService.saveDefaultDTOs(listDto2, modifyDefault);
-    			}
-    		catch (Exception e)
-    			{
-    			e.printStackTrace();
-    			}
-    		List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("assigned_task_notification");
-       		// issue 210	        		
-   			String msg = "Workflow: " +  listDto2.get(0).getWfID() +  " saved for experiment: " + expID  +  ".";
-   			target.appendJavaScript(StringUtils.makeAlertMessage(msg));
-   			progressTrackingDefaultForm.modal2.close(target);
-   			pressedPlus = false;
-   			pressedDelete = false;
-   			listOfTasks.clear();
-   			listOfTasks.addAll(processTrackingService.allTaskDesc());
-   			//////sendOutEmails (listDto2, email_contacts, mailer);	
-	        }
+		        {
+				noAssay= false;
+				noWf = false;
+				noExp = false;
+				gTotalDaysExpectedToSpan = 0; 
+				List <ProcessTrackingDetailsDTO> listDto2 = progressTrackingDefaultForm.createDTOAddedArray();
+				processTrackingService.deleteTracking(listDto2.get(0).getExpID(), listDto2.get(0).getAssayID());
+	       		String err = progressTrackingDefaultForm.errcheck(listDto2);
+	       		if  (!StringUtils.isEmptyOrNull(err))
+	       			{
+	       			target.appendJavaScript(StringUtils.makeAlertMessage(err));
+	       			return;
+	       			}
+	       		int idxForOrder = 1;
+	       		// issue 262
+	    		for (ProcessTrackingDetailsDTO  lAddedTask : listDto2 )
+	    			{
+	    			lAddedTask.setDetailOrder(idxForOrder);
+	    			idxForOrder++;
+	    			}  
+	       		processTrackingService.saveDefaultDTOs(listDto2, modifyDefault);
+	       		List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("assigned_task_notification");
+	       		// issue 210	        		
+	   			String msg = "Workflow: " +  listDto2.get(0).getWfID() +  " saved for experiment: " + expID  +  ".";
+	   			target.appendJavaScript(StringUtils.makeAlertMessage(msg));
+	   			progressTrackingDefaultForm.modal2.close(target);
+	   			pressedPlus = false;
+	   			pressedDelete = false;
+	   			listOfTasks.clear();
+	   			listOfTasks.addAll(processTrackingService.allTaskDesc());
+	   			//////sendOutEmails (listDto2, email_contacts, mailer);	
+		        }
 		
 		protected String getMailTitle() { return "Metlims Workflow Task Assigned - Test email from Test"; }
 		protected String getMailAddress() { return "metabolomics@med.umich.edu"; }

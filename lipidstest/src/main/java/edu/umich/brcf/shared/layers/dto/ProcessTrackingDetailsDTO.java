@@ -24,9 +24,9 @@ import edu.umich.brcf.shared.layers.domain.ProcessTrackingDetails;
 // issue 31 2020
 public class ProcessTrackingDetailsDTO implements Serializable
 	{
-	public static ProcessTrackingDetailsDTO instance(String jobID,  String startDate, String completedDate, String comments,  String taskID, String assignedTo, String dateAssigned) 
+	public static ProcessTrackingDetailsDTO instance(String jobID,  String startDate, String completedDate, String comments,  String taskID, String assignedTo) 
 	    {
-	    return new ProcessTrackingDetailsDTO(jobID, startDate, completedDate, comments, taskID, assignedTo, dateAssigned);
+	    return new ProcessTrackingDetailsDTO(jobID, startDate, completedDate, comments, taskID, assignedTo);
 		}
 	
 	public static ProcessTrackingDetailsDTO instance(ProcessTrackingDetails processTrackingDetails)
@@ -35,11 +35,8 @@ public class ProcessTrackingDetailsDTO implements Serializable
 		//String formattedDateStarted = format1.format(processTrackingDetails.convertToDateString(processTrackingDetails.getDateStarted()));
 		String dateStarted = processTrackingDetails.convertToDateString(processTrackingDetails.getDateStarted());
 		//String formattedDateCompleted = format1.format(processTrackingDetails.convertToDateString(processTrackingDetails.getDateCompleted()));
-		String dateCompleted = processTrackingDetails.convertToDateString(processTrackingDetails.getDateCompleted());
-		
-		String dateAssigned = processTrackingDetails.convertToDateString(processTrackingDetails.getDateAssigned());
-		// Output "Wed Sep 26 14:23:28 EST 2012"		
-		return new ProcessTrackingDetailsDTO(processTrackingDetails.getJobid(), dateStarted, dateCompleted, processTrackingDetails.getComments(),processTrackingDetails.getProcessTracking().getProcessTrackingId(),  processTrackingDetails.getAssignedTo().getId(), dateAssigned);
+		String dateCompleted = processTrackingDetails.convertToDateString(processTrackingDetails.getDateCompleted());		
+		return new ProcessTrackingDetailsDTO(processTrackingDetails.getJobid(), dateStarted, dateCompleted, processTrackingDetails.getComments(),processTrackingDetails.getProcessTracking().getProcessTrackingId(),  processTrackingDetails.getAssignedTo().getId());
 		}	
 	// issue 61 2020
 	private String finalVolumeUnits ; // issue 196
@@ -66,7 +63,6 @@ public class ProcessTrackingDetailsDTO implements Serializable
     private String jobID;
     private String dateStarted;
     private String dateCompleted;
-    private String dateAssigned;
     private String dateOnHold;
     private String trackingId;
     private String assignedTo;
@@ -83,12 +79,11 @@ public class ProcessTrackingDetailsDTO implements Serializable
     Map<String, List<String>> mixtureAliquotMap = new HashMap<String, List<String>>(); 
     Map<String, List<MixAliquotInfo>> mixtureAliquotInfoMap = new HashMap<String, List<MixAliquotInfo>>();
     // issue 116
-	private ProcessTrackingDetailsDTO(String jobID, String dateStarted,   String dateCompleted, String comments,  String trackingId, String assignedTo, String dateAssigned)
+	private ProcessTrackingDetailsDTO(String jobID, String dateStarted,   String dateCompleted, String comments,  String trackingId, String assignedTo)
 		{
 		this.jobID = jobID;		
 		this.dateStarted = dateStarted;
 		this.dateCompleted = dateCompleted;
-		this.dateAssigned = dateAssigned;
 		this.trackingId = trackingId;
 		this.assignedTo = assignedTo;	
 		this.comments = comments;
@@ -151,18 +146,7 @@ public class ProcessTrackingDetailsDTO implements Serializable
 		{
 		this.dateCompleted= dateCompleted;
 		}	
-	
-	public String getDateAssigned()
-		{
-		return dateAssigned;
-		}
-
-//issue 196
-	public void setDateAssigned(String dateAssigned)
-		{
-		this.dateAssigned= dateAssigned;
-		}
-	
+		
 	public String getDateOnHold()
 		{
 		return dateOnHold;
