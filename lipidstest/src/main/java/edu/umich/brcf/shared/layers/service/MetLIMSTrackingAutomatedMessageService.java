@@ -147,7 +147,7 @@ public class MetLIMSTrackingAutomatedMessageService
 			        for (String email_contact : email_contacts) 
 			    		{
 			    		htmlString =   "<h3><b> "  + msg + " " +   msgTitle + " </b></h3> <br> ";
-			    		METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "julieker@umich.edu", "METLIMS Tracking - METLIMS Sample Registration Message", msg, htmlString);
+			    		METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, email_contact, "METLIMS Tracking - METLIMS Sample Registration Message", msg, htmlString);
 			    		}
 		    	return;
 		    	
@@ -173,11 +173,11 @@ public class MetLIMSTrackingAutomatedMessageService
 			 						}
 			 					htmlString = htmlString +  "<h3><b> "  + msg + " " +   msgTitle + " </b></h3> <br> <h4>" +  buildTaskString(newEachAssayList, "List of assigned tasks for experiment:" + nlist.get(0)[5].toString()  + " and assay: " + llAssayExp[1])  + " </h4>";
 		 						}
-				 			METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "julieker@umich.edu", "METLIMS Tracking - METLIMS Sample Registration Message", msg, htmlString);
+				 			METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, email_contact, "METLIMS Tracking - METLIMS Sample Registration Message", msg, htmlString);
 				 			}
 			 			catch (Exception e)
 				 			{
-				 			System.out.println("in except....");
+				 			System.out.println("in exception....");
 				 			e.printStackTrace();
 				 			}
 			 		    }
@@ -198,7 +198,7 @@ public class MetLIMSTrackingAutomatedMessageService
 	 					msgTitle = "Friday List of Tasks assigned for Experiment:" + nlist.get(0)[5].toString() + " Assay: " + nlist.get(0)[6].toString() + " Workflow:" + nlist.get(0)[8].toString();
 	 					htmlString = htmlString +  "<h3><b> "  + msg + " " +   msgTitle + " </b></h3> <br> <h4>" +  buildTaskString(nlist, "List of assigned tasks for experiment:" + nlist.get(0)[5].toString())  + "</h4>";
 	 					}
-	 			//	METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "mkachman@med.umich.edu", "METLIMS Tracking - Weekly task list" , msg, htmlString);
+	 			    METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "mkachman@med.umich.edu", "METLIMS Tracking - Weekly task list" , msg, htmlString);
 	 				METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender2=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, "julieker@umich.edu", "METLIMS Tracking - Weekly task list" , msg, htmlString);
 	 				htmlString = "";
 	 			  //  }
