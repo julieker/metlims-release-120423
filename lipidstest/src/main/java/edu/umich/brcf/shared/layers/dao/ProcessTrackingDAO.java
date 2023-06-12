@@ -496,12 +496,16 @@ public class ProcessTrackingDAO extends BaseDAO
 		}
 	// issue 277
 	/////////////////////////////////////////////
-	public void doMoveAhead(String wfID, String expID, String assayId, int increment, int trackingorder)
+	public void doMoveAhead(String wfID, String expID, String assayId, int increment, int trackingorder, String status)
 		{
 		Query query = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = date_started + ?4 " + " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order >?5 " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(4, increment).setParameter(5, trackingorder);
-		query.executeUpdate();			
-	    query = getEntityManager().createNativeQuery("update tracking_tasks_details set status=  'In progress' " +  " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order = ?5 " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(5, (trackingorder+ 1));
-		query.executeUpdate();			
+		query.executeUpdate();	
+	    if (status.equals("Completed"))
+			// issue 277
+			{
+			query = getEntityManager().createNativeQuery("update tracking_tasks_details set status=  'In progress' " +  " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order = ?5 " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(5, (trackingorder+ 1));
+			query.executeUpdate();	
+			} 
 		}
 	
 	// issue 277 

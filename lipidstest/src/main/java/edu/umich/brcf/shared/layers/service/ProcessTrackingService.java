@@ -386,9 +386,9 @@ public class ProcessTrackingService
 		 return processTrackingDao.listExpAssayForUser(email);
 		}
 	 
-	 public void doMoveAhead(String wfID, String expID, String assayId, int increment, int trackingorder)
+	 public void doMoveAhead(String wfID, String expID, String assayId, int increment, int trackingorder, String status)
 	 	{
-		 processTrackingDao.doMoveAhead (wfID, expID, assayId, increment, trackingorder) ;
+		 processTrackingDao.doMoveAhead (wfID, expID, assayId, increment, trackingorder, status) ;
 	 	}
 	 
 	 // issue 277
