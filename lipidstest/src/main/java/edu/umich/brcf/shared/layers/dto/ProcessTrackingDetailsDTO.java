@@ -74,6 +74,8 @@ public class ProcessTrackingDetailsDTO implements Serializable
     private String assayID;
     private String daysExpected;
     private Integer detailOrder;
+    // issue 283
+    private String dateInProgress;
     
     // issue 123
     Map<String, List<String>> mixtureAliquotMap = new HashMap<String, List<String>>(); 
@@ -157,6 +159,19 @@ public class ProcessTrackingDetailsDTO implements Serializable
 		{
 		this.dateOnHold= dateOnHold;
 		}
+	
+// issue 283	
+public String getDateInProgress()
+	{
+	return dateInProgress;
+	}
+
+//issue 196
+public void setDateInProgress(String dateInProgress)
+	{
+	this.dateInProgress= dateInProgress;
+	}
+
 
 
 	public String getTrackingId()

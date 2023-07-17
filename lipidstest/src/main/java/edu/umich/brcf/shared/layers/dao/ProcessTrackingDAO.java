@@ -18,6 +18,7 @@ import com.mysql.jdbc.StringUtils;
 import edu.umich.brcf.shared.layers.domain.ProcessTracking;
 import edu.umich.brcf.shared.layers.domain.ProcessTrackingDetails;
 import edu.umich.brcf.shared.layers.domain.Workflow;
+import edu.umich.brcf.shared.util.StringParser;
 import edu.umich.brcf.shared.layers.domain.DefaultTrackingTasks;
 
 // issue 61
@@ -498,7 +499,10 @@ public class ProcessTrackingDAO extends BaseDAO
 	/////////////////////////////////////////////
 	public void doMoveAhead(String wfID, String expID, String assayId, int increment, int trackingorder, String status)
 		{
-		Query query = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = date_started + ?4 " + " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order >?5 " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(4, increment).setParameter(5, trackingorder);
+		String theQuery = 
+				"update tracking_tasks_details set date_started = date_started + " + increment + " where wf_id = " + "'" + wfID + "'" + " and exp_id = " + "'" + expID + "'" + " and assay_id = " + "'" + assayId + "'" + " and detail_order > " + trackingorder;  
+		System.out.println("here is the query :" + theQuery);
+		Query query = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = date_started + ?4 " + " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order >?5  and status = 'In queue'"  ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(4, increment).setParameter(5, trackingorder);
 		query.executeUpdate();	
 	    if (status.equals("Completed"))
 			// issue 277
@@ -508,6 +512,50 @@ public class ProcessTrackingDAO extends BaseDAO
 			} 
 		}
 	
+      
+	// issue 283
+	public void doAutomaticPropagation()
+		{
+		int i = 0;
+		int prevExpDays = 0;
+		int inProcessDays = 0;
+		List <Object []> listOfExpAssay = listExpAssay();
+		int idx = 0;
+		for (Object [] obj : listOfExpAssay)
+			{
+			i = 1;
+		            
+			Query queryListInProcess =  getEntityManager().createNativeQuery("select days_expected from tracking_tasks_details where exp_id = ?1 and assay_id = ?2 and status = 'In progress' order by detail_order ").setParameter(1, obj[0].toString()).setParameter(2,  StringParser.parseId(obj[1].toString()));
+			List <String> theInprocessResult = queryListInProcess.getResultList();
+			if (theInprocessResult.size() > 0  )
+				inProcessDays = Integer.valueOf(theInprocessResult.get(theInprocessResult.size() -1 ).toString());			
+			Query queryListJobs = getEntityManager().createNativeQuery("select job_id, days_expected from tracking_tasks_details where exp_id = ?1 and assay_id = ?2 and status = 'In queue' order by detail_order ").setParameter(1, obj[0].toString()).setParameter(2,  StringParser.parseId(obj[1].toString()));
+		    System.out.println("Here is the querylistjobs:" + "select job_id, days_expected from tracking_tasks_details where exp_id =" + obj[0].toString()  + " and assay_id = " + StringParser.parseId(obj[1].toString() +   " and status = 'In queue' order by detail_order "));
+			
+			List <Object []> listJobs =  queryListJobs.getResultList();
+			Query query = null;
+			for (Object [] strJob : listJobs)      
+				{    
+				if (i == 0)
+					{
+				    query = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = sysdate  + ?3 where job_id = ?2").setParameter(2, strJob[0].toString()).setParameter(3, inProcessDays);
+					System.out.println("query for if:  update tracking_tasks_details set date_started = sysdate + " + inProcessDays + " where job_id = " + strJob[0].toString());
+					}
+				else 
+					{
+					query = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = sysdate + ?1  where job_id = ?2").setParameter(1, i).setParameter(2, strJob[0].toString());
+					System.out.println("query for else:  update tracking_tasks_details set date_started = sysdate + " + " " + " +  " + (i) + " where job_id = " + strJob[0].toString());
+					}
+				query.executeUpdate();	
+				prevExpDays = Integer.valueOf(strJob[1].toString());
+				
+				i = i + prevExpDays;
+				idx++;
+				          
+				}
+			}    
+		}    
+	                            
 	// issue 277 
 	public String  grabNumberOfSamplesForEmail (String expID)
 		{

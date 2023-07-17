@@ -291,12 +291,16 @@ public class Workflow implements Serializable
 		List <ProcessTrackingDetails> ptListCriteria  = new ArrayList <ProcessTrackingDetails> ();
 		List <ProcessTrackingDetails> ptListExpAssayWk  = new ArrayList <ProcessTrackingDetails> ();
 		Collections.sort(getProcessTrackingDetailsList(), new ProgressTrackDetailsComparator());
-		
+		System.out.println("here is first getExpId:" + getExpID());
 		for (ProcessTrackingDetails pt : getProcessTrackingDetailsList())
 			{
-			if (StringUtils.isEmptyOrNull(getExpID()) || StringUtils.isEmptyOrNull(getAssayID()))
+			System.out.println("here is getExpId:" + getExpID() + "here is expexpid:" + pt.getExperiment().getExpID());
+			// issue 283
+			if (StringUtils.isEmptyOrNull(getExpID()) && StringUtils.isEmptyOrNull(getAssayID()))
 				ptListCriteria.add(pt);	
 			else if (pt.getExperiment().getExpID().equals(getExpID() ) && pt.getAssay().getAssayId().equals(getAssayID() ))
+				ptListCriteria.add(pt);
+			else if (pt.getExperiment().getExpID().equals(getExpID() ) && StringUtils.isEmptyOrNull(getAssayID()))
 				ptListCriteria.add(pt);
 			}
 		Collections.sort(ptListCriteria, new ProgressTrackDetailsComparator());

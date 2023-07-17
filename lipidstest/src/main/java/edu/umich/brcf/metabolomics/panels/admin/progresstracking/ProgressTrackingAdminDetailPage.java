@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -95,6 +96,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
     Boolean existsOnHold = false;
     String assayDescID;
     ProcessTrackingDetails gPtd;
+    Label cLabel ;
    
     Map<String, Boolean> collapseMap = new HashMap<String, Boolean> ();
 	
@@ -285,7 +287,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    				}
 		    			};
 		    		if (linkID.equals("eLink"))
-		    		    expLink.add(new Label("experimentID", expId ));
+		    		    expLink.add(new Label("experimentID", expId));
 		    		return expLink;
 		    		}
 		        	
@@ -297,13 +299,16 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 					    	existsOnHold = true;
 					    listItem.add(new Label("sampleType", new Model (processTrackingService.grabSampleType(wf.getWfID(), expID))));
 						final Project withDocs = projectService.loadById(procTracDetails.getExperiment().getProject().getProjectID());
-						listItem.add(buildLinkExp("eLink", modal2, withDocs, procTracDetails.getExperiment().getExpID()));
+						listItem.add(buildLinkExp("eLink", modal2, withDocs, procTracDetails.getExperiment().getExpID() + "\n" + procTracDetails.getAssay().getAssayId()));
 						listItem.add(new Label("taskdescription", new Model(procTracDetails.getProcessTracking().getTaskDesc())));
 						listItem.add(new Label("dateStarted", new Model( procTracDetails.convertToDateString( procTracDetails.getDateStarted() ))));
 						listItem.add(new Label("assignedto", new Model( procTracDetails.getAssignedTo().getFullName())));
 						//listItem.add(new Label("datecompleted", new Model(procTracDetails.convertToCreateDateString(procTracDetails.getDateCompleted())));				
 						listItem.add(new Label("datecompleted", new Model( procTracDetails.convertToDateString( procTracDetails.getDateCompleted() ))));				
-						listItem.add(new Label("comments", new Model(edu.umich.brcf.shared.util.io.StringUtils.isEmptyOrNull(procTracDetails.getComments()) ? "" : (  procTracDetails.getComments().length() > 20 ?  procTracDetails.getComments().substring(0,20) :  procTracDetails.getComments()          )    )));				
+						listItem.add(cLabel = new Label("comments", new Model(edu.umich.brcf.shared.util.io.StringUtils.isEmptyOrNull(procTracDetails.getComments()) ? "" : (  procTracDetails.getComments().length() > 20 ?  procTracDetails.getComments().substring(0,20) :  procTracDetails.getComments()          )    )));				
+									
+						cLabel.add(AttributeModifier.replace("title",     edu.umich.brcf.shared.util.io.StringUtils.isEmptyOrNull(procTracDetails.getComments()) ? "" :   procTracDetails.getComments()       ));
+						
 						listItem.add(new Label("status", new Model(procTracDetails.getStatus())));		
 						listItem.add(buildLinkToEditTracking("editTrackingAdmin",procTracDetails,modal2));	
 						listItem.add(buildLinkToDeleteTracking("deleteTrackingAdmin",procTracDetails,modal2));	

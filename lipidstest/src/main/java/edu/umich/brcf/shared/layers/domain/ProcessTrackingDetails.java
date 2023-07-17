@@ -43,10 +43,10 @@ public class ProcessTrackingDetails implements Serializable
 	private Experiment experiment;
 	
 	
-	public static ProcessTrackingDetails instance( String jobid, ProcessTracking processTracking, Calendar dateStarted, Calendar dateCompleted, String comments,  User assignedTo,  Experiment experiment, Workflow workflow, String status, Assay assay, String daysExpected, Integer detailOrder , Calendar dateOnHold) 
+	public static ProcessTrackingDetails instance( String jobid, ProcessTracking processTracking, Calendar dateStarted, Calendar dateCompleted, String comments,  User assignedTo,  Experiment experiment, Workflow workflow, String status, Assay assay, String daysExpected, Integer detailOrder , Calendar dateOnHold, Calendar dateInProgress) 
 		{
 		//System.out.println("here is days expected:" + daysExpected);
-		return new ProcessTrackingDetails(jobid,  processTracking,  dateStarted,  dateCompleted,  comments,  assignedTo, experiment, workflow, status, assay, daysExpected, detailOrder, dateOnHold);
+		return new ProcessTrackingDetails(jobid,  processTracking,  dateStarted,  dateCompleted,  comments,  assignedTo, experiment, workflow, status, assay, daysExpected, detailOrder, dateOnHold, dateInProgress);
 		}
 
 	@Id()
@@ -72,6 +72,11 @@ public class ProcessTrackingDetails implements Serializable
 	@Column(name = "DATE_COMPLETED", nullable = true)
 	private Calendar dateCompleted ;
 	
+	// issue 283
+	@Basic()
+	@Column(name = "DATE_INPROGRESS", nullable = true)
+	private Calendar dateInProgress ;
+	
 	@Basic()
 	@Column(name = "STATUS", nullable = true, columnDefinition = "VARCHAR2(50)")
 	private String status;
@@ -87,7 +92,8 @@ public class ProcessTrackingDetails implements Serializable
 	@Column(name = "DAYS_EXPECTED", nullable = true, columnDefinition = "VARCHAR2(5)")
 	private String daysExpected;
 	
-
+    
+	
 	@Basic()
 	@Column(name = "COMMENTS", nullable = true)
 	private String comments;
@@ -107,7 +113,7 @@ public class ProcessTrackingDetails implements Serializable
 	
 	public ProcessTrackingDetails() {  }
 	
-	private ProcessTrackingDetails(String jobid, ProcessTracking processTracking, Calendar dateStarted, Calendar dateCompleted, String comments,  User assignedTo,  Experiment experiment, Workflow workflow, String status, Assay assay, String daysExpected, Integer detailOrder, Calendar dateOnHold)
+	private ProcessTrackingDetails(String jobid, ProcessTracking processTracking, Calendar dateStarted, Calendar dateCompleted, String comments,  User assignedTo,  Experiment experiment, Workflow workflow, String status, Assay assay, String daysExpected, Integer detailOrder, Calendar dateOnHold, Calendar dateInProgress)
 		{
 		this.jobid = jobid;
 		this.processTracking = processTracking;
@@ -122,6 +128,7 @@ public class ProcessTrackingDetails implements Serializable
 		this.daysExpected = daysExpected;
 		this.detailOrder = detailOrder;
 		this.dateOnHold = dateOnHold;
+		this.dateInProgress = dateInProgress;
 		
 	 //issue 196
 		}
@@ -136,6 +143,8 @@ public class ProcessTrackingDetails implements Serializable
 		this.daysExpected = processTrackingDetailsDto.getDaysExpected();
 		this.detailOrder = processTrackingDetailsDto.getDetailOrder();
 		this.dateOnHold = (StringUtils.isEmptyOrNull(processTrackingDetailsDto.getDateOnHold()) ? null : CalendarUtils.calendarFromString(processTrackingDetailsDto.getDateOnHold(),ProcessTracking.ProcessTracking_DATE_FORMAT) );
+		// issue 283
+		this.dateInProgress = (StringUtils.isEmptyOrNull(processTrackingDetailsDto.getDateInProgress()) ? null : CalendarUtils.calendarFromString(processTrackingDetailsDto.getDateInProgress(),ProcessTracking.ProcessTracking_DATE_FORMAT) );
 		} 
 
 	public void updateDaysExpected(int newDaysExpected)
@@ -186,6 +195,17 @@ public class ProcessTrackingDetails implements Serializable
 	public void setDateStarted(Calendar dateStarted)
 		{
 		this.dateStarted = dateStarted;
+		}
+	
+	// issue 283
+	public Calendar getDateInProgress()
+		{
+		return dateInProgress;
+		}
+
+	public void setDateInProgress(Calendar dateInProgress)
+		{
+		this.dateInProgress = dateInProgress;
 		}
 	
 	////////////////////////////

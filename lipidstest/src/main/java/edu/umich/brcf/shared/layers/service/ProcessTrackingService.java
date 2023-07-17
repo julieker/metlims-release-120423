@@ -295,7 +295,8 @@ public class ProcessTrackingService
 		  //  ProcessTrackingDetails ptd  = ProcessTrackingDetails.instance(dto.getJobID(), pt, dto.getDateStarted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateStarted()),  dto.getDateCompleted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateCompleted()), dto.getComments(),  user, DateUtils.calendarFromDateStr(dto.getDateAssigned()) , experiment, workflow, dto.getStatus(), a, dto.getDaysExpected() , dto.getDetailOrder(), dto.getDateOnHold() == null ? null : DateUtils.calendarFromDateStr(dto.getDateOnHold()));	
 			// issue 277
 		//	ProcessTrackingDetails ptd  = ProcessTrackingDetails.instance(dto.getJobID(), pt, dto.getDateStarted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateStarted()),  dto.getDateCompleted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateCompleted()), dto.getComments(),  user, null , experiment, workflow, dto.getStatus(), a, dto.getDaysExpected() , dto.getDetailOrder(), dto.getDateOnHold() == null ? null : DateUtils.calendarFromDateStr(dto.getDateOnHold()));
-			ProcessTrackingDetails ptd  = ProcessTrackingDetails.instance(dto.getJobID(), pt, dto.getDateStarted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateStarted()),  dto.getDateCompleted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateCompleted()), dto.getComments(),  user,  experiment, workflow, dto.getStatus(), a, dto.getDaysExpected() , dto.getDetailOrder(), dto.getDateOnHold() == null ? null : DateUtils.calendarFromDateStr(dto.getDateOnHold()));
+			ProcessTrackingDetails ptd  = ProcessTrackingDetails.instance(dto.getJobID(), pt, dto.getDateStarted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateStarted()),  dto.getDateCompleted() == null ? null : DateUtils.calendarFromDateStr(dto.getDateCompleted()), dto.getComments(),  user,  experiment, workflow, dto.getStatus(), a, dto.getDaysExpected() , dto.getDetailOrder(), dto.getDateOnHold() == null ? null : DateUtils.calendarFromDateStr(dto.getDateOnHold()),
+					                      StringUtils.isEmptyOrNull(dto.getDateInProgress()) ? null : DateUtils.calendarFromDateStr(dto.getDateInProgress()     ));
 			if (dto.getJobID() == null || dto.getJobID().equals("to be assigned"))
 				{
 				processTrackingDao.createProcessTracking(ptd);
@@ -403,5 +404,8 @@ public class ProcessTrackingService
 		return processTrackingDao.grabSampleTypeForEmail(expID);
 	 	}
 	 
-	
+	 public void doAutomaticPropagation()
+	 	{
+		 processTrackingDao.doAutomaticPropagation();
+	 	}
     }
