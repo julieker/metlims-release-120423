@@ -534,18 +534,13 @@ public class ProcessTrackingDAO extends BaseDAO
 			
 			List <Object []> listJobs =  queryListJobs.getResultList();
 			Query query = null;
+			query = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = sysdate where exp_id = ?1 and assay_id = ?2 and status = 'In progress' and date_inprogress is null ").setParameter(1,obj[0].toString()).setParameter(2,  StringParser.parseId(obj[1].toString()));
+			query.executeUpdate();
 			for (Object [] strJob : listJobs)      
 				{    
-				if (i == 0)
-					{
-				    query = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = sysdate  + ?3 where job_id = ?2").setParameter(2, strJob[0].toString()).setParameter(3, inProcessDays);
-					System.out.println("query for if:  update tracking_tasks_details set date_started = sysdate + " + inProcessDays + " where job_id = " + strJob[0].toString());
-					}
-				else 
-					{
-					query = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = sysdate + ?1  where job_id = ?2").setParameter(1, i).setParameter(2, strJob[0].toString());
-					System.out.println("query for else:  update tracking_tasks_details set date_started = sysdate + " + " " + " +  " + (i) + " where job_id = " + strJob[0].toString());
-					}
+			
+				query = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = sysdate + ?1  where job_id = ?2").setParameter(1, i).setParameter(2, strJob[0].toString());
+				System.out.println("query for else:  update tracking_tasks_details set date_started = sysdate + " + " " + " +  " + (i) + " where job_id = " + strJob[0].toString());
 				query.executeUpdate();	
 				prevExpDays = Integer.valueOf(strJob[1].toString());
 				

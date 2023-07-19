@@ -520,20 +520,20 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 		   
 		if  (nList.get(i).getDateCompleted() != null)
 			{
-			if (i==260)   
-				 System.out.println("alright in if  step 1 260 now....here is indexCompleted:" + indexCompleted + " " + 
+			if (i==0)   
+				 System.out.println("alright in if  step 1 0 now....here is indexCompleted:" + indexCompleted + " " + 
 			      "here is experiment" + nList.get(i).getExperiment().getExpID() + " " + nList.get(i).getAssay().getAssayId() + " " + 
 			      nList.get(i).getProcessTracking().getTaskDesc()    );
 			thecompleted = nList.get(i).convertToDateString(nList.get(i).getDateCompleted()).substring(0,5);
-			if (i==260)   
-				 System.out.println("alright in if  step 1 260 now....here is thecompleted:" + thecompleted);
+			if (i==0)   
+				 System.out.println("alright in if  step 1 0 now....here is thecompleted:" + thecompleted);
 			indexCompleted = todayStrList.indexOf(thecompleted);
 			}
 		else 
 			indexCompleted = -1;
 		
-		if (i==260)   
-			 System.out.println("FIRST step 1 260 now....here is indexCompleted:" + indexCompleted);
+		if (i==0)   
+			 System.out.println("FIRST step 1 0 now....here is indexCompleted:" + indexCompleted);
 		
 		
 		indexxofDate = todayStrList.indexOf(theStartDate);
@@ -570,19 +570,19 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 		 indexxofCurrentDate = todayStrList.indexOf(theCurrentDate.substring(0,5));
 		 indexxofDate = todayStrList.indexOf(theStartDate);
 		 boolean didonHoldForInprocess = false;
-		 if (i==260)
+		 if (i==0)
 			 System.out.println("here is indexxofDate and indexxofcurrentdate:" + indexxofDate + " " + indexxofCurrentDate);
 		 if (indexxofDate <0  && indexxofCurrentDate <= 0) 
 		 	 {
-			 if (i==260)
+			 if (i==0)
 		    	 System.out.println("made it in indexdate current date...");
 			 if (ChronoUnit.DAYS.between(theStartingCal.toInstant(),  nList.get(i).getDateStarted().toInstant()) < 0 
 			     &&
 			     ChronoUnit.DAYS.between(theEndingCal.toInstant(),  forCurrentCal.toInstant()) >= 0
 			     )
 				 	{   
-				     if (i==260)
-				    	 System.out.println("in i 260");
+				     if (i==0)
+				    	 System.out.println("in i 0");
 				     String theProgressDate = "";
 				     if (nList.get(i).getDateInProgress() != null)
 				     	{
@@ -611,8 +611,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 				    	    		1;
 				    	    int endingpoint =
 				    	    		indexxofProgressDate + 1;
-				    	    if (i==260)
-						    	 System.out.println("ok in i 260");
+				    	    if (i==1)
+						    	 System.out.println("ok in i 0");
 				    	    str = str +
 									  "  ul .chart-li-onHold-" + (i) +  "{" +
 											  "    grid-column:" +  (1 ) + "/" + ( endingpoint   ) +      ";  grid-row:2; " ;
@@ -627,8 +627,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 				     else
 				     	{ 
 				    	int endPointProcessBeforeHold = 15;
-					    if (i==260)
-						     System.out.println("not ok in i 260");
+					    if (i==1)
+						     System.out.println("not ok in i 0");
 					    if (ChronoUnit.DAYS.between(theStartingCal.toInstant(),  nList.get(i).getDateStarted().toInstant()) <=0
 					    	&& indexxofHoldDate >= 0 
 					    	&& nList.get(i).getDateOnHold() != null
@@ -645,8 +645,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 				 	}
 			 else       
 				 {  
-			     if (i==260)
-			    	 System.out.println("in ii 260");
+			     if (i==1)
+			    	 System.out.println("in ii 0");
 				  str = str + 
 				  "  ul .chart-li-" + (i) +  "{" +
 				  "    grid-column:" +  "0" + "/" + "0" +   "; grid-row:2; " ;
@@ -658,14 +658,14 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 		 	 }
     	 else if (indexxofDate <0 && indexxofCurrentDate >= 0 )       
 		 	{    
-    		  if (i==260)
-			    	 System.out.println("in iii 260"); 
+    		  if (i==1)
+			    	 System.out.println("in iii 0"); 
     		  int endpoint = 0;
     		  if (indexCompleted > 0 )
     			  endpoint = indexCompleted + 1; 
     		  else 
     			  endpoint = indexxofCurrentDate+ 2;
-    		  if (i==260)
+    		  if (i==1)
 			    	 System.out.println("here is indexCompleted:" + indexCompleted + " " + endpoint); 
 			 str = str + 
 					 "  ul .chart-li-" + (i) +  "{" +
@@ -676,8 +676,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 		 ///// june29
     	 else if (indexxofDate >=0 && indexxofCurrentDate <0  && indexCompleted >= 0 && nList.get(i).getDateCompleted() != null)       
 		 	{
-    		 if (i==260)
-		    	 System.out.println("in iv 260"); 
+    		 if (i==1)
+		    	 System.out.println("in iv 0"); 
 			 str = str + 
 					 "  ul .chart-li-" + (i) +  "{" +				 
 				"  grid-row-gap:0px;  grid-column:"  + (indexxofDate+ 1) +"/" + (indexCompleted + 1) +      ";  grid-row:2; "   ;
@@ -686,8 +686,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 		 ///// june29           
     	 else if (indexxofDate >=0 && indexxofCurrentDate <0  && indexCompleted < 0 && nList.get(i).getDateCompleted() != null )       
 		 	{
-    		 if (i==260)
-		    	 System.out.println("in v 260"); 
+    		 if (i==1)
+		    	 System.out.println("in v 0"); 
 			 str = str + 
 					 "  ul .chart-li-" + (i) +  "{" +			 
 				"  grid-row-gap:0px;  grid-column:"  + indexxofDate +"/" + 15 +      ";  grid-row:2; "   ;
@@ -695,14 +695,22 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 			 	}
 		 else    
 			 {
+			 String theclass = "";
 			 indexxofDate = indexxofDate < 0 ? 0 : indexxofDate;
 			 indexxofCurrentDate = indexxofCurrentDate < 0 ? 0 : indexxofCurrentDate;
-			if (i == 260)
+			if (i == 1)       
 				{
-				System.out.println("here in vi 260");
-				}
+				System.out.println("here in vi 1");
+				} 
+			if (nList.get(i).getDateInProgress() != null) 
+				theclass = "ul .chart-li-2Prog";
+			 else
+				theclass = "ul .chart-li-";
+			if (i == 260)
+				System.out.println("here is theclass:" + theclass);		
+			///// issue 283 jul 18     
 			 str = str + 
-			 "  ul .chart-li-" + (i) +  "{" +
+			 theclass + (i) +  "{" +
 			"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (  (indexxofDate +  daysBetween + 2 ) > 15 ? 15 :  (indexxofDate +  daysBetween + 2 ) )  +      ";  grid-row:2; "   ;
 			 showit =  "  ul .chart-li-" + (i) +  "{" +
 					"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (  (indexxofDate +  daysBetween + 2 ) > 15 ? 15 :  (indexxofDate +  daysBetween + 2 ) )  +      ";  grid-row:2; "   ;  
@@ -712,7 +720,7 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 			{
 			thecompleted = nList.get(i).convertToDateString(nList.get(i).getDateCompleted()).substring(0,5);
 			indexCompleted = todayStrList.indexOf(thecompleted);
-			}
+			}     
 		else 
 			indexCompleted = -1;
 		if  (nList.get(i).getDateOnHold() != null)
@@ -743,8 +751,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 		     {
 			 if (indexxofHoldDate  > 0 && indexCompleted > 0 && indexxofDate > 0   )
 			 	{
-				 if (i==260)
-			    	 System.out.println("in vii 260"); 
+				 if (i==1)
+			    	 System.out.println("in vii 1"); 
 				 str = str + 
 						 "  ul .chart-li-2Prog" + (i)  +  "{" +
 						// "  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (indexxofDate +  (daysBetween + 2 > 15 ? 15: daysBetween + 2) ) +      ";  grid-row:2; "   ;
@@ -786,13 +794,13 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 				indexxofProgressDate = todayStrList.indexOf(theProgressDate);
 			 if (indexxofProgressDate > 0   )
 			    {
-				 if (i==260)
-			    	 System.out.println("in viii 260"); 
+				 if (i==1)
+			    	 System.out.println("in viii 1"); 
 				 int theendpoint = indexxofCurrentDate >= 0 ? indexxofCurrentDate : 15;
 				 str = str + 
 						 "  ul .chart-li-2Prog" + (i)  +  "{" +
 						// "  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (indexxofDate +  (daysBetween + 2 > 15 ? 15: daysBetween + 2) ) +      ";  grid-row:2; "   ;
-						"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofProgressDate) + "/" + (theendpoint  )  +      ";  grid-row:2; "   ;
+						"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofProgressDate) + "/" + (theendpoint + 1 )  +      ";  grid-row:2; "   ;
 					 		
 					 		str = str + "   background-color:#4C9A2A;" ;		 
 					 			str = str + 
@@ -824,8 +832,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 			 int endingPoint = 0;
 			 if (nList.get(i).getDateOnHold()!= null)
 				 {
-				 if (i==260)
-					 System.out.println("step 1 260printing out completed.....");
+				 if (i==0)
+					 System.out.println("step 1 0printing out completed.....");
 				
 				 if (indexxofDate >= 0 )
 					 startingPoint = indexxofDate+ 1;
@@ -841,8 +849,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 			 
 			 if (nList.get(i).getDateOnHold()== null)
 			 {
-				 if (i==260)   
-					 System.out.println("step 1 260 now....here is indexCompleted:" + indexCompleted);
+				 if (i==0)   
+					 System.out.println("step 1 0 now....here is indexCompleted:" + indexCompleted);
 				
 				 if (indexxofDate >= 0 )     
 					 startingPoint = indexxofDate+ 1;
@@ -852,7 +860,7 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 					 endingPoint = indexCompleted + 1;
 				 else 
 					 endingPoint = 15;
-				 if (i==260)
+				 if (i==0)
 					 System.out.println("here is endpoint:" + endingPoint); 
 			 }
 			 
@@ -878,8 +886,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 			 if ( displayProgress					 
 			    ) 
 			 	{    
-				 if (i==260)
-					 System.out.println("ix in 260 printing out completed..........");
+				 if (i==1)
+					 System.out.println("ix in 0 printing out completed..........");
 					 str = str + 	
 					 "  ul .chart-li-" + (i) +  "{" +
 								//	  "    grid-column:" +  ( numDaysComplt > 14 ? 14 :  (1+ indexxofDate + numDaysComplt + 1)) + "/" + ( numDaysComplt > 14 ? 14 :  (indexxofDate +  numDaysComplt + 1)) +      ";  grid-row:2; "   ;
@@ -947,8 +955,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 				&& (ChronoUnit.DAYS.between(theEndingCal.toInstant(),nList.get(i).getDateInProgress().toInstant() ) >0					
 					) )
 				{
-				if (i==260)
-			    	 System.out.println("in XXX 260"); 
+				if (i==1)
+			    	 System.out.println("in XXX 0"); 
 				str = str +
 						  "  ul .chart-li-onHold-" + (i) +  "{" +
 								  "    grid-column:" +  ( 1)+ "/" + 15 +      ";  grid-row:2; " ;
@@ -959,8 +967,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 				{
 				    if (indexxofCurrentDate > 0 )
 				    	{
-				    	if (i==260)
-					    	 System.out.println("in X 260"); 
+				    	if (i==1)
+					    	 System.out.println("in X 0"); 
 				        str = str + 
 								  "  ul .chart-li-" + (i) +  "{" +
 								  "    grid-column:" +  (indexxofDate + 1 ) + "/" + (indexxofDate + 1 + indexxofCurrentDate + 1)  +   "; grid-row:2; " ;
@@ -971,8 +979,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 				    	}
 				    else 
 				    	{
-				    	if (i==260)
-					    	 System.out.println("in XI 260"); 
+				    	if (i==1)
+					    	 System.out.println("in XI 0"); 
 				    	
 				    	if (i==98)
 					    	 System.out.println("in i 98"); 
@@ -992,22 +1000,26 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 			   
 			else if (nList.get(i).getDateCompleted() == null && indexxofHoldDate >= 0 && indexxofDate >= 0   && indexxofCurrentDate <0 )
 				{
-				if (i==260)
-			    	 System.out.println("in XXXi 260"); 
+				int enddpoint = 15;
+				
+			    if (nList.get(i).getDateOnHold() != null && indexxofHoldDate >= 0 && ChronoUnit.DAYS.between(nList.get(i).getDateOnHold().toInstant(),Calendar.getInstance().toInstant() ) < 0 )
+				     enddpoint = indexxofHoldDate + 1;
+			    if (i==1)
+			    	 System.out.println("in XXXi 0"); 
                 if (i == 98)
                     {
                 	System.out.println("here in 98 ii");
                     }
-				str = str +
+				str = str +   
 						  "  ul .chart-li-onHold-" + (i) +  "{" +
-								  "    grid-column:" +  (indexxofHoldDate + 1)+ "/" + 15 +      ";  grid-row:2; " ;
+								  "    grid-column:" +  (indexxofHoldDate + 1)+ "/" + enddpoint +      ";  grid-row:2; " ;
 				}
 			else if (nList.get(i).getDateCompleted() == null && indexxofHoldDate >= 0   && indexxofCurrentDate >=0 )
 				{
-				int endforlOnHold = indexxofCurrentDate + 2;
+				int endforlOnHold = indexxofHoldDate + 1;
 				// issue 283 fix on hold not extending all the way
-				if (i==260)
-			    	 System.out.println("in XXXii 260"); 
+				if (i==1)
+			    	 System.out.println("in XXXii 0"); 
 				if (i == 98)
                    {
                	   System.out.println("here in 98 iii");
@@ -1016,6 +1028,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 						&& (indexxofProgressDate > 0 )
 						)       
 					endforlOnHold = indexxofProgressDate + 1 ;
+				if (i==1)
+					System.out.println("here is beginning and end:" + (indexxofHoldDate + 1) + "  " +  " end date: " + endforlOnHold);
 				str = str +
 						  "  ul .chart-li-onHold-" + (i) +  "{" +
 						  "    grid-column:" +  (indexxofHoldDate + 1)+ "/" + (endforlOnHold) +      ";  grid-row:2; " ;
@@ -1029,8 +1043,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
                 	{
             	   System.out.println("here in 98 iv");
                 	}
-				if (i==260)
-			    	 System.out.println("in XXX 260"); 
+				if (i==1)
+			    	 System.out.println("in XXX 0"); 
 				str = str +
 						  "  ul .chart-li-onHold-" + (i) +  "{" +
 						  "    grid-column:" +  (1)+ "/" + (indexxofCurrentDate + 2) +      ";  grid-row:2; " ;
@@ -1041,8 +1055,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 			else if (nList.get(i).getDateCompleted() == null && indexxofHoldDate >=0   && indexxofCurrentDate < 0 )
 				{
 				
-				if (i==260)
-			    	 System.out.println("in XXXiv 260"); 
+				if (i==1)
+			    	 System.out.println("in XXXiv 0"); 
 				if (i == 98)
                 	{
             	   System.out.println("here in 98 iv");
@@ -1078,10 +1092,13 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 						nList.get(i).convertToDateString(nList.get(i).getDateInProgress()).substring(0,5);
 				indexxofProgressDate = todayStrList.indexOf(theProgressDate);
 				Long numDaysbtwProgressAndComplete = ChronoUnit.DAYS.between(nList.get(i).getDateInProgress().toInstant(), nList.get(i).getDateCompleted().toInstant()) ;
-				if (i==260)
-			    	 System.out.println("in XII 260");
+				if (i==1)
+			    	 System.out.println("in XII 0");
+				String thepClass = str.indexOf("ul .chart-li-" + (i)) >= 0  
+						? " ul .chartInProgress-li-" + (i) : "  ul .chart-li-" + (i);
+					
 				str = str + 
-						 "  ul .chart-li-" + (i) +  "{" +
+						 thepClass +  "{" +
 						// "  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (indexxofDate +  (daysBetween + 2 > 15 ? 15: daysBetween + 2) ) +      ";  grid-row:2; "   ;
 						"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofProgressDate) + "/" + ( 1+ indexxofProgressDate + numDaysbtwProgressAndComplete )  +      ";  grid-row:2; "   ;
 			    showit =  "  ul .chart-li-" + (i) +  "{" + 	"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofProgressDate) + "/" + ( 1+ indexxofProgressDate + numDaysbtwProgressAndComplete )  +      ";  grid-row:2; "   ;
@@ -1117,8 +1134,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
             	   System.out.println("here in 98 v");
                 	} 
 				
-				if (i==260)
-			    	 System.out.println("in XXXv 260"); 
+				if (i==1)
+			    	 System.out.println("in XXXv 0"); 
 				str = str +
 						  "  ul .chart-li-onHold-" + (i) +  "{" +
 								  "    grid-column:" +  (1+ indexxofHoldDate ) + "/" + ( 1 + indexCompleted    ) +      ";  grid-row:2; " ;
@@ -1131,8 +1148,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
                 	{
             	   System.out.println("here in 98 vi");
                 	}
-				if (i==260)
-			    	 System.out.println("in XXXvi 260"); 
+				if (i==1)
+			    	 System.out.println("in XXXvi 0"); 
 				str = str + 
 					  "  ul .chart-li-onHold-" + (i) +  "{" +
 			 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
@@ -1144,8 +1161,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 	            	{
 	        	   System.out.println("here in 98 vii");
 	            	}
-				if (i==260)
-			    	 System.out.println("in XXXvii 260"); 
+				if (i==1)
+			    	 System.out.println("in XXXvii 0"); 
 				str = str + 
 					  "  ul .chart-li-onHold-" + (i) +  "{" +
 			 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
@@ -1166,8 +1183,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 		            	{
 		        	   System.out.println("here in 98 ix");
 		            	}
-					if (i==260)
-				    	 System.out.println("in XXXviii 260"); 
+					if (i==1)
+				    	 System.out.println("in XXXviii 0"); 
 					str = str + 
 							  "  ul .chart-li-onHold-" + (i) +  "{" +
 					 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
@@ -1182,8 +1199,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 		            	{
 		        	   System.out.println("here in 98 x");
 		            	}
-					if (i==260)
-				    	 System.out.println("in XXXix 260"); 
+					if (i==1)
+				    	 System.out.println("in XXXix 0"); 
 					str = str +   "  ul .chart-li-onHold-" + (i) +  "{" +
 						 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
 						        "    grid-column:" +  (indexxofHoldDate + 1 +   "/" + ( 15 )) +      ";  grid-row:2; "   ;	
@@ -1199,8 +1216,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 		            	{
 		        	    System.out.println("here in 98 xi");
 		            	}
-					if (i==260)
-				    	 System.out.println("in XXXx 260"); 
+					if (i==1)
+				    	 System.out.println("in XXXx 0"); 
 				    str = str +   "  ul .chart-li-onHold-" + (i) +  "{" +
 					 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
 					        "    grid-column:" +  ( 1 +   "/" + ( 15 )) +      ";  grid-row:2; "   ;	
@@ -1214,8 +1231,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 		            	{
 		        	    System.out.println("here in 98 xii");
 		            	}
-					if (i==260)
-				    	 System.out.println("in XXXxii 260"); 
+					if (i==1)
+				    	 System.out.println("in XXXxii 0"); 
 				str = str +   "  ul .chart-li-onHold-" + (i) +  "{" +
 					 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
 					        "    grid-column:" +  ( (indexxofHoldDate)  +   "/" + 15) +      ";  grid-row:2; "   ;	
@@ -1232,8 +1249,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 	        	    System.out.println("here in 98 xiii");
 	            	}
 					
-					if (i==260)
-				    	 System.out.println("in XXXxiii 260"); 
+					if (i==1)
+				    	 System.out.println("in XXXxiii 0"); 
 					str = str + 
 							  "  ul .chart-li-onHold-" + (i) +  "{" +
 					 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
@@ -1249,8 +1266,8 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 	            	{
 	        	    System.out.println("here in 98 xiv");
 	            	}
-					if (i==260)
-				    	 System.out.println("in XXXxv 260"); 
+					if (i==1)
+				    	 System.out.println("in XXXxv 0"); 
 					str = str + 
 						  "  ul .chart-li-onHold-" + (i) +  "{" +
 				 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
@@ -1265,11 +1282,11 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 				{
 				if (i == 260)    
 				{
-					System.out.println("yippieee for 260");
+					System.out.println("yippieee for 0");
 				}
 				
-				if (i==260)
-			    	 System.out.println("in XXXxv 260");     
+				if (i==1)
+			    	 System.out.println("in XXXxv 0");     
 				str = str + 
 				  "  ul .chart-li-onHold-" + (i) +  "{" +
 		 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
@@ -1601,12 +1618,14 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 	    				nList.get(indexLink).getDateOnHold() != null && 
 	    				indexxofHoldDate >= 0   && indexxofDate >= 0 )
 	    			{	
-	    		      if (indexLink == 260)  
-                 	   System.out.println("260 ahha here ");
+	    		      if (indexLink == 1)  
+                 	   System.out.println("204 ahha here ");
 	    		      if (indexLink == 0)  
 	                   	   System.out.println("0 number 1");
+	    		    String theclass = str.indexOf("chart-li-" + (indexLink) + "{") > 0 ? "chart-li-" + (indexLink) :
+	    		    	("chart-li-2Prog" + indexLink);
 	    			str = str + "        <ul class=\"chart-row-bars\">" +	    					    
-	    					 ( ( indexxofDate < 0 ) ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" ) +	 					
+	    					 ( ( indexxofDate < 0 ) ? "" : " <li   class=\"" + theclass +   "\">" +   "</li>" ) +	 					
 		   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
 		   		 		(doDisplay   ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
 		   		 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 
@@ -1620,10 +1639,10 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 	    		if (nList.get(indexLink).getDateInProgress() != null && nList.get(indexLink).getDateCompleted() != null && 
 	    				indexCompleted >= 0 && indexxofHoldDate >= 0 && indexxofProgressDate > 0  )
 	    			{	
-	    		      if (indexLink == 260)  
-                   	   System.out.println("260 number 1");
-	    		      if (indexLink == 0)  
-	                   	   System.out.println("0 number 1");
+	    		      if (indexLink == 1)  
+                   	   System.out.println("204 number 1.1");
+	    		      if (indexLink == 1)  
+	                   	   System.out.println("204 number 0");
 	    			str = str + "        <ul class=\"chart-row-bars\">" +
 	    			
                  
@@ -1643,11 +1662,11 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 	    		if (nList.get(indexLink).getDateInProgress() != null && nList.get(indexLink).getDateCompleted() != null && 
 	    				indexCompleted > 0 && indexxofHoldDate < 0 && indexxofProgressDate > 0  )
 	    			{
-	    		      if (indexLink == 260)  
-	                   	   System.out.println("260 number 2");
+	    		      if (indexLink == 1)  
+	                   	   System.out.println("204 number 2");
 	    		      
-	    		      if (indexLink == 0)  
-	                   	   System.out.println("0 number 2");
+	    		      if (indexLink == 1)  
+	                   	   System.out.println("204 number 1");
 	    			str = str + "        <ul class=\"chart-row-bars\">" +
 	    			
                                               
@@ -1676,12 +1695,15 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 	    			    displayprog = false;
 	    			else
 	    				displayprog = true;          
-	    		      if (indexLink == 260)     
-	                   	   System.out.println("260 number 3");
-	    		      if (indexLink == 0)  
+	    		      if (indexLink == 0)     
 	                   	   System.out.println("0 number 3");
-	    		      if (str.indexOf("<li   class=\" chart-li-" + (indexLink) +   "\">") < 0)
+	    		      if (indexLink == 1)  
+	                   	   System.out.println("204 number 3");
+	    		      if (str.trim().replace(" ",  "").indexOf("liclass=\"chart-li-" + indexLink)< 0)
+	    		     // if (str.indexOf("<li   class=\" chart-li-" + (indexLink) +   "\">") < 0)
 		    		      {
+	    		    	  if (indexLink == 1)  
+		                   	   System.out.println("yep here 1.....");
 		                 str = str + "        <ul class=\"chart-row-bars\">" + 
 		                   	(displayprog ? (" <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>") : " ")   +
 			   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
@@ -1705,10 +1727,10 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 	    			  	  {
 	    				  doDisplayInProgressAfterCurrentDate  = false;
 	    			  	  }
-	    		      if (indexLink == 260 	     
+	    		      if (indexLink == 0 	     
 	    		    	 )  
 	    		      	{  
-	                   	System.out.println("260 number 4 here come starting and current date..." + (doDisplayInProgressAfterCurrentDate));
+	                   	System.out.println("0 number 4 here come starting and current date..." + (doDisplayInProgressAfterCurrentDate));
 	                   	SimpleDateFormat sddf = new SimpleDateFormat("MM/dd/yyyy");
 	                   	System.out.println ((theStartingCal == null) ? "" : sdf.format(theStartingCal.getTime()));
 	                    Calendar lcal = Calendar.getInstance();
@@ -1717,12 +1739,12 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 	                   	System.out.println(ChronoUnit.DAYS.between(theStartingCal.toInstant(),  Calendar.getInstance().toInstant() ) );
 	                   	System.out.println(ChronoUnit.DAYS.between(theEndingCal.toInstant(),  Calendar.getInstance().toInstant() ) );
 	    		      	}
-	    		      if (indexLink == 0)  
-	                   	   System.out.println("0 number 4");
+	    		      if (indexLink == 1)  
+	                   	   System.out.println("204 number 4");
 	                  str = str + "        <ul class=\"chart-row-bars\">" + 
 	                		 ( doDisplayInProgressAfterCurrentDate ?  " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" : " ") + 
-		   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-		   		 		(doDisplay ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
+	                		 (doDisplay ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	 
+		   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
 		   		 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	
 		   		 
 		   		 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
@@ -1745,8 +1767,8 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 	    			 continuingInProcess = true;		
 	    			if (nList.get(indexLink).getDateInProgress()== null)
 		    			{
-	    			      if (indexLink == 260)  
-	                      	   System.out.println("260 number 5");
+	    			      if (indexLink == 1)  
+	                      	   System.out.println("204 number 5");
 	    			      if (indexLink == 0)  
 	                      	   System.out.println("0 number 5");
 		    			str = str + "        <ul class=\"chart-row-bars\">" +
@@ -1767,8 +1789,8 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 		    			 	&& nList.get(indexLink).getStatus().equals("On hold")
 		    		    )	  
 	    			{
-	    		      if (indexLink == 260)  
-	                   	   System.out.println("260 number 6");
+	    		      if (indexLink == 0)  
+	                   	   System.out.println("204 number 6");
 	    		      if (indexLink == 0)  
 	                   	   System.out.println("0 number 6");
 	    			if (nList.get(indexLink).getDateInProgress()== null)
@@ -1805,8 +1827,8 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 	    					  
 	    						if (nList.get(indexLink).getDateInProgress()== null)
 		    		    			{
-	    						      if (indexLink == 260)  
-	    			                   	   System.out.println("260 number 7");
+	    						      if (indexLink == 1)  
+	    			                   	   System.out.println("204 number 7");
 	    						      if (indexLink == 0)  
 	    			                   	   System.out.println("0 number 7");
 		    					    str = str + "        <ul class=\"chart-row-bars\">" +
@@ -1824,8 +1846,8 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 		    				{	
 	    					 if (nList.get(indexLink).getDateInProgress()== null)
 	    		    			 {
-	    						 if (indexLink == 260)  
-  			                   	   System.out.println("260 number 8");
+	    						 if (indexLink == 1)  
+  			                   	   System.out.println("204 number 8");
 	    						 if (indexLink == 0)  
 	  			                   	   System.out.println("0 number 8");
 		    					 str = str + "        <ul class=\"chart-row-bars\">" +
@@ -1868,25 +1890,37 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 								{
                                 displayInProg = false;
 								}
-	    				 // fix vanilla on hold issue 283
+	    				if (ChronoUnit.DAYS.between(theEndingCal.toInstant(),  nList.get(indexLink).getDateStarted().toInstant() )> 0 )
+	    						displayInProg = false;
+	    					// fix vanilla on hold issue 283
 	    				 if (nList.get(indexLink).getDateInProgress()== null)
 			    			 {
-	    					 if (indexLink == 260)  
-			                   	   System.out.println("260 number 9");
+	    					 String theclass = 
+	    							 str.indexOf("chart-li-" + (indexLink) + "{") >= 0 ?
+	    									 "chart-li-" + (indexLink) :			     
+	    							 		"chart-li-2Prog" +indexLink;
 	    					 if (indexLink == 0)  
-			                   	   System.out.println("0 number 9");
-			    			str = str + "        <ul class=\"chart-row-bars\">" +
-			    				/////////	 (daysBetweeni < 0 || ( !nList.get(indexLink).getStatus().equals("In progress") && nList.get(indexLink).getDateInProgress() == null) ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" )  +	
-			    				(!displayInProg  ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" )  +
-			   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-			   		 		(doDisplay ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-			   		 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 		
-			   		 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-			   		 	  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-			   		 		"                               </ul>" ;
+			                   	   System.out.println("0 number 9" + "the class:" + theclass);
+	    					 if (indexLink == 1)      
+			                   	   System.out.println("204 number 9" + "the class:" + theclass);
+	    					 if (str.trim().replace(" ",  "").indexOf("liclass=\"chart-li-" + indexLink)< 0)
+	    					 		{
+	    						 if (indexLink == 1)  
+				                   	   System.out.println("204 number 9 yep in here:");
+					    			str = str + "        <ul class=\"chart-row-bars\">" +
+					    				/////////	 (daysBetweeni < 0 || ( !nList.get(indexLink).getStatus().equals("In progress") && nList.get(indexLink).getDateInProgress() == null) ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" )  +	
+					    				(!displayInProg  ? "" : " <li   class=\"" + theclass +   "\">" +   "</li>" )  +
+					    				(doDisplay ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
+					   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
+					   		 		
+					   		 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 		
+					   		 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
+					   		 	  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
+					   		 		"                               </ul>" ;
+	    					 		}       
 			    			 }
-		    			}
-	       			
+		    			}    
+	       			          
 	    			///// put back
 	    		////	str = str + "        <ul class=\"chart-row-bars\">" +
 		 		////	 (daysBetweeni < 0 || ( !nList.get(indexLink).getStatus().equals("In progress") && nList.get(indexLink).getDateInProgress() == null) ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" ) +		 					
@@ -1915,8 +1949,8 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 	    			{
 	    			 if (nList.get(indexLink).getDateInProgress()== null)
 		    			 {
-	    				 if (indexLink == 260)  
-		                   	   System.out.println("260 number 10:" + doDisplay);
+	    				 if (indexLink == 1)  
+		                   	   System.out.println("204 number 10:" + doDisplay);
 	    				 if (indexLink == 0)  
 		                   	   System.out.println("0 number 10");       
 	    				 
@@ -1983,8 +2017,8 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 	    		    	{  
 	    				 if (nList.get(indexLink).getDateInProgress()== null)
 			    			 {
-	    					 if (indexLink == 260)  
-			                   	   System.out.println("260 number 11");
+	    					 if (indexLink == 1)  
+			                   	   System.out.println("204 number 11");
 	    					 if (indexLink == 0)  
 			                   	   System.out.println("0 number 11");
 	    					 
@@ -2023,8 +2057,8 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 	    		    		 
 	    		    			 if (nList.get(indexLink).getDateInProgress()== null)
 				    			 {
-	    		    			 if (indexLink == 260)  
-				                   	   System.out.println("260 number 12");
+	    		    			 if (indexLink == 1)  
+				                   	   System.out.println("204 number 12");
 	    		    			 if (indexLink == 0)  
 				                   	   System.out.println("0 number 12");
 		    		    		str = str + "        <ul class=\"chart-row-bars\">" +
@@ -2534,7 +2568,7 @@ public void setDateEndGantt (String dateEndGantt)
 	 private AjaxLink buildGanttChartLink(String id, int i)
 		{
 		AjaxLink link;		
-		// Issue 2607
+		// Issue 07
 		// issue 39
 	    link =  new AjaxLink <Void>(id)
 			{

@@ -355,7 +355,7 @@ public class EditProcessTrackingDetail extends WebPage
 								EditProcessTrackingDetail.this.error(errMsg);
 								return;
 								}
-						if (originalOnHoldDate != null && processTrackingDetailsDTO.getStatus().equals("In progress"))
+						if (originalOnHoldDate != null && !StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold()) && processTrackingDetailsDTO.getStatus().equals("In progress"))
 							{
 							// issue 283
 							System.out.println("in in progress");
@@ -411,6 +411,7 @@ public class EditProcessTrackingDetail extends WebPage
 							//moveDependentTasks(ptd, (int) dayOnHoldToAdd -1);
 							//amountToMove =(int) dayOnHoldToAdd -1;
 							amountToMove =(int) dayOnHoldToAdd ;
+							System.out.println("hhhhhhere is amount to move:" + amountToMove);
 							//amountToMove = (int) dayOnHoldToAdd -1;
 							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
 							}
