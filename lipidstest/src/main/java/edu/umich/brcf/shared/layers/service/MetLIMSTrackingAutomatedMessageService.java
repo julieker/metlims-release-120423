@@ -19,6 +19,7 @@ import edu.umich.brcf.metabolomics.panels.admin.messaging.METWorksMessageMailer;
 import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.layers.service.SystemConfigService;
 import edu.umich.brcf.shared.util.StringParser;
+import edu.umich.brcf.shared.util.utilpackages.StringUtils;
 
 
 @Service
@@ -74,8 +75,9 @@ public class MetLIMSTrackingAutomatedMessageService
 	//@Scheduled(cron="0 51 11 * * WED")
 	//@Scheduled(cron="0 43 16 * * SUN")
 	//  @Scheduled(cron="0 05 16 * * MON")
-	@Scheduled(cron="0 00 08 * * FRI")
+	//@Scheduled(cron="0 00 08 * * FRI")
 	//@Scheduled(cron="0 14 14 * * FRI")
+	@Scheduled(cron="0 00 08 * * FRI")
 	public void sendAssignedTasksReport()
         {     	
         String msg = "Metlims Tracking System:  Your tasks ";
@@ -91,6 +93,8 @@ public class MetLIMSTrackingAutomatedMessageService
         
         Map <String, String> theCurrentTaskMap = buildCurrentTaskMap();
         Map <String, String> theContactMap =  buildContactMap();
+        Map <String, String> theCommentMap = buildCommentMap();
+        
     	//List<String> email_contacts = (List<String>) (systemConfigService.getSystemConfigMap()).get("task_notification");	       
         List<String> email_contacts = processTrackingService.grabUsersWithAssignedTasks();
         String numSamplesStr = "";
@@ -104,12 +108,14 @@ public class MetLIMSTrackingAutomatedMessageService
  			    nList = processTrackingService.loadTasksAssignedForUser(email_contact);
                 htmlString = "";
                 String taskInfoStr = "";
- 				for (Object[] lObj: nListExpAssayUser)
+ 				for (Object[] lObj: nListExpAssayUser)     
  				    {
  					numSamplesStr = processTrackingService.grabNumberOfSamplesForEmail ((String) lObj[0]);
  					sampleTypeStr = processTrackingService.grabSampleTypeForEmail((String) lObj[0]);
  					nListStudy = processTrackingService.loadTasksAssignedForUserExpAssay(email_contact, (String) lObj[0], (String) lObj[1]);
- 					htmlString = htmlString + "<h3><b> "  + msg + " </b></h3> <br> <h4>" +  buildTaskString(nListStudy, "List of your assigned tasks" + " for " + (String) lObj[0]  + " " +      assayNameMap.get((String) lObj[1]) + " <br> " +   theContactMap.get((String) lObj[0] + (String) lObj[1])  + "<br>" + " Number of Samples: " + numSamplesStr + "<br>" +  "Sample Type:" + sampleTypeStr + "<br>" + theCurrentTaskMap.get((String) lObj[0] + (String) lObj[1])   ) + "</h4>";				
+ 					String theCommentString = theCommentMap.get((String) lObj[0] + (String) lObj[1])== null ? "" : "<br>" + " <span  style=\"  font-size: 14pt; font-weight:bold;  \">   " + "Comments:" + " </span> <br>" +  theCommentMap.get((String) lObj[0] + (String) lObj[1]);
+ 					// issue 285
+ 					htmlString = htmlString + "<h3><b> <br>" + " </b></h3>  <h4>"  +  buildTaskString(nListStudy, "<span style=\"  font-size: 16pt;  font-weight:bold;  \" >"  +    "Assigned tasks"  + " for " + (String) lObj[0]  + " " +      assayNameMap.get((String) lObj[1]) + "</span>" +  " <br> " +   theContactMap.get((String) lObj[0] + (String) lObj[1])  + "<br>  <span  style=\"  font-size: 14pt; font-weight:bold;  \">   " +  " <span  style=\"  font-size: 14pt; font-weight:bold;  \">   "   +  " Number of Samples: </span> " +  " <span  style=\"  font-size: 14pt; font-weight:normal;  \">   " +  numSamplesStr + " </span> <br>" + "<span  style=\"  font-size: 14pt; font-weight:bold;  \">   " +  " Sample Type: </span> " +  " </span> " + "<span  style=\"  font-size: 14pt; font-weight:normal;  \">   "   + sampleTypeStr + " </span> <br>"  +  theCurrentTaskMap.get((String) lObj[0] + (String) lObj[1]) + theCommentString ) + "</h4>"; 				
  				    }
  				METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, email_contact, mailTitle, msg, htmlString);
  				///////////////
@@ -173,7 +179,7 @@ public class MetLIMSTrackingAutomatedMessageService
 			 						}
 			 					htmlString = htmlString +  "<h3><b> "  + msg + " " +   msgTitle + " </b></h3> <br> <h4>" +  buildTaskString(newEachAssayList, "List of assigned tasks for experiment:" + nlist.get(0)[5].toString()  + " and assay: " + llAssayExp[1])  + " </h4>";
 		 						}
-				 			METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, email_contact, "METLIMS Tracking - METLIMS Sample Registration Message", msg, htmlString);
+				 			METWorksHTMLMailMessageSender metWorksHTMLMailMessageSender=  new METWorksHTMLMailMessageSender(mailSender, mailAddress, email_contact , "METLIMS Tracking - METLIMS Sample Registration Message", msg, htmlString);
 				 			}
 			 			catch (Exception e)
 				 			{
@@ -214,7 +220,7 @@ public class MetLIMSTrackingAutomatedMessageService
 		 for (Object [] lobj : expAssayObjs)
 		 	 {	
 		     currentTaskObj = processTrackingService.loadTasksAssignedForExpAssay((String) lobj[0], StringParser.parseId((String) lobj[1])     ).get(0);
-		     String cTaskInfo = "Currently " +  (String) currentTaskObj[3] + ": " + (String) currentTaskObj[0];
+		     String cTaskInfo = "<span  style=\"  font-size: 14pt; font-weight:bold;  \">" + "Current Step: </span>" + "<span  style=\"  font-size: 14pt; font-weight:normal;  \">" + (String) currentTaskObj[0] + "</span> <br>" + "<span  style=\"  font-size: 14pt; font-weight:bold;  \">"  + " Current Status: </span> " + "<span  style=\"  font-size: 14pt; font-weight:normal;  \">"  +  (String) currentTaskObj[3] + "</span>"  ;
 		     currentTaskMap.put((String) currentTaskObj[4]+  StringParser.parseId( (String) currentTaskObj[5])  , cTaskInfo);
 		     assayNameMap.put((String) StringParser.parseId((String) lobj[1]), (String) lobj[1]);
 		 	 }    	 
@@ -231,11 +237,33 @@ public class MetLIMSTrackingAutomatedMessageService
 		 for (Object [] lobj : expAssayObjs)
 		 	 {	
 		    // currentTaskObj = processTrackingService.loadTasksAssignedForExpAssay((String) lobj[0], StringParser.parseId((String) lobj[1])     ).get(0);
-		     contactInvestigatorStr = "Contact Name and PI Name:" + experimentService.loadById((String) lobj[0]).getProject().getContactPerson().getFullNameByLast() + " " + 
-		     experimentService.loadById((String) lobj[0]).getProject().getClient().getInvestigator().getFullNameByLast();
+		     contactInvestigatorStr = "<span  style=\"  font-size: 14pt; font-weight:bold;  \">" + "Contact and PI: </span>" +  "<span  style=\"  font-size: 14pt; font-weight:normal;  \"> "   + experimentService.loadById((String) lobj[0]).getProject().getContactPerson().getFullNameByLast() + " " + 
+		     experimentService.loadById((String) lobj[0]).getProject().getClient().getInvestigator().getFullNameByLast() + "</span>";
 		     currentContactMap.put((String) lobj[0] +  StringParser.parseId( (String) lobj[1])  , contactInvestigatorStr);		     
+		 	  
 		 	 } 
 		 return currentContactMap;
+		 }
+    
+    // issue 285
+    public Map <String, String> buildCommentMap ()
+		 {
+		 Map <String, String> commentMap =  new HashMap<String, String>();
+		 List <Object []> expAssayObjs = processTrackingService.listExpAssay();
+		 Object [] currentTaskObj;
+		 String commentString = "";
+		 for (Object [] lobj : expAssayObjs)
+	 	 	{	
+			 for (Object [] lcomm : processTrackingService.loadAllComments((String) lobj[0],   StringParser.parseId( (String) lobj[1]) ))
+			 	 {	
+			    // currentTaskObj = processTrackingService.loadTasksAssignedForExpAssay((String) lobj[0], StringParser.parseId((String) lobj[1])     ).get(0);
+			     commentString = commentString +   "<span style=\"  font-size: 14pt;  font-weight:bold;  \" >" + lcomm[2] + ": </span>" + "<span style=\"  font-size: 14pt;  font-weight:normal;  \" >" +  lcomm[3] + "</span>" +"<br>";	     
+			 	 } 
+			 if (!StringUtils.isEmptyOrNull(commentString))
+				 commentMap.put((String) lobj[0] +  StringParser.parseId( (String) lobj[1])  , commentString);	
+			 commentString = "";
+	 	 	}
+		 return commentMap;
 		 }
 	
 	 public  String buildTaskString (List<Object[]> sList, String titleStr )

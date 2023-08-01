@@ -4,9 +4,6 @@
  */
 package edu.umich.brcf.metabolomics.panels.admin.progresstracking;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
@@ -56,8 +53,6 @@ public class GantChart extends WebPage implements IMarkupResourceStreamProvider
 	{
 	@SpringBean
 	CompoundService compoundService;
-	File julieFile;
-	
 	//String dateStartGantt;
 	//String dateEndGantt;
 	// issue 61
@@ -75,7 +70,6 @@ public class GantChart extends WebPage implements IMarkupResourceStreamProvider
 	ProcessTrackingService processTrackingService;
 	String str;
 	long startDateGap;
-	boolean continuingInProcess = false;
 	AjaxCheckBox currentCheckBox;
 	AjaxCheckBox inProgressCheckBox;
 	AjaxCheckBox onHoldCheckBox;
@@ -86,8 +80,6 @@ public class GantChart extends WebPage implements IMarkupResourceStreamProvider
 	List<Compound> parentageList;
 	ListView listViewProgressTracking; // issue 61
 	GantChart GantChart = this;
-	List <Calendar> todayCalList = new ArrayList <Calendar> ();
-	
 	EditProcessTrackingDetail editProcessTrackingDetail;
 	List<ProcessTrackingDetails> currentList = new ArrayList <ProcessTrackingDetails> ();
 	// itemList
@@ -109,7 +101,6 @@ public class GantChart extends WebPage implements IMarkupResourceStreamProvider
 	boolean isInProgress = false;
 	boolean isOnHold = false;
 	
-	
 	boolean allExpAssay = true; 
 	boolean isAllExp = true;
 	int gIndex = 0;
@@ -121,13 +112,8 @@ public class GantChart extends WebPage implements IMarkupResourceStreamProvider
 	 DropDownChoice<String> userNamesDD;
 	 String assignedTo ;
 	 Map <String, String> sampleTypeMap =  new HashMap<String, String>();
-    boolean initialLoad = false;
-    int indexCompleted  = 0;
-    String thecompleted = "";
-	String theOnHold = "";
-	Calendar theStartingCal;
-	Calendar theEndingCal;
-	Calendar forCurrentCal = Calendar.getInstance();
+ 
+	 
 	/* @Override
 	 public void renderHead( IHeaderResponse response)
 	     {
@@ -183,13 +169,12 @@ public void setIsAllExp(boolean isAllExp)
 @Override
 public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<?> containerClass) 
 	{
-	
 	markupContainer = container;
 	containerClassl = containerClass;
 	//MarkupFactory.get().getMarkupCache();
 	MarkupCache.get().clear();
 	//Map <String, String> sampleTypeMap =  new HashMap<String, String>();
-    str = "";
+
 /////////////////////////////////////////////
 	Calendar mCalendar = Calendar.getInstance();    
 	mCalendar.add(Calendar.MONTH, 8);
@@ -222,63 +207,37 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
     SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
 	String startedString = 	(nList.size() == 0 || nList.get(0).getDateStarted()  == null) ? "" : (gantChartForm == null || StringUtils.isNullOrEmpty(gantChartForm.dateStartGantt) ?  sdf.format(nList.get(0).getDateStarted().getTime())  : gantChartForm.dateStartGantt   );
 	
-	
+	Calendar forCurrent = Calendar.getInstance();
 	////  if (isCurrent)
-	////	startedString = sdf.format(forCurrent.getTime());	
-	Calendar calP = Calendar.getInstance();
-	todayStrList = new ArrayList <String> ();
-	todayCalList = new ArrayList <Calendar> ();
-	
+	////	startedString = sdf.format(forCurrent.getTime());		
     for (int i = dateStartingPointIndex; i < dateStartingPointIndex+14; i++)
 	    	{	
-    	   
-    	    if (nList.size() == 0) 
+    	    if (nList.size() == 0)
     	    	   break;
-    
-    	    calP = Calendar.getInstance();
-    	    calP.setTime(new Date(startedString));
+	    	Calendar calP = Calendar.getInstance();
+	    	calP.setTime(new Date(startedString));
 	    	if (!(gantChartForm == null) && !StringUtils.isNullOrEmpty(gantChartForm.dateStartGantt))
 	    		{
 	    		calP.setTime(new Date(gantChartForm.dateStartGantt));
 	    		}
-	    	
-	    	
-	        if (i==0)
-	    		theStartingCal= Calendar.getInstance();
-	 
 	    	//calP.setTime(new Date(dateStartGantt));
-	    		
-	    	calP.add(Calendar.DAY_OF_MONTH, i);
-	    	theEndingCal = calP;
-	    	sdf = new SimpleDateFormat("MM/dd/yyyy");
-	    	String calendStr =  (calP == null) ? "" : sdf.format(calP.getTime());
-	    
-	    	if (i== dateStartingPointIndex+13)
-	    		{
-	    		theEndingCal.setTime(new Date (calendStr));
-	    		}
-	    	todayStrList.add(calendStr.substring(0,5));
-	    	todayCalList.add(calP);
 	    	
-	    	if (i==0)
-    			{
-	    		theStartingCal.setTime(new Date (calendStr));
-    			}
+	    	calP.add(Calendar.DAY_OF_MONTH, i);
+	    	sdf = new SimpleDateFormat("MM/dd/yyyy");
+	    	String calendStr =  (calP == null) ? "" : sdf.format(calP.getTime());	    	
+	    	todayStrList.add(calendStr.substring(0,5));
 	    	}
-    
-    theStartingCal = Calendar.getInstance();
-    theStartingCal = todayCalList.get(0);
-    theEndingCal = Calendar.getInstance();
-    theEndingCal = todayCalList.get(13);
-
  	String fillerDate1;
 	String fillerDate2;
 	String fillerDate3;
 	String fillerDate4;
 	String fillerDate5;
 	String fillerDate6;
-	String fillerDate7;	   
+	String fillerDate7;
+	
 	List <String> flDateString = new ArrayList <String> () ;
+	
+	
 	indexx = 0;
     str = "";
 	str = 
@@ -468,42 +427,11 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 	////////////////////////////// small for loop /////////////
 	//////////////////////////////                /////////////
 	
-	String theStartDate ;    
+	String theStartDate ;
 	String theEndingDate;
-	int indexxofDate = 0 ;
+	int indexxofDate ;
 	int indexxofEndingDate = 0;
-	int indexxofCurrentDate = 0;
-	// issue 283 
-	int indexxofHoldDate = 0;
-	
-	long daysBetweeni = 0L;
-	long daysBetweenj = 0L;
-	int theExpAssayIndex = 0;
-	String prevAssay = "";
-	String prevExp = "" ; 
-	if (!initialLoad)
-		processTrackingService.doAutomaticPropagation();
-	for (int i = 0; i<= nList.size() -2 ; i++)
-		{		
-		daysBetweeni = ChronoUnit.DAYS.between(nList.get(i).getDateStarted().toInstant(),Calendar.getInstance().toInstant() );
-		daysBetweenj = ChronoUnit.DAYS.between(nList.get(i+1).getDateStarted().toInstant(),Calendar.getInstance().toInstant() );
-	
-		if (!prevExp.equals(nList.get(i).getExperiment().getExpID()) && !prevAssay.equals(nList.get(i).getAssay().getAssayId()))
-			theExpAssayIndex= 0;
-		if (StringUtils.isNullOrEmpty(prevExp) && StringUtils.isNullOrEmpty(prevAssay))
-			theExpAssayIndex++;
-		prevAssay = nList.get(i).getAssay().getAssayId();
-		prevExp = nList.get(i).getExperiment().getExpID();
-		
-		}
-    initialLoad = true;
-    int indexxofProgressDate = 0;   
-    Calendar cCalendar = Calendar.getInstance();
-    
-    String theCurrentDate = 
-    		sdf.format(cCalendar.getTime());
-    
-    
+
 	//// handle all rows...
 	for (int i = 0; i<= nList.size() -1 ; i++)
 		{
@@ -517,46 +445,19 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 		dCalendar.add(Calendar.DAY_OF_MONTH, daysExpected);
 		theEndingDate = sdf.format(dCalendar.getTime());
 		
-		   
-		if  (nList.get(i).getDateCompleted() != null)
-			{
-			if (i==0)   
-				 System.out.println("alright in if  step 1 0 now....here is indexCompleted:" + indexCompleted + " " + 
-			      "here is experiment" + nList.get(i).getExperiment().getExpID() + " " + nList.get(i).getAssay().getAssayId() + " " + 
-			      nList.get(i).getProcessTracking().getTaskDesc()    );
-			thecompleted = nList.get(i).convertToDateString(nList.get(i).getDateCompleted()).substring(0,5);
-			if (i==0)   
-				 System.out.println("alright in if  step 1 0 now....here is thecompleted:" + thecompleted);
-			indexCompleted = todayStrList.indexOf(thecompleted);
-			}
-		else 
-			indexCompleted = -1;
-		
-		if (i==0)   
-			 System.out.println("FIRST step 1 0 now....here is indexCompleted:" + indexCompleted);
-		
-		
 		indexxofDate = todayStrList.indexOf(theStartDate);
 		indexxofEndingDate = todayStrList.indexOf(theEndingDate.substring(0,5));
-		
-		// issue 283 for on hold look at here 
-		if (nList.get(i).getDateOnHold() != null)
-			{
-			theOnHold = nList.get(i).convertToDateString(nList.get(i).getDateOnHold()).substring(0,5);
-			indexxofHoldDate= todayStrList.indexOf(theOnHold);
-			}
-		else 
-			indexxofHoldDate = -1;
-		
-		indexxofCurrentDate = todayStrList.indexOf(theCurrentDate.substring(0,5));
-		
 		long daysBetween = 0L;
 		if (nList.get(i).getStatus().equals("In progress"))
 		    {
 			if (nList.get(i).getDateStarted().compareTo(Calendar.getInstance()) <= 0 )
+		        {
 				daysBetween = ChronoUnit.DAYS.between(nList.get(i).getDateStarted().toInstant(),Calendar.getInstance().toInstant() );
+				}
 			else 
+			    {
 				daysBetween =  StringUtils.isNullOrEmpty(nList.get(i).getDaysExpected()) || (Integer.parseInt(nList.get(i).getDaysExpected()) <= 0) ? 1 : Integer.parseInt(nList.get(i).getDaysExpected()) - 1;
+			  	}
 		  	}
 		else 
 	  	    {
@@ -565,741 +466,62 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 		    else if (!(nList.get(i).getDateCompleted() == null)) 
 			    daysBetween = ChronoUnit.DAYS.between(nList.get(i).getDateStarted().toInstant(), nList.get(i).getDateCompleted().toInstant());		  	
 	  	    }	    
-		 String showit = "";
-		
-		 indexxofCurrentDate = todayStrList.indexOf(theCurrentDate.substring(0,5));
-		 indexxofDate = todayStrList.indexOf(theStartDate);
-		 boolean didonHoldForInprocess = false;
-		 if (i==0)
-			 System.out.println("here is indexxofDate and indexxofcurrentdate:" + indexxofDate + " " + indexxofCurrentDate);
-		 if (indexxofDate <0  && indexxofCurrentDate <= 0) 
+		 String showit;
+		 if (indexxofDate <0)
 		 	 {
-			 if (i==0)
-		    	 System.out.println("made it in indexdate current date...");
-			 if (ChronoUnit.DAYS.between(theStartingCal.toInstant(),  nList.get(i).getDateStarted().toInstant()) < 0 
-			     &&
-			     ChronoUnit.DAYS.between(theEndingCal.toInstant(),  forCurrentCal.toInstant()) >= 0
-			     )
-				 	{   
-				     if (i==0)
-				    	 System.out.println("in i 0");
-				     String theProgressDate = "";
-				     if (nList.get(i).getDateInProgress() != null)
-				     	{
-			             theProgressDate = nList.get(i).convertToDateString(nList.get(i).getDateInProgress()).substring(0,5);
-				         indexxofProgressDate = todayStrList.indexOf(theProgressDate);
-				     	}
-				     else indexxofProgressDate = -1;
-				     if (nList.get(i).getDateOnHold() != null)
-						{
-						theOnHold = nList.get(i).convertToDateString(nList.get(i).getDateOnHold()).substring(0,5);
-						indexxofHoldDate= todayStrList.indexOf(theOnHold);
-						}
-				     else
-				    	 indexxofHoldDate = -1;
-				     
-				     // july 14 left off here...
-				     if (nList.get(i).getDateOnHold() != null
-				    		 && nList.get(i).getStatus().equals("In progress")
-				    		 && ChronoUnit.DAYS.between(theStartingCal.toInstant(),  nList.get(i).getDateOnHold().toInstant()) <=0
-				    		 && nList.get(i).getDateInProgress() != null
-				    		 && indexxofProgressDate > 0
-				    		 && indexxofHoldDate <= 0 
-				    		 )
-				     		{ 
-				    	    int startingpoint = 
-				    	    		1;
-				    	    int endingpoint =
-				    	    		indexxofProgressDate + 1;
-				    	    if (i==1)
-						    	 System.out.println("ok in i 0");
-				    	    str = str +
-									  "  ul .chart-li-onHold-" + (i) +  "{" +
-											  "    grid-column:" +  (1 ) + "/" + ( endingpoint   ) +      ";  grid-row:2; " ;
-						 str = str + "   background-color:#FF0000;" ;
-						 str = str + 
-								 "    border-right: 1px solid rgba(0, 0, 0, 0.3); height: 5px;" +
-								 "  }" ;
-				    	    
-				    	    
-						 didonHoldForInprocess = true; 
-				     	}
-				     else
-				     	{ 
-				    	int endPointProcessBeforeHold = 15;
-					    if (i==1)
-						     System.out.println("not ok in i 0");
-					    if (ChronoUnit.DAYS.between(theStartingCal.toInstant(),  nList.get(i).getDateStarted().toInstant()) <=0
-					    	&& indexxofHoldDate >= 0 
-					    	&& nList.get(i).getDateOnHold() != null
-					    	&& nList.get(i).getStatus().equals("In progress")
-					    	&& ChronoUnit.DAYS.between(theStartingCal.toInstant(),  nList.get(i).getDateOnHold().toInstant()) >=0
-					    	)
-					     	{
-					    	endPointProcessBeforeHold =  indexxofHoldDate;
-					     	}
-						str = str + 
-								  "  ul .chart-li-" + (i) +  "{" +
-								  "  grid-row-gap:0px;  grid-column:" +  "1" + "/" + (endPointProcessBeforeHold) +   "; grid-row:2; " ; 
-				     	}
-				 	}
-			 else       
-				 {  
-			     if (i==1)
-			    	 System.out.println("in ii 0");
-				  str = str + 
-				  "  ul .chart-li-" + (i) +  "{" +
-				  "    grid-column:" +  "0" + "/" + "0" +   "; grid-row:2; " ;
-				  if (ChronoUnit.DAYS.between(theEndingCal.toInstant(),  nList.get(i).getDateStarted().toInstant()) > 0 )
-					    str = str + "display:none;";
-				  showit =  "  ul .chart-li-" + (i) +  "{" +
-						  "    grid-column:" +  "3" + "/" + "4" +    "; grid-row:2; " ;
-				 }
+			 str = str + 
+			  "  ul .chart-li-" + (i) +  "{" +
+			  "    grid-column:" +  "0" + "/" + "0" +   "; grid-row:2; " ;
+			  showit =  "  ul .chart-li-" + (i) +  "{" +
+					  "    grid-column:" +  "0" + "/" + "0" +    "; grid-row:2; " ;
 		 	 }
-    	 else if (indexxofDate <0 && indexxofCurrentDate >= 0 )       
-		 	{    
-    		  if (i==1)
-			    	 System.out.println("in iii 0"); 
-    		  int endpoint = 0;
-    		  if (indexCompleted > 0 )
-    			  endpoint = indexCompleted + 1; 
-    		  else 
-    			  endpoint = indexxofCurrentDate+ 2;
-    		  if (i==1)
-			    	 System.out.println("here is indexCompleted:" + indexCompleted + " " + endpoint); 
-			 str = str + 
-					 "  ul .chart-li-" + (i) +  "{" +
-				"  grid-row-gap:0px;  grid-column:"  + 1 +"/" + (endpoint) +      ";  grid-row:2; "   ;
-				showit =  "  ul .chart-li-" + (i) +  "{" + "  grid-row-gap:0px;  grid-column:" +  3 + "/" + 7 +      ";  grid-row:2; "   ;  
-			 	}
-		 
-		 ///// june29
-    	 else if (indexxofDate >=0 && indexxofCurrentDate <0  && indexCompleted >= 0 && nList.get(i).getDateCompleted() != null)       
-		 	{
-    		 if (i==1)
-		    	 System.out.println("in iv 0"); 
-			 str = str + 
-					 "  ul .chart-li-" + (i) +  "{" +				 
-				"  grid-row-gap:0px;  grid-column:"  + (indexxofDate+ 1) +"/" + (indexCompleted + 1) +      ";  grid-row:2; "   ;
-				showit =  "  ul .chart-li-" + (i) +  "{" + "  grid-row-gap:0px;  grid-column:" +  3 + "/" + 7 +      ";  grid-row:2; "   ;      
-			 	}
-		 ///// june29           
-    	 else if (indexxofDate >=0 && indexxofCurrentDate <0  && indexCompleted < 0 && nList.get(i).getDateCompleted() != null )       
-		 	{
-    		 if (i==1)
-		    	 System.out.println("in v 0"); 
-			 str = str + 
-					 "  ul .chart-li-" + (i) +  "{" +			 
-				"  grid-row-gap:0px;  grid-column:"  + indexxofDate +"/" + 15 +      ";  grid-row:2; "   ;
-				showit =  "  ul .chart-li-" + (i) +  "{" + "  grid-row-gap:0px;  grid-column:" +  3 + "/" + 7 +      ";  grid-row:2; "   ;
-			 	}
-		 else    
+		 else
 			 {
-			 String theclass = "";
-			 indexxofDate = indexxofDate < 0 ? 0 : indexxofDate;
-			 indexxofCurrentDate = indexxofCurrentDate < 0 ? 0 : indexxofCurrentDate;
-			if (i == 1)       
-				{
-				System.out.println("here in vi 1");
-				} 
-			if (nList.get(i).getDateInProgress() != null) 
-				theclass = "ul .chart-li-2Prog";
-			 else
-				theclass = "ul .chart-li-";
-			if (i == 260)
-				System.out.println("here is theclass:" + theclass);		
-			///// issue 283 jul 18     
 			 str = str + 
-			 theclass + (i) +  "{" +
-			"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (  (indexxofDate +  daysBetween + 2 ) > 15 ? 15 :  (indexxofDate +  daysBetween + 2 ) )  +      ";  grid-row:2; "   ;
-			 showit =  "  ul .chart-li-" + (i) +  "{" +
-					"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (  (indexxofDate +  daysBetween + 2 ) > 15 ? 15 :  (indexxofDate +  daysBetween + 2 ) )  +      ";  grid-row:2; "   ;  
+			 "  ul .chart-li-" + (i) +  "{" +
+			// "  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (indexxofDate +  (daysBetween + 2 > 15 ? 15: daysBetween + 2) ) +      ";  grid-row:2; "   ;
+			"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (  (indexxofDate +  daysBetween + 2) > 15 ? 15 :  (indexxofDate +  daysBetween + 2) )  +      ";  grid-row:2; "   ;
+			  showit =  "  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (  (indexxofDate +  daysBetween + 2) > 15 ? 15 :  (indexxofDate +  daysBetween + 2) )  +      ";  grid-row:2; "   ;
 			 }
-		 
-		if  (nList.get(i).getDateCompleted() != null)
-			{
-			thecompleted = nList.get(i).convertToDateString(nList.get(i).getDateCompleted()).substring(0,5);
-			indexCompleted = todayStrList.indexOf(thecompleted);
-			}     
-		else 
-			indexCompleted = -1;
-		if  (nList.get(i).getDateOnHold() != null)
-			{
-			theOnHold = nList.get(i).convertToDateString(nList.get(i).getDateOnHold()).substring(0,5);
-			indexxofHoldDate= todayStrList.indexOf(theOnHold);
-			}
-		else 
-			indexxofHoldDate = -1;
-		 
-		 
-		 if (!didonHoldForInprocess )
-			 {
-			 str = str + "   background-color:#4C9A2A;" ;		   
-			 str = str + 
-					 "    border-right: 1px solid rgba(0, 0, 0, 0.3); height: 5px;" +
-					 "  }" ;  
-			}
-		 showit = showit +  "   background-color:#4C9A2A;" ;
-		 showit = showit + 
+		 str = str + "   background-color:#4C9A2A;" ;		 
+		 str = str + 
 				 "    border-right: 1px solid rgba(0, 0, 0, 0.3); height: 5px;" +
-				 "  }" ; 
-		
-		 // issue 283 taking off hold completed.....
-		 if (nList.get(i).getDateCompleted() != null
-				 && nList.get(i).getDateOnHold() != null &&
-				 nList.get(i).getDateInProgress() != null) 
-		     {
-			 if (indexxofHoldDate  > 0 && indexCompleted > 0 && indexxofDate > 0   )
-			 	{
-				 if (i==1)
-			    	 System.out.println("in vii 1"); 
-				 str = str + 
-						 "  ul .chart-li-2Prog" + (i)  +  "{" +
-						// "  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (indexxofDate +  (daysBetween + 2 > 15 ? 15: daysBetween + 2) ) +      ";  grid-row:2; "   ;
-						"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate) + "/" + (indexxofHoldDate + 1  )  +      ";  grid-row:2; "   ;
-					 		
-					 		str = str + "   background-color:#4C9A2A;" ;		 
-					 			str = str + 
-					 	"    border-right: 1px solid rgba(0, 0, 0, 0.3); height: 5px;" +
-					 	"  }" ;
-			 	}
-			              
-			 if (indexxofHoldDate  > 0 && indexCompleted > 0  )
-			 	{
-				 String theProgressDate = 
-							nList.get(i).convertToDateString(nList.get(i).getDateInProgress()).substring(0,5);
-					indexxofProgressDate = todayStrList.indexOf(theProgressDate);
-					str = str + 
-				 "  ul .chartInProgress-li-" + (i)  +  "{" +
-				// "  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (indexxofDate +  (daysBetween + 2 > 15 ? 15: daysBetween + 2) ) +      ";  grid-row:2; "   ;
-				"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofProgressDate) + "/" + (indexCompleted + 1  )  +      ";  grid-row:2; "   ;
-
-			 		str = str + "   background-color:#4C9A2A;" ;		 
-			 			str = str + 
-			 	"    border-right: 1px solid rgba(0, 0, 0, 0.3); height: 5px;" +
-			 	"  }" ;
-			 	}
-			 
-		 	 }
+				 "  }" ;
 		 
-		 // issue 283
-		 ///////////////////////////////////////////////////////////////////
+		 //////////////////////
 		 
-		 if (nList.get(i).getDateCompleted() == null
-				 && nList.get(i).getDateOnHold() != null &&
-				 nList.get(i).getDateInProgress() != null) 
-		     {
-			 String theProgressDate = 
-						nList.get(i).convertToDateString(nList.get(i).getDateInProgress()).substring(0,5);
-				indexxofProgressDate = todayStrList.indexOf(theProgressDate);
-			 if (indexxofProgressDate > 0   )
-			    {
-				 if (i==1)
-			    	 System.out.println("in viii 1"); 
-				 int theendpoint = indexxofCurrentDate >= 0 ? indexxofCurrentDate : 15;
-				 str = str + 
-						 "  ul .chart-li-2Prog" + (i)  +  "{" +
-						// "  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (indexxofDate +  (daysBetween + 2 > 15 ? 15: daysBetween + 2) ) +      ";  grid-row:2; "   ;
-						"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofProgressDate) + "/" + (theendpoint + 1 )  +      ";  grid-row:2; "   ;
-					 		
-					 		str = str + "   background-color:#4C9A2A;" ;		 
-					 			str = str + 
-					 	"    border-right: 1px solid rgba(0, 0, 0, 0.3); height: 5px;" +
-					 	"  }" ;
-					 			
-// issue 283 test onhold, inprogress, onhold, in progress again 
-				/*	str = str + 
-					"  ul .chart-li-" + (i)  +  "{" +
-					// "  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (indexxofDate +  (daysBetween + 2 > 15 ? 15: daysBetween + 2) ) +      ";  grid-row:2; "   ;
-					"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofProgressDate) + "/" + (indexxofCurrentDate + 2  )  +      ";  grid-row:2; "   ;	 		
-					str = str + "   background-color:#4C9A2A;" ;		 
-					str = str + 
-					"    border-right: 1px solid rgba(0, 0, 0, 0.3); height: 5px;" +
-					"  }" ;	 */			
-					 				 			
-			 	}
-
-		     }
- 
-		 ///////////////////////////////////////////////////////////////////
-
-		 // issue 283
 		 if (nList.get(i).getDateCompleted() != null)
 		 	{
-			 /// issue 283 displaying before .... 
-			 ///
-			 int startingPoint = 0 ;
-			 int endingPoint = 0;
-			 if (nList.get(i).getDateOnHold()!= null)
-				 {
-				 if (i==0)
-					 System.out.println("step 1 0printing out completed.....");
-				
-				 if (indexxofDate >= 0 )
-					 startingPoint = indexxofDate+ 1;
-				 else 
-					 startingPoint = 1;
-				 if (indexxofHoldDate >=0 )
-					 endingPoint = indexxofHoldDate + 1;
-				 else 
-					 endingPoint = 15;    
-				 }
-			
-			 //////////   leaving off jul12   //////////////////
-			 
-			 if (nList.get(i).getDateOnHold()== null)
-			 {
-				 if (i==0)   
-					 System.out.println("step 1 0 now....here is indexCompleted:" + indexCompleted);
-				
-				 if (indexxofDate >= 0 )     
-					 startingPoint = indexxofDate+ 1;
-				 else 
-					 startingPoint = 1;
-				 if (indexCompleted >=0 )
-					 endingPoint = indexCompleted + 1;
-				 else 
-					 endingPoint = 15;
-				 if (i==0)
-					 System.out.println("here is endpoint:" + endingPoint); 
-			 }
-			 
-			
-			 
-			 //////////////////////////
-			 boolean displayProgress = false;
-			 if (indexxofDate >= 0 )
-				 displayProgress = true;
-			 else if (indexxofHoldDate >= 0 )
-				 displayProgress = true;
-			 else if   (nList.get(i).getDateOnHold() != null &&    ChronoUnit.DAYS.between(theStartingCal.toInstant(), nList.get(i).getDateStarted().toInstant()) <= 0 
-					 &&
-					 ChronoUnit.DAYS.between(theEndingCal.toInstant(), nList.get(i).getDateOnHold().toInstant()) >= 0 )
-			 	 {
-				 displayProgress = true;
-			 	 }
-			 /////// leaving off jl12 
-			 else if (nList.get(i).getDateOnHold() == null && indexCompleted > 0 )
-			 {
-				 displayProgress = true; 
-			 }
-			 if ( displayProgress					 
-			    ) 
-			 	{    
-				 if (i==1)
-					 System.out.println("ix in 0 printing out completed..........");
-					 str = str + 	
-					 "  ul .chart-li-" + (i) +  "{" +
-								//	  "    grid-column:" +  ( numDaysComplt > 14 ? 14 :  (1+ indexxofDate + numDaysComplt + 1)) + "/" + ( numDaysComplt > 14 ? 14 :  (indexxofDate +  numDaysComplt + 1)) +      ";  grid-row:2; "   ;
-					 "    grid-column:" +   (startingPoint) + "/" + ( endingPoint  ) +      ";  grid-row:2; "   ;
-					 str = str + "   background-color:#4C9A2A;" ;		   
-					 str = str + 
-							 "    border-right: 1px solid rgba(0, 0, 0, 0.3); height: 5px;" +
-							 "  }" ; 
-				 
-			 	}
-			 
-			 
 			 numDaysComplt = ChronoUnit.DAYS.between(nList.get(i).getDateStarted().toInstant(), nList.get(i).getDateCompleted().toInstant()); 
-			 if (nList.get(i).getDateCompleted() != null && nList.get(i).getDateOnHold()  != null  
-					 && indexCompleted >= 0)
-			 	 {
-					 str = str + 
-							  "  ul .chart-li-cmplt-" + (i) +  "{" +
-						//	  "    grid-column:" +  ( numDaysComplt > 14 ? 14 :  (1+ indexxofDate + numDaysComplt + 1)) + "/" + ( numDaysComplt > 14 ? 14 :  (indexxofDate +  numDaysComplt + 1)) +      ";  grid-row:2; "   ;
-						"    grid-column:" +   (indexCompleted + 1) + "/" + ( indexCompleted + 1     ) +      ";  grid-row:2; "   ;
-					
-			 	 }
-			 else if (nList.get(i).getDateCompleted() != null && nList.get(i).getDateOnHold()  == null  
-					 && indexCompleted >= 0)
-			 	{
-				 str = str + 
-						  "  ul .chart-li-cmplt-" + (i) +  "{" +
-					//	  "    grid-column:" +  ( numDaysComplt > 14 ? 14 :  (1+ indexxofDate + numDaysComplt + 1)) + "/" + ( numDaysComplt > 14 ? 14 :  (indexxofDate +  numDaysComplt + 1)) +      ";  grid-row:2; "   ;
-					"    grid-column:" +   (indexCompleted + 1) + "/" + ( indexCompleted + 1     ) +      ";  grid-row:2; "   ;
-			 	}
-			 
-			 else     
-			 ////////////////////////////////////////////
-				 str = str + 
-						  "  ul .chart-li-cmplt-" + (i) +  "{" +
-					//	  "    grid-column:" +  ( numDaysComplt > 14 ? 14 :  (1+ indexxofDate + numDaysComplt + 1)) + "/" + ( numDaysComplt > 14 ? 14 :  (indexxofDate +  numDaysComplt + 1)) +      ";  grid-row:2; "   ;
-					"    grid-column:" +   (1+ indexxofDate + numDaysComplt + 1) + "/" + (     ( indexxofDate +  numDaysComplt + 1) > 15 ? 15 : ( indexxofDate +  numDaysComplt + 1)     ) +      ";  grid-row:2; "   ;
-		     str = str + "   background-color:#0000FF;" ;
 			 str = str + 
-			(numDaysComplt > 15 ? "    border-right: 1px ;  " : "    border-right: 1px solid ") + " rgba(0, 0, 0, 0.3); height: 5px;" +
+					  "  ul .chart-li-cmplt-" + (i) +  "{" +
+				//	  "    grid-column:" +  ( numDaysComplt > 14 ? 14 :  (1+ indexxofDate + numDaysComplt + 1)) + "/" + ( numDaysComplt > 14 ? 14 :  (indexxofDate +  numDaysComplt + 1)) +      ";  grid-row:2; "   ;
+				"    grid-column:" +   (1+ indexxofDate + numDaysComplt + 1) + "/" + (     ( indexxofDate +  numDaysComplt + 1) > 15 ? 15 : ( indexxofDate +  numDaysComplt + 1)     ) +      ";  grid-row:2; "   ;
+			 str = str + "   background-color:#0000FF;" ;
+			 str = str + 
+			(numDaysComplt > 15 ? "    border-right: 1px ; border-style: dotted; " : "    border-right: 1px solid ") + " rgba(0, 0, 0, 0.3); height: 5px;" +
 					 "  }" ;	
 			 showit =  "  ul .chart-li-cmplt-" + (i) +  "{" +
 					  "    grid-column:" +  (1+ indexxofDate + numDaysComplt + 1) + "/" + (indexxofDate +  numDaysComplt + 1) +      ";  grid-row:2; "   ;
 		 	}
 		 
 		 //////////////////////
-		 /// issue 283
-		 long extOnHold = 0L;	 	
-		 
-		 // just changed yesterday
+		 		 	 
 		 if (nList.get(i).getDateOnHold() != null)
 		 	{
-			 
-			 theOnHold = nList.get(i).convertToDateString(nList.get(i).getDateOnHold()).substring(0,5);
-			 indexxofHoldDate= todayStrList.indexOf(theOnHold);
-			 indexxofCurrentDate = todayStrList.indexOf(theCurrentDate.substring(0,5));
-			 theStartDate = nList.get(i).convertToDateString(nList.get(i).getDateStarted()).substring(0,5);
-			 indexxofDate = todayStrList.indexOf(theStartDate);
-			 
-			// issue 283 issue with grey bar for on hold
-			if (ChronoUnit.DAYS.between(theStartingCal.toInstant(),nList.get(i).getDateOnHold().toInstant() ) < 0
-				&& nList.get(i).getDateOnHold() != null 
-				&& nList.get(i).getDateInProgress() != null 
-				&& nList.get(i).getDateCompleted() == null
-				&& (ChronoUnit.DAYS.between(theEndingCal.toInstant(),nList.get(i).getDateInProgress().toInstant() ) >0					
-					) )
-				{
-				if (i==1)
-			    	 System.out.println("in XXX 0"); 
-				str = str +
-						  "  ul .chart-li-onHold-" + (i) +  "{" +
-								  "    grid-column:" +  ( 1)+ "/" + 15 +      ";  grid-row:2; " ;
-				}   
-			      
-			          
-			if (nList.get(i).getDateCompleted() == null && indexxofHoldDate < 0 && indexxofDate > 0 )
-				{
-				    if (indexxofCurrentDate > 0 )
-				    	{
-				    	if (i==1)
-					    	 System.out.println("in X 0"); 
-				        str = str + 
-								  "  ul .chart-li-" + (i) +  "{" +
-								  "    grid-column:" +  (indexxofDate + 1 ) + "/" + (indexxofDate + 1 + indexxofCurrentDate + 1)  +   "; grid-row:2; " ;
-					    str = str + "   background-color:#4C9A2A;" ;		   
-						 str = str + 
-								 "    border-right: 1px solid rgba(0, 0, 0, 0.3); height: 5px;" +
-								 "  }" ;  
-				    	}
-				    else 
-				    	{
-				    	if (i==1)
-					    	 System.out.println("in XI 0"); 
-				    	
-				    	if (i==98)
-					    	 System.out.println("in i 98"); 
-				    	str = str +    
-								  "  ul .chart-li-" + (i) +  "{" +
-								  "    grid-column:" +  (indexxofDate + 1 ) + "/" + (15)  +   "; grid-row:2; " ;
-					    str = str + "   background-color:#4C9A2A;" ;		   
-						 str = str + 
-								 "    border-right: 1px solid rgba(0, 0, 0, 0.3); height: 5px;" +
-								 "  }" ;  
-				    	}
-				        
-				    str = str +      
-						  "  ul .chart-li-onHold-" + (i) +  "{" +
-								  "    grid-column:" +  (0)+ "/" + ( 0 ) +      ";  grid-row:2; display:none;" ;
-				}
-			   
-			else if (nList.get(i).getDateCompleted() == null && indexxofHoldDate >= 0 && indexxofDate >= 0   && indexxofCurrentDate <0 )
-				{
-				int enddpoint = 15;
-				
-			    if (nList.get(i).getDateOnHold() != null && indexxofHoldDate >= 0 && ChronoUnit.DAYS.between(nList.get(i).getDateOnHold().toInstant(),Calendar.getInstance().toInstant() ) < 0 )
-				     enddpoint = indexxofHoldDate + 1;
-			    if (i==1)
-			    	 System.out.println("in XXXi 0"); 
-                if (i == 98)
-                    {
-                	System.out.println("here in 98 ii");
-                    }
-				str = str +   
-						  "  ul .chart-li-onHold-" + (i) +  "{" +
-								  "    grid-column:" +  (indexxofHoldDate + 1)+ "/" + enddpoint +      ";  grid-row:2; " ;
-				}
-			else if (nList.get(i).getDateCompleted() == null && indexxofHoldDate >= 0   && indexxofCurrentDate >=0 )
-				{
-				int endforlOnHold = indexxofHoldDate + 1;
-				// issue 283 fix on hold not extending all the way
-				if (i==1)
-			    	 System.out.println("in XXXii 0"); 
-				if (i == 98)
-                   {
-               	   System.out.println("here in 98 iii");
-                   }
-				if (nList.get(i).getStatus().equals ("In progress")
-						&& (indexxofProgressDate > 0 )
-						)       
-					endforlOnHold = indexxofProgressDate + 1 ;
-				if (i==1)
-					System.out.println("here is beginning and end:" + (indexxofHoldDate + 1) + "  " +  " end date: " + endforlOnHold);
-				str = str +
-						  "  ul .chart-li-onHold-" + (i) +  "{" +
-						  "    grid-column:" +  (indexxofHoldDate + 1)+ "/" + (endforlOnHold) +      ";  grid-row:2; " ;
-				}
-			    
-			/***********/
-			
-			else if (nList.get(i).getDateCompleted() == null && indexxofHoldDate <0   && indexxofCurrentDate >=0 )
-				{
-				if (i == 98)
-                	{
-            	   System.out.println("here in 98 iv");
-                	}
-				if (i==1)
-			    	 System.out.println("in XXX 0"); 
-				str = str +
-						  "  ul .chart-li-onHold-" + (i) +  "{" +
-						  "    grid-column:" +  (1)+ "/" + (indexxofCurrentDate + 2) +      ";  grid-row:2; " ;
-				}
-					
-			/******/      
-			
-			else if (nList.get(i).getDateCompleted() == null && indexxofHoldDate >=0   && indexxofCurrentDate < 0 )
-				{
-				
-				if (i==1)
-			    	 System.out.println("in XXXiv 0"); 
-				if (i == 98)
-                	{
-            	   System.out.println("here in 98 iv");
-                	}
-				int endd = 15;
-				if (ChronoUnit.DAYS.between(nList.get(i).getDateOnHold().toInstant(),Calendar.getInstance().toInstant() ) <= 0 )
-					{
-					endd = indexxofHoldDate + 1;  
-					}
-				str = str +
-						  "  ul .chart-li-onHold-" + (i) +  "{" +   
-						  "    grid-column:" +  (indexxofHoldDate + 1)+ "/" + (endd) +      ";  grid-row:2; " ;
-				}
-			
-			 /// issue 283
-			if (nList.get(i).getDateCompleted() == null)
-				extOnHold = ChronoUnit.DAYS.between(nList.get(i).getDateOnHold().toInstant(),Calendar.getInstance().toInstant() ) ;
-			if (extOnHold <0)
-				extOnHold = 0;
-			numDaysOnHold = ChronoUnit.DAYS.between(nList.get(i).getDateStarted().toInstant(), nList.get(i).getDateOnHold().toInstant()); 			
-			if ( nList.get(i).getDateOnHold() != null &&  nList.get(i).getDateCompleted() != null && nList.get(i).getDateInProgress() == null)
+			 numDaysOnHold = ChronoUnit.DAYS.between(nList.get(i).getDateStarted().toInstant(), nList.get(i).getDateOnHold().toInstant()); 
+			if ( nList.get(i).getDateOnHold() != null &&  nList.get(i).getDateCompleted() != null)
 				numDaysUntilComplete = ChronoUnit.DAYS.between(nList.get(i).getDateOnHold().toInstant(), nList.get(i).getDateCompleted().toInstant());
-			// issue 283
-			else if (nList.get(i).getDateOnHold() != null && nList.get(i).getDateCompleted() == null
-					  && extOnHold > 0 ) 
-				numDaysUntilComplete = ChronoUnit.DAYS.between(nList.get(i).getDateOnHold().toInstant(), Calendar.getInstance().toInstant());
-				// issue 283
-			else if (nList.get(i).getDateOnHold() != null && nList.get(i).getDateCompleted() != null
-					   && nList.get(i).getDateInProgress() != null) 
-				{
-				numDaysUntilComplete = ChronoUnit.DAYS.between(nList.get(i).getDateOnHold().toInstant(), nList.get(i).getDateInProgress().toInstant()) ;
-				String theProgressDate = 
-						nList.get(i).convertToDateString(nList.get(i).getDateInProgress()).substring(0,5);
-				indexxofProgressDate = todayStrList.indexOf(theProgressDate);
-				Long numDaysbtwProgressAndComplete = ChronoUnit.DAYS.between(nList.get(i).getDateInProgress().toInstant(), nList.get(i).getDateCompleted().toInstant()) ;
-				if (i==1)
-			    	 System.out.println("in XII 0");
-				String thepClass = str.indexOf("ul .chart-li-" + (i)) >= 0  
-						? " ul .chartInProgress-li-" + (i) : "  ul .chart-li-" + (i);
-					
-				str = str + 
-						 thepClass +  "{" +
-						// "  grid-row-gap:0px;  grid-column:" +  (1+ indexxofDate ) + "/" + (indexxofDate +  (daysBetween + 2 > 15 ? 15: daysBetween + 2) ) +      ";  grid-row:2; "   ;
-						"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofProgressDate) + "/" + ( 1+ indexxofProgressDate + numDaysbtwProgressAndComplete )  +      ";  grid-row:2; "   ;
-			    showit =  "  ul .chart-li-" + (i) +  "{" + 	"  grid-row-gap:0px;  grid-column:" +  (1+ indexxofProgressDate) + "/" + ( 1+ indexxofProgressDate + numDaysbtwProgressAndComplete )  +      ";  grid-row:2; "   ;
-
-			 	str = str + "   background-color:#4C9A2A;" ;		 
-			 	str = str + 
-					 "    border-right: 1px solid rgba(0, 0, 0, 0.3); height: 5px;" +
-					 "  }" ;
-				}		
-				// issue 283
-			else if (nList.get(i).getDateOnHold() != null && nList.get(i).getDateCompleted() != null) 
-				{
-				numDaysUntilComplete = ChronoUnit.DAYS.between(nList.get(i).getDateOnHold().toInstant(), nList.get(i).getDateCompleted().toInstant()) ;
-				}   
-				
 			else 
-				// issue 283
-				numDaysUntilComplete = 0; 	
-				
-			String lStr = "";
-			Long firstPart = (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       ));
-			Long secondPart = numDaysUntilComplete; 
-			if (nList.get(i).getStatus().equals("In progress")  &&  nList.get(i).getDateOnHold() != null )
-				secondPart = secondPart -1 ;
-			
-			// issue 283 start here small change
-			
-			if (nList.get(i).getDateOnHold() != null && nList.get(i).getDateCompleted() != null 
-					     && indexxofHoldDate >= 0 && indexCompleted >= 0 )
-				{
-				if (i == 98)
-                	{
-            	   System.out.println("here in 98 v");
-                	} 
-				
-				if (i==1)
-			    	 System.out.println("in XXXv 0"); 
-				str = str +
-						  "  ul .chart-li-onHold-" + (i) +  "{" +
-								  "    grid-column:" +  (1+ indexxofHoldDate ) + "/" + ( 1 + indexCompleted    ) +      ";  grid-row:2; " ;
-				}	
-			
-		
-			else if (nList.get(i).getDateOnHold() != null && nList.get(i).getDateCompleted() != null && indexxofHoldDate < 0 && indexCompleted >= 0)
-				{
-				if (i == 98)
-                	{
-            	   System.out.println("here in 98 vi");
-                	}
-				if (i==1)
-			    	 System.out.println("in XXXvi 0"); 
-				str = str + 
+				numDaysUntilComplete = 0;
+			 str = str + 
 					  "  ul .chart-li-onHold-" + (i) +  "{" +
-			 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
-			        "    grid-column:" +  (1 +  "/" + ( 1+  indexCompleted   )) +      ";  grid-row:2; "   ;
-				}
-			else if (nList.get(i).getDateOnHold() != null && nList.get(i).getDateCompleted() != null && indexxofHoldDate >= 0 && indexCompleted < 0)
-				{
-				if (i == 98)
-	            	{
-	        	   System.out.println("here in 98 vii");
-	            	}
-				if (i==1)
-			    	 System.out.println("in XXXvii 0"); 
-				str = str + 
-					  "  ul .chart-li-onHold-" + (i) +  "{" +
-			 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
-			        "    grid-column:" +  (1+ indexxofHoldDate +  "/" + ( 15  )) +      ";  grid-row:2; "   ;
-				}
-			
-			//////////////////////////
-			else if (nList.get(i).getDateOnHold() != null && nList.get(i).getDateCompleted() != null && indexxofHoldDate < 0 && indexCompleted < 0)
-				{
-				if (i == 98)
-	            	{
-	        	   System.out.println("here in 98 viii");
-	            	}
-				if (ChronoUnit.DAYS.between(theStartingCal.toInstant(),  nList.get(i).getDateOnHold().toInstant())  < 0
-						&& ChronoUnit.DAYS.between(theEndingCal.toInstant(),nList.get(i).getDateCompleted().toInstant())  > 0 )
-				    { 
-					if (i == 98)
-		            	{
-		        	   System.out.println("here in 98 ix");
-		            	}
-					if (i==1)
-				    	 System.out.println("in XXXviii 0"); 
-					str = str + 
-							  "  ul .chart-li-onHold-" + (i) +  "{" +
-					 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
-					        "    grid-column:" +  (1 +   "/" + ( 15  )) +      ";  grid-row:2; "   ;
-					
-					}
-				
-	///// issue 283 Take care of the on hold grey 
-				else if (nList.get(i).getDateOnHold() != null && nList.get(i).getDateCompleted() == null && indexxofHoldDate >= 0 && indexxofDate < 0 && indexxofCurrentDate < 0 )
-					{
-					if (i == 98)
-		            	{
-		        	   System.out.println("here in 98 x");
-		            	}
-					if (i==1)
-				    	 System.out.println("in XXXix 0"); 
-					str = str +   "  ul .chart-li-onHold-" + (i) +  "{" +
-						 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
-						        "    grid-column:" +  (indexxofHoldDate + 1 +   "/" + ( 15 )) +      ";  grid-row:2; "   ;	
-					}
-				else if (nList.get(i).getDateOnHold() != null && nList.get(i).getDateCompleted() == null && indexxofHoldDate < 0 && indexxofDate < 0
-						&& 
-						ChronoUnit.DAYS.between(theStartingCal.toInstant(),  nList.get(i).getDateOnHold().toInstant()) < 0 &&
-						ChronoUnit.DAYS.between(theEndingCal.toInstant(), Calendar.getInstance().toInstant()) < 0 &&
-						indexxofCurrentDate < 0 
-						)
-					{
-					if (i == 98)
-		            	{
-		        	    System.out.println("here in 98 xi");
-		            	}
-					if (i==1)
-				    	 System.out.println("in XXXx 0"); 
-				    str = str +   "  ul .chart-li-onHold-" + (i) +  "{" +
-					 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
-					        "    grid-column:" +  ( 1 +   "/" + ( 15 )) +      ";  grid-row:2; "   ;	
-					}
-				else if (nList.get(i).getDateOnHold() != null && nList.get(i).getDateCompleted() == null && indexxofHoldDate >= 0 && indexxofDate > 0 && indexxofCurrentDate <0
-						 
-						
-						)
-					{
-					if (i == 98)
-		            	{
-		        	    System.out.println("here in 98 xii");
-		            	}
-					if (i==1)
-				    	 System.out.println("in XXXxii 0"); 
-				str = str +   "  ul .chart-li-onHold-" + (i) +  "{" +
-					 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
-					        "    grid-column:" +  ( (indexxofHoldDate)  +   "/" + 15) +      ";  grid-row:2; "   ;	
-					}
-				  
-				
-				else if (  
-						ChronoUnit.DAYS.between(theStartingCal.toInstant(),  nList.get(i).getDateOnHold().toInstant()) < 0  &&
-						ChronoUnit.DAYS.between(theEndingCal.toInstant(),nList.get(i).getDateCompleted().toInstant()) < 0 
-						)
-					{
-					if (i == 98)
-	            	{
-	        	    System.out.println("here in 98 xiii");
-	            	}
-					
-					if (i==1)
-				    	 System.out.println("in XXXxiii 0"); 
-					str = str + 
-							  "  ul .chart-li-onHold-" + (i) +  "{" +
-					 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
-					        "    grid-column:" +  (-1 +   "/" + ( -1  )) +      ";  grid-row:2; "   ;	
-					}
-				
-			    else if (ChronoUnit.DAYS.between(theEndingCal.toInstant(), nList.get(i).getDateCompleted().toInstant())  > 0					 
-			    		&&
-			    		ChronoUnit.DAYS.between(theStartingCal.toInstant(), nList.get(i).getDateCompleted().toInstant())  > 0
-			    		)
-					{	
-			    	if (i == 98)
-	            	{
-	        	    System.out.println("here in 98 xiv");
-	            	}
-					if (i==1)
-				    	 System.out.println("in XXXxv 0"); 
-					str = str + 
-						  "  ul .chart-li-onHold-" + (i) +  "{" +
-				 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
-				        "    grid-column:" +  (-1 +  "/" + ( -1  )) +      ";  grid-row:2; "   ;
-					}
-			
-				}
-			else if (indexxofHoldDate< 0 && nList.get(i).getDateOnHold() != null && nList.get(i).getDateCompleted() == null 
-					&&  ChronoUnit.DAYS.between(theStartingCal.toInstant(), Calendar.getInstance().toInstant()) > 0 && 
-			ChronoUnit.DAYS.between(theStartingCal.toInstant(), nList.get(i).getDateOnHold().toInstant()) < 0  &&
-			indexxofCurrentDate < 0 && nList.get(i).getDateInProgress() == null)
-				{
-				if (i == 260)    
-				{
-					System.out.println("yippieee for 0");
-				}
-				
-				if (i==1)
-			    	 System.out.println("in XXXxv 0");     
-				str = str + 
-				  "  ul .chart-li-onHold-" + (i) +  "{" +
-		 		//  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 + extOnHold + numDaysUntilComplete + 5 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
-		        "    grid-column:" +  ((1) +  "/" + ( 15 )) +      ";  grid-row:2; "   ;
-				}
+			 		  "    grid-column:" +  (1+ indexxofDate + numDaysOnHold + (    nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null  ? 1 : 0       )) + "/" + (    (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1))  ) > 15 ? 15 :  (indexxofDate +   (nList.get(i).getDateOnHold() == null || nList.get(i).getDateCompleted() == null ?    numDaysOnHold + 1 : (numDaysUntilComplete + numDaysOnHold + 1)) )    ) +      ";  grid-row:2; "   ;
 			 str = str + "   background-color:#FF0000;" ;
 			 str = str + 
 					 "    border-right: 1px solid rgba(0, 0, 0, 0.3); height: 5px;" +
-					 "  }" ;
-		
-			
-			
-		 	}	/// end of on hold	 
+					 "  }" ;		 	
+		 	}		 
 		 //////////////////////
 		 
 		 str = str + 
@@ -1441,7 +663,20 @@ str = str + "          <span style=\"border:none\">" + todayStrList.get(0) + "</
 "          <span style=\"border:none\">  " + todayStrList.get(13) + "</span>" + 
 //"          <span style=\"border:none; width:200px; \"> " + "comments" + "</span>" + 
 "          <span style=\"border:none; height: 43px; width:401px;   \"> " + "comments" + "</span>" ; 
+
+
+
+/////////
+
+
+
+
 str = str + "      </div>" ;
+
+
+
+
+
 str = str + "      <div class=\"chart-row chart-lines\">" +
 "        <span></span><span></span><span></span>" +
 "<span></span><span></span><span></span>" +
@@ -1450,7 +685,8 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 //"  <span > </span> <span > </span> <span style=\" width:200px; \"> </span>  " + 
  "  <span > </span> <span > </span> <span style=\" width:401px;height:43px;   \" > </span>  " + 
 "      </div>" ;
-       
+    
+    
    ///// nList = processTrackingService.loadAllTasksAssigned(expID);
     int index = 0;
     String prevWf = "";
@@ -1461,31 +697,7 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
     int indexLink = 0;
     for (ProcessTrackingDetails ptd: nList)
     	{
-		if  (ptd.getDateCompleted() != null)
-			{
-			thecompleted = ptd.convertToDateString(ptd.getDateCompleted()).substring(0,5);
-			indexCompleted = todayStrList.indexOf(thecompleted);
-			}
-		else 
-			indexCompleted = -1;
-		if  (ptd.getDateOnHold() != null)
-			{
-			theOnHold = ptd.convertToDateString(ptd.getDateOnHold()).substring(0,5);
-			indexxofHoldDate= todayStrList.indexOf(theOnHold);
-			}
-		else 
-			indexxofHoldDate = -1;
-		
-		if (ptd.getDateInProgress()!= null)
-			{
-			 String theProgressDate = 
-					nList.get(indexLink).convertToDateString(nList.get(indexLink).getDateInProgress()).substring(0,5);
-			indexxofProgressDate = todayStrList.indexOf(theProgressDate);	
-			}
-		else 
-			indexxofProgressDate = -1;
-		
-		
+    	
     	theStartDate = nList.get(indexLink).convertToDateString(nList.get(indexLink).getDateStarted()).substring(0,5);
     	indexxofDate = todayStrList.indexOf(theStartDate); 
     	if (nList.get(indexLink).getDateCompleted() != null)
@@ -1496,50 +708,26 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
     	Calendar dCalendar = Calendar.getInstance();
 		int daysExpected = Integer.parseInt(nList.get(indexLink).getDaysExpected());
         
-		//// whether or not to display
 		
-		boolean doDisplay = true;  
-		/* if (
-				ptd.getDateOnHold() == null ||
-				(  // (ptd.getDateOnHold() != null && ChronoUnit.DAYS.between(theStartingCal.toInstant(),  ptd.getDateOnHold().toInstant()) < 0 ) ||
-				( ptd.getDateOnHold() != null && ChronoUnit.DAYS.between(theEndingCal.toInstant(),  ptd.getDateOnHold().toInstant()) > 0 ) ||
-				( ptd.getDateOnHold() != null && ChronoUnit.DAYS.between(theStartingCal.toInstant(),  Calendar.getInstance().toInstant())< 0 ) )
-		   )
-			{
-	         doDisplay = false;
-			} */
-		      
-		if (ptd.getDateOnHold() == null)   
-	         doDisplay = false;
-		if (ptd.getDateOnHold() != null && ChronoUnit.DAYS.between(theEndingCal.toInstant(),  ptd.getDateStarted().toInstant()) > 0 )
-			doDisplay = false;
-		if (ptd.getDateOnHold() != null && ChronoUnit.DAYS.between(theEndingCal.toInstant(),  ptd.getDateOnHold().toInstant()) > 0 )
-			doDisplay = false;
-		if (ptd.getDateOnHold() != null && ChronoUnit.DAYS.between(theEndingCal.toInstant(),  ptd.getDateOnHold().toInstant()) > 0 )
-			doDisplay = false;
-		if (ptd.getDateOnHold() != null && ptd.getDateCompleted() != null && ChronoUnit.DAYS.between(theStartingCal.toInstant(),  ptd.getDateCompleted().toInstant()) < 0 )
-			doDisplay = false;
-		if (ptd.getDateOnHold() != null && ChronoUnit.DAYS.between(theStartingCal.toInstant(),  Calendar.getInstance().toInstant()) <= 0 
-			&&  ChronoUnit.DAYS.between(ptd.getDateOnHold().toInstant(),  Calendar.getInstance().toInstant()) > 0 )// issue 283 mark less than or equal to 0
-			doDisplay = false;
-		if (str.indexOf("chart-li-onHold-" + (indexLink)) < 0)
-			doDisplay = false;
-		if (ptd.getStatus().equals ("In progress") 
-			&& 	
-			ptd.getDateOnHold() != null 
-			&&		
-			ChronoUnit.DAYS.between(theStartingCal.toInstant(),  ptd.getDateInProgress().toInstant()) <= 0
-			&&
-			indexxofHoldDate  <0				
-		   )
-		   doDisplay = false;
 		
 		dCalendar.setTime(new Date(nList.get(indexLink).convertToDateString(nList.get(indexLink).getDateStarted())));
 		dCalendar.add(Calendar.DAY_OF_MONTH, daysExpected);
 		theEndingDate = sdf.format(dCalendar.getTime());
+	//// this is a test	List <Object[]> samplObjects = processTrackingService.grabSampleTypeStringFromList(ptd.getExperiment().getExpID(), ptd.getWorkflow().getWfID());
+    	///System.out.println("here is size of smpleobjects:" + samplObjects.size());
+		/////// call sample type string String sampleTypeStr = processTrackingService.grabSampleTypeStringFromList(ptd.getExperiment().getExpID(), ptd.getWorkflow().getWfID());
+    	//////System.out.println("here is sampletypestr:" + sampleTypeStr);
     	String sampleTypeString = "";
+    	
+    	// this is a test
+    /*	for (Object[] smpleobj : samplObjects)
+    		{
+    		sampleTypeString  = sampleTypeString + smpleobj[0] + " ,";
+    		} */
+    	
     	if (!StringUtils.isNullOrEmpty(sampleTypeString))	   
     		sampleTypeString = sampleTypeString.substring(0,sampleTypeString.length()-1);
+    	//System.out.println("here is samplestring:" + sampleTypeString);
     	indexxofEndingDate = todayStrList.indexOf(theEndingDate.substring(0,5));
     	if (index == 0 )
 	        {
@@ -1552,569 +740,87 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 				     ptd.getExperiment().getExpID() + " " + ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")"  + "<br>" + sampleTypeMap.get(ptd.getExperiment().getExpID()) +   "<br>" + "Contact and PI:" + ptd.getExperiment().getProject().getContactPerson().getFullNameByLast() + " " + ptd.getExperiment().getProject().getClient().getInvestigator().getFullNameByLast() + "</span>";
 		   
 	       }
-	    	// issue 273
-		    else if (!prevWf.equals(ptd.getWorkflow().getWfDesc()) || !prevExpId.equals(ptd.getExperiment().getExpID()) ||  !prevAssayId.equals(ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")") )
-		   	   {
-		    	str = str + "      <div  class=\"chart-row chart-period  \">" ;
-		    	str = str + "          <div class=\"chart-row-item-big\"></div> " ;
-		    	// issue 269
-		    	
-		    	str = str + "          <span style=\"border:none\">" + todayStrList.get(0) + "</span>" + 
-		    			"          <span style=\"border:none\"> " + todayStrList.get(1) + "</span>" + 
-		    			"          <span style=\"border:none\">" + todayStrList.get(2)  + "</span>" +
-		    			"          <span style=\"border:none\"> " + todayStrList.get(3) + "</span>" + 
-		    			"          <span style=\"border:none\"> " + todayStrList.get(4) + "</span>" + 
-		    			"          <span style=\"border:none\"> " + todayStrList.get(5) + "</span>" + 
-		    			"          <span style=\"border:none\"> " + todayStrList.get(6) + "</span>" + 
-		    			"          <span style=\"border:none\"> " + todayStrList.get(7) + "</span>" + 
-		    			"          <span style=\"border:none\"> " + todayStrList.get(8) + "</span>" + 
-		    			"          <span style=\"border:none\"> " + todayStrList.get(9) + "</span>" + 
-		    			"          <span style=\"border:none\">  " + todayStrList.get(10) + "</span>" + 
-		    			"          <span style=\"border:none\"  > " + todayStrList.get(11) + "</span>" + 
-		    			"          <span style=\"border:none\">  " + todayStrList.get(12) + "</span>" + 
-		    			"          <span style=\"border:none\">  " + todayStrList.get(13) + "</span>" + 
-		    			//"          <span style=\"border:none; width:200px; \"> " + "comments" + "</span>" + 
-		    			"          <span style=\"border:none; height: 43px; width:401px;   \"> " + "comments" + "</span>" ; 
-		    	
-		    	
-		    	        str = str + "      </div>" ;
-		    	
-		    	
-		    	
-		    	
-		    	
-		    	
-		    	
-			   str = str + " <span>" + ptd.getWorkflow().getWfDesc().replace("<", "&lt").replace(">", "&gt")  + " <br>" + 
-				     ptd.getExperiment().getExpID() + " " + ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")" + "<br>" + sampleTypeMap.get(ptd.getExperiment().getExpID()) +  "<br>" + "Contact and PI:" + ptd.getExperiment().getProject().getContactPerson().getFullNameByLast() + " " + ptd.getExperiment().getProject().getClient().getInvestigator().getFullNameByLast() +  "</span>";
-		       index = 0;
-		       prevWf = ptd.getWorkflow().getWfDesc();
-		       prevExpId = ptd.getExperiment().getExpID();
-		       prevAssayId = ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")";
-		   	   }
-	    	 
-	    	// issue 262
-	    	str = str +    		
-	    				"<div>" + 
-	        			"  <a style=\"text-decoration:none;\" wicket:id= \"gchart" + Integer.toString(indexLink) + "\"   href=\"#\" > <div class=\"chart-row\">" +
-	        			"        <div style=\"text-decoration:none;font-size: 15px;font-weight: bold;color:black; \"  class=\"chart-row-item-big\">" + (index + 1) + ". " + ptd.getProcessTracking().getTaskDesc().replace("<","&lt").replace(">", "&gt") + "\n" + "<br>"  + "Assigned To:" +  ptd.getAssignedTo().getFullName() +  "</div>" ;		
-	    				
-	    		String truncComment = StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ||  nList.get(indexLink).getComments().length() <= 50 ? nList.get(indexLink).getComments() : nList.get(indexLink).getComments().substring(0, 50);
-	    		if (StringUtils.isNullOrEmpty(truncComment))
-	    			truncComment = "";
-	    		/// resume here
-	    		// issue 283
-	    		if (nList.get(indexLink).getDateCompleted() != null)
-	    			{
-	    			thecompleted = nList.get(indexLink).convertToDateString(nList.get(indexLink).getDateCompleted()).substring(0,5);
-	    			indexCompleted = todayStrList.indexOf(thecompleted);
-	    			}
-	    		else
-	    			indexCompleted = -1; 
-	    		
-	    		// issue 283 date in progress 
-	    		
-	    		if ( nList.get(indexLink).getDateCompleted() == null && 
-	    				nList.get(indexLink).getDateOnHold() != null && 
-	    				indexxofHoldDate >= 0   && indexxofDate >= 0 )
-	    			{	
-	    		      if (indexLink == 1)  
-                 	   System.out.println("204 ahha here ");
-	    		      if (indexLink == 0)  
-	                   	   System.out.println("0 number 1");
-	    		    String theclass = str.indexOf("chart-li-" + (indexLink) + "{") > 0 ? "chart-li-" + (indexLink) :
-	    		    	("chart-li-2Prog" + indexLink);
-	    			str = str + "        <ul class=\"chart-row-bars\">" +	    					    
-	    					 ( ( indexxofDate < 0 ) ? "" : " <li   class=\"" + theclass +   "\">" +   "</li>" ) +	 					
-		   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-		   		 		(doDisplay   ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-		   		 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 
-		   		 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-		   			  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-		   		 		"                               </ul>" ;
-	    			    
-	    			}
-	    		
-	    		// issue 283 in progress
-	    		if (nList.get(indexLink).getDateInProgress() != null && nList.get(indexLink).getDateCompleted() != null && 
-	    				indexCompleted >= 0 && indexxofHoldDate >= 0 && indexxofProgressDate > 0  )
-	    			{	
-	    		      if (indexLink == 1)  
-                   	   System.out.println("204 number 1.1");
-	    		      if (indexLink == 1)  
-	                   	   System.out.println("204 number 0");
-	    			str = str + "        <ul class=\"chart-row-bars\">" +
-	    			
-                 
-	    					    
-	    					 ( ( indexxofDate < 0 ) ? "" : " <li   class=\" chart-li-2Prog" + (indexLink) +   "\">" +   "</li>" ) +	 					
-		   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-		   		 		(doDisplay   ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-		   		 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 
-		   		 	  ((  nList.get(indexLink).getDateInProgress() != null) ? " <li   class=\" chartInProgress-li-" + (indexLink) +   "\">" +   "</li>" : " ") +
-		   		 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-		   			  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-		   		 		"                               </ul>" ;
-	    			
-	    			}
-	    		
-	    		// issue 283 in progress on hold in progress to complete 
-	    		if (nList.get(indexLink).getDateInProgress() != null && nList.get(indexLink).getDateCompleted() != null && 
-	    				indexCompleted > 0 && indexxofHoldDate < 0 && indexxofProgressDate > 0  )
-	    			{
-	    		      if (indexLink == 1)  
-	                   	   System.out.println("204 number 2");
-	    		      
-	    		      if (indexLink == 1)  
-	                   	   System.out.println("204 number 1");
-	    			str = str + "        <ul class=\"chart-row-bars\">" +
-	    			
-                                              
-	    					 
-	    					 ( ( indexxofDate < 0 ) ? "" : " <li   class=\" chart-li-2Prog" + (indexLink) +   "\">" +   "</li>" ) +	 					
-		   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-		   		 		(doDisplay   ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-		   		 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 
-		   		 	  ((  nList.get(indexLink).getDateInProgress() != null) ? " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" : " ") +
-		   		 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-		   			  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-		   		 		"                               </ul>" ;
-	    			
-	    			         
-	    			}
-	    		
-	    		///////////////
-	    		///////////////  issue 283 putting switching in progress on hold
-	    		///////////////
-	    		
-	    		if (nList.get(indexLink).getDateInProgress() != null && nList.get(indexLink).getDateCompleted() == null && indexxofProgressDate > 0 
-	    				  )
-	    			{
-	    			boolean displayprog = false;
-	    			if ( str.indexOf("ul .chart-li-" + (indexLink) +  "{") < 0 )
-	    			    displayprog = false;
-	    			else
-	    				displayprog = true;          
-	    		      if (indexLink == 0)     
-	                   	   System.out.println("0 number 3");
-	    		      if (indexLink == 1)  
-	                   	   System.out.println("204 number 3");
-	    		      if (str.trim().replace(" ",  "").indexOf("liclass=\"chart-li-" + indexLink)< 0)
-	    		     // if (str.indexOf("<li   class=\" chart-li-" + (indexLink) +   "\">") < 0)
-		    		      {
-	    		    	  if (indexLink == 1)  
-		                   	   System.out.println("yep here 1.....");
-		                 str = str + "        <ul class=\"chart-row-bars\">" + 
-		                   	(displayprog ? (" <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>") : " ")   +
-			   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-			   		 		(doDisplay ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-			   		 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	
-			   		 	 ( ( indexxofProgressDate < 0 ) ? "" : " <li   class=\" chart-li-2Prog" + (indexLink) +   "\">" +   "</li>" ) +	
-			   		 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-			   			  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-			   		 		"                               </ul>" ;
-		    		      }
-	    		      }
-	    		           
-	    		//// index 283 fix onhold stuff not displaying 
-	    		
-	    	//	if (nList.get(indexLink).getDateInProgress() != null && nList.get(indexLink).getDateCompleted() == null && indexxofProgressDate < 0 
-	    		if (nList.get(indexLink).getDateInProgress() != null  /*&& indexxofProgressDate < 0 		  ) */
-	    			&& str.indexOf(" <li   class=\" chart-li-onHold-" + (indexLink) +   "\">") < 0 )
-	    		     {
-	    			  boolean doDisplayInProgressAfterCurrentDate = true;
-	    			  if (   (ChronoUnit.DAYS.between(theStartingCal.toInstant(),  Calendar.getInstance().toInstant() )  <= 0 )   )
-	    			  	  {
-	    				  doDisplayInProgressAfterCurrentDate  = false;
-	    			  	  }
-	    		      if (indexLink == 0 	     
-	    		    	 )  
-	    		      	{  
-	                   	System.out.println("0 number 4 here come starting and current date..." + (doDisplayInProgressAfterCurrentDate));
-	                   	SimpleDateFormat sddf = new SimpleDateFormat("MM/dd/yyyy");
-	                   	System.out.println ((theStartingCal == null) ? "" : sdf.format(theStartingCal.getTime()));
-	                    Calendar lcal = Calendar.getInstance();
-	                    
-	                   	System.out.println((lcal == null) ? "" : sdf.format(lcal.getTime()));
-	                   	System.out.println(ChronoUnit.DAYS.between(theStartingCal.toInstant(),  Calendar.getInstance().toInstant() ) );
-	                   	System.out.println(ChronoUnit.DAYS.between(theEndingCal.toInstant(),  Calendar.getInstance().toInstant() ) );
-	    		      	}
-	    		      if (indexLink == 1)  
-	                   	   System.out.println("204 number 4");
-	                  str = str + "        <ul class=\"chart-row-bars\">" + 
-	                		 ( doDisplayInProgressAfterCurrentDate ?  " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" : " ") + 
-	                		 (doDisplay ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	 
-		   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-		   		 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	
-		   		 
-		   		 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-		   			  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-		   		 		"                               </ul>" ;
-	    			}
-	    		
-	    		   
-	    		
-	    		   
-	    		indexxofCurrentDate = todayStrList.indexOf(theCurrentDate.substring(0,5));
-	    		
-	    		if (indexxofDate <0 && indexxofCurrentDate < 0  && 
-	    			ChronoUnit.DAYS.between(theStartingCal.toInstant(),  nList.get(indexLink).getDateStarted().toInstant()) < 0 
-	   			     &&
-	   			     ChronoUnit.DAYS.between(theEndingCal.toInstant(),  forCurrentCal.toInstant()) > 0	
-	    			&& 	nList.get(indexLink).getStatus().equals("In progress")
-	    		    )	    				
-	    			{
-	    			 continuingInProcess = true;		
-	    			if (nList.get(indexLink).getDateInProgress()== null)
-		    			{
-	    			      if (indexLink == 1)  
-	                      	   System.out.println("204 number 5");
-	    			      if (indexLink == 0)  
-	                      	   System.out.println("0 number 5");
-		    			str = str + "        <ul class=\"chart-row-bars\">" +
-		   		 			 ( (ChronoUnit.DAYS.between(theStartingCal.toInstant(), Calendar.getInstance().toInstant())) < 0   ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" ) +		 					
-		   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-		   		 		(doDisplay  ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-		   		 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 		
-		   		 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-		   			  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-		   		 		"                               </ul>" ;
-		    			}
-	    			
-	    			}  
-	    		
-	    		// issue 283 see how it works plain on hold
-	    		else if (indexxofDate >0 
-	    				    && indexxofCurrentDate < 0   
-		    			 	&& nList.get(indexLink).getStatus().equals("On hold")
-		    		    )	  
-	    			{
-	    		      if (indexLink == 0)  
-	                   	   System.out.println("204 number 6");
-	    		      if (indexLink == 0)  
-	                   	   System.out.println("0 number 6");
-	    			if (nList.get(indexLink).getDateInProgress()== null)
-		    			{
-		    			str = str + "        <ul class=\"chart-row-bars\">" +
-			   		 			  " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>"  +		 					
-			   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-			   		 		(doDisplay ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-			   		 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 		
-			   		 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-			   			  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-			   		 		"                               </ul>" ;
-		    			}
-	    			}
-	    		    
-	    		
-	    		if ((indexxofDate >= 0 || indexxofCurrentDate >= 0 ) &&
-	    				! (ptd.getDateOnHold() != null && ptd.getDateCompleted() != null
-	    					&&	indexxofHoldDate < 0 &&indexCompleted < 0	    						
-	    				   )	
-	    		   ) //&& indexxofEndingDate>= 0    
-	    				
-	    			{  
-	    			
-	    			
-	    			
-	    			daysBetweeni = ChronoUnit.DAYS.between(nList.get(indexLink).getDateStarted().toInstant(),Calendar.getInstance().toInstant() );
-	    			
-	    			if (indexxofDate >=0 && indexxofCurrentDate <0  && indexCompleted >= 0 && ptd.getDateCompleted() != null && ptd.getDateOnHold() == null)
-	    			  {
-	    		    				 
-	    				 if (ptd.getDateCompleted()!= null &&  ChronoUnit.DAYS.between(nList.get(indexLink).getDateStarted().toInstant(), ptd.getDateCompleted().toInstant())  == 0)
-	    				 	{
-	    					  
-	    						if (nList.get(indexLink).getDateInProgress()== null)
-		    		    			{
-	    						      if (indexLink == 1)  
-	    			                   	   System.out.println("204 number 7");
-	    						      if (indexLink == 0)  
-	    			                   	   System.out.println("0 number 7");
-		    					    str = str + "        <ul class=\"chart-row-bars\">" +
-			    					""	+ 				
-			    					(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-			    					(doDisplay ? " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-			    					(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 		
-			    					// 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-			    					" <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-			    					"                               </ul>" ;
-		    		    			}
-	    		    			}
-	    				 
-	    				else 
-		    				{	
-	    					 if (nList.get(indexLink).getDateInProgress()== null)
-	    		    			 {
-	    						 if (indexLink == 1)  
-  			                   	   System.out.println("204 number 8");
-	    						 if (indexLink == 0)  
-	  			                   	   System.out.println("0 number 8");
-		    					 str = str + "        <ul class=\"chart-row-bars\">" +
-				    					 (daysBetweeni < 0  ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" )  +		 					
-				   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-				   		 		(doDisplay ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-				   		 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 		
-				   		 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-				   		 	  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-				   		 		"                               </ul>" ;
-	    		    			}
-		    				}
-	    			  }
-	    		
-	    			   //// issue 283 put in more cases more cases
-	    			else if (!(
-	    				nList.get(indexLink).getDateCompleted() == null &&
-	    				nList.get(indexLink).getDateOnHold() != null && 
-	    				indexxofCurrentDate < 0 && 
-	    				indexxofHoldDate < 0 &&	
-	    				indexxofDate >= 0 
-	    				) 
-	    				&& 
-	    				! (nList.get(indexLink).getDateCompleted() == null &&
-	    				nList.get(indexLink).getDateOnHold() != null && 
-	    				indexxofCurrentDate < 0 && 
-	    				indexxofHoldDate >= 0 &&	
-	    				indexxofDate >= 0 )
-	    			     )   
-		    			{
-	    				boolean displayInProg = true;
-	    				if (nList.get(indexLink).getDateCompleted() != null &&  indexCompleted < 0 &&
-	    						ChronoUnit.DAYS.between(theStartingCal.toInstant(),  nList.get(indexLink).getDateCompleted().toInstant() )< 0 
-	    						) 
-								{
-                                displayInProg = false;
-								}
-	    				if (nList.get(indexLink).getStatus().equals("In queue")
-	    						) 
-								{
-                                displayInProg = false;
-								}
-	    				if (ChronoUnit.DAYS.between(theEndingCal.toInstant(),  nList.get(indexLink).getDateStarted().toInstant() )> 0 )
-	    						displayInProg = false;
-	    					// fix vanilla on hold issue 283
-	    				 if (nList.get(indexLink).getDateInProgress()== null)
-			    			 {
-	    					 String theclass = 
-	    							 str.indexOf("chart-li-" + (indexLink) + "{") >= 0 ?
-	    									 "chart-li-" + (indexLink) :			     
-	    							 		"chart-li-2Prog" +indexLink;
-	    					 if (indexLink == 0)  
-			                   	   System.out.println("0 number 9" + "the class:" + theclass);
-	    					 if (indexLink == 1)      
-			                   	   System.out.println("204 number 9" + "the class:" + theclass);
-	    					 if (str.trim().replace(" ",  "").indexOf("liclass=\"chart-li-" + indexLink)< 0)
-	    					 		{
-	    						 if (indexLink == 1)  
-				                   	   System.out.println("204 number 9 yep in here:");
-					    			str = str + "        <ul class=\"chart-row-bars\">" +
-					    				/////////	 (daysBetweeni < 0 || ( !nList.get(indexLink).getStatus().equals("In progress") && nList.get(indexLink).getDateInProgress() == null) ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" )  +	
-					    				(!displayInProg  ? "" : " <li   class=\"" + theclass +   "\">" +   "</li>" )  +
-					    				(doDisplay ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-					   		 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-					   		 		
-					   		 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 		
-					   		 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-					   		 	  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-					   		 		"                               </ul>" ;
-	    					 		}       
-			    			 }
-		    			}    
-	       			          
-	    			///// put back
-	    		////	str = str + "        <ul class=\"chart-row-bars\">" +
-		 		////	 (daysBetweeni < 0 || ( !nList.get(indexLink).getStatus().equals("In progress") && nList.get(indexLink).getDateInProgress() == null) ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" ) +		 					
-		 		////(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-		 		////(nList.get(indexLink).getDateOnHold() != null ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-		 		////(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 		
-		 	  ////  // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-		 	 //// " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-		 	////	"                               </ul>" ;
-	    			}
-	    		
-	    		else if ((indexxofHoldDate >= 0 || indexCompleted >= 0) &&
-	    				!
-	    				((ptd.getDateOnHold() != null && ptd.getDateCompleted() != null
-    		    		&& ChronoUnit.DAYS.between(theStartingCal.toInstant(),  ptd.getDateOnHold().toInstant()) > 0 
-    		    		&& ChronoUnit.DAYS.between(theEndingCal.toInstant(),  ptd.getDateOnHold().toInstant()) > 0 
-    		    		&& ChronoUnit.DAYS.between(theStartingCal.toInstant(),  ptd.getDateCompleted().toInstant()) > 0 
-    		    		&& ChronoUnit.DAYS.between(theEndingCal.toInstant(),  ptd.getDateCompleted().toInstant()) > 0 )
-    		    	||
-    		    (ptd.getDateOnHold() != null && ptd.getDateCompleted() != null
-	    		&& ChronoUnit.DAYS.between(theStartingCal.toInstant(),  ptd.getDateOnHold().toInstant()) < 0 
-	    		&& ChronoUnit.DAYS.between(theEndingCal.toInstant(),  ptd.getDateOnHold().toInstant()) < 0 
-	    		&& ChronoUnit.DAYS.between(theStartingCal.toInstant(),  ptd.getDateCompleted().toInstant()) < 0 
-	    		&& ChronoUnit.DAYS.between(theEndingCal.toInstant(),  ptd.getDateCompleted().toInstant()) < 0 ))
-	    				)
-	    			{
-	    			 if (nList.get(indexLink).getDateInProgress()== null)
-		    			 {
-	    				 if (indexLink == 1)  
-		                   	   System.out.println("204 number 10:" + doDisplay);
-	    				 if (indexLink == 0)  
-		                   	   System.out.println("0 number 10");       
-	    				 
-	    				 boolean displayProgress = false;
-    					 if (indexxofDate >= 0 )
-    						 displayProgress = true;
-    					 else if (indexxofHoldDate >= 0 )
-    						 displayProgress = true;
-    					 else if   (nList.get(indexLink).getDateOnHold() != null &&    ChronoUnit.DAYS.between(theStartingCal.toInstant(), nList.get(indexLink).getDateStarted().toInstant()) <= 0 
-    							 &&
-    							 ChronoUnit.DAYS.between(theEndingCal.toInstant(), nList.get(indexLink).getDateOnHold().toInstant()) >= 0 )
-    					 	 {
-    						 displayProgress = true;   
-    					 	 }    
-    					 else if (nList.get(indexLink).getDateOnHold() == null && nList.get(indexLink).getDateCompleted() != null && 
-    							 indexCompleted > 0 )
-    						 displayProgress = true;
-	    				 
-		    			str = str + "        <ul class=\"chart-row-bars\">" +
-		    					// 
-		    					(!displayProgress ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" ) +		 					
-		    				 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-		    				 		(doDisplay ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-		    				 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 		
-		    				 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-		    				 	  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-		    				 		"                               </ul>" ;
-		    			 }
-	    			}
-	    		
-	    		/// continue here .....
-	    		else if (indexxofHoldDate < 0 || indexCompleted < 0  )  
-					{	 
-	    			 
-	    			///////
-	    			
-	    		    Long sCron = 0L;
-	    		    long eCron = 0L;
-	    		    
-	    		  //  if (ptd.getDateOnHold() != null && ptd.getDateCompleted() != null)
-	    		   // 	{
-	    		    	
-	    		  //  	}
-	    		//	Long sCron = ChronoUnit.DAYS.between(theStartingCal.toInstant(),  ptd.getDateOnHold().toInstant()) ;
-	    		//	Long eCron = ChronoUnit.DAYS.between(theEndingCal.toInstant(),ptd.getDateCompleted().toInstant());
-	    		
-	    			////////
-	    		    
-	    		    
-	    		    
-	    		    if ((ptd.getDateOnHold() != null && ptd.getDateCompleted() != null
-	    		    		&& ChronoUnit.DAYS.between(theStartingCal.toInstant(),  ptd.getDateOnHold().toInstant()) > 0 
-	    		    		&& ChronoUnit.DAYS.between(theEndingCal.toInstant(),  ptd.getDateOnHold().toInstant()) > 0 
-	    		    		&& ChronoUnit.DAYS.between(theStartingCal.toInstant(),  ptd.getDateCompleted().toInstant()) > 0 
-	    		    		&& ChronoUnit.DAYS.between(theEndingCal.toInstant(),  ptd.getDateCompleted().toInstant()) > 0 )
-	    		    	||
-	    		    (ptd.getDateOnHold() != null && ptd.getDateCompleted() != null
-		    		&& ChronoUnit.DAYS.between(theStartingCal.toInstant(),  ptd.getDateOnHold().toInstant()) < 0 
-		    		&& ChronoUnit.DAYS.between(theEndingCal.toInstant(),  ptd.getDateOnHold().toInstant()) < 0 
-		    		&& ChronoUnit.DAYS.between(theStartingCal.toInstant(),  ptd.getDateCompleted().toInstant()) < 0 
-		    		&& ChronoUnit.DAYS.between(theEndingCal.toInstant(),  ptd.getDateCompleted().toInstant()) < 0 )
-	    		    	)
-	    		    	
-	    		    	{  
-	    				 if (nList.get(indexLink).getDateInProgress()== null)
-			    			 {
-	    					 if (indexLink == 1)  
-			                   	   System.out.println("204 number 11");
-	    					 if (indexLink == 0)  
-			                   	   System.out.println("0 number 11");
-	    					 
-	    					 boolean displayProgress = false;
-	    					 if (indexxofDate >= 0 )
-	    						 displayProgress = true;
-	    					 else if (indexxofHoldDate >= 0 )
-	    						 displayProgress = true;
-	    					 else if   (nList.get(indexLink).getDateOnHold() != null &&    ChronoUnit.DAYS.between(theStartingCal.toInstant(), nList.get(indexLink).getDateStarted().toInstant()) <= 0 
-	    							 &&
-	    							 ChronoUnit.DAYS.between(theEndingCal.toInstant(), nList.get(indexLink).getDateOnHold().toInstant()) >= 0 )
-	    					 	 {
-	    						 displayProgress = true;
-	    					 	 } 
-		    		    	str = str + "        <ul class=\"chart-row-bars\">" +
-									/// (daysBetweeni < 0 || ( !nList.get(indexLink).getStatus().equals("In progress") && nList.get(indexLink).getDateInProgress() == null) ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" ) +		 					
-									(!displayProgress ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" ) +		
-									(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) +  	
-								 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 		
-								 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-								 	  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-								 		"                               </ul>" ;
-			    			 }
-	    		    	
-	    		    	}
-	    		    else      
-	    		    	
-		    		    { 
-	    		    	if (!continuingInProcess)      
-		    		    	{    
-	    		    		 boolean displayProcessAfterComplete = false;
-	    		    		 if (nList.get(indexLink).getDateCompleted() != null && ChronoUnit.DAYS.between(theStartingCal.toInstant(),  nList.get(indexLink).getDateCompleted().toInstant()) < 0 )
-	    		    		     displayProcessAfterComplete = false;
-	    		    		 else 
-	    		    			 displayProcessAfterComplete = true;
-	    		    		 
-	    		    			 if (nList.get(indexLink).getDateInProgress()== null)
-				    			 {
-	    		    			 if (indexLink == 1)  
-				                   	   System.out.println("204 number 12");
-	    		    			 if (indexLink == 0)  
-				                   	   System.out.println("0 number 12");
-		    		    		str = str + "        <ul class=\"chart-row-bars\">" +
-										 (  (!displayProcessAfterComplete || daysBetweeni < 0) || ( !nList.get(indexLink).getStatus().equals("In progress") && nList.get(indexLink).getDateInProgress() == null  &&   ChronoUnit.DAYS.between(theStartingCal.toInstant(),  Calendar.getInstance().toInstant()) < 0                 ) ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" ) +		 					
-									 		(nList.get(indexLink).getDateCompleted() != null && indexCompleted>=0 ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
-									 		(doDisplay ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
-									 		(indexxofDate >= 0 ? "  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" : "")+	 		
-									 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
-									 	  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-									 		"                               </ul>" ;
-				    			 }  
-		    		    	}       
-	    		    	else    
-	    		    		continuingInProcess = false;   
-		    		      }
-					}
-	    		else 
-	    		{
-
-	    			str = str + "        <ul class=\"chart-row-bars\"  style= \"background-color: transparent; \" >" +
-	    		 		 " <li  style= \" display:none; \">" +   "</li>"  +	
-	    		 		 " <li style= \" display:none; \">" +   "</li>"  +	
-	    		 		 " <li style= \" display:none; \">" +   "</li>"  +	
-	    		 	  " <li style= \" display:block; width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
-	    		 		"                               </ul>" ;
-	    		}
-			str = str + "      </div> </a></div>";
-	    		
-	    		
-	    		     
-	    	    index++;
-	    	    indexLink++;
+    	// issue 273
+	    else if (!prevWf.equals(ptd.getWorkflow().getWfDesc()) || !prevExpId.equals(ptd.getExperiment().getExpID()) ||  !prevAssayId.equals(ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")") )
+	   	   {
+	    	str = str + "      <div  class=\"chart-row chart-period  \">" ;
+	    	str = str + "          <div class=\"chart-row-item-big\"></div> " ;
+	    	// issue 269
+	    	
+	    	str = str + "          <span style=\"border:none\">" + todayStrList.get(0) + "</span>" + 
+	    			"          <span style=\"border:none\"> " + todayStrList.get(1) + "</span>" + 
+	    			"          <span style=\"border:none\">" + todayStrList.get(2)  + "</span>" +
+	    			"          <span style=\"border:none\"> " + todayStrList.get(3) + "</span>" + 
+	    			"          <span style=\"border:none\"> " + todayStrList.get(4) + "</span>" + 
+	    			"          <span style=\"border:none\"> " + todayStrList.get(5) + "</span>" + 
+	    			"          <span style=\"border:none\"> " + todayStrList.get(6) + "</span>" + 
+	    			"          <span style=\"border:none\"> " + todayStrList.get(7) + "</span>" + 
+	    			"          <span style=\"border:none\"> " + todayStrList.get(8) + "</span>" + 
+	    			"          <span style=\"border:none\"> " + todayStrList.get(9) + "</span>" + 
+	    			"          <span style=\"border:none\">  " + todayStrList.get(10) + "</span>" + 
+	    			"          <span style=\"border:none\"  > " + todayStrList.get(11) + "</span>" + 
+	    			"          <span style=\"border:none\">  " + todayStrList.get(12) + "</span>" + 
+	    			"          <span style=\"border:none\">  " + todayStrList.get(13) + "</span>" + 
+	    			//"          <span style=\"border:none; width:200px; \"> " + "comments" + "</span>" + 
+	    			"          <span style=\"border:none; height: 43px; width:401px;   \"> " + "comments" + "</span>" ; 
+	    	
+	    	
+	    	        str = str + "      </div>" ;
+	    	
+	    	
+	    	
+	    	
+	    	
+	    	
+	    	
+		   str = str + " <span>" + ptd.getWorkflow().getWfDesc().replace("<", "&lt").replace(">", "&gt")  + " <br>" + 
+			     ptd.getExperiment().getExpID() + " " + ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")" + "<br>" + sampleTypeMap.get(ptd.getExperiment().getExpID()) +  "<br>" + "Contact and PI:" + ptd.getExperiment().getProject().getContactPerson().getFullNameByLast() + " " + ptd.getExperiment().getProject().getClient().getInvestigator().getFullNameByLast() +  "</span>";
+	       index = 0;
+	       prevWf = ptd.getWorkflow().getWfDesc();
+	       prevExpId = ptd.getExperiment().getExpID();
+	       prevAssayId = ptd.getAssay().getAssayName() + " (" +  ptd.getAssay().getAssayId() + ")";
+	   	   }
+    	 
+    	// issue 262
+    	str = str +    		
+    				"<div>" + 
+        			"  <a style=\"text-decoration:none;\" wicket:id= \"gchart" + Integer.toString(indexLink) + "\"   href=\"#\" > <div class=\"chart-row\">" +
+        			"        <div style=\"text-decoration:none;font-size: 15px;font-weight: bold;color:black; \"  class=\"chart-row-item-big\">" + (index + 1) + ". " + ptd.getProcessTracking().getTaskDesc().replace("<","&lt").replace(">", "&gt") + "\n" + "<br>"  + "Assigned To:" +  ptd.getAssignedTo().getFullName() +  "</div>" ;		
+    				
+    		String truncComment = StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ||  nList.get(indexLink).getComments().length() <= 50 ? nList.get(indexLink).getComments() : nList.get(indexLink).getComments().substring(0, 50);
+    		if (StringUtils.isNullOrEmpty(truncComment))
+    			truncComment = "";
+    		/// resume here
+    		
+    		if (indexxofDate >= 0  && indexxofEndingDate>= 0 )		           
+	 			str = str + "        <ul class=\"chart-row-bars\">" +
+	 			( nList.get(indexLink).getStatus().equals("In queue") ? "" : " <li   class=\" chart-li-" + (indexLink) +   "\">" +   "</li>" ) +		 					
+	 		(nList.get(indexLink).getDateCompleted() != null ? 	 " <li   class=\" chart-li-cmplt-" + (indexLink) +   "\">" +   "</li>" : "" ) + 
+	 		(nList.get(indexLink).getDateOnHold() != null ? 	 " <li   class=\" chart-li-onHold-" + (indexLink) +   "\">" +   "</li>" : "" ) + 	
+	 		"  <li   class=\" chart-li-" + (indexLink)  + "-expect\">" +   " </li>" +	 		
+	 	    // 	" <li style= \" width:401px; height:35px; overflow-y: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + nList.get(index).getComments() +   "\">  "  + truncComment.replace("\n", "<br>").replace("\r",  "<br>") + "<br>" +  " </li>  " +
+	 	  " <li style= \" width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
+	 		"                               </ul>" ;
+    		
+    		else 
+    			str = str + "        <ul class=\"chart-row-bars\"  style= \"background-color: transparent; \" >" +
+    		 		 " <li  style= \" display:none; \">" +   "</li>"  +	
+    		 		 " <li style= \" display:none; \">" +   "</li>"  +	
+    		 		 " <li style= \" display:none; \">" +   "</li>"  +	
+    		 	  " <li style= \" display:block; width:401px; height:43px; overflow-y: auto; overflow-x: auto; color:black;text-align:top;   \" class=\" chart-li-" + (indexLink) + "-comment\"  title=\"" + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : nList.get(indexLink).getComments()) +   "\">  "  + (StringUtils.isNullOrEmpty(nList.get(indexLink).getComments()) ? " " : truncComment) +  "<br>" +  " </li>  " +
+    		 		"                               </ul>" ;
+		str = str + "      </div> </a></div>";
+    		
+    		
+    		
+    	    index++;
+    	    indexLink++;
     	
-    	} // end of for loop end of for loop
-    
-    
-    
+    	} // end of for loop
         str = str + 
         		"    </div>" +
         		"" +
         		"</div> </form>";
-        
-  try 
-  	{
-    BufferedWriter f_writer
-    = new BufferedWriter(new FileWriter(
-     "/Users/admin/gantchart.txt"));
-    f_writer.write(str);
-    f_writer.close();
-  	}
-  catch(Exception e)
-  
-  {
-	  
-  }
-        
     return new StringResourceStream(str);
 	}
 
@@ -2122,7 +828,8 @@ public GantChart (String id)
 	{
 	assignedTo = "";
 	sampleTypeMap =  processTrackingService.createSampleTypeStringFromList();
-	add(gantChartForm = new GantChartForm("gantChartForm"));    
+	add(gantChartForm = new GantChartForm("gantChartForm"));
+    
 	}
 
 
@@ -2172,7 +879,6 @@ public void setDateEndGantt (String dateEndGantt)
 		{
 		///////////////////
 		super(id, new CompoundPropertyModel(gantChart));	
-		 
 		getMarkupResourceStream(markupContainer, containerClassl) ;
 	    nList = new ArrayList <ProcessTrackingDetails> () ;
 	    nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold);
@@ -2443,7 +1149,6 @@ public void setDateEndGantt (String dateEndGantt)
 				dateStartingPointIndex = dateStartingPointIndex- 7;
 				MarkupCache.get().clear();
 				getMarkupResourceStream(markupContainer, containerClassl) ;
-				
 				target.add(gantChart);
 				} 
 			};
@@ -2568,7 +1273,7 @@ public void setDateEndGantt (String dateEndGantt)
 	 private AjaxLink buildGanttChartLink(String id, int i)
 		{
 		AjaxLink link;		
-		// Issue 07
+		// Issue 237
 		// issue 39
 	    link =  new AjaxLink <Void>(id)
 			{
@@ -2634,39 +1339,6 @@ public void setDateEndGantt (String dateEndGantt)
 				
 		return userNamesDD;		
 		}
-	 
-	 // issue 283
-	 public void doMoveDownInProcess()
-	 	{
-		 Calendar theCurrentPDate = Calendar.getInstance();
-		 int indexx = 0;
-		 int i = 0;
-		// System.out.println("just before for loop");
-		 String prevExp = ""; 
-		 String prevAssay = "";
-		 SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-		 List <ProcessTrackingDetails> nListExpAssay = new ArrayList <ProcessTrackingDetails> ();
-		 for (ProcessTrackingDetails ptd : nList)
-		 	{
-			 if (ptd.getExperiment().getExpID().equals("EX00599")
-					 && ptd.getAssay().getAssayId().equals("A003"))
-				 nListExpAssay.add(ptd);
-				 
-		 	}
-		 
-		 for (ProcessTrackingDetails ptd : nListExpAssay)
-		 	{
-			 if (indexx == 0)
-			 	{
-				 indexx ++;
-				 continue;
-			 	}   
-	        theCurrentPDate.add(Calendar.DAY_OF_MONTH, 1);
-	        
-			ptd.setDateStarted(theCurrentPDate);
-			}
-		 
-	 	}
 	 
 		public String getAssignedTo() { return assignedTo; }
 		public void setAssignedTo (String e) { assignedTo = e; }

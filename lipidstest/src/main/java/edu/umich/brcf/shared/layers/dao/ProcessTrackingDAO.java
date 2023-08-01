@@ -18,7 +18,6 @@ import com.mysql.jdbc.StringUtils;
 import edu.umich.brcf.shared.layers.domain.ProcessTracking;
 import edu.umich.brcf.shared.layers.domain.ProcessTrackingDetails;
 import edu.umich.brcf.shared.layers.domain.Workflow;
-import edu.umich.brcf.shared.util.StringParser;
 import edu.umich.brcf.shared.layers.domain.DefaultTrackingTasks;
 
 // issue 61
@@ -175,16 +174,23 @@ public class ProcessTrackingDAO extends BaseDAO
 		}
 	
 	////
-	////
-	public List<String> loadAllWFsAssigned(String expID)
+	//// issue 287
+	public List<String> loadAllWFsAssigned(String expID, String assayID)
 		{
 		List <String> ptdList = new ArrayList <String> ();
-		if (StringUtils.isNullOrEmpty(expID))
+		if (StringUtils.isNullOrEmpty(expID) && StringUtils.isNullOrEmpty(assayID))
 			ptdList =  getEntityManager().createNativeQuery(" select distinct wf_desc from workflow t1, tracking_tasks_details t2   where t1.wf_id = t2.wf_id  ")
 			.getResultList();
-		else 
+		else if (!StringUtils.isNullOrEmpty(expID) && StringUtils.isNullOrEmpty(assayID))
 		    ptdList =  getEntityManager().createNativeQuery(" select distinct wf_desc from workflow t1, tracking_tasks_details t2   where t1.wf_id = t2.wf_id and t2.exp_id = ?1 ").setParameter(1,expID)
-			.getResultList();	
+			.getResultList();
+		else if (!StringUtils.isNullOrEmpty(expID) && !StringUtils.isNullOrEmpty(assayID))
+		    ptdList =  getEntityManager().createNativeQuery(" select distinct wf_desc from workflow t1, tracking_tasks_details t2   where t1.wf_id = t2.wf_id and t2.exp_id = ?1 and t2.assay_id = ?2 ").setParameter(1,expID).setParameter(2,assayID)
+			.getResultList();
+		// issue 287
+		else if (StringUtils.isNullOrEmpty(expID) && !StringUtils.isNullOrEmpty(assayID))
+		    ptdList =  getEntityManager().createNativeQuery(" select distinct wf_desc from workflow t1, tracking_tasks_details t2   where t1.wf_id = t2.wf_id and t2.assay_id = ?2 ").setParameter(2,assayID)
+			.getResultList();
 	
 		return ptdList;
 		}
@@ -415,14 +421,24 @@ public class ProcessTrackingDAO extends BaseDAO
 	   
 		return assignedList;
 		}
-	 
+	 // issue 285
 	 public List<String> loadAllAssignedExperiments()
 		{
 		List<String> assignedList =  getEntityManager().createNativeQuery("select distinct exp_id "
-				 + " from tracking_tasks_details t2  order by 1 asc ")
+				 + " from tracking_tasks_details t2  order by 1 desc ")
 				.getResultList();	
 	   
 		return assignedList;
+		}
+	 
+	 //issue 285
+	 public List<Object []> loadAllComments(String exp, String assay)
+		{
+		List<Object []> commentObjList =  getEntityManager().createNativeQuery("select distinct exp_id, assay_id, task_desc, comments "
+				 + " from tracking_tasks t1, tracking_tasks_details t2 where t1.task_id = t2.task_id and exp_id = ?1 and assay_id = ?2 and trim(comments) is not null order by 1 asc ")
+				.setParameter(1, exp).setParameter(2, assay).getResultList();	
+	   
+		return commentObjList;
 		}
 	
 	public List<ProcessTracking> loadAllTasks()
@@ -447,13 +463,21 @@ public class ProcessTrackingDAO extends BaseDAO
 	
 	public List<String> allAssayNamesForExpIdInTracking (String eid, boolean skipAbsciex)
 		{
-		Query query2 = getEntityManager().createNativeQuery("select cast(a.assay_name as VARCHAR2(150)), "
-								+ " cast(a.assay_id as VARCHAR2(4)) from (select s.sample_id from Sample s where s.exp_id ="
-								+ "?1"
-								+ ") t"
-								+ " inner join Sample_Assays sa on t.sample_id = sa.sample_id "
-								+ " inner join Assays a on sa.assay_id = a.assay_id and a.assay_id in (select distinct assay_id from tracking_tasks_details) "
-								+ " group by a.assay_name, a.assay_id").setParameter(1,eid) ;		
+		// issue 287
+		Query query2 = null;
+		if (edu.umich.brcf.shared.util.utilpackages.StringUtils.isEmptyOrNull((eid)))
+	        query2 = getEntityManager().createNativeQuery("select distinct cast(assay_name as VARCHAR2(150)), "
+	        		+ " cast(t1.assay_id as VARCHAR2(4))  " + 
+	        		 "  from tracking_tasks_details t1, assays t2   " + 
+	        		 "   where t1.assay_id = t2.assay_id ");
+		else 
+			query2 = getEntityManager().createNativeQuery("select cast(a.assay_name as VARCHAR2(150)), "
+									+ " cast(a.assay_id as VARCHAR2(4)) from (select s.sample_id from Sample s where s.exp_id ="
+									+ "?1"
+									+ ") t"
+									+ " inner join Sample_Assays sa on t.sample_id = sa.sample_id "
+									+ " inner join Assays a on sa.assay_id = a.assay_id and a.assay_id in (select distinct assay_id from tracking_tasks_details) "
+									+ " group by a.assay_name, a.assay_id").setParameter(1,eid) ;		
 		ArrayList<String> labelledAssays = new ArrayList<String>();
 		List<Object[]> assayList = query2.getResultList();	
 		for (Object[] assayResult : assayList)
@@ -499,58 +523,36 @@ public class ProcessTrackingDAO extends BaseDAO
 	/////////////////////////////////////////////
 	public void doMoveAhead(String wfID, String expID, String assayId, int increment, int trackingorder, String status)
 		{
-		String theQuery = 
-				"update tracking_tasks_details set date_started = date_started + " + increment + " where wf_id = " + "'" + wfID + "'" + " and exp_id = " + "'" + expID + "'" + " and assay_id = " + "'" + assayId + "'" + " and detail_order > " + trackingorder;  
-		System.out.println("here is the query :" + theQuery);
-		Query query = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = date_started + ?4 " + " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order >?5  and status = 'In queue'"  ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(4, increment).setParameter(5, trackingorder);
+		// issue 287
+		Query query = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = date_started + ?4 " + " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order >?5  " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(4, increment).setParameter(5, trackingorder);
 		query.executeUpdate();	
 	    if (status.equals("Completed"))
 			// issue 277
 			{
 			query = getEntityManager().createNativeQuery("update tracking_tasks_details set status=  'In progress' " +  " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order = ?5 " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(5, (trackingorder+ 1));
 			query.executeUpdate();	
-			} 
+			}    
 		}
 	
-      
-	// issue 283
-	public void doAutomaticPropagation()
+	public void doMoveAheadOnHold(String wfID, String expID, String assayId, int increment, int trackingorder, String status, String onHoldDate)
 		{
-		int i = 0;
-		int prevExpDays = 0;
-		int inProcessDays = 0;
-		List <Object []> listOfExpAssay = listExpAssay();
-		int idx = 0;
-		for (Object [] obj : listOfExpAssay)
+		// issue 287
+		Query query = getEntityManager().createNativeQuery("select detail_order from tracking_tasks_details  where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order >?5 and status = 'In queue' order by 1 " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(5, trackingorder);
+		List <String> detailOrdersList  = query.getResultList();
+		for (int i = 0; i < detailOrdersList.size(); i++)
 			{
-			i = 1;
-		            
-			Query queryListInProcess =  getEntityManager().createNativeQuery("select days_expected from tracking_tasks_details where exp_id = ?1 and assay_id = ?2 and status = 'In progress' order by detail_order ").setParameter(1, obj[0].toString()).setParameter(2,  StringParser.parseId(obj[1].toString()));
-			List <String> theInprocessResult = queryListInProcess.getResultList();
-			if (theInprocessResult.size() > 0  )
-				inProcessDays = Integer.valueOf(theInprocessResult.get(theInprocessResult.size() -1 ).toString());			
-			Query queryListJobs = getEntityManager().createNativeQuery("select job_id, days_expected from tracking_tasks_details where exp_id = ?1 and assay_id = ?2 and status = 'In queue' order by detail_order ").setParameter(1, obj[0].toString()).setParameter(2,  StringParser.parseId(obj[1].toString()));
-		    System.out.println("Here is the querylistjobs:" + "select job_id, days_expected from tracking_tasks_details where exp_id =" + obj[0].toString()  + " and assay_id = " + StringParser.parseId(obj[1].toString() +   " and status = 'In queue' order by detail_order "));
-			
-			List <Object []> listJobs =  queryListJobs.getResultList();
-			Query query = null;
-			query = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = sysdate where exp_id = ?1 and assay_id = ?2 and status = 'In progress' and date_inprogress is null ").setParameter(1,obj[0].toString()).setParameter(2,  StringParser.parseId(obj[1].toString()));
-			query.executeUpdate();
-			for (Object [] strJob : listJobs)      
-				{    
-			
-				query = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = sysdate + ?1  where job_id = ?2").setParameter(1, i).setParameter(2, strJob[0].toString());
-				System.out.println("query for else:  update tracking_tasks_details set date_started = sysdate + " + " " + " +  " + (i) + " where job_id = " + strJob[0].toString());
-				query.executeUpdate();	
-				prevExpDays = Integer.valueOf(strJob[1].toString());
-				
-				i = i + prevExpDays;
-				idx++;
-				          
-				}
+			// issue 287 use i+1 for increment
+			Query query2 = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = to_date(?6, 'mm/dd/yyyy') + ?4 " + " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order =?5 and status = 'In queue' " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(4, i+1).setParameter(5, detailOrdersList.get(i)).setParameter(6, onHoldDate);
+			query2.executeUpdate();
+			}
+	    if (status.equals("Completed"))
+			// issue 277
+			{
+			query = getEntityManager().createNativeQuery("update tracking_tasks_details set status=  'In progress' " +  " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order = ?5 " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(5, (trackingorder+ 1));
+			query.executeUpdate();	  
 			}    
-		}    
-	                            
+		}
+	
 	// issue 277 
 	public String  grabNumberOfSamplesForEmail (String expID)
 		{

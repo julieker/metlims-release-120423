@@ -203,23 +203,6 @@ public class EditProcessTrackingDetail extends WebPage
 			dateFldStarted.setDefaultStringFormat(ProcessTracking.ProcessTracking_DATE_FORMAT);
 			dateFldStarted.setRequired(true);
 			add(dateFldStarted);
-			
-			METWorksAjaxUpdatingDateTextField dateFldInProgress =  new METWorksAjaxUpdatingDateTextField("dateInProgress", new PropertyModel<String>(processTrackingDetailsDTO, "dateInProgress"), "dateInProgress")
-				{
-				@Override
-			    public boolean isEnabled()
-			    	{
-			    	return false;
-			    	}
-			   
-				@Override
-				protected void onUpdate(AjaxRequestTarget target)  
-			        { 
-			        }
-				};		
-			dateFldInProgress.setDefaultStringFormat(ProcessTracking.ProcessTracking_DATE_FORMAT);
-			//dateFldInProgress.setRequired(true);
-			add(dateFldInProgress);
 		
 			METWorksAjaxUpdatingDateTextField dateFldOnHold =  new METWorksAjaxUpdatingDateTextField("dateOnHold", new PropertyModel<String>(processTrackingDetailsDTO, "dateOnHold"), "dateOnHold")
 				{
@@ -325,13 +308,12 @@ public class EditProcessTrackingDetail extends WebPage
 										EditProcessTrackingDetail.this.error(errMsg);
 										return;
 										}
-						
-						if (!processTrackingDetailsDTO.getStatus().equals("On hold") && !StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold())
-								&& !(originalOnHoldDate != null && processTrackingDetailsDTO.getStatus().equals("In progress"))
+					
+						if (originalOnHoldDate == null && !processTrackingDetailsDTO.getStatus().equals("On hold") && !StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold())
 								 && StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateCompleted() ) )
 							//	processTrackingDetailsDTO.getDateOnHold().compareTo(processTrackingDetailsDTO.getDateCompleted()) > 0  ) )
 									{
-									String errMsg =  "<span style=\"color:red;\">" + "There is an on hold date.  Please set status to on hold." +  "</span>";
+									String errMsg =  "<span style=\"color:red;\">" + "There is a on hold date.  Please set status to on hold." +  "</span>";
 									EditProcessTrackingDetail.this.error(errMsg);
 									return;
 									}
@@ -355,17 +337,14 @@ public class EditProcessTrackingDetail extends WebPage
 								EditProcessTrackingDetail.this.error(errMsg);
 								return;
 								}
-						if (originalOnHoldDate != null && !StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold()) && processTrackingDetailsDTO.getStatus().equals("In progress"))
-							{
-							// issue 283
-							System.out.println("in in progress");
-							SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-							String theDateInProgress = sdf.format(Calendar.getInstance().getTime());
-							processTrackingDetailsDTO.setDateInProgress(theDateInProgress);
-							}
+						
+						/// issue 287
+						if (originalOnHoldDate != null && processTrackingDetailsDTO.getStatus().equals("In progress") && !StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold())
+								 && StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateCompleted() ) )
+							//	processTrackingDetailsDTO.getDateOnHold().compareTo(processTrackingDetailsDTO.getDateCompleted()) > 0  ) )
+									processTrackingDetailsDTO.setDateOnHold("");
 						ProcessTrackingDetails ptd = processTrackingService.save(processTrackingDetailsDTO, userAssignedTo, null, null);				
 						gPtd = ptd;
-						
 						String lStatus = ptd.getStatus();
 						int diffDaysExp = Integer.parseInt(ptd.getDaysExpected())- Integer.parseInt(originalDaysExpStr);
 						if (diffDaysExp != 0)
@@ -380,15 +359,14 @@ public class EditProcessTrackingDetail extends WebPage
 							if (originalCompletedDate == null)
 								{
 								
-								//////dayCompletedToAdd = ChronoUnit.DAYS.between(originalCompletingDate.toInstant(),ptd.getDateCompleted().toInstant());
-								dayCompletedToAdd = ChronoUnit.DAYS.between(Calendar.getInstance().toInstant(),ptd.getDateCompleted().toInstant());
+								dayCompletedToAdd = ChronoUnit.DAYS.between(originalCompletingDate.toInstant(),ptd.getDateCompleted().toInstant());
 								if (ptd.getDateCompleted() != null && ptd.getDateStarted()!= null && ptd.getDateCompleted().compareTo(ptd.getDateStarted()) == 0)
 									{   
 									//moveDependentTasks(ptd, 0);									
 									amountToMove = 0;
 									processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
 									}
-								else   
+								else
 									{
 									//moveDependentTasks(ptd, (int) dayCompletedToAdd * ptd.getDateCompleted().compareTo(originalCompletingDate));								
 									amountToMove = (int) dayCompletedToAdd * ptd.getDateCompleted().compareTo(originalCompletingDate);
@@ -411,20 +389,22 @@ public class EditProcessTrackingDetail extends WebPage
 							//moveDependentTasks(ptd, (int) dayOnHoldToAdd -1);
 							//amountToMove =(int) dayOnHoldToAdd -1;
 							amountToMove =(int) dayOnHoldToAdd ;
-							System.out.println("hhhhhhere is amount to move:" + amountToMove);
 							//amountToMove = (int) dayOnHoldToAdd -1;
-							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
+							// issue 287
+							SimpleDateFormat lsdf = new SimpleDateFormat("MM/dd/yyyy");
+							String dateOnHoldString = lsdf.format(ptd.getDateOnHold().getTime());
+							//(dateToConvert == null) ? "" : sdf.format(dateToConvert.getTime());			
+							//processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
+							processTrackingService.doMoveAheadOnHold(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateOnHoldString);
 							}
 						
 						if (ptd.getDateOnHold() != null && ptd.getDateCompleted() == null && originalOnHoldDate != null)
 							{
-							// do in progress date
 							
 							//dayOnHoldToAdd = ChronoUnit.DAYS.between(ptd.getDateStarted().toInstant(),ptd.getDateOnHold().toInstant());
 							dayOnHoldToAdd = ChronoUnit.DAYS.between(originalOnHoldDate.toInstant(),ptd.getDateOnHold().toInstant());
 							// moveDependentTasks(ptd, (int) dayOnHoldToAdd );
-						    if (ptd.getDateInProgress() != null && ptd.getStatus().equals("On hold"))
-						    	ptd.setDateInProgress(null);
+						
 							//amountToMove = (int) dayOnHoldToAdd -1;
 							amountToMove = (int) dayOnHoldToAdd;
 							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
@@ -432,9 +412,7 @@ public class EditProcessTrackingDetail extends WebPage
 						
 						if (ptd.getDateOnHold() != null && ptd.getDateCompleted() != null && originalCompletedDate == null)
 							{
-							System.out.println("in here for date completed and on hold.....");
-							//// put it back   dayOnHoldToAdd = ChronoUnit.DAYS.between(ptd.getDateOnHold().toInstant(),ptd.getDateCompleted().toInstant());
-							dayOnHoldToAdd  =  ChronoUnit.DAYS.between(Calendar.getInstance().toInstant(), ptd.getDateCompleted().toInstant());
+							dayOnHoldToAdd = ChronoUnit.DAYS.between(ptd.getDateOnHold().toInstant(),ptd.getDateCompleted().toInstant());
 							// moveDependentTasks(ptd, (int) dayOnHoldToAdd );
 							//amountToMove = (int) dayOnHoldToAdd -1;
 							amountToMove = (int) dayOnHoldToAdd;
@@ -504,9 +482,6 @@ public class EditProcessTrackingDetail extends WebPage
 			processTrackingDetailsDTO.setDaysExpected(ptd.getDaysExpected());
 			processTrackingDetailsDTO.setDetailOrder(ptd.getDetailOrder());
 			processTrackingDetailsDTO.setDateOnHold(ptd.convertToDateString(ptd.getDateOnHold()));
-			processTrackingDetailsDTO.setDateInProgress(ptd.convertToDateString(ptd.getDateInProgress()));
-			
-			
 			//processTrackingDetailsDTO.setDetailOrder(ptd.getDetailOrder());
 			}
 		

@@ -221,7 +221,6 @@ public class Workflow implements Serializable
     	
 		
 		List<ProcessTrackingDetails> nList = processTrackingDetailsList;
-		//System.out.println("here is processTrackingDetailsLIst:" + nList.size());
 		List<ProcessTrackingDetails> nList2 = new ArrayList<ProcessTrackingDetails> ();
 		List<ProcessTrackingDetails> nList3 = new ArrayList<ProcessTrackingDetails> ();
 		List<ProcessTrackingDetails> nList4 = new ArrayList<ProcessTrackingDetails> ();
@@ -234,7 +233,6 @@ public class Workflow implements Serializable
 				{
 				if (!StringUtils.isNullOrEmpty(assignedTo))	
 					{
-					//System.out.println("in assigned to.....");
 				    if (pd.getAssignedTo().getFullNameByLast().equals(assignedTo))
 				    	nList2.add(pd);
 					}
@@ -242,11 +240,9 @@ public class Workflow implements Serializable
 			}
 		if (nList2.size() == 0 && StringUtils.isNullOrEmpty(assignedTo))
 			{
-			//System.out.println("in nList2 = 0 and assigned 2 empty ");
 			nList2.addAll(nList);
 			}
 		nList3.addAll(nList2);
-		//System.out.println("here is nList3 size:" + nList3.size());
 		for (ProcessTrackingDetails pd : nList3 )
 			{
 			if (onHold)	
@@ -269,40 +265,37 @@ public class Workflow implements Serializable
 			
 			if (inQueue)	
 				{
-				//System.out.println("INQueue....");
 			    if (pd.getStatus() != null && pd.getStatus().equals("In queue"))
 			    	nList4.add(pd);
 				}
-			}
+			}   
 					
 		nList = new ArrayList<ProcessTrackingDetails> ();
 		nList.addAll(nList4);	
-	
-    	//System.out.println("in at the end:" + nList.size());
-    	
-    	//////////
 		return nList;
 		
 		}
-    @Transient
+    @Transient   
     public List <ProcessTrackingDetails> getTrackingListForExpAssay ()
 		{
             	  
 		List <ProcessTrackingDetails> ptListCriteria  = new ArrayList <ProcessTrackingDetails> ();
 		List <ProcessTrackingDetails> ptListExpAssayWk  = new ArrayList <ProcessTrackingDetails> ();
 		Collections.sort(getProcessTrackingDetailsList(), new ProgressTrackDetailsComparator());
-		System.out.println("here is first getExpId:" + getExpID());
 		for (ProcessTrackingDetails pt : getProcessTrackingDetailsList())
 			{
-			System.out.println("here is getExpId:" + getExpID() + "here is expexpid:" + pt.getExperiment().getExpID());
+			
 			// issue 283
-			if (StringUtils.isEmptyOrNull(getExpID()) && StringUtils.isEmptyOrNull(getAssayID()))
+			if (StringUtils.isEmptyOrNull(getExpID()) && StringUtils.isEmptyOrNull(getAssayID()))   
 				ptListCriteria.add(pt);	
-			else if (pt.getExperiment().getExpID().equals(getExpID() ) && pt.getAssay().getAssayId().equals(getAssayID() ))
+			else if (!StringUtils.isEmptyOrNull(getExpID()) && pt.getExperiment().getExpID().equals(getExpID() ) && pt.getAssay().getAssayId().equals(getAssayID() ))
 				ptListCriteria.add(pt);
-			else if (pt.getExperiment().getExpID().equals(getExpID() ) && StringUtils.isEmptyOrNull(getAssayID()))
+			else if ( !StringUtils.isEmptyOrNull(getExpID()) && pt.getExperiment().getExpID().equals(getExpID() ) && StringUtils.isEmptyOrNull(getAssayID()))
 				ptListCriteria.add(pt);
-			}
+			// issue 287
+			else if ( StringUtils.isEmptyOrNull(getExpID()) &&  !StringUtils.isEmptyOrNull(getAssayID()) &&   pt.getAssay().getAssayId().equals(getAssayID()))
+				ptListCriteria.add(pt);
+			}   
 		Collections.sort(ptListCriteria, new ProgressTrackDetailsComparator());
 		return ptListCriteria;
 		}

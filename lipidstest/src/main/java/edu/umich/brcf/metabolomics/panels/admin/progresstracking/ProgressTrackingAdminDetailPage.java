@@ -262,6 +262,8 @@ public class ProgressTrackingAdminDetailPage extends WebPage
     			wf.setInProgress(inProgress);
     			wf.setInQueue(inQueue);
 		        wf.setExpID(expID);
+		        // issue 287
+		       // wf.setAssayID(assayDescID);
 		        wf.setAssayID(StringParser.parseId(assayDescID));
 		        wfItem.add(listViewProgressTracking = new ListView("trackingDetail", new PropertyModel(wf, "trackingListForExpAssay"))
 					{
@@ -299,14 +301,17 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 					    	existsOnHold = true;
 					    listItem.add(new Label("sampleType", new Model (processTrackingService.grabSampleType(wf.getWfID(), expID))));
 						final Project withDocs = projectService.loadById(procTracDetails.getExperiment().getProject().getProjectID());
-						listItem.add(buildLinkExp("eLink", modal2, withDocs, procTracDetails.getExperiment().getExpID() + "\n" + procTracDetails.getAssay().getAssayId()));
+						AjaxLink exAssayLink;
+						listItem.add(exAssayLink = buildLinkExp("eLink", modal2, withDocs, procTracDetails.getExperiment().getExpID() + "\n" + procTracDetails.getAssay().getAssayId()));
+						// issue 285
+						exAssayLink.add(AttributeModifier.replace("title",     procTracDetails.getAssay().getAssayName()    ));						
 						listItem.add(new Label("taskdescription", new Model(procTracDetails.getProcessTracking().getTaskDesc())));
 						listItem.add(new Label("dateStarted", new Model( procTracDetails.convertToDateString( procTracDetails.getDateStarted() ))));
 						listItem.add(new Label("assignedto", new Model( procTracDetails.getAssignedTo().getFullName())));
 						//listItem.add(new Label("datecompleted", new Model(procTracDetails.convertToCreateDateString(procTracDetails.getDateCompleted())));				
 						listItem.add(new Label("datecompleted", new Model( procTracDetails.convertToDateString( procTracDetails.getDateCompleted() ))));				
 						listItem.add(cLabel = new Label("comments", new Model(edu.umich.brcf.shared.util.io.StringUtils.isEmptyOrNull(procTracDetails.getComments()) ? "" : (  procTracDetails.getComments().length() > 20 ?  procTracDetails.getComments().substring(0,20) :  procTracDetails.getComments()          )    )));				
-									
+						// issue 285			
 						cLabel.add(AttributeModifier.replace("title",     edu.umich.brcf.shared.util.io.StringUtils.isEmptyOrNull(procTracDetails.getComments()) ? "" :   procTracDetails.getComments()       ));
 						
 						listItem.add(new Label("status", new Model(procTracDetails.getStatus())));		
@@ -383,7 +388,8 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 	
 	public List<String> getWfDetail()
 		{
-		List <String> nWfList = processTrackingService.loadAllWFsAssigned(getExpID());
+		// issue 287
+		List <String> nWfList = processTrackingService.loadAllWFsAssigned(getExpID(), StringParser.parseId(assayDescID));
 		return nWfList;
 		}
 	
@@ -414,7 +420,10 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    	    		expID = null;
 		    	    		target.add(experimentDD);
 		    	    		}
+		    	    	 // issue 287   
 		    	    	newAliquotList.add("Choose One");
+		    	    	newAliquotList.add("All Assays");
+		    	    	// issue 287
 		    	    	newAliquotList.addAll(processTrackingService.allAssayNamesForExpIdInTracking(expID, false));
 		    	    	//assayDescDD.setChoices (processTrackingService.allAssayNamesForExpIdInTracking(expID, false));
 		    	    	assayDescDD.setChoices (newAliquotList);
@@ -423,9 +432,18 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    	    	target.add(progressTrackingAdminDetailPage);
 		    	    	break;
 		    	    case "updateAssayDesc" :
-						assayDescDD.setChoices (processTrackingService.allAssayNamesForExpIdInTracking(expID, false));	
+		    	    	if (!StringUtils.isNullOrEmpty (expID))
+		    	    		newAliquotList.add("All Assays");
+		    	    	newAliquotList.addAll(processTrackingService.allAssayNamesForExpIdInTracking(expID, false)  );		    	      	    	
+						assayDescDD.setChoices (newAliquotList);	
+						 if (assayDescID.equals("All Assays"))
+		    	    		{	
+		    	    		assayDescID = null;
+		    	    		target.add(assayDescDD);
+		    	    		}
 						target.add(progressTrackingAdminDetailPage);
-						break;	
+						
+						break;	    
 		    	    }
 		    	}
 		    };
@@ -455,7 +473,10 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 			}
 	    
 		 public DropDownChoice buildAssayDescDropDown(final String id)
-			{				
+			{	
+			 List <String> assayList = new ArrayList <String> ();
+				assayList.add("All Assays");
+				assayList.addAll(processTrackingService.allAssayNamesForExpIdInTracking(expID, false));
 			assayDescDD =  new DropDownChoice<String>(id, new PropertyModel(this, "assayDescID" ), new ArrayList <String> ())
 					{				
 					};		
