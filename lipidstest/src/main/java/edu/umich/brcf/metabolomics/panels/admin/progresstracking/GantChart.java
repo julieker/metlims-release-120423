@@ -98,8 +98,8 @@ public class GantChart extends WebPage implements IMarkupResourceStreamProvider
 	GantChart gantChart = this;
 	GantChartForm gantChartForm;
 	boolean	isCurrent = false;
-	boolean isInProgress = false;
-	boolean isOnHold = false;
+	boolean isInProgress = true;
+	boolean isOnHold = true;   
 	
 	boolean allExpAssay = true; 
 	boolean isAllExp = true;
@@ -180,9 +180,9 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 	mCalendar.add(Calendar.MONTH, 8);
 	List <String> monthStrList =  new ArrayList  <String> ();
 	List <String> todayStrList = new ArrayList  <String> ();
-	nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold);
+	nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold, true, true, true );   
    /// if (nList.size() == 0 )
-   ////      return new StringResourceStream(" ");
+   ////      return new StringResourceStream(" ");   
 	int ii = 0; 
 	if (isCurrent)
 		{
@@ -193,7 +193,7 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 			{
 			if (nList.get(ii).getDateStarted().compareTo(curdate) >= 0)
 				{
-				currentList.add(lilp);
+				currentList.add(lilp);        
 				}
 			ii++;
 			}
@@ -708,8 +708,6 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
     	Calendar dCalendar = Calendar.getInstance();
 		int daysExpected = Integer.parseInt(nList.get(indexLink).getDaysExpected());
         
-		
-		
 		dCalendar.setTime(new Date(nList.get(indexLink).convertToDateString(nList.get(indexLink).getDateStarted())));
 		dCalendar.add(Calendar.DAY_OF_MONTH, daysExpected);
 		theEndingDate = sdf.format(dCalendar.getTime());
@@ -881,7 +879,7 @@ public void setDateEndGantt (String dateEndGantt)
 		super(id, new CompoundPropertyModel(gantChart));	
 		getMarkupResourceStream(markupContainer, containerClassl) ;
 	    nList = new ArrayList <ProcessTrackingDetails> () ;
-	    nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold);
+	    nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold, true, true, true);
 	    for (int i=0 ; i<= nList.size();i++ )
 		 	{
 	    	try
@@ -983,7 +981,7 @@ public void setDateEndGantt (String dateEndGantt)
 		    {
 			
 			assignedTo = "";
-			nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo); 
+			nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, true, true, true); 
 			MarkupCache.get().clear();
 			getMarkupResourceStream(markupContainer, containerClassl) ;
 			target.add(gantChartForm);
@@ -1194,7 +1192,7 @@ public void setDateEndGantt (String dateEndGantt)
 					    MarkupCache.get().clear();
 						getMarkupResourceStream(markupContainer, containerClassl) ;
 		    	  
-						nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo); 
+						nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, true, true, true); 
 						AjaxLink gCLink;
 						ggIndex = 0;
 						// nList = new ArrayList <ProcessTrackingDetails> () ;

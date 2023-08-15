@@ -8,7 +8,11 @@ package edu.umich.brcf.shared.layers.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -21,11 +25,13 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import edu.umich.brcf.shared.layers.dto.ProcessTrackingDetailsDTO;
+import edu.umich.brcf.shared.util.comparator.ProgressTrackDetailsComparator;
 import edu.umich.brcf.shared.util.utilpackages.CalendarUtils;
 //import edu.umich.brcf.shared.layers.dto.ProcessTrackingDetailsDTO;
 import edu.umich.brcf.shared.util.utilpackages.StringUtils;
 
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity()
 @Table(name = "TRACKING_TASKS_DETAILS")
@@ -105,9 +111,17 @@ public class ProcessTrackingDetails implements Serializable
 	private Assay assay;
 	
 	
+	  @Transient 
+	  private String expID;
+	  @Transient 
+	  private String assayID;
+	
+	
+	
+	
 	public ProcessTrackingDetails() {  }
 	
-	private ProcessTrackingDetails(String jobid, ProcessTracking processTracking, Calendar dateStarted, Calendar dateCompleted, String comments,  User assignedTo,  Experiment experiment, Workflow workflow, String status, Assay assay, String daysExpected, Integer detailOrder, Calendar dateOnHold)
+	public ProcessTrackingDetails(String jobid, ProcessTracking processTracking, Calendar dateStarted, Calendar dateCompleted, String comments,  User assignedTo,  Experiment experiment, Workflow workflow, String status, Assay assay, String daysExpected, Integer detailOrder, Calendar dateOnHold)
 		{
 		this.jobid = jobid;
 		this.processTracking = processTracking;
@@ -177,6 +191,34 @@ public class ProcessTrackingDetails implements Serializable
 		{
 		this.processTracking = processTracking;
 		}
+	
+	
+	///////////////////////// issue 290
+	
+	@Transient
+	public String getExpID()
+		{
+		return expID;
+		}
+	
+	@Transient
+	public void setExpID(String expID)
+		{
+		this.expID = expID;
+		}
+	
+	@Transient
+	public String getAssayID()
+		{
+		return assayID;
+		}
+	
+	@Transient
+	public void setAssayID(String assayID)
+		{
+		this.assayID = assayID;
+		}
+	
 	
 	public Calendar getDateStarted()
 		{
@@ -297,6 +339,97 @@ public class ProcessTrackingDetails implements Serializable
 		{
 		this.detailOrder = detailOrder;
 		}
+	
+	
+	////////////////////////
+	
+	/*   public List<ProcessTrackingDetails> getProcessTrackingDetailsList()
+			{
+	    //	if (collapse)    		
+	    //	   return new ArrayList <ProcessTrackingDetails> ();
+	    	
+			
+			List<ProcessTrackingDetails> nList = processTrackingDetailsList;
+			List<ProcessTrackingDetails> nList2 = new ArrayList<ProcessTrackingDetails> ();
+			List<ProcessTrackingDetails> nList3 = new ArrayList<ProcessTrackingDetails> ();
+			List<ProcessTrackingDetails> nList4 = new ArrayList<ProcessTrackingDetails> ();
+			
+			//nList2.addAll(nList);
+			if (!StringUtils.isNullOrEmpty(assignedTo))
+				{
+				
+				for (ProcessTrackingDetails pd : nList )
+					{
+					if (!StringUtils.isNullOrEmpty(assignedTo))	
+						{
+					    if (pd.getAssignedTo().getFullNameByLast().equals(assignedTo))
+					    	nList2.add(pd);
+						}
+					}
+				}
+			if (nList2.size() == 0 && StringUtils.isNullOrEmpty(assignedTo))
+				{
+				nList2.addAll(nList);
+				}
+			nList3.addAll(nList2);
+			for (ProcessTrackingDetails pd : nList3 )
+				{
+				if (onHold)	
+						{
+					    if (pd.getStatus() != null && pd.getStatus().equals("On hold"))				    	
+					    	nList4.add(pd);
+						}
+					
+				if (inProgress)	
+						{
+					    if (pd.getStatus() != null && pd.getStatus().equals("In progress"))
+					    	nList4.add(pd);
+						}
+				
+				if (completed)	
+					{
+				    if (pd.getStatus() != null && pd.getStatus().equals("Completed"))
+				    	nList4.add(pd);
+					}
+				
+				if (inQueue)	
+					{
+				    if (pd.getStatus() != null && pd.getStatus().equals("In queue"))
+				    	nList4.add(pd);
+					}
+				}   
+						
+			nList = new ArrayList<ProcessTrackingDetails> ();
+			nList.addAll(nList4);	
+			return nList;
+			
+			}
+	    @Transient   
+	    public List <ProcessTrackingDetails> getTrackingListForExpAssay ()
+			{
+	            	  
+			List <ProcessTrackingDetails> ptListCriteria  = new ArrayList <ProcessTrackingDetails> ();
+			List <ProcessTrackingDetails> ptListExpAssayWk  = new ArrayList <ProcessTrackingDetails> ();
+			Collections.sort(getProcessTrackingDetailsList(), new ProgressTrackDetailsComparator());
+			for (ProcessTrackingDetails pt : getProcessTrackingDetailsList())
+				{
+				
+				// issue 283
+				if (StringUtils.isEmptyOrNull(getExperiment().getExpID()) && StringUtils.isEmptyOrNull(getAssay().getAssayId()))   
+					ptListCriteria.add(pt);	
+				else if (!StringUtils.isEmptyOrNull(getExpID()) && pt.getExperiment().getExpID().equals(getExpID() ) && pt.getAssay().getAssayId().equals(getAssayID() ))
+					ptListCriteria.add(pt);
+				else if ( !StringUtils.isEmptyOrNull(getExpID()) && pt.getExperiment().getExpID().equals(getExpID() ) && StringUtils.isEmptyOrNull(getAssayID()))
+					ptListCriteria.add(pt);
+				// issue 287
+				else if ( StringUtils.isEmptyOrNull(getExpID()) &&  !StringUtils.isEmptyOrNull(getAssayID()) &&   pt.getAssay().getAssayId().equals(getAssayID()))
+					ptListCriteria.add(pt);
+				}   
+			Collections.sort(ptListCriteria, new ProgressTrackDetailsComparator());
+			return ptListCriteria;
+			} */
+	
+	/////////////////////////
 	
 	}
 	

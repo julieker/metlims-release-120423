@@ -6,6 +6,7 @@
 package edu.umich.brcf.shared.layers.dao;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +18,11 @@ import org.springframework.stereotype.Repository;
 import com.mysql.jdbc.StringUtils;
 import edu.umich.brcf.shared.layers.domain.ProcessTracking;
 import edu.umich.brcf.shared.layers.domain.ProcessTrackingDetails;
+import edu.umich.brcf.shared.layers.domain.User;
 import edu.umich.brcf.shared.layers.domain.Workflow;
+import edu.umich.brcf.shared.layers.domain.Assay;
 import edu.umich.brcf.shared.layers.domain.DefaultTrackingTasks;
+import edu.umich.brcf.shared.layers.domain.Experiment;
 
 // issue 61
 
@@ -65,6 +69,31 @@ public class ProcessTrackingDAO extends BaseDAO
 		Query query = getEntityManager().createNativeQuery("select distinct description from sample_type t1, sample t2, tracking_tasks_details t3 "
 				+ " where t1.sample_type_id = t2.sample_type_id and t2.exp_id = t3.exp_id and t3.wf_id =  ?1 and t3.exp_id = ?2").setParameter(1, wfID).setParameter(2, expID);		
 		return  query.getResultList().size() == 0 ? " " :query.getResultList().get(0).toString();		
+		}
+	
+	public String grabSampleType(String expID)
+	{
+	Query query = getEntityManager().createNativeQuery("select distinct description from sample_type t1, sample t2, tracking_tasks_details t3 "
+			+ " where t1.sample_type_id = t2.sample_type_id and t2.exp_id = t3.exp_id  and t3.exp_id = ?2").setParameter(2, expID);		
+	return  query.getResultList().size() == 0 ? " " :query.getResultList().get(0).toString();		
+	}
+	
+	
+	// issue 290
+	
+	// issue 290
+	public Map <String, String> grabAllSampleTypes()
+		{
+		Map <String, String> sampleTypeMap = new HashMap <String, String> ();
+		Query query = getEntityManager().createNativeQuery("select distinct t3.exp_id, description from sample_type t1, sample t2, tracking_tasks_details t3 "
+				+ " where t1.sample_type_id = t2.sample_type_id and t2.exp_id = t3.exp_id ");		
+		List <Object[]> sampleTypeList = query.getResultList();
+		for (Object [] obj :sampleTypeList )
+			{
+			sampleTypeMap.put((String) obj[0], (String) obj[1]);
+			}
+		
+		return  sampleTypeMap;		
 		}
 	
 	// issue 262
@@ -209,58 +238,148 @@ public class ProcessTrackingDAO extends BaseDAO
 	
 	public List<ProcessTrackingDetails> loadAllTasksAssigned(String expId, String assayDescId , boolean allExpAssay, String assignedTo, boolean isCurrent, boolean isInProgress, boolean isOnHold)
 		{
+		return loadAllTasksAssigned(expId,assayDescId ,  allExpAssay,  assignedTo, isCurrent,isInProgress,  isOnHold,  false,  true,true);
+		}
+	
+	// issue 290
+	public List<ProcessTrackingDetails> loadAllTasksBelowEditedExperiment(String expId, String assayDescId , int detailOrder)
+		{
+		List<ProcessTrackingDetails> ptdList = getEntityManager().createQuery("from ProcessTrackingDetails pd where pd.experiment.expID = ?1 and pd.assay.assayId= ?2 and detailOrder >= ?3 order by detailOrder  ").setParameter(1,  expId).setParameter(2, assayDescId).setParameter(3, detailOrder).getResultList();
+		return ptdList;
+		}
+	
+	
+	public List<ProcessTrackingDetails> loadAllTasksAssigned(String expId, String assayDescId , boolean allExpAssay, String assignedTo, boolean isCurrent, boolean isInProgress, boolean isOnHold, boolean isComplete, boolean isInqueue, boolean isGantt)
+		{
 		List<ProcessTrackingDetails> ptdListWF = new ArrayList <ProcessTrackingDetails> ();
 		List<ProcessTrackingDetails> ptdListWFInProgress = new ArrayList <ProcessTrackingDetails> ();
 		List<ProcessTrackingDetails> ptdListWFOnHold = new ArrayList <ProcessTrackingDetails> ();
-		List<ProcessTrackingDetails> ptdList = new ArrayList <ProcessTrackingDetails> ();
+		List<ProcessTrackingDetails> ptdList = new ArrayList <ProcessTrackingDetails> ();       
 		ProcessTrackingDetails pd;
 		// issue 273
-		if (allExpAssay )
+		if (allExpAssay && StringUtils.isNullOrEmpty(assayDescId))
 			{
 			ptdList =  getEntityManager().createQuery("from ProcessTrackingDetails pd  order by   experiment.expID, assay.assayId, detailOrder  ")
-			.getResultList();
+			.getResultList();   
 			}
+		else if ((allExpAssay || StringUtils.isNullOrEmpty(expId)) && !StringUtils.isNullOrEmpty(assayDescId))
+			ptdList =  getEntityManager().createQuery("from ProcessTrackingDetails pd  where pd.assay.assayId= ?2  order by   experiment.expID, assay.assayId, detailOrder  ").setParameter(2, assayDescId)
+			.getResultList();
 		else if (StringUtils.isNullOrEmpty(expId) || StringUtils.isNullOrEmpty(assayDescId))
 			//return ptdListWF;
-			 ptdList =  getEntityManager().createQuery("from ProcessTrackingDetails pd where pd.experiment.expID = ?1  order by experiment.expID, assay.assayId, detailOrder  ").setParameter(1,  expId).getResultList();
+			ptdList =  getEntityManager().createQuery("from ProcessTrackingDetails pd where pd.experiment.expID = ?1  order by experiment.expID, assay.assayId, detailOrder  ").setParameter(1,  expId).getResultList();
 		else 
 		    ptdList =  getEntityManager().createQuery("from ProcessTrackingDetails pd where pd.experiment.expID = ?1 and pd.assay.assayId= ?2 order by detailOrder  ").setParameter(1,  expId).setParameter(2, assayDescId)
 				.getResultList();
+		int i = 0;
+		String prevExp = "";
+		String prevAssay = "";
+		boolean itBelongs = false;
+		
 		for (ProcessTrackingDetails ptd : ptdList)
 			{
-			initializeTheKids(ptd, new String[] { "processTracking", "assignedTo"});
+		
+			itBelongs = false; 
+			// issue 290               
+			initializeTheKids(ptd, new String[] { "processTracking", "assignedTo", "experiment", "assay"});
+			initializeTheKids(ptd.getExperiment(), new String[] { "project"});
 			//////if ( ptd.getWorkflow().getWfDesc().equals(wfDescString))
-			if (isCurrent)
+		/*	if (isCurrent)
 				{
 				if (    (  !StringUtils.isNullOrEmpty(assignedTo) &&  ptd.getAssignedTo().getFullNameByLast().equals(assignedTo) && !ptd.getStatus().equals("Completed") )   ||   
 						(StringUtils.isNullOrEmpty(assignedTo)  && !ptd.getStatus().equals("Completed"))
 				   )
-				   ptdListWF.add(ptd);
-				}
-			else if (isInProgress)
+				  // ptdListWF.add(ptd);
+				   itBelongs = true;
+				}*/
+			
+			if (isCurrent && ptd.getStatus().equals("Completed"))
+				continue;
+			else if (isInProgress && ptd.getStatus().equals("In progress"))
 				{
 				if ( (!StringUtils.isNullOrEmpty(assignedTo) &&  ptd.getAssignedTo().getFullNameByLast().equals(assignedTo) && ptd.getStatus().equals("In progress")) ||
 						(StringUtils.isNullOrEmpty(assignedTo)  && ptd.getStatus().equals("In progress"))
 						)
-					ptdListWF.add(ptd);
+					//ptdListWF.add(ptd);
+				    itBelongs = true;
 			
 				}
-			else if (isOnHold)
+			// issue 290
+			
+			else if (isOnHold && ptd.getStatus().equals("On hold"))
 				{
 				if ( (!StringUtils.isNullOrEmpty(assignedTo) &&  ptd.getAssignedTo().getFullNameByLast().equals(assignedTo) && ptd.getStatus().equals("On hold")) ||
 						(StringUtils.isNullOrEmpty(assignedTo)  && ptd.getStatus().equals("On hold")))
-						ptdListWF.add(ptd);
+						{
+					    // ptdListWF.add(ptd);  
+					    itBelongs = true;
+						}
 				}
-			else if (!StringUtils.isNullOrEmpty(assignedTo) && !assignedTo.equals("All Users"))
+		
+			
+			else if (isComplete && ptd.getStatus().equals("Completed"))
 				{
-				if (ptd.getAssignedTo().getFullNameByLast().equals(assignedTo)    )
-					ptdListWF.add(ptd);
+				if ( (!StringUtils.isNullOrEmpty(assignedTo) &&  ptd.getAssignedTo().getFullNameByLast().equals(assignedTo) && ptd.getStatus().equals("Completed")) ||
+						(StringUtils.isNullOrEmpty(assignedTo)  && ptd.getStatus().equals("Completed")))
+						{
+					    // ptdListWF.add(ptd);  
+						itBelongs = true;
+						}
 				}
-			else if (StringUtils.isNullOrEmpty(assignedTo) || assignedTo.equals("All Users"))
-				ptdListWF.add(ptd);
-			}
+
+			
+			// issue 290
+			else if (isInqueue && ptd.getStatus().equals("In queue"))
+				{
+				if ( (!StringUtils.isNullOrEmpty(assignedTo) &&  ptd.getAssignedTo().getFullNameByLast().equals(assignedTo) && ptd.getStatus().equals("In queue")) ||
+						(StringUtils.isNullOrEmpty(assignedTo)  && ptd.getStatus().equals("In queue")))
+						{
+					    //ptdListWF.add(ptd); 
+					    itBelongs = true;     
+						}
+				}
+		
+		   if (!StringUtils.isNullOrEmpty(assignedTo) && !assignedTo.equals("All Users"))
+				{
+				if (! ptd.getAssignedTo().getFullNameByLast().equals(assignedTo)    )
+					{
+					itBelongs = false;          
+					}    
+				}
+		   
+		   if (itBelongs == true)
+		       ptdListWF.add(ptd);
+				
+		  
+		   }
+		// issue 290
+		  List<ProcessTrackingDetails> ptdListWFTemp = new ArrayList <ProcessTrackingDetails> ();
+		  //ptdListWFTemp.addAll(ptdListWF);
+		  i=0;
+		  for (ProcessTrackingDetails ptd : ptdListWF) 
+			  {
+			  if (i==0)       
+					{
+					prevExp= "";
+				    prevAssay = "";  
+					} 
+			  else if (i>0 && !isGantt)
+					{
+				//	System.out.println("here is prevExp:" + prevExp + " here is prevassay:" + prevAssay + " here is assay id:" + prevAssay + "exp id:" + ptd.getExperiment().getExpID());
+					if ( (!prevAssay.equals(ptd.getAssay().getAssayId()) || !prevExp.equals(ptd.getExperiment().getExpID()))  )   
+						ptdListWFTemp.add(new ProcessTrackingDetails(" ", null, null, null, " ",  null,  null, null, " ", null, " ", null, 
+										null));
+					} 
+			  ptdListWFTemp.add(ptd);
+			  prevExp = ptd.getExperiment().getExpID();    
+			  prevAssay = ptd.getAssay().getAssayId();
+			  i++;    
+			  }   
+		 
+		ptdListWF = new ArrayList <ProcessTrackingDetails> ();
+		ptdListWF.addAll(ptdListWFTemp);
 		return ptdListWF;
-		}
+		} 
 	
 	 public List<Object []> loadAllDefaultTasksAssigned(String wfDesc)
 		{
@@ -353,6 +472,14 @@ public class ProcessTrackingDAO extends BaseDAO
 				 " where t1.task_id = t2.task_id  and t3.researcher_id = t1.assigned_to  and t5.wf_id = t1.wf_id and t4.assay_id = t1.assay_id and status != 'Completed' order by 1,2 "
 				 )
 				.getResultList();	
+		return expAssayList;
+		}
+	 
+	 // issue 290
+	 public List<ProcessTrackingDetails> listProcTrackDetails()
+		{
+		List<ProcessTrackingDetails> expAssayList =  getEntityManager().createQuery(" from ProcessTrackingDetails order by experiment.expID, assay.assayId"				
+		).getResultList();	
 		return expAssayList;
 		}
 	 
@@ -571,4 +698,10 @@ public class ProcessTrackingDAO extends BaseDAO
 		String sampleTypeStr = query.getResultList().get(0).toString();
 		return sampleTypeStr;
 		}
+	
+	 public void initializeProcessKids (ProcessTrackingDetails vPTD)
+	 	{
+		initializeTheKids(vPTD, new String[] { "processTracking", "assignedTo", "experiment", "assay"});
+		initializeTheKids(vPTD.getExperiment(), new String[] { "project"});		 
+	 	}
 	}

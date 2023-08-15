@@ -79,6 +79,19 @@ public class ProcessTrackingService
 		return processTrackingDao.grabSampleType(wfID, expID);
 		}
 	
+	// issue 290
+	public String grabSampleType( String expID)
+		{
+		return processTrackingDao.grabSampleType( expID);
+		}
+	
+	// issue 290
+	public Map <String, String> grabAllSampleTypes( )
+		{
+		return processTrackingDao.grabAllSampleTypes();
+		}
+	
+	
 	public String grabMinDateStarted(String wfID)
 		{
 		return  processTrackingDao.grabMinDateStarted(wfID);		
@@ -113,6 +126,19 @@ public class ProcessTrackingService
 		return processTrackingDao.loadAllTasksAssigned(expId,assayDescId, allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold);
 		}
 	
+	// issue 290
+	
+	public List<ProcessTrackingDetails> loadAllTasksBelowEditedExperiment(String expId, String assayDescId , int detailOrder)
+		{
+		return processTrackingDao.loadAllTasksBelowEditedExperiment(expId, assayDescId, detailOrder);
+		}
+	
+	
+	public List<ProcessTrackingDetails> loadAllTasksAssigned(String expId, String assayDescId, boolean allExpAssay, String assignedTo, boolean isCurrent, boolean isInProgress, boolean isOnHold, boolean isCompleted, boolean isInQueue, boolean isGant)
+		{
+		return processTrackingDao.loadAllTasksAssigned(expId,assayDescId, allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold, isCompleted, isInQueue, isGant);
+		}
+	
 	// issue 262
 	public Map <String, String> createSampleTypeStringFromList ()
 	 	{
@@ -132,6 +158,11 @@ public class ProcessTrackingService
 	 public List<Object []> listExpAssayExp(String expId)
 	 	{
 		return processTrackingDao.listExpAssayExp(expId);
+	 	}
+	 
+	 public List<ProcessTrackingDetails> listProcTrackDetails()
+	 	{
+		 return processTrackingDao.listProcTrackDetails();
 	 	}
 	 	 
 	 public List<Object []> loadTasksAssignedForExp(String expid)
@@ -414,5 +445,9 @@ public class ProcessTrackingService
 	 public List<Object []> loadAllComments(String exp, String assay)
 	 	{
 		 return processTrackingDao.loadAllComments(exp, assay);
+	 	}
+	 public void initializeProcessKids (ProcessTrackingDetails vPTD)
+	 	{
+		processTrackingDao.initializeProcessKids (vPTD);	 
 	 	}
     }

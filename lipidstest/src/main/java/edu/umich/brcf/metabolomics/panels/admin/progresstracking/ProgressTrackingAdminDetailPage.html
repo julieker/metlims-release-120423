@@ -8,12 +8,18 @@ table.scroll {
 }
 
 table.scroll tbody,
-table.scroll thead { display: block; }
+table.scroll thead { display: block;  }
 
 thead tr th { 
     height: 30px;
     line-height: 30px;
+    border: none;
     /* text-align: left; */
+}
+
+table.scroll thead {
+    height: 100px;
+ border: none;
 }
 
 table.scroll tbody {
@@ -22,11 +28,14 @@ table.scroll tbody {
     overflow-x: hidden;
 }
 
-tbody { border-top: 2px solid black; }
+tbody { /*border-top: 2px solid black;*/ 
+      border: none; }
 
 tbody td, thead th {
     /* width: 20%; */ /* Optional */
-    border-right: 1px solid black;
+    border-right: none;
+    /*
+    border-right: 1px solid black;*/   
     /* white-space: nowrap; */
 }
 
@@ -41,13 +50,16 @@ html, body{
 }
 section {
   position: relative;
-  border: 1px solid #000;
-  border-left: 1px solid #000;
-  border-right: 1px solid #000;
-  padding-top: 43px;
+ /* border: none;*/
+  
+border-right: none;
+ /* border-left: 1px solid #000;
+  border-right: 1px solid #000;*/
+  
+  padding-top: 43px;    
  
   /*background: #220;*/
-  background-color: blue;
+  background-color: blue;        
 }
 section.positioned {
   position: absolute;
@@ -69,11 +81,13 @@ td + td {
   border-left:1px solid #eee;
 }
 td, th {
+border-top:1px solid #eee;  
   border-bottom:1px solid #eee;
   background: #ddd;
-  color: #000;
+  color: #000;      
  /* padding: 10px 25px; */
- padding: 4px 25px;
+ /* padding: 4px 25px; */
+ padding: 1px 8px 1px 8px;       
 }
 th {
   height: 0;
@@ -93,7 +107,9 @@ th div{
   top: 0;
   margin-left: -25px;
   line-height: normal;
-  border-left: 1px solid #800;
+  border: none;
+  /*
+  border-left: 1px solid #800;*/
 }
 th:first-child div{
   border: none;
@@ -102,15 +118,18 @@ th:first-child div{
 </style>
 </head>
 <!--  
-<wicket:panel>
--->
+<wicket:panel>   
+-->    
 <body>
 
 	    <div wicket:id="modal2"></div>
 		 <div style="overflow-y: auto; height : 100%; width : 96%; padding-right : 10px;">
+			<!-- 
 			<br>
 			<br>
+			 
 			<br>
+			-->     
 			    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		   		<span wicket:id = "titleLabel" style = "text-align : left; font-weight : bold; color :  #0053CF">View Progress Tracking</span> &nbsp;&nbsp;&nbsp;
 		   	        <!--  
@@ -174,13 +193,23 @@ th:first-child div{
        <thead>
         <tr>
            <th>
-            Workflow
-            <div>Workflow </div>
+            Experiment
+            <div>Experiment </div>
           </th>
          
           <th>
-            Experiment
-            <div>Experiment <br> Assay </div>
+            Assay
+            <div>Assay </div>        
+          </th>
+          
+            <th style= "width:101px; ">
+           Contact and PI
+            <div  style= "width:100px; " >Contact and PI </div>
+          </th>
+          
+              <th style= "width:101px; ">
+           Service Request ID
+            <div  style= "width:100px; " >Service Request ID </div>
           </th>
           
             <th>
@@ -231,31 +260,11 @@ th:first-child div{
      
     
          
-     <thead>
-     </thead>
-      <tbody wicket:id = "wfDetail">
+    
+     <!--  
+      <tbody >
+      -->
       
-        <tr >
-        <td>
-        <a wicket:id = "wfLink">
-        <span wicket:id = "wfDesc">Huckleberry Finn</span>
-        </a>
-        </td>
-          <td><span wicket:id = "eLabel"> </span></td>
-            <td><span></span></td>
-              <td><span ></span></td>
-                <td><span></span></td>
-                  <td><span wicket:id = "startDate" ></span></td>
-                    <td><span></span></td>
-                      <td><span></span></td>
-                      <td><span   wicket:id = "onHoldStatus"  ></span></td>
-                        <td><span ></span></td>
-                          <td><span></span></td>
-                          <!--  
-                          <td><span></span></td>
-                          -->
-        </tr>
-     
        <!--  
        <tr wicket:id = "wfDesc">Huckleberry Finn</span></td>
        -->
@@ -267,13 +276,17 @@ th:first-child div{
        -->
        <!--  
        <td><span></span></td>
-       -->
+       
        <td><span></span></td>
+       -->
         <td>
         <a wicket:id = "eLink">
-        <span wicket:id = "experimentID">Huckleberry Finn</span>
+        <span wicket:id = "experimentID">Huckleberry Finn</span>     
         </a> 
         </td>
+        <td><span wicket:id = "assayID">Huckleberry Finn</span></td>
+        <td style= "width:100px; "><span style= "width:100px; "  wicket:id = "ContactPI"></span></td>
+           <td><span wicket:id = "serviceRequest">Huckleberry Finn</span></td> 
            <td><span wicket:id = "sampleType">Huckleberry Finn</span></td>     
           <td><span wicket:id = "taskdescription">Huckleberry Finn</span></td>
           <td><span wicket:id = "assignedto">Huckleberry Finn</span></td>
@@ -281,14 +294,16 @@ th:first-child div{
         
            <td> <span wicket:id = "datecompleted">Mark Twain</span></td>
           
-          
-           <td><span wicket:id = "status">(123) 456-7890</span></td>
+                   
+           <td><span wicket:id = "status">(123) 456-7890</span></td>       
            <td><span wicket:id = "comments">(123) 456-7890</span></td> 
-           <td> <a wicket:id = "editTrackingAdmin" href="#">edit</a> </td>
-           <td> <a wicket:id = "deleteTrackingAdmin" href="#">delete</a> </td>
+           <td> <a wicket:id = "editTrackingAdmin" href="#"><span wicket:id = "editLabel"></span></a> </td>
+           <td> <a wicket:id = "deleteTrackingAdmin" href="#"><span wicket:id = "deleteLabel">Huckleberry Finn</span> </a> </td>
          
         </tr>
+       <!--  
       </tbody>
+      -->
     </table>
     
   
