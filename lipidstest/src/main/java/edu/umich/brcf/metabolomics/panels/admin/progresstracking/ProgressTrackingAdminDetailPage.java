@@ -106,6 +106,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
     boolean collapse = false;
     String expID;
     Boolean existsOnHold = false;
+    String callingLink = "";
     
     String assayDescID;
     ProcessTrackingDetails gPtd;
@@ -254,6 +255,8 @@ public class ProgressTrackingAdminDetailPage extends WebPage
         	{
             public void onClose(AjaxRequestTarget target)
             	{
+            	if (callingLink.equals("projectDetails"))
+            	    return;
             	List <ProcessTrackingDetails> lPTD = new ArrayList <ProcessTrackingDetails> ();
             	gptd = processTrackingService.loadById(gJobId);
             	processTrackingService.initializeProcessKids(gptd);
@@ -358,6 +361,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 			    				{
 			    				modal1.setInitialWidth(625);
 			    			    modal1.setInitialHeight(600);
+			    			    callingLink = "projectDetails";
 			    			    modal1.setPageCreator(new ModalWindow.PageCreator()
 			    		    		{
 			    		            public Page createPage()
@@ -501,6 +505,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 					public Page createPage() {   return setPage(id, modal1, ptd);   }
 					});	
 				    	modal1.show(target); 
+				    	callingLink = "editTrackingDetails";
 				}
 			};
 		return lnk;
