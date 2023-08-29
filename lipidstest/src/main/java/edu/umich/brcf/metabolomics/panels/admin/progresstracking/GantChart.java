@@ -825,7 +825,7 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 public GantChart (String id)
 	{
 	assignedTo = "";
-	sampleTypeMap =  processTrackingService.createSampleTypeStringFromList();
+	sampleTypeMap =  processTrackingService.createSampleTypeStringMapFromList();
 	add(gantChartForm = new GantChartForm("gantChartForm"));
     
 	}
@@ -965,10 +965,7 @@ public void setDateEndGantt (String dateEndGantt)
 				dateStartingPointIndex = 0;
 			    }
 		    });
-		
-		
-		
-		
+
 		add(ganttDateLink =  new IndicatingAjaxLink <Void>("AllUsersBtn") 
 	    {			
 		@Override
@@ -1179,9 +1176,6 @@ public void setDateEndGantt (String dateEndGantt)
 		    		{
 		    		if (isAllExp)
 			    		{
-		    			///////////////////////////////
-		    			
-		    			
 		    			allExpAssay = true;
 						expID = "";
 						assayDescID = null;

@@ -89,9 +89,11 @@ public class EditProcessTrackingDetail extends WebPage
 	DropDownChoice<String> statusDD;
 	DropDownChoice<String> daysExpectedDD;
 	int amountToMove = 0;
+	String maxCompltDate = "";
+	String maxOnHoldDate = "";
 	List<String> userNamesChoices = new ArrayList<String>();
 	List<String> taskNamesChoices = new ArrayList<String>();
-	
+	boolean offHoldInProcess = false;
 	EditProcessTrackingDetail editProcessTrackingDetail = this;// issue 61 2020
 	ProcessTrackingDetailsDTO processTrackingDetailsDTO = new ProcessTrackingDetailsDTO();
 	Button saveChangesButton;
@@ -119,10 +121,17 @@ public class EditProcessTrackingDetail extends WebPage
 	public EditProcessTrackingDetail(Page backPage, IModel cmpModel, final ModalWindow window, boolean isViewOnly) 
 		{
 		ProcessTrackingDetails ptd = (ProcessTrackingDetails) cmpModel.getObject();	
+		processTrackingService.initializeProcessKids(ptd);
+		
+		// issue 292
+		maxCompltDate = (processTrackingService.grabMaxCompletedDate 
+		         (ptd.getExperiment().getExpID(),  ptd.getAssay().getAssayId()));  
+		maxOnHoldDate = (processTrackingService.grabMaxOnHoldDate 
+		         (ptd.getExperiment().getExpID(),  ptd.getAssay().getAssayId()));  
 		aFeedback = new FeedbackPanel("feedback");
 		aFeedback.setEscapeModelStrings(false);		
 		add(aFeedback);	
-		add(new Label("titleLabel",  "Edit Assigned Task"));
+		add(new Label("titleLabel",  "Edit Assigned Task"));               
 		setProcessTrackingDetailsDTO(ProcessTrackingDetailsDTO.instance(ptd));
 		// issue 196
 		add(editProcessTrackingDetailForm = new EditProcessTrackingDetailForm("editProcessTrackingDetailForm", ptd.getJobid(), processTrackingDetailsDTO, backPage, window, editProcessTrackingDetail, ptd, isViewOnly));
@@ -242,9 +251,13 @@ public class EditProcessTrackingDetail extends WebPage
 		
 				public void onSubmit() 
 					{	
-					
+					    
 					try
-						{
+						{    
+						offHoldInProcess = false;
+						// issue 292    
+					/*	String maxCompltDate = (processTrackingService.grabMaxCompletedDate 
+						         (processTrackingDetailsDTO.getExpID(),   processTrackingDetailsDTO.getAssayID())); */
 						User userAssignedTo;
 						userAssignedTo = userService.loadUserByFullName(processTrackingDetailsDTO.getAssignedTo());						
 						Calendar expectedCompletionDate;
@@ -273,6 +286,19 @@ public class EditProcessTrackingDetail extends WebPage
 						if (!StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateStarted()))
 							lCalStartDate.setTime(new Date(processTrackingDetailsDTO.getDateStarted()));
 						
+						// issue 292
+						Calendar lMaxCompletedDate = Calendar.getInstance();
+					    if (!StringUtils.isNullOrEmpty(maxCompltDate))
+							{
+							lMaxCompletedDate.setTime(new Date (maxCompltDate));         
+							}
+						// issue 292
+					    Calendar lMaxOnHoldDate = Calendar.getInstance();
+					    if (!StringUtils.isNullOrEmpty(maxOnHoldDate))
+							{
+					    	lMaxOnHoldDate.setTime(new Date (maxOnHoldDate));         
+							}
+					    
 						// issue 273
 						if (processTrackingDetailsDTO.getStatus().equals("On hold")  &&  
 						    StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold()))
@@ -315,13 +341,14 @@ public class EditProcessTrackingDetail extends WebPage
 									{
 									String errMsg =  "<span style=\"color:red;\">" + "There is a on hold date.  Please set status to on hold." +  "</span>";
 									EditProcessTrackingDetail.this.error(errMsg);
-									return;
+									return;    
 									}
 						
 						if (!StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold()) && 
 								//processTrackingDetailsDTO.getDateStarted().compareTo(processTrackingDetailsDTO.getDateOnHold()) > 0  )
 								!StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateStarted()) &&
-								lCalStartDate.compareTo(lCalOnHold) > 0 )
+								lCalStartDate.compareTo(lCalOnHold) > 0 && lCalOnHold != null &&  lCalOnHold.compareTo(lMaxOnHoldDate) < 0 )
+								
 								{
 								String errMsg =  "<span style=\"color:red;\">" + "The on hold date must be later than the start date." +  "</span>";
 								EditProcessTrackingDetail.this.error(errMsg);
@@ -331,46 +358,92 @@ public class EditProcessTrackingDetail extends WebPage
 						if (!StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateStarted()) && 
 								//processTrackingDetailsDTO.getDateStarted().compareTo(processTrackingDetailsDTO.getDateOnHold()) > 0  )
 								!StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateCompleted()) && 
-								lCalStartDate.compareTo(lCalCompleted) > 0 )
-								{
-								String errMsg =  "<span style=\"color:red;\">" + "The completed date must be later than the start date." +  "</span>";
-								EditProcessTrackingDetail.this.error(errMsg);
-								return;
+								     lCalStartDate.compareTo(lCalCompleted) > 0  &&  lCalCompleted!= null &&  (lCalCompleted.compareTo(lMaxCompletedDate)  < 0 ) )
+								   
+								{   							  
+								String errMsg =  "<span style=\"color:red;\">" + "The completed date must be later than the start date or greater than the latest complete date of ." + maxCompltDate +   "</span>";
+								EditProcessTrackingDetail.this.error(errMsg);   
+								return;      
 								}
 						
-						/// issue 287
+						
+						// issue 292    
+						 if (   ! StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateCompleted()) &&    lCalCompleted != null && lCalStartDate.compareTo(lCalCompleted) > 0 && lCalCompleted.compareTo(lMaxCompletedDate)  >= 0 )
+							processTrackingDetailsDTO.setDateStarted(processTrackingDetailsDTO.getDateCompleted());							
+						 if (     ! StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold()) &&   processTrackingDetailsDTO.getStatus().equals("On hold")  &&  lCalOnHold != null && lCalStartDate.compareTo(lCalOnHold) > 0 && lCalOnHold.compareTo(lMaxOnHoldDate)  >= 0 )
+							processTrackingDetailsDTO.setDateStarted(processTrackingDetailsDTO.getDateOnHold());
+						/// issue 287    
 						if (originalOnHoldDate != null && processTrackingDetailsDTO.getStatus().equals("In progress") && !StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold())
 								 && StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateCompleted() ) )
 							//	processTrackingDetailsDTO.getDateOnHold().compareTo(processTrackingDetailsDTO.getDateCompleted()) > 0  ) )
-									processTrackingDetailsDTO.setDateOnHold("");
+							{	
+							offHoldInProcess = true;
+							processTrackingDetailsDTO.setDateOnHold("");
+							}
 						ProcessTrackingDetails ptd = processTrackingService.save(processTrackingDetailsDTO, userAssignedTo, null, null);				
-						gPtd = ptd;
+						
+						gPtd = ptd;       
 						String lStatus = ptd.getStatus();
 						int diffDaysExp = Integer.parseInt(ptd.getDaysExpected())- Integer.parseInt(originalDaysExpStr);
+						
+						// issue 292 on hold taken off by in process
+					/*	if (offHoldInProcess)
+							{
+							System.out.println("in off h9old in process");
+							SimpleDateFormat lsdf = new SimpleDateFormat("MM/dd/yyyy");
+							String dateStartedString = lsdf.format(ptd.getDateStarted().getTime());
+							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateStartedString);
+							} */
+						
 						if (diffDaysExp != 0)
 							{
 						   // moveDependentTasks(ptd, diffDaysExp);							
 							amountToMove = diffDaysExp;
-							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(),lStatus);
+							SimpleDateFormat lsdf = new SimpleDateFormat("MM/dd/yyyy");
+							String dateStartedString = lsdf.format(ptd.getDateStarted().getTime());
+							//(dateToConvert == null) ? "" : sdf.format(dateToConvert.getTime());			
+							//processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
+							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateStartedString);
 							}
+						
+						// issue 292
+						
+						 if (ptd.getDateCompleted() != null && lCalStartDate.compareTo(lCalCompleted) > 0 && lCalCompleted.compareTo(lMaxCompletedDate)  >= 0 )
+						 	{
+							SimpleDateFormat lsdf = new SimpleDateFormat("MM/dd/yyyy");
+							String dateCompletedString = lsdf.format(ptd.getDateCompleted().getTime());  
+							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateCompletedString);
+						 	}    
+						
 						if ((originalCompletedDate == null && ptd.getDateOnHold() == null && ptd.getDateCompleted() != null) ||  ( ptd.getDateCompleted() != null && ptd.getDateOnHold() == null ))
 							{
 							originalCompletingDate.add(Calendar.DAY_OF_MONTH, Integer.parseInt(originalDaysExpStr));							
-							if (originalCompletedDate == null)
-								{
+							if (originalCompletedDate == null)   
+								{   
 								
 								dayCompletedToAdd = ChronoUnit.DAYS.between(originalCompletingDate.toInstant(),ptd.getDateCompleted().toInstant());
 								if (ptd.getDateCompleted() != null && ptd.getDateStarted()!= null && ptd.getDateCompleted().compareTo(ptd.getDateStarted()) == 0)
 									{   
 									//moveDependentTasks(ptd, 0);									
 									amountToMove = 0;
-									processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
+									SimpleDateFormat lsdf = new SimpleDateFormat("MM/dd/yyyy");
+									String dateCompletedString = lsdf.format(ptd.getDateCompleted().getTime()); 
+									processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateCompletedString);
+									//processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
 									}
 								else
 									{
+									// issue 292
 									//moveDependentTasks(ptd, (int) dayCompletedToAdd * ptd.getDateCompleted().compareTo(originalCompletingDate));								
 									amountToMove = (int) dayCompletedToAdd * ptd.getDateCompleted().compareTo(originalCompletingDate);
-									processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
+									SimpleDateFormat lsdf = new SimpleDateFormat("MM/dd/yyyy");
+									String dateCompletedString = lsdf.format(ptd.getDateCompleted().getTime());
+									//(dateToConvert == null) ? "" : sdf.format(dateToConvert.getTime());			
+									//processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
+									processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateCompletedString);
+									
+									
+									//processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
 									}
 									// issue 269									
 								}
@@ -379,7 +452,11 @@ public class EditProcessTrackingDetail extends WebPage
 								dayCompletedToAdd = ChronoUnit.DAYS.between(originalCompletedDate.toInstant(),ptd.getDateCompleted().toInstant());
 								//moveDependentTasks(ptd, (int) dayCompletedToAdd);
 								amountToMove = (int) dayCompletedToAdd;
-								processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus );
+								SimpleDateFormat lsdf = new SimpleDateFormat("MM/dd/yyyy");
+								String dateCompletedString = lsdf.format(ptd.getDateCompleted().getTime());
+								//(dateToConvert == null) ? "" : sdf.format(dateToConvert.getTime());			
+								//processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
+								processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateCompletedString);
 								}							
 							}
 						
@@ -395,7 +472,8 @@ public class EditProcessTrackingDetail extends WebPage
 							String dateOnHoldString = lsdf.format(ptd.getDateOnHold().getTime());
 							//(dateToConvert == null) ? "" : sdf.format(dateToConvert.getTime());			
 							//processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
-							processTrackingService.doMoveAheadOnHold(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateOnHoldString);
+							// issue 292
+							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateOnHoldString);
 							}
 						
 						if (ptd.getDateOnHold() != null && ptd.getDateCompleted() == null && originalOnHoldDate != null)
@@ -407,7 +485,13 @@ public class EditProcessTrackingDetail extends WebPage
 						
 							//amountToMove = (int) dayOnHoldToAdd -1;
 							amountToMove = (int) dayOnHoldToAdd;
-							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
+							
+							SimpleDateFormat lsdf = new SimpleDateFormat("MM/dd/yyyy");
+							String dateOnHoldString = lsdf.format(ptd.getDateOnHold().getTime());
+							//(dateToConvert == null) ? "" : sdf.format(dateToConvert.getTime());			
+							//processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
+							// issue 292
+							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateOnHoldString);
 							}
 						
 						if (ptd.getDateOnHold() != null && ptd.getDateCompleted() != null && originalCompletedDate == null)
@@ -416,7 +500,11 @@ public class EditProcessTrackingDetail extends WebPage
 							// moveDependentTasks(ptd, (int) dayOnHoldToAdd );
 							//amountToMove = (int) dayOnHoldToAdd -1;
 							amountToMove = (int) dayOnHoldToAdd;
-							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
+							SimpleDateFormat lsdf = new SimpleDateFormat("MM/dd/yyyy");
+							String dateOnHoldString = lsdf.format(ptd.getDateOnHold().getTime());
+							//(dateToConvert == null) ? "" : sdf.format(dateToConvert.getTime());			
+							//processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
+							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateOnHoldString);
 							} 
 						
 						if (ptd.getDateOnHold() != null && ptd.getDateCompleted() != null && originalCompletedDate != null)
@@ -425,7 +513,11 @@ public class EditProcessTrackingDetail extends WebPage
 							 //moveDependentTasks(ptd, (int) dayOnHoldToAdd );
 							//amountToMove = (int) dayOnHoldToAdd -1;
 							amountToMove = (int) dayOnHoldToAdd;
-							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
+							SimpleDateFormat lsdf = new SimpleDateFormat("MM/dd/yyyy");
+							String dateCompletedString = lsdf.format(ptd.getDateCompleted().getTime());
+							//(dateToConvert == null) ? "" : sdf.format(dateToConvert.getTime());			
+							//processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
+							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateCompletedString);
 							} 
 					
 						if (ptd.getJobid() != null && (processTrackingDetailsDTO.getJobID()== null || processTrackingDetailsDTO.getJobID().equals("to be assigned")))

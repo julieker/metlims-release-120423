@@ -138,7 +138,9 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		numSampleMap = buildNumberOfSamplesMap ();
 		investigatorAndContactMap = buildInvestigatorAndContactMap();
 		serviceRequestMap = buildServiceRequestMap();
-		sampleTypeMap = buildSampleTypeMap();
+		//// sampleTypeMap = buildSampleTypeMap();
+		// issue 292
+		sampleTypeMap =  processTrackingService.createSampleTypeStringMapFromList();
 		final ModalWindow modal2= new ModalWindow("modal2");
 		modal2.setInitialWidth(1580);
         modal2.setInitialHeight(600);
@@ -255,8 +257,9 @@ public class ProgressTrackingAdminDetailPage extends WebPage
         	{
             public void onClose(AjaxRequestTarget target)
             	{
-            	if (callingLink.equals("projectDetails"))
+            	if (callingLink.equals("projectDetails"))        
             	    return;
+            
             	List <ProcessTrackingDetails> lPTD = new ArrayList <ProcessTrackingDetails> ();
             	gptd = processTrackingService.loadById(gJobId);
             	processTrackingService.initializeProcessKids(gptd);
@@ -269,29 +272,35 @@ public class ProgressTrackingAdminDetailPage extends WebPage
             		processTrackingService.initializeProcessKids(sPTD);
             		}
             	
+            	/// issue 290
+            	List <String> statusList = new ArrayList <String> ();
+            	if (completed)
+            		statusList.add("Completed");
+             	if (inQueue)
+            		statusList.add("In queue");
+             	if (inProgress)
+            		statusList.add("In progress");
+             	if (onHold)
+            		statusList.add("On hold");      
+             	   
             	for (int i=0; i<glPTD.size(); i++)
             		{
+            		
             		if (jobIDList.contains(glPTD.get(i).getJobid()))
         				{
-            			lPTD.add(lstPtdIncludingBelow.get(j));
-            			j++;
+            			
+            			if (!statusList.contains(lstPtdIncludingBelow.get(j).getStatus()))
+            				{
+            				j++;
+            				continue;
+            				}
+            				
+            			lPTD.add(lstPtdIncludingBelow.get(j));                  
+            			j++;    
         				}
             		else 
-            			lPTD.add(glPTD.get(i));
+            			lPTD.add(glPTD.get(i));    
             		}
-            	
-            	
-            /*	for (int i=0; i<glPTD.size(); i++)
-            		{
-            		if (glPTD.get(i).getJobid().equals(gptd.getJobid()))
-            			{
-            			lPTD.add(gptd);
-            			}
-            		else 
-            			lPTD.add(glPTD.get(i));
-            		} */
-            	
-            	
             	
             	glPTD =  new ArrayList <ProcessTrackingDetails> ();
             	glPTD.addAll(lPTD);
@@ -301,29 +310,23 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 	        		{
             		if (jobIDList.contains(glPTDAllExp.get(i).getJobid()))
 	    				{
-	        			lPTD.add(lstPtdIncludingBelow.get(j));
+            			      
+            			if (!statusList.contains(lstPtdIncludingBelow.get(j).getStatus()))
+	        				{
+	        				j++;
+	        				continue;
+	        				}
+            			           			
+	        			lPTD.add(lstPtdIncludingBelow.get(j));   
 	        			j++;
 	    				}
 	    			else 
 	    				lPTD.add(glPTDAllExp.get(i));
 	        		} 
             	
-            	
-            	/* for (int i = 0; i<glPTDAllExp.size(); i++ )
-            		{
-            		if (glPTDAllExp.get(i).getJobid().equals(gptd.getJobid()))
-        			{
-        			lPTD.add(gptd);
-        			}
-        		else 
-        			lPTD.add(glPTDAllExp.get(i));
-            		} */
-            	
-            	
             	glPTDAllExp =  new ArrayList <ProcessTrackingDetails> ();
             	glPTDAllExp.addAll(lPTD); 
-            	
-            	
+            	            	
             	//glPTD = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), StringUtils.isNullOrEmpty(expID) , assignedTo, false, inProgress, onHold, true, true, false);
             	target.add(progressTrackingAdminDetailPage);
             	}
@@ -344,10 +347,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
     	
     	///////////////////////////////////////////////////////////////////////// leave off here 
     	/////////////////////////////////////////////////////////////////////////
-    	
-    	
-    	   
-    		    
+
 		        add(listViewProgressTracking = new ListView("trackingDetail", new PropertyModel(this, "trackingListForExpAssay"))
 					{
 		        	private AjaxLink buildLinkExp(final String linkID,  final ModalWindow modal1 ,Project prj, String expId) 
@@ -600,14 +600,16 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    	{
 		    	List<String> newAliquotList = new ArrayList<String>();
 		    	// issue 290
+		    	// issue 292
 		    	
 		    	switch (response)
 		        	{		    	   
 		    	    case "updateUser" :    
 		    	    	if (assignedTo.equals("All Users"))
 		    	    		assignedTo = "";
-		    	    	// issue 290       
-		    	    	glPTD = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), StringUtils.isNullOrEmpty(expID) , assignedTo, false, inProgress, onHold, true, true, false);
+		    	    	// issue 290     
+		    	    	completed = false;
+		    	    	glPTD = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), StringUtils.isNullOrEmpty(expID) , assignedTo, false, inProgress, onHold, false, true, false);
 		    	    	target.add(userNamesDD);
 		    	    	target.add(progressTrackingAdminDetailPage);
 		    	    	break;
@@ -619,12 +621,18 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    	    	target.add(progressTrackingAdminDetailPage);
 		    	    	// issue 273
 		    	    case "updateExperiment" :            
-		    	    	assayDescID = null; // issue 290     
-				    	glPTD = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), StringUtils.isNullOrEmpty(expID) , assignedTo, false, inProgress, onHold, true, true, false);
+		    	    	assayDescID = null; // issue 290    
+		    	    	completed = false;
+				    	glPTD = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), StringUtils.isNullOrEmpty(expID) , assignedTo, false, inProgress, onHold, false, true, false);
 		    	    	// issue 273
 				    
 		    	    	 if (expID == null || expID.contentEquals("All Experiments"))   
 		    	    		{	
+		    	    		 // issue 292
+		    	    		completed = false;
+		    	    		onHold = true;
+		    	    		inProgress = true;
+		    	    		inQueue = true;
 		    	    		expID = null; 
 		    	    		assignedTo = null; // issue 290     
 		    	    		glPTD = new ArrayList <ProcessTrackingDetails> ();
@@ -644,6 +652,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    	    	target.add(progressTrackingAdminDetailPage);
 		    	    	break;
 		    	    case "updateAssayDesc" :
+		    	    	completed = false;
 		    	    	if (!StringUtils.isNullOrEmpty (expID))
 		    	    		newAliquotList.add("All Assays");
 		    	    	newAliquotList.addAll(processTrackingService.allAssayNamesForExpIdInTracking(expID, false)  );		    	      	    	
@@ -654,7 +663,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    	    		target.add(assayDescDD);
 		    	    		}
 						 
-						glPTD = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), StringUtils.isNullOrEmpty(expID) , assignedTo, false, inProgress, onHold, true, true, false);
+						glPTD = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), StringUtils.isNullOrEmpty(expID) , assignedTo, false, inProgress, onHold, false, true, false);
 						target.add(progressTrackingAdminDetailPage);
 						
 						break;	    

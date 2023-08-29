@@ -140,9 +140,9 @@ public class ProcessTrackingService
 		}
 	
 	// issue 262
-	public Map <String, String> createSampleTypeStringFromList ()
+	public Map <String, String> createSampleTypeStringMapFromList ()
 	 	{
-		 return processTrackingDao.createSampleTypeStringFromList();
+		 return processTrackingDao.createSampleTypeStringMapFromList();
 	 	}
 	
 	 public List<Object []> loadTasksAssignedForUser(String email)
@@ -419,17 +419,24 @@ public class ProcessTrackingService
 		 return processTrackingDao.listExpAssayForUser(email);
 		}
 	 
-	 public void doMoveAhead(String wfID, String expID, String assayId, int increment, int trackingorder, String status)
-	 	{
-		 processTrackingDao.doMoveAhead (wfID, expID, assayId, increment, trackingorder, status) ;
-	 	}
-	 
-	 // issue 287
-	 public void doMoveAheadOnHold(String wfID, String expID, String assayId, int increment, int trackingorder, String status, String onHoldDate)
+	 // issue 292
+	public String grabMaxCompletedDate (String expId, String assayDescId)
 		{
-		 processTrackingDao.doMoveAheadOnHold(wfID, expID, assayId, increment, trackingorder, status, onHoldDate);
+		return processTrackingDao.grabMaxCompletedDate (expId, assayDescId);		 		
+		}
+	
+	 // issue 292
+	public String grabMaxOnHoldDate (String expId, String assayDescId)
+		{
+		return processTrackingDao.grabMaxOnHoldDate (expId, assayDescId);		 		
 		}
 	 
+	 // issue 287
+	 public void doMoveAhead(String wfID, String expID, String assayId, int increment, int trackingorder, String status, String onHoldDate)
+		{
+		 processTrackingDao.doMoveAhead(wfID, expID, assayId, increment, trackingorder, status, onHoldDate);
+		}
+	 	 
 	 // issue 277
 	 public String  grabNumberOfSamplesForEmail (String expID)
 		{

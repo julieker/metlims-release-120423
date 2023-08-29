@@ -97,7 +97,7 @@ public class ProcessTrackingDAO extends BaseDAO
 		}
 	
 	// issue 262
-	public Map <String, String>  createSampleTypeStringFromList( )
+	public Map <String, String>  createSampleTypeStringMapFromList( )
 		{
 		Map <String, String> sampleTypeMap =  new HashMap<String, String>();
 		String sampleTypeString = "";
@@ -248,6 +248,27 @@ public class ProcessTrackingDAO extends BaseDAO
 		return ptdList;
 		}
 	
+	// issue 292
+	public String grabMaxCompletedDate (String expId, String assayDescId)       
+		{       
+		List<String> maxCompDateList = new ArrayList <String> ();		
+	    maxCompDateList.addAll(getEntityManager().createNativeQuery(" select to_char(date_completed, 'mm/dd/yyyy') from tracking_tasks_details where date_completed is not null and exp_id = ?1 and assay_id = ?2 ").setParameter(1,  expId).setParameter(2 , assayDescId).getResultList());		 
+		if (maxCompDateList.size() == 0 )
+			return null;
+	    maxCompDateList = getEntityManager().createNativeQuery(" select to_char(max(date_completed), 'mm/dd/yyyy') from tracking_tasks_details where exp_id = ?1 and assay_id = ?2 ").setParameter(1,  expId).setParameter(2 , assayDescId).getResultList();
+	    return maxCompDateList.get(0).toString();	       	     		
+		}    
+	
+	// issue 292
+	public String grabMaxOnHoldDate (String expId, String assayDescId)             
+		{       
+		List<String> maxOnHoldDateList = new ArrayList <String> ();		
+	    maxOnHoldDateList.addAll(getEntityManager().createNativeQuery(" select to_char(date_onHold, 'mm/dd/yyyy') from tracking_tasks_details where date_onhold is not null and exp_id = ?1 and status = 'On hold' and assay_id = ?2 ").setParameter(1,  expId).setParameter(2 , assayDescId).getResultList());		 
+	    if (maxOnHoldDateList.size() == 0 )
+            return null;
+		maxOnHoldDateList = getEntityManager().createNativeQuery(" select to_char(max(date_onHold), 'mm/dd/yyyy') from tracking_tasks_details where exp_id = ?1 and assay_id = ?2 and status = 'On hold'  ").setParameter(1,  expId).setParameter(2 , assayDescId).getResultList();
+		return maxOnHoldDateList.get(0).toString();        	     		
+		}    
 	
 	public List<ProcessTrackingDetails> loadAllTasksAssigned(String expId, String assayDescId , boolean allExpAssay, String assignedTo, boolean isCurrent, boolean isInProgress, boolean isOnHold, boolean isComplete, boolean isInqueue, boolean isGantt)
 		{
@@ -284,15 +305,7 @@ public class ProcessTrackingDAO extends BaseDAO
 			initializeTheKids(ptd, new String[] { "processTracking", "assignedTo", "experiment", "assay"});
 			initializeTheKids(ptd.getExperiment(), new String[] { "project"});
 			//////if ( ptd.getWorkflow().getWfDesc().equals(wfDescString))
-		/*	if (isCurrent)
-				{
-				if (    (  !StringUtils.isNullOrEmpty(assignedTo) &&  ptd.getAssignedTo().getFullNameByLast().equals(assignedTo) && !ptd.getStatus().equals("Completed") )   ||   
-						(StringUtils.isNullOrEmpty(assignedTo)  && !ptd.getStatus().equals("Completed"))
-				   )
-				  // ptdListWF.add(ptd);
-				   itBelongs = true;
-				}*/
-			
+
 			if (isCurrent && ptd.getStatus().equals("Completed"))
 				continue;
 			else if (isInProgress && ptd.getStatus().equals("In progress"))
@@ -365,7 +378,6 @@ public class ProcessTrackingDAO extends BaseDAO
 					} 
 			  else if (i>0 && !isGantt)
 					{
-				//	System.out.println("here is prevExp:" + prevExp + " here is prevassay:" + prevAssay + " here is assay id:" + prevAssay + "exp id:" + ptd.getExperiment().getExpID());
 					if ( (!prevAssay.equals(ptd.getAssay().getAssayId()) || !prevExp.equals(ptd.getExperiment().getExpID()))  )   
 						ptdListWFTemp.add(new ProcessTrackingDetails(" ", null, null, null, " ",  null,  null, null, " ", null, " ", null, 
 										null));
@@ -646,39 +658,53 @@ public class ProcessTrackingDAO extends BaseDAO
 		Query query = getEntityManager().createNativeQuery(queryString).setParameter(1, wfID);		
 		query.executeUpdate();
 		}
-	// issue 277
-	/////////////////////////////////////////////
-	public void doMoveAhead(String wfID, String expID, String assayId, int increment, int trackingorder, String status)
+	
+
+	// issue 292
+	public void doMoveAhead(String wfID, String expID, String assayId, int increment, int trackingorder, String status, String dateToPropagateAgainst)
+	{
+	boolean movedownInProcess = false;
+		// issue 292 if you change completed make sure the task below in process is actually + 1
+	Query query = 	getEntityManager().createNativeQuery("select detail_order from tracking_tasks_details  where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order =?5 and status = 'In progress'  order by 1 " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(5, trackingorder + 1);	
+	if (query.getResultList().size() == 0)  
 		{
-		// issue 287
-		Query query = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = date_started + ?4 " + " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order >?5  " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(4, increment).setParameter(5, trackingorder);
-		query.executeUpdate();	
-	    if (status.equals("Completed"))
-			// issue 277
-			{
-			query = getEntityManager().createNativeQuery("update tracking_tasks_details set status=  'In progress' " +  " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order = ?5 " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(5, (trackingorder+ 1));
-			query.executeUpdate();	
-			}    
+		movedownInProcess = false;
+		}
+	else
+		{
+		movedownInProcess = true;
 		}
 	
-	public void doMoveAheadOnHold(String wfID, String expID, String assayId, int increment, int trackingorder, String status, String onHoldDate)
+	// issue 287
+	query = 	getEntityManager().createNativeQuery("select detail_order from tracking_tasks_details  where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order >?5 and status in ('On hold', 'Completed') and rownum = 1 order by 1 " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(5, trackingorder);
+	int trackOrder = 0;  
+	if (query.getResultList().size() == 0)  
+	    query = getEntityManager().createNativeQuery("select detail_order from tracking_tasks_details  where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order >?5 and status = 'In queue' order by 1 " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(5, trackingorder);
+
+	else 
 		{
-		// issue 287
-		Query query = getEntityManager().createNativeQuery("select detail_order from tracking_tasks_details  where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order >?5 and status = 'In queue' order by 1 " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(5, trackingorder);
-		List <String> detailOrdersList  = query.getResultList();
-		for (int i = 0; i < detailOrdersList.size(); i++)
-			{
-			// issue 287 use i+1 for increment
-			Query query2 = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = to_date(?6, 'mm/dd/yyyy') + ?4 " + " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order =?5 and status = 'In queue' " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(4, i+1).setParameter(5, detailOrdersList.get(i)).setParameter(6, onHoldDate);
-			query2.executeUpdate();
-			}
-	    if (status.equals("Completed"))
-			// issue 277
-			{
-			query = getEntityManager().createNativeQuery("update tracking_tasks_details set status=  'In progress' " +  " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order = ?5 " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(5, (trackingorder+ 1));
-			query.executeUpdate();	  
-			}    
+		trackOrder = Integer.parseInt(query.getResultList().get(0).toString());
+		query = getEntityManager().createNativeQuery("select detail_order from tracking_tasks_details  where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order >?5 and detail_order < ?6 and status = 'In queue' order by 1 " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(5, trackingorder).setParameter(5, trackingorder).setParameter(6, trackOrder);
 		}
+	List <String> detailOrdersList  = query.getResultList();
+	for (int i = 0; i < detailOrdersList.size(); i++)   
+		{
+		// issue 287 use i+1 for increment
+		Query query2 = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = to_date(?6, 'mm/dd/yyyy') + ?4 " + " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order =?5 and status = 'In queue' " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(4, movedownInProcess ? i + 1 : i).setParameter(5, detailOrdersList.get(i)).setParameter(6, dateToPropagateAgainst);
+		query2.executeUpdate();
+		}      
+	
+    if (status.equals("Completed"))                               
+		// issue 277
+		{  
+		query = getEntityManager().createNativeQuery("update tracking_tasks_details set status=  'In progress' " +  " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order = ?5 and status = 'In queue' " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(5, (trackingorder+ 1));
+		query.executeUpdate();	  
+		}  
+    // take care of in process right after completed         
+    Query query2 = getEntityManager().createNativeQuery("update tracking_tasks_details set date_started = to_date(?6, 'mm/dd/yyyy')  " + " where wf_id = ?1 and exp_id = ?2 " + " and assay_id = ?3 " + " and detail_order = ?5 and status = 'In progress' " ).setParameter(1, wfID).setParameter(2, expID).setParameter(3, assayId).setParameter(5, (trackingorder + 1)).setParameter(6, dateToPropagateAgainst);
+	query2.executeUpdate();             
+	}        
+	
 	
 	// issue 277 
 	public String  grabNumberOfSamplesForEmail (String expID)
