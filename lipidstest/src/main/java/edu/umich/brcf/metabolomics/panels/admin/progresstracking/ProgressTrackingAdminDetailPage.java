@@ -604,7 +604,12 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    	
 		    	switch (response)
 		        	{		    	   
-		    	    case "updateUser" :    
+		    	    case "updateUser" : 
+		    	    	// issue 292
+		    	    	completed = false;
+	    	    		onHold = true;
+	    	    		inProgress = true;
+	    	    		inQueue = true;
 		    	    	if (assignedTo.equals("All Users"))
 		    	    		assignedTo = "";
 		    	    	// issue 290     
@@ -622,17 +627,17 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    	    	// issue 273
 		    	    case "updateExperiment" :            
 		    	    	assayDescID = null; // issue 290    
-		    	    	completed = false;
 				    	glPTD = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), StringUtils.isNullOrEmpty(expID) , assignedTo, false, inProgress, onHold, false, true, false);
 		    	    	// issue 273
-				    
+				    	// issue 292
+				    	completed = false;
+	    	    		onHold = true;
+	    	    		inProgress = true;
+	    	    		inQueue = true;
 		    	    	 if (expID == null || expID.contentEquals("All Experiments"))   
 		    	    		{	
 		    	    		 // issue 292
-		    	    		completed = false;
-		    	    		onHold = true;
-		    	    		inProgress = true;
-		    	    		inQueue = true;
+		    	    		
 		    	    		expID = null; 
 		    	    		assignedTo = null; // issue 290     
 		    	    		glPTD = new ArrayList <ProcessTrackingDetails> ();
@@ -652,7 +657,11 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    	    	target.add(progressTrackingAdminDetailPage);
 		    	    	break;
 		    	    case "updateAssayDesc" :
+		    	    	// issue 292
 		    	    	completed = false;
+	    	    		onHold = true;
+	    	    		inProgress = true;
+	    	    		inQueue = true;
 		    	    	if (!StringUtils.isNullOrEmpty (expID))
 		    	    		newAliquotList.add("All Assays");
 		    	    	newAliquotList.addAll(processTrackingService.allAssayNamesForExpIdInTracking(expID, false)  );		    	      	    	

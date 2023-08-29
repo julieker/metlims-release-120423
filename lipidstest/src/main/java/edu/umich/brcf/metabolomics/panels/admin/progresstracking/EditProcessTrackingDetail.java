@@ -350,7 +350,7 @@ public class EditProcessTrackingDetail extends WebPage
 								lCalStartDate.compareTo(lCalOnHold) > 0 && lCalOnHold != null &&  lCalOnHold.compareTo(lMaxOnHoldDate) < 0 )
 								
 								{
-								String errMsg =  "<span style=\"color:red;\">" + "The on hold date must be later than the start date." +  "</span>";
+								String errMsg =  "<span style=\"color:red;\">" + "The on hold date must be later than the start date or greater than the latest on hold date of " + maxOnHoldDate +  "</span>";
 								EditProcessTrackingDetail.this.error(errMsg);
 								return;
 								}
@@ -361,7 +361,7 @@ public class EditProcessTrackingDetail extends WebPage
 								     lCalStartDate.compareTo(lCalCompleted) > 0  &&  lCalCompleted!= null &&  (lCalCompleted.compareTo(lMaxCompletedDate)  < 0 ) )
 								   
 								{   							  
-								String errMsg =  "<span style=\"color:red;\">" + "The completed date must be later than the start date or greater than the latest complete date of ." + maxCompltDate +   "</span>";
+								String errMsg =  "<span style=\"color:red;\">" + "The completed date must be later than the start date or greater than the latest completed date of " + maxCompltDate +   "</span>";
 								EditProcessTrackingDetail.this.error(errMsg);   
 								return;      
 								}
@@ -494,6 +494,7 @@ public class EditProcessTrackingDetail extends WebPage
 							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateOnHoldString);
 							}
 						
+						// issue 292
 						if (ptd.getDateOnHold() != null && ptd.getDateCompleted() != null && originalCompletedDate == null)
 							{
 							dayOnHoldToAdd = ChronoUnit.DAYS.between(ptd.getDateOnHold().toInstant(),ptd.getDateCompleted().toInstant());
@@ -501,10 +502,10 @@ public class EditProcessTrackingDetail extends WebPage
 							//amountToMove = (int) dayOnHoldToAdd -1;
 							amountToMove = (int) dayOnHoldToAdd;
 							SimpleDateFormat lsdf = new SimpleDateFormat("MM/dd/yyyy");
-							String dateOnHoldString = lsdf.format(ptd.getDateOnHold().getTime());
+							String dateCompletedString = lsdf.format(ptd.getDateCompleted().getTime());
 							//(dateToConvert == null) ? "" : sdf.format(dateToConvert.getTime());			
 							//processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus);
-							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateOnHoldString);
+							processTrackingService.doMoveAhead(ptd.getWorkflow().getWfID(), ptd.getExperiment().getExpID(), ptd.getAssay().getAssayId(), amountToMove, ptd.getDetailOrder(), lStatus,dateCompletedString);
 							} 
 						
 						if (ptd.getDateOnHold() != null && ptd.getDateCompleted() != null && originalCompletedDate != null)
