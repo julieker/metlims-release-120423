@@ -151,8 +151,9 @@ public abstract class AbstractGenericSampleFormUploadPage extends WebPage
 							{
 							msg = nSaved + " samples have been registered for experiment - '"+ exp.getExpName()+" ("+exp.getExpID()+")'" 
 						    + " <br> <br> Experiment: " + exp.getExpID() + " has been assigned to workflow(s):" + theWorkFlowIDLabel;						
-							}
-						if (!StringUtils.isNullOrEmpty(theWorkFlowIDStr))
+							}						
+						// issue 294
+						///if (!StringUtils.isNullOrEmpty(theWorkFlowIDStr))
 							try
 								{
 								processTrackingService.saveDefaultDTOs(processTrackingDTOList);
@@ -162,12 +163,11 @@ public abstract class AbstractGenericSampleFormUploadPage extends WebPage
 								System.out.println("Exception okay");
 								e.printStackTrace();
 								}
-					
 						List<Object[]> nList = new ArrayList<Object[]> ();
 						nList = processTrackingService.loadTasksAssignedForExp(exp.getExpID());	
 						metLIMSTrackingAutomatedMessageService.sendAssignedTasksExpReport(nList, msg, false);
-						}
-					}
+						}   
+					}   
 	
 				catch (SampleSheetIOException e)
 					{
@@ -208,35 +208,61 @@ public abstract class AbstractGenericSampleFormUploadPage extends WebPage
 			List <Object []> assayObjects = experimentService.grabAssayType(exp.getExpID());
 			String wfTypeStr = "";
 			try 
+			
 			    {
 			   	wfTypeStr = experimentService.grabWfType(exp.getExpID());
+			   	if (StringUtils.isNullOrEmpty(wfTypeStr))
+			   		wfTypeStr = "Default Workflow";
 			    }
 			catch (Exception e)
 				{
+				System.out.println("in exception ....");  
 				e.printStackTrace();
 				}
-			if (StringUtils.isNullOrEmpty(wfTypeStr))
-				return null;
-			String lWorkFlow = "";
-			for (Object [] iAssay : assayObjects)
-				{
-				lWorkFlow = experimentService.grabtheWorkFlow(numSamplesStr.toLowerCase().replace(" ", ""), iAssay[0].toString().toLowerCase().replace(" ", ""), wfTypeStr.toLowerCase().replace(" ", ""));
-				if (!theWorkFlowIDStr.contains(lWorkFlow) )
-					theWorkFlowIDStr = theWorkFlowIDStr + " " +  lWorkFlow;
+			/**************/
+			
+			// issue 294 for default workflow
+			///////////////////////////////////////////////////////////////
+			
+			if (assayObjects.size()== 0)
+				////////////////////////////////////////////////////////////
+				return processDefaultDtos(exp);     
+				/////////////////////////////////////////////////////////////////
+			//////////////////////////
+			/// issue 294 non-default
+			//////////////////////////
+			else
+				{  
+				String lWorkFlow = "";
+				for (Object [] iAssay : assayObjects)      
+					{
+					if (wfTypeStr.equals("Default Workflow"))
+						lWorkFlow = "Default Workflow";
+					else	
+						lWorkFlow = experimentService.grabtheWorkFlow(numSamplesStr.toLowerCase().replace(" ", ""), iAssay[0].toString().toLowerCase().replace(" ", ""), wfTypeStr.toLowerCase().replace(" ", ""));
+					if (!theWorkFlowIDStr.contains(lWorkFlow) )
+						theWorkFlowIDStr = theWorkFlowIDStr + " " +  lWorkFlow;
+					}
+				// issue 294
+			    theWorkFlowIDLabel = theWorkFlowIDStr;
 				}
-		    int i = 0, idx = 0;
-		    theWorkFlowIDLabel = theWorkFlowIDStr;
-		    
-			if (!StringUtils.isNullOrEmpty(theWorkFlowIDStr))
-				{
+				int i = 0, idx = 0;
 				for (Object [] iAssay : assayObjects)
 					{
 				   
-				    totalDaysExpectedToSpan = 0;
+				    totalDaysExpectedToSpan = 0;         
 					wfTypeStr = experimentService.grabWfType(exp.getExpID());
-					try
+					
+					try    
+					//. issue 294
 						{
-						theWorkFlowIDStr = experimentService.grabtheWorkFlow(numSamplesStr.toLowerCase().replace(" ", ""), iAssay[0].toString().toLowerCase().replace(" ", ""), wfTypeStr.toLowerCase().replace(" ", ""));
+						if (StringUtils.isNullOrEmpty(wfTypeStr))
+							{
+							wfTypeStr = "Default Workflow";
+							theWorkFlowIDStr = "Default Workflow";
+							}
+						if ((!StringUtils.isNullOrEmpty(theWorkFlowIDStr)) && (!(theWorkFlowIDStr.equals ("Default Workflow"))))
+							theWorkFlowIDStr = experimentService.grabtheWorkFlow(numSamplesStr.toLowerCase().replace(" ", ""), iAssay[0].toString().toLowerCase().replace(" ", ""), wfTypeStr.toLowerCase().replace(" ", ""));
 						}
 					catch (Exception e)
 						{
@@ -276,7 +302,9 @@ public abstract class AbstractGenericSampleFormUploadPage extends WebPage
 						}
 				    i++;
 					}
-				 }
+			   List <ProcessTrackingDetailsDTO> theDefaultDtoList = new ArrayList <ProcessTrackingDetailsDTO> ();	
+               theDefaultDtoList = processDefaultDtos(exp);
+               theDtoList.addAll(theDefaultDtoList);    
 			   return theDtoList;
 			
 			}
@@ -305,6 +333,63 @@ public abstract class AbstractGenericSampleFormUploadPage extends WebPage
 			uploadFolder.mkdirs();
 			return (uploadFolder);
 			}
+		
+		
+		//// issue 294
+		/////////////////////////////////////////////////////////
+		private List <ProcessTrackingDetailsDTO> processDefaultDtos (Experiment exp)
+			{
+			List <ProcessTrackingDetailsDTO> theDtoList = new ArrayList <ProcessTrackingDetailsDTO> ();
+			int totalDaysExpectedToSpan = 0; 
+			theWorkFlowIDStr = "";
+			theWorkFlowIDStr = "Default Workflow";
+			
+			List<Object[]> nList = processTrackingService.loadAllDefaultTasksAssigned(theWorkFlowIDStr);
+			
+			int i = 0, idx = 0;           
+			idx=0;
+			List <String> assyObjs2 = experimentService.grabAssayTypeDefault(exp.getExpID());
+			//assyObjs2.addAll(experimentService.grabAssayTypeDefault(exp.getExpID()));
+			if (assyObjs2.size() > 0 )
+				theWorkFlowIDLabel = theWorkFlowIDLabel + ( StringUtils.isNullOrEmpty(theWorkFlowIDLabel)?"":",") + "Default Workflow";
+			for (String iAssay : assyObjs2)
+				{
+				for (Object [] tobj: nList)
+					{
+					ProcessTrackingDetailsDTO lilProcessTrackingDetailsDTO = new ProcessTrackingDetailsDTO();
+					lilProcessTrackingDetailsDTO.setTaskDesc(tobj[1].toString());
+					// issue 277 get rid of date assigned
+					lilProcessTrackingDetailsDTO.setAssignedTo(tobj[6].toString());						
+					lilProcessTrackingDetailsDTO.setExpID(exp.getExpID());
+					lilProcessTrackingDetailsDTO.setAssayID(iAssay);
+					lilProcessTrackingDetailsDTO.setDaysExpected(tobj[8].toString());
+					dDateStarted = Calendar.getInstance();
+					dDateStarted.add(Calendar.DAY_OF_MONTH, totalDaysExpectedToSpan);
+					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+					String datestr = sdf.format(dDateStarted.getTime());
+					if (tobj[7] == null )
+						lilProcessTrackingDetailsDTO.setDetailOrder(idx);
+					else
+						lilProcessTrackingDetailsDTO.setDetailOrder(Integer.parseInt(tobj[7].toString()));
+					lilProcessTrackingDetailsDTO.setDateStarted(datestr);	
+					lilProcessTrackingDetailsDTO.setWfID(theWorkFlowIDStr);
+					lilProcessTrackingDetailsDTO.setAssayID(iAssay);
+					lilProcessTrackingDetailsDTO.setComments(" ");
+					// issue 273
+					if (idx == 0)
+						lilProcessTrackingDetailsDTO.setStatus("In progress");
+					else
+						lilProcessTrackingDetailsDTO.setStatus("In queue");
+					totalDaysExpectedToSpan = totalDaysExpectedToSpan + Integer.parseInt(tobj[8].toString());
+					theDtoList.add(lilProcessTrackingDetailsDTO);	
+					idx++;
+					}
+			    };
+			 return theDtoList;
+			}
+		
+		
+		
 		}
 
 	

@@ -84,6 +84,28 @@ public class ExperimentDAO extends BaseDAO
 		   
 		}
 	
+	public List <String> grabAssayTypeDefault (String expID)    
+		{
+		Query query;
+		query = getEntityManager().createNativeQuery (
+		" select distinct  t3.assay_id from  " + 
+		" sample_assays t2, assays t3 " + 
+		" where t3.assay_id = t2.assay_id "  + 
+		" and t3.assay_name not in (select assay_name from assay_types) " + 
+		" and t2.sample_id in (select sample_id from sample where exp_id = ?1) " +
+		"  ").setParameter(1,  expID);
+		
+		List <String> assayInfoList =  query.getResultList();
+		//Object[] assayInfo = assayInfoList.get(0);
+		
+	//	Object [] tobj = query.getResultList().get(0);
+	//	String assayTypeStr = query.getResultList().get(0).toString();
+		return assayInfoList;
+		
+			// query = getEntityManager().createNativeQuery ("select count(*) from sample where exp_id = ?1").setParameter (1, expID);
+		   
+		}
+	
 	// issue 210 
 		public String grabWfType (String expID)
 			{

@@ -107,6 +107,13 @@ public class ExperimentService
 		return experimentDao.grabAssayType(expID);
 		}
 	
+	// issue 294 
+	public List <String>  grabAssayTypeDefault (String expID)
+		{
+		return experimentDao.grabAssayTypeDefault(expID);
+		}
+	
+	
 	public String  grabWfType (String expID)
 		{
 		return experimentDao.grabWfType(expID);
