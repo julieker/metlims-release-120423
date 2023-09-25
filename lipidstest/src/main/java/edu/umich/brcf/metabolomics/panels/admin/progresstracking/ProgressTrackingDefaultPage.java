@@ -883,7 +883,6 @@ public class ProgressTrackingDefaultPage extends WebPage
         						addedTasks.add(ptd);
         						}
     		    	    	target.add(progressTrackingDefaultPage);
-			    	    	target.add(progressTrackingDefaultPage);
 			    	    	break	;
 			    	    case "updateUser" :    	
 			    	    	processTrackingDetailsDTO.setAssignedTo(assignedToString);
@@ -943,7 +942,9 @@ public class ProgressTrackingDefaultPage extends WebPage
 			pressedPlus = false;
 			pressedDelete = false;
 			pressedDown = false;
-			pressedUp = true;			
+			// issue 298
+			// put back pressedUp = true;	
+			pressedUp = false;
 			tuserDDListadd = new ArrayList <DropDownChoice> ();
 			tuserDDListadd.addAll(userDDListadd);
 			orgTaskDescTextFieldList = new ArrayList <TextField> ();

@@ -242,32 +242,61 @@ public class ProcessTrackingDAO extends BaseDAO
 		}
 	
 	// issue 290
-	public List<ProcessTrackingDetails> loadAllTasksBelowEditedExperiment(String expId, String assayDescId , int detailOrder)
+	// issue 298
+	public List<ProcessTrackingDetails>
+	loadAllTasksBelowEditedExperiment(String expId, String assayDescId , int detailOrder,  String assignedTo)
 		{
-		List<ProcessTrackingDetails> ptdList = getEntityManager().createQuery("from ProcessTrackingDetails pd where pd.experiment.expID = ?1 and pd.assay.assayId= ?2 and detailOrder >= ?3 order by detailOrder  ").setParameter(1,  expId).setParameter(2, assayDescId).setParameter(3, detailOrder).getResultList();
-		return ptdList;
+		String queryStr = ""; 
+		List<ProcessTrackingDetails> ptdList = new ArrayList <ProcessTrackingDetails> ();
+		if (StringUtils.isNullOrEmpty(assignedTo))
+			ptdList = getEntityManager().createQuery("from ProcessTrackingDetails pd where pd.experiment.expID = ?1 and pd.assay.assayId= ?2 and detailOrder >= ?3   order by detailOrder  ").setParameter(1,  expId).setParameter(2, assayDescId).setParameter(3, detailOrder).getResultList();
+		else
+			ptdList = getEntityManager().createQuery("from ProcessTrackingDetails pd where pd.experiment.expID = ?1 and pd.assay.assayId= ?2 and detailOrder >= ?3  and pd.assignedTo.lastName || ', ' || pd.assignedTo.firstName= ?5  order by detailOrder  ").setParameter(1,  expId).setParameter(2, assayDescId).setParameter(3, detailOrder).setParameter(5, assignedTo).getResultList();
+		return ptdList;   
 		}
 	
 	// issue 292
-	public String grabMaxCompletedDate (String expId, String assayDescId)       
+	public String grabMaxCompletedDate (String expId, String assayDescId, int detailOrder)       
 		{       
-		List<String> maxCompDateList = new ArrayList <String> ();		
-	    maxCompDateList.addAll(getEntityManager().createNativeQuery(" select to_char(date_completed, 'mm/dd/yyyy') from tracking_tasks_details where date_completed is not null and exp_id = ?1 and assay_id = ?2 ").setParameter(1,  expId).setParameter(2 , assayDescId).getResultList());		 
-		if (maxCompDateList.size() == 0 )
-			return null;
-	    maxCompDateList = getEntityManager().createNativeQuery(" select to_char(max(date_completed), 'mm/dd/yyyy') from tracking_tasks_details where exp_id = ?1 and assay_id = ?2 ").setParameter(1,  expId).setParameter(2 , assayDescId).getResultList();
-	    return maxCompDateList.get(0).toString();	       	     		
+		// issue 298 
+		List<String> complDateOrderList = new ArrayList <String> ();
+		List<String> maxDateForSection  = new ArrayList <String> ();            
+		
+		complDateOrderList .addAll(getEntityManager().createNativeQuery(" select to_char(detail_order)  from tracking_tasks_details where date_completed is not null and exp_id = ?1 and assay_id = ?2 and detail_order < ?3").setParameter(1,  expId).setParameter(2 , assayDescId).setParameter(3 , detailOrder).getResultList());
+	    if (complDateOrderList.size() == 0 )            
+	    	return null;  
+	    complDateOrderList = new ArrayList <String> ();    
+	    maxDateForSection.addAll(getEntityManager().createNativeQuery(" select to_char(max(detail_order))  from tracking_tasks_details where date_completed is not null and exp_id = ?1 and assay_id = ?2 and detail_order < ?3").setParameter(1,  expId).setParameter(2 , assayDescId).setParameter(3 , detailOrder).getResultList());
+	    int theDetailOrderForMaxDateSection = Integer.parseInt(maxDateForSection.get(0).toString());
+	 
+		maxDateForSection  = new ArrayList <String> (); 
+		maxDateForSection.addAll(getEntityManager().createNativeQuery(" select to_char(date_completed, 'mm/dd/yyyy') from tracking_tasks_details where date_completed is not null and exp_id = ?1 and assay_id = ?2 and detail_order = ?3").setParameter(1,  expId).setParameter(2 , assayDescId).setParameter(3,theDetailOrderForMaxDateSection).getResultList());		 
+		if (maxDateForSection.size() == 0 )
+			return null;     
+	    return maxDateForSection.get(0).toString();	               	     		
 		}    
 	
 	// issue 292
-	public String grabMaxOnHoldDate (String expId, String assayDescId)             
-		{       
-		List<String> maxOnHoldDateList = new ArrayList <String> ();		
-	    maxOnHoldDateList.addAll(getEntityManager().createNativeQuery(" select to_char(date_onHold, 'mm/dd/yyyy') from tracking_tasks_details where date_onhold is not null and exp_id = ?1 and status = 'On hold' and assay_id = ?2 ").setParameter(1,  expId).setParameter(2 , assayDescId).getResultList());		 
-	    if (maxOnHoldDateList.size() == 0 )
-            return null;
-		maxOnHoldDateList = getEntityManager().createNativeQuery(" select to_char(max(date_onHold), 'mm/dd/yyyy') from tracking_tasks_details where exp_id = ?1 and assay_id = ?2 and status = 'On hold'  ").setParameter(1,  expId).setParameter(2 , assayDescId).getResultList();
-		return maxOnHoldDateList.get(0).toString();        	     		
+	public String grabMaxOnHoldDate (String expId, String assayDescId, int detailOrder)             
+		{     
+		// issue 298
+		List<String> onHoldDateOrderList = new ArrayList <String> ();
+		List<String> maxOnHoldDateForSection = new ArrayList <String> ();
+		onHoldDateOrderList .addAll(getEntityManager().createNativeQuery(" select to_char(detail_order)  from tracking_tasks_details where date_onhold is not null and date_completed is null and exp_id = ?1 and assay_id = ?2 and detail_order < ?3").setParameter(1,  expId).setParameter(2 , assayDescId).setParameter(3 , detailOrder).getResultList());
+		
+		if (onHoldDateOrderList.size() == 0 )                
+		    	return null; 
+		onHoldDateOrderList = new ArrayList <String> ();                      
+		
+		maxOnHoldDateForSection.addAll(getEntityManager().createNativeQuery(" select to_char(max(detail_order))  from tracking_tasks_details where date_onhold is not null and date_completed is null and exp_id = ?1 and assay_id = ?2 and detail_order < ?3").setParameter(1,  expId).setParameter(2 , assayDescId).setParameter(3 , detailOrder).getResultList());
+	    int theDetailOrderForMaxDateSection = Integer.parseInt(maxOnHoldDateForSection.get(0).toString());
+		 
+		   // int theDetailOrderForMaxDateSection = Integer.parseInt(complDateOrderList.get(0).toString());
+			maxOnHoldDateForSection  = new ArrayList <String> (); 
+			maxOnHoldDateForSection.addAll(getEntityManager().createNativeQuery(" select to_char(date_onhold, 'mm/dd/yyyy') from tracking_tasks_details where date_onhold is not null and date_completed is null and exp_id = ?1 and assay_id = ?2 and detail_order = ?3").setParameter(1,  expId).setParameter(2 , assayDescId).setParameter(3,theDetailOrderForMaxDateSection).getResultList());		 
+			if (maxOnHoldDateForSection.size() == 0 )
+				return null;     
+		return maxOnHoldDateForSection.get(0).toString();                    	     		
 		}    
 	
 	public List<ProcessTrackingDetails> loadAllTasksAssigned(String expId, String assayDescId , boolean allExpAssay, String assignedTo, boolean isCurrent, boolean isInProgress, boolean isOnHold, boolean isComplete, boolean isInqueue, boolean isGantt)
@@ -393,6 +422,48 @@ public class ProcessTrackingDAO extends BaseDAO
 		return ptdListWF;
 		} 
 	
+	// issue 298
+	 public List<ProcessTrackingDetails> addBlankLinksToPtdList (List<ProcessTrackingDetails> ptdListWF, boolean isGantt)
+	 	{
+		  int i=0;
+		  String prevExp = "";
+		  String prevAssay = "";
+		  List<ProcessTrackingDetails> ptdListWFTemp = new ArrayList <ProcessTrackingDetails> ();
+		  /// issue 298 remove previous blanks....
+		  ///
+		  int sizee = ptdListWFTemp.size();
+		  
+		  // issue 298
+		/*  for (i=0; i<sizee; i++ )
+		  	{
+			if (ptdListWF.get(i).getJobid().length() < 7)  
+			    ptdListWF.remove(i);	
+		  	}*/
+		  
+		  i= 0;
+		  for (ProcessTrackingDetails ptd : ptdListWF) 
+			  {
+			  if (i==0)       
+					{
+					prevExp= "";
+				    prevAssay = "";  
+					} 
+			  else if (i>0 && !isGantt)
+					{
+				    initializeProcessKids(ptd);
+					if ( (!prevAssay.equals(ptd.getAssay().getAssayId()) || !prevExp.equals(ptd.getExperiment().getExpID()))  )   
+						ptdListWFTemp.add(new ProcessTrackingDetails(" ", null, null, null, " ",  null,  null, null, " ", null, " ", null, 
+										null));
+					} 
+			  ptdListWFTemp.add(ptd);
+			  prevExp = ptd.getExperiment().getExpID();    
+			  prevAssay = ptd.getAssay().getAssayId();
+			  i++;    
+			  }       
+		 
+		return  ptdListWFTemp;
+		
+	 	}
 	 public List<Object []> loadAllDefaultTasksAssigned(String wfDesc)
 		{
 		List<Object []> defaultList =  getEntityManager().createNativeQuery("select  t2.task_id, task_desc,  to_char(sysdate, 'mm/dd/yyyy') , ' ' a,' ' b,' ' c, last_Name || ', '  || first_Name, t2.task_order, days_required "
@@ -546,7 +617,7 @@ public class ProcessTrackingDAO extends BaseDAO
 	 public List<String> loadAllWorkFlows()
 		{
 		List<String> defaultList =  getEntityManager().createNativeQuery("select wf_desc "
-				 + " from workflow  ")
+				 + " from workflow  order by 1 ")
 				.getResultList();	
 	   
 		return defaultList;

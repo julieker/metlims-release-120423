@@ -27,6 +27,7 @@ import edu.umich.brcf.shared.layers.dto.ExperimentDTO;
 import edu.umich.brcf.shared.layers.dto.SampleAssaysBean;
 import edu.umich.brcf.shared.util.FormatVerifier;
 import edu.umich.brcf.shared.util.StringParser;
+import edu.umich.brcf.shared.util.io.StringUtils;
 
 
 @Repository
@@ -139,6 +140,9 @@ public class ExperimentDAO extends BaseDAO
 					 " where lower(replace(trim (wf_desc),' ','')) like '%" + part1 + "%'  and " + 
 				        " lower(replace(trim (wf_desc),' ','')) like '" +  part2 + "%'  and " + 
 				        " lower(replace(trim (wf_desc),' ','')) like '%" + part3 + "%'   ";	
+			// issue 298
+			if (query.getResultList().size() == 0)
+				return "Default Workflow";
 			String workflowStr= query.getResultList().get(0).toString();
 			return workflowStr;
 			

@@ -127,10 +127,10 @@ public class ProcessTrackingService
 		}
 	
 	// issue 290
-	
-	public List<ProcessTrackingDetails> loadAllTasksBelowEditedExperiment(String expId, String assayDescId , int detailOrder)
+	// issue 298
+	public List<ProcessTrackingDetails> loadAllTasksBelowEditedExperiment(String expId, String assayDescId , int detailOrder,  String assignedTo)
 		{
-		return processTrackingDao.loadAllTasksBelowEditedExperiment(expId, assayDescId, detailOrder);
+		return processTrackingDao.loadAllTasksBelowEditedExperiment(expId, assayDescId, detailOrder,  assignedTo);
 		}
 	
 	
@@ -138,6 +138,12 @@ public class ProcessTrackingService
 		{
 		return processTrackingDao.loadAllTasksAssigned(expId,assayDescId, allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold, isCompleted, isInQueue, isGant);
 		}
+	
+	// issue 298
+	public List<ProcessTrackingDetails> addBlankLinksToPtdList (List<ProcessTrackingDetails> ptdListWF, boolean isGantt)
+ 		{
+        return processTrackingDao.addBlankLinksToPtdList (ptdListWF,isGantt );
+ 		}
 	
 	// issue 262
 	public Map <String, String> createSampleTypeStringMapFromList ()
@@ -420,15 +426,15 @@ public class ProcessTrackingService
 		}
 	 
 	 // issue 292
-	public String grabMaxCompletedDate (String expId, String assayDescId)
+	public String grabMaxCompletedDate (String expId, String assayDescId, int detailOrder)
 		{
-		return processTrackingDao.grabMaxCompletedDate (expId, assayDescId);		 		
+		return processTrackingDao.grabMaxCompletedDate (expId, assayDescId, detailOrder);	   	 		
 		}
 	
 	 // issue 292
-	public String grabMaxOnHoldDate (String expId, String assayDescId)
+	public String grabMaxOnHoldDate (String expId, String assayDescId, int detailOrder)
 		{
-		return processTrackingDao.grabMaxOnHoldDate (expId, assayDescId);		 		
+		return processTrackingDao.grabMaxOnHoldDate (expId, assayDescId, detailOrder);		 		
 		}
 	 
 	 // issue 287

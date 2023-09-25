@@ -263,7 +263,8 @@ public class ProgressTrackingAdminDetailPage extends WebPage
             	List <ProcessTrackingDetails> lPTD = new ArrayList <ProcessTrackingDetails> ();
             	gptd = processTrackingService.loadById(gJobId);
             	processTrackingService.initializeProcessKids(gptd);
-    			List <ProcessTrackingDetails> lstPtdIncludingBelow = processTrackingService.loadAllTasksBelowEditedExperiment(gptd.getExperiment().getExpID(), gptd.getAssay().getAssayId() , gptd.getDetailOrder());
+            	// issue 298
+    			List <ProcessTrackingDetails> lstPtdIncludingBelow = processTrackingService.loadAllTasksBelowEditedExperiment(gptd.getExperiment().getExpID(), gptd.getAssay().getAssayId() , gptd.getDetailOrder(), assignedTo);
             	List <String> jobIDList = new ArrayList <String> ();
             	int j = 0;
             	for ( ProcessTrackingDetails sPTD : lstPtdIncludingBelow)
@@ -271,7 +272,6 @@ public class ProgressTrackingAdminDetailPage extends WebPage
             		jobIDList.add(sPTD.getJobid());
             		processTrackingService.initializeProcessKids(sPTD);
             		}
-            	
             	/// issue 290
             	List <String> statusList = new ArrayList <String> ();
             	if (completed)
@@ -287,15 +287,8 @@ public class ProgressTrackingAdminDetailPage extends WebPage
             		{
             		
             		if (jobIDList.contains(glPTD.get(i).getJobid()))
-        				{
-            			
-            			if (!statusList.contains(lstPtdIncludingBelow.get(j).getStatus()))
-            				{
-            				j++;
-            				continue;
-            				}
-            				
-            			lPTD.add(lstPtdIncludingBelow.get(j));                  
+        				{            		
+            			lPTD.add(lstPtdIncludingBelow.get(j));  
             			j++;    
         				}
             		else 
@@ -304,34 +297,83 @@ public class ProgressTrackingAdminDetailPage extends WebPage
             	
             	glPTD =  new ArrayList <ProcessTrackingDetails> ();
             	glPTD.addAll(lPTD);
+
+            	lPTD = new ArrayList <ProcessTrackingDetails> ();
+            	boolean isStatus = false;
+            	boolean isAssignedTo = false;
+            	
+            	for (int i=0; i<glPTD.size(); i++)
+	        		{
+            		isStatus = false;
+            		isAssignedTo = false;
+	    			if (statusList.contains(glPTD.get(i).getStatus()))
+	    				isStatus = true;  
+	    			// issue 298
+	    			if (!StringUtils.isNullOrEmpty(assignedTo) && glPTD.get(i).getAssignedTo() != null &&  glPTD.get(i).getAssignedTo().getFullNameByLast().equals(assignedTo))	           
+	    				isAssignedTo = true;
+	    			if (StringUtils.isNullOrEmpty(assignedTo))
+	    				isAssignedTo = true;
+	    			if (isStatus && isAssignedTo)	    				
+	    			    lPTD.add(glPTD.get(i)); 
+	        		}
+            	   
+            	glPTD =  new ArrayList <ProcessTrackingDetails> ();
+            	glPTD.addAll(lPTD);
             	lPTD = new ArrayList <ProcessTrackingDetails> ();
             	j = 0;
-            	for (int i = 0; i<glPTDAllExp.size(); i++ )
+            	jobIDList = new ArrayList <String> ();
+            	// issue 298
+            	lstPtdIncludingBelow = processTrackingService.loadAllTasksBelowEditedExperiment(gptd.getExperiment().getExpID(), gptd.getAssay().getAssayId() , gptd.getDetailOrder(), null);
+            	for ( ProcessTrackingDetails sPTD : lstPtdIncludingBelow)
+	        		{            		
+	        		jobIDList.add(sPTD.getJobid());
+	        		processTrackingService.initializeProcessKids(sPTD);
+	        		}
+            	    
+            	// issue 298
+            	j=0;
+            	for (int i=0; i<glPTDAllExp.size(); i++)              
 	        		{
-            		if (jobIDList.contains(glPTDAllExp.get(i).getJobid()))
-	    				{
-            			      
-            			if (!statusList.contains(lstPtdIncludingBelow.get(j).getStatus()))
-	        				{
-	        				j++;
-	        				continue;
-	        				}
-            			           			
-	        			lPTD.add(lstPtdIncludingBelow.get(j));   
-	        			j++;
+	        		if (jobIDList.contains(glPTDAllExp.get(i).getJobid()))
+	    				{  
+	        			
+	        			lPTD.add(i, lstPtdIncludingBelow.get(j));  
+	        			j++;    
 	    				}
-	    			else 
-	    				lPTD.add(glPTDAllExp.get(i));
-	        		} 
-            	
+	        		else    
+	        			lPTD.add(i, glPTDAllExp.get(i));  
+	        		}
             	glPTDAllExp =  new ArrayList <ProcessTrackingDetails> ();
-            	glPTDAllExp.addAll(lPTD); 
-            	            	
-            	//glPTD = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), StringUtils.isNullOrEmpty(expID) , assignedTo, false, inProgress, onHold, true, true, false);
+            	glPTDAllExp.addAll(lPTD);
+
+            	lPTD = new ArrayList <ProcessTrackingDetails> ();
+            	j = 0;
+            	for (int i = 0; i<glPTDAllExp.size(); i++ )       
+	        		{
+            		isStatus = false;
+            		isAssignedTo = false;  
+            		if (statusList.contains(glPTDAllExp.get(i).getStatus()))   
+	    				isStatus = true;  
+	    			// issue 298
+	    			if (!StringUtils.isNullOrEmpty(assignedTo) && glPTDAllExp.get(i).getAssignedTo() != null &&  glPTDAllExp.get(i).getAssignedTo().getFullNameByLast().equals(assignedTo))	           
+	    				isAssignedTo = true;
+	    			if (StringUtils.isNullOrEmpty(assignedTo))
+	    				isAssignedTo = true;
+	    		//	if (isStatus && isAssignedTo)
+	    			if (isStatus)
+	    			    lPTD.add(j++, glPTDAllExp.get(i));  
+	        		} 
+            	  
+            	
+            	glPTDAllExp =  new ArrayList <ProcessTrackingDetails> ();   
+            	lPTD = processTrackingService.addBlankLinksToPtdList (lPTD, false); 
+            	glPTDAllExp.addAll(lPTD);            
+            	// issue 298
+            	glPTD = processTrackingService.addBlankLinksToPtdList (glPTD, false);   
             	target.add(progressTrackingAdminDetailPage);
             	}
         	}); 
-        add(modal2);
+        add(modal2);       
         
         
     	add( new AjaxLink<Void>("close")
@@ -344,6 +386,7 @@ public class ProgressTrackingAdminDetailPage extends WebPage
         
 		///// issue 94
 		//// issue 120
+    	
     	
     	///////////////////////////////////////////////////////////////////////// leave off here 
     	/////////////////////////////////////////////////////////////////////////
@@ -398,14 +441,9 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		        	
 					public void populateItem(final ListItem listItem)    
 						{		
-						Label assayIDLabel;
-						
+						Label assayIDLabel;						
 					    listItem.setEscapeModelStrings(false) ;        
-						final ProcessTrackingDetails procTracDetails = (ProcessTrackingDetails) listItem.getModelObject();		
-					    
-					     
-						if (procTracDetails.getStatus().equals("On hold"))
-					    	existsOnHold = true;
+						final ProcessTrackingDetails procTracDetails = (ProcessTrackingDetails) listItem.getModelObject();							     
 						AjaxLink exAssayLink;
 						if (procTracDetails.getJobid().length() < 7)        
 							{
@@ -642,7 +680,6 @@ public class ProgressTrackingAdminDetailPage extends WebPage
 		    	    		assignedTo = null; // issue 290     
 		    	    		glPTD = new ArrayList <ProcessTrackingDetails> ();
 		    	    		glPTD.addAll(glPTDAllExp);   
-		    	    		
 		    	    		target.add(experimentDD);
 		    	    		}
 		    	    	 // issue 287   

@@ -125,13 +125,13 @@ public class EditProcessTrackingDetail extends WebPage
 		
 		// issue 292
 		maxCompltDate = (processTrackingService.grabMaxCompletedDate 
-		         (ptd.getExperiment().getExpID(),  ptd.getAssay().getAssayId()));  
+		         (ptd.getExperiment().getExpID(),  ptd.getAssay().getAssayId(),  ptd.getDetailOrder()));  
 		maxOnHoldDate = (processTrackingService.grabMaxOnHoldDate 
-		         (ptd.getExperiment().getExpID(),  ptd.getAssay().getAssayId()));  
+		         (ptd.getExperiment().getExpID(),  ptd.getAssay().getAssayId(), ptd.getDetailOrder()));  
 		aFeedback = new FeedbackPanel("feedback");
-		aFeedback.setEscapeModelStrings(false);		
+		aFeedback.setEscapeModelStrings(false);	    	
 		add(aFeedback);	
-		add(new Label("titleLabel",  "Edit Assigned Task"));               
+		add(new Label("titleLabel",  "Edit Assigned Task"));                  
 		setProcessTrackingDetailsDTO(ProcessTrackingDetailsDTO.instance(ptd));
 		// issue 196
 		add(editProcessTrackingDetailForm = new EditProcessTrackingDetailForm("editProcessTrackingDetailForm", ptd.getJobid(), processTrackingDetailsDTO, backPage, window, editProcessTrackingDetail, ptd, isViewOnly));
@@ -287,18 +287,22 @@ public class EditProcessTrackingDetail extends WebPage
 							lCalStartDate.setTime(new Date(processTrackingDetailsDTO.getDateStarted()));
 						
 						// issue 292
+						// issue 298
 						Calendar lMaxCompletedDate = Calendar.getInstance();
-					    if (!StringUtils.isNullOrEmpty(maxCompltDate))
-							{
-							lMaxCompletedDate.setTime(new Date (maxCompltDate));         
-							}
+					    if (!StringUtils.isNullOrEmpty(maxCompltDate))		
+							lMaxCompletedDate.setTime(new Date (maxCompltDate));  
+					    else 
+					    	lMaxCompletedDate.setTime(new Date (processTrackingDetailsDTO.getDateStarted()));
+			            
 						// issue 292
 					    Calendar lMaxOnHoldDate = Calendar.getInstance();
 					    if (!StringUtils.isNullOrEmpty(maxOnHoldDate))
-							{
-					    	lMaxOnHoldDate.setTime(new Date (maxOnHoldDate));         
-							}
-					    
+					    	lMaxOnHoldDate.setTime(new Date (maxOnHoldDate));               
+					    else 
+					    	lMaxOnHoldDate.setTime(new Date (processTrackingDetailsDTO.getDateStarted()));
+					    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+						String dateToConvertstr = lMaxOnHoldDate == null ? "" : sdf.format(lMaxOnHoldDate.getTime());
+						String dateToConver2str = lMaxCompletedDate == null ? "" : sdf.format(lMaxCompletedDate.getTime());
 						// issue 273
 						if (processTrackingDetailsDTO.getStatus().equals("On hold")  &&  
 						    StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold()))
@@ -347,10 +351,10 @@ public class EditProcessTrackingDetail extends WebPage
 						if (!StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateOnHold()) && 
 								//processTrackingDetailsDTO.getDateStarted().compareTo(processTrackingDetailsDTO.getDateOnHold()) > 0  )
 								!StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateStarted()) &&
-								lCalStartDate.compareTo(lCalOnHold) > 0 && lCalOnHold != null &&  lCalOnHold.compareTo(lMaxOnHoldDate) < 0 )
+								lCalStartDate.compareTo(lCalOnHold) > 0 && lCalOnHold != null &&  lCalOnHold.compareTo(lMaxOnHoldDate)  < 0 )
 								
 								{
-								String errMsg =  "<span style=\"color:red;\">" + "The on hold date must be later than the start date or greater than the latest on hold date of " + maxOnHoldDate +  "</span>";
+								String errMsg =  "<span style=\"color:red;\">" + "The on hold date must be later than the start date " + (StringUtils.isNullOrEmpty(maxOnHoldDate) ? " " :  "or greater than the latest on hold date of " + maxOnHoldDate) +  "</span>";
 								EditProcessTrackingDetail.this.error(errMsg);
 								return;
 								}
@@ -360,10 +364,10 @@ public class EditProcessTrackingDetail extends WebPage
 								!StringUtils.isNullOrEmpty(processTrackingDetailsDTO.getDateCompleted()) && 
 								     lCalStartDate.compareTo(lCalCompleted) > 0  &&  lCalCompleted!= null &&  (lCalCompleted.compareTo(lMaxCompletedDate)  < 0 ) )
 								   
-								{   							  
-								String errMsg =  "<span style=\"color:red;\">" + "The completed date must be later than the start date or greater than the latest completed date of " + maxCompltDate +   "</span>";
+								{  							
+								String errMsg =  "<span style=\"color:red;\">" + "The completed date must be later than the start date " + (StringUtils.isNullOrEmpty(maxCompltDate) ? " " :  "or greater than the latest completed date of " + maxCompltDate) +  "</span>";
 								EditProcessTrackingDetail.this.error(errMsg);   
-								return;      
+								return;             
 								}
 						
 						
