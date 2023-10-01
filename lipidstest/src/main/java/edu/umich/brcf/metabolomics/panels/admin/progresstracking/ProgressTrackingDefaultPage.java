@@ -806,6 +806,15 @@ public class ProgressTrackingDefaultPage extends WebPage
 					lilProcessTrackingDetailsDTO.setComments(commentTextAreaList.get(index).getDefaultModelObjectAsString());
 					//// issue 273
 					if (idxx == 1)
+					    {
+						// issue 301
+						lilProcessTrackingDetailsDTO.setStatus("Completed");
+						Calendar todayCal = Calendar.getInstance();
+						SimpleDateFormat sdff = new SimpleDateFormat("MM/dd/yyyy");
+						lilProcessTrackingDetailsDTO.setDateCompleted(todayCal == null ? "" : sdf.format(todayCal.getTime()));
+						}
+					 
+					else if (idxx == 2)
 						lilProcessTrackingDetailsDTO.setStatus("In progress");
 					else 
 						lilProcessTrackingDetailsDTO.setStatus("In queue");

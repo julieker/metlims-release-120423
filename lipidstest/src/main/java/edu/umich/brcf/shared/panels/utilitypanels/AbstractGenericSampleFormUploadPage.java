@@ -292,7 +292,16 @@ public abstract class AbstractGenericSampleFormUploadPage extends WebPage
 						lilProcessTrackingDetailsDTO.setAssayID(iAssay[1].toString());
 						lilProcessTrackingDetailsDTO.setComments(" ");
 						// issue 273
+						// issue 301
 						if (idx == 0)
+							{
+							lilProcessTrackingDetailsDTO.setStatus("Completed");
+							Calendar todayCal = Calendar.getInstance();
+							SimpleDateFormat sdff = new SimpleDateFormat("MM/dd/yyyy");
+							lilProcessTrackingDetailsDTO.setDateCompleted(todayCal == null ? "" : sdf.format(todayCal.getTime()));
+							}
+						
+						else if (idx == 1)
 							lilProcessTrackingDetailsDTO.setStatus("In progress");
 						else
 							lilProcessTrackingDetailsDTO.setStatus("In queue");
@@ -377,6 +386,13 @@ public abstract class AbstractGenericSampleFormUploadPage extends WebPage
 					lilProcessTrackingDetailsDTO.setComments(" ");
 					// issue 273
 					if (idx == 0)
+						{
+						lilProcessTrackingDetailsDTO.setStatus("Completed");
+						Calendar todayCal = Calendar.getInstance();
+						SimpleDateFormat sdff = new SimpleDateFormat("MM/dd/yyyy");
+						lilProcessTrackingDetailsDTO.setDateCompleted(todayCal == null ? "" : sdf.format(todayCal.getTime()));
+						}
+					else if (idx == 1)
 						lilProcessTrackingDetailsDTO.setStatus("In progress");
 					else
 						lilProcessTrackingDetailsDTO.setStatus("In queue");
