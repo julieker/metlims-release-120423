@@ -342,7 +342,6 @@ public class ProgressTrackingDefaultPage extends WebPage
 	        				int ii = 0;
 	        				List <TextField> tTaskDescTextFieldList = new ArrayList <TextField> ();
 	        				tTaskDescTextFieldList.addAll(taskDescTextFieldList);
-	        				
 	        			   /******************************************/ 
 	        			    dateStartedListadd.remove(indexx);
     						userDDListadd.remove(indexx);
@@ -536,7 +535,9 @@ public class ProgressTrackingDefaultPage extends WebPage
 	    				taskDescTxt.setDefaultModelObject(addedTasks.get(itemIndex).getTaskDesc())	;	
 	    				listItem.add(taskDescTxt);		
 	    				taskDescTextFieldList.add(taskDescTxt);
-	    				listItem.add(buildDeleteButton("deleteButton", indexUserDDLista, lProcessTrackingDetailsDTO));
+	    				//listItem.add(buildDeleteButton("deleteButton", indexUserDDLista, lProcessTrackingDetailsDTO));
+	    				// issue 301 
+	    				listItem.add(buildDeleteButton("deleteButton", itemIndex, lProcessTrackingDetailsDTO));
 	    				METWorksAjaxUpdatingDateTextField ldateFldStarted =  new METWorksAjaxUpdatingDateTextField("dateStarteda", new PropertyModel<String>(lpDTO, "dateStarted"), "dateStarteda")
 		    				{
 		    				@Override
