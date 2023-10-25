@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -73,7 +75,9 @@ public class GantChart extends WebPage implements IMarkupResourceStreamProvider
 	AjaxCheckBox currentCheckBox;
 	AjaxCheckBox inProgressCheckBox;
 	AjaxCheckBox onHoldCheckBox;
+	AjaxCheckBox completedCheckBox; //issue 305
 	AjaxCheckBox allExpChkBox;
+	AjaxCheckBox inQueueCheckBox;
 	IndicatingAjaxLink ganttDateLink;
 	WebMarkupContainer container;
 	WebMarkupContainer containerAliquot;
@@ -100,18 +104,19 @@ public class GantChart extends WebPage implements IMarkupResourceStreamProvider
 	boolean	isCurrent = false;
 	boolean isInProgress = true;
 	boolean isOnHold = true;   
-	
+	boolean isCompleted = false;
+	boolean isInQueue = true;
 	boolean allExpAssay = true; 
 	boolean isAllExp = true;
 	int gIndex = 0;
 	int ggIndex = 0;
-	 ModalWindow modal2 =new ModalWindow("modal2");;
-	 long numDaysComplt = 0L;
-	 long numDaysOnHold = 0L;
-	 long numDaysUntilComplete = 0L;
-	 DropDownChoice<String> userNamesDD;
-	 String assignedTo ;
-	 Map <String, String> sampleTypeMap =  new HashMap<String, String>();
+	ModalWindow modal2 =new ModalWindow("modal2");;
+	long numDaysComplt = 0L;
+	long numDaysOnHold = 0L;
+	long numDaysUntilComplete = 0L;
+	DropDownChoice<String> userNamesDD;
+	String assignedTo ;
+	Map <String, String> sampleTypeMap =  new HashMap<String, String>();
  
 	 
 	/* @Override
@@ -143,6 +148,32 @@ public void setIsInProgress(boolean isInProgress)
 	{
 	this.isInProgress = isInProgress;	
 	}
+
+// issue 305
+public boolean getIsCompleted ()
+	{
+	return isCompleted;
+	}
+
+//issue 305
+public void setIsCompleted(boolean isCompleted)
+	{
+	this.isCompleted = isCompleted;	
+	}
+
+
+//issue 305
+public boolean getIsInQueue ()
+	{
+	return isInQueue;
+	}
+
+//issue 305
+public void setIsInQueue(boolean isInQueue)
+	{
+	this.isInQueue = isInQueue;	
+	}
+
 
 public boolean getIsOnHold ()
 	{
@@ -176,30 +207,33 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 	//Map <String, String> sampleTypeMap =  new HashMap<String, String>();
 
 /////////////////////////////////////////////
-	Calendar mCalendar = Calendar.getInstance();    
+	Calendar mCalendar = Calendar.getInstance();       
 	mCalendar.add(Calendar.MONTH, 8);
 	List <String> monthStrList =  new ArrayList  <String> ();
 	List <String> todayStrList = new ArrayList  <String> ();
-	nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold, true, true, true );   
-   /// if (nList.size() == 0 )
-   ////      return new StringResourceStream(" ");   
+	// issue 305
+	nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold, isCompleted, isInQueue, true );   
+	/// if (nList.size() == 0 )
+   ////      return new StringResourceStream(" ");  
 	int ii = 0; 
-	if (isCurrent)
+	if (isCurrent)    
 		{
-		dateStartingPointIndex = 0;
+		dateStartingPointIndex = 0;    
 		Calendar curdate = Calendar.getInstance();
 		currentList = new ArrayList <ProcessTrackingDetails> ();
 		for (ProcessTrackingDetails lilp : nList)
 			{
-			if (nList.get(ii).getDateStarted().compareTo(curdate) >= 0)
-				{
-				currentList.add(lilp);        
-				}
+			// issue 305
+			if (nList.get(ii).getDateStarted().compareTo(curdate) >= 0 || DateUtils.isSameDay(curdate, nList.get(ii).getDateStarted()))
+			    if (DateUtils.isSameDay(mCalendar, mCalendar))
+			    currentList.add(lilp);        
 			ii++;
-			}
+			}    
+		 // issue 305
+		nList = new ArrayList <ProcessTrackingDetails> () ;
+		nList.addAll(currentList);
 		}
-
-	int indexx = 0;
+	int indexx = 0;    
     DateFormat formatter = new SimpleDateFormat("MM/dd");
     Calendar dayIncrementer = Calendar.getInstance(); 
     Calendar dayToAdd;
@@ -568,17 +602,23 @@ str = str +
 " <span style=\"outline: 1px solid ;  \"> <input style=\"   background-color: #D3D3D3;   \" wicket:id=\"AllUsersBtn\" type=\"submit\" value=\"All Users \"  size=\"10\"> </span> " + 
 
 "<br> <br>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <button wicket:id = \"leftArrow\"  type= \"submit\"  >   <span>  &#x2190;  </span>     </button>   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <button wicket:id = \"rightArrow\"  type= \"submit\"  >   <span>  &#x2192;  </span>  </button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style= \"border: none; \"> View Current and Future? </span> <input style=\"   background-color: #D3D3D3;   \" wicket:id=\"currentChkBox\" type=\"checkbox\" value=\"View Current?\"  size=\"20\">   &nbsp;&nbsp;&nbsp;&nbsp; <span style= \"border: none; \"> View In Progress? </span> <input style=\"   background-color: #D3D3D3;   \" wicket:id=\"inProgressChkBox\" type=\"checkbox\" value=\"View Current?\"  size=\"20\">   <span style= \"border: none; \"> View On Hold? </span>  <input style=\"   background-color: #D3D3D3;   \" wicket:id=\"onHoldChkBox\" type=\"checkbox\" value=\"View Current?\"  size=\"20\">      " + 
+// issue 305
+"<span style=\"border: none; \"> View Completed? </span>  <input style=\"   background-color: #D3D3D3;   \" wicket:id= \"completedCheckBox \" type= \"checkbox \" value= \" View Current? \"  size= \"20 \"> "  + 
+
+"<span style=\"border: none; \"> View In Queue? </span>  <input style=\"   background-color: #D3D3D3;   \" wicket:id= \"inQueueCheckBox \" type= \"checkbox \" value= \" View Current? \"  size= \"20 \"> "  + 
 
 
 "<br> <br>     <div id = \"scroll-to-bottom\" class=\"container\">" +
 
-"<div wicket:id=\"modal2\"></div>" +
+
+
+"<div wicket:id=\"modal2\"></div>" +      
 /////////////////////////////////////////////////////
 "<table> <tr> <td> " +  "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +  "  </td> <td>&nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;      week 1   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;   &nbsp; &nbsp; &nbsp; &nbsp;   </td> <td>  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;  &nbsp; &nbsp;&nbsp; &nbsp;    week 2  &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; </td> </tr> " ;
 
 //flDate3.add(Calendar.DAY_OF_MONTH, 3);
 Calendar cal = Calendar.getInstance();
-Calendar calEndWeek = Calendar.getInstance();
+Calendar calEndWeek = Calendar.getInstance();   
 
 if (gantChartForm != null &&!StringUtils.isNullOrEmpty(gantChartForm.dateStartGantt))
 	{
@@ -711,21 +751,10 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
 		dCalendar.setTime(new Date(nList.get(indexLink).convertToDateString(nList.get(indexLink).getDateStarted())));
 		dCalendar.add(Calendar.DAY_OF_MONTH, daysExpected);
 		theEndingDate = sdf.format(dCalendar.getTime());
-	//// this is a test	List <Object[]> samplObjects = processTrackingService.grabSampleTypeStringFromList(ptd.getExperiment().getExpID(), ptd.getWorkflow().getWfID());
-    	///System.out.println("here is size of smpleobjects:" + samplObjects.size());
-		/////// call sample type string String sampleTypeStr = processTrackingService.grabSampleTypeStringFromList(ptd.getExperiment().getExpID(), ptd.getWorkflow().getWfID());
-    	//////System.out.println("here is sampletypestr:" + sampleTypeStr);
     	String sampleTypeString = "";
-    	
-    	// this is a test
-    /*	for (Object[] smpleobj : samplObjects)
-    		{
-    		sampleTypeString  = sampleTypeString + smpleobj[0] + " ,";
-    		} */
     	
     	if (!StringUtils.isNullOrEmpty(sampleTypeString))	   
     		sampleTypeString = sampleTypeString.substring(0,sampleTypeString.length()-1);
-    	//System.out.println("here is samplestring:" + sampleTypeString);
     	indexxofEndingDate = todayStrList.indexOf(theEndingDate.substring(0,5));
     	if (index == 0 )
 	        {
@@ -879,7 +908,8 @@ public void setDateEndGantt (String dateEndGantt)
 		super(id, new CompoundPropertyModel(gantChart));	
 		getMarkupResourceStream(markupContainer, containerClassl) ;
 	    nList = new ArrayList <ProcessTrackingDetails> () ;
-	    nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold, true, true, true);
+	    // issue 305
+	    nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold, isCompleted,  isInQueue, true);
 	    for (int i=0 ; i<= nList.size();i++ )
 		 	{
 	    	try
@@ -895,10 +925,14 @@ public void setDateEndGantt (String dateEndGantt)
 		currentCheckBox = buildScreeningChkBox("currentChkBox", "isCurrent");
 		inProgressCheckBox = buildScreeningChkBox("inProgressChkBox", "isInProgress");
 		onHoldCheckBox = buildScreeningChkBox("onHoldChkBox", "isOnHold");
+		completedCheckBox = buildScreeningChkBox("completedCheckBox", "isCompleted");  //issue 305		
+		inQueueCheckBox = buildScreeningChkBox("inQueueCheckBox", "isInQueue");  //issue 305
 		allExpChkBox = buildScreeningChkBox("allExpChkBox", "isAllExp");
 		add (currentCheckBox); 
 		add (inProgressCheckBox); 
 		add (onHoldCheckBox); 
+		add (completedCheckBox);
+		add (inQueueCheckBox);
 		add (allExpChkBox);
 		
 		 nList = new ArrayList <ProcessTrackingDetails> ();
@@ -978,7 +1012,8 @@ public void setDateEndGantt (String dateEndGantt)
 		    {
 			
 			assignedTo = "";
-			nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, true, true, true); 
+			// issue 305
+			nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCompleted,  isInQueue, true); 
 			MarkupCache.get().clear();
 			getMarkupResourceStream(markupContainer, containerClassl) ;
 			target.add(gantChartForm);
@@ -1052,12 +1087,19 @@ public void setDateEndGantt (String dateEndGantt)
 					    break;
 					    // issue 273
 					case "updateExperiment" :
+						isInProgress = true;
+						isOnHold = true;
+						isCompleted = false;
+						isInQueue = true;
+						isCurrent = false;
 						if (expID.equals ("All Experiments") )
-							{
+							{						
 							allExpAssay = true;
 							expID = "All Experiments";
 							assayDescID = null;
 							MarkupCache.get().clear();
+							// issue 305
+
 				    	    getMarkupResourceStream(markupContainer, containerClassl) ;
 				    	    target.add(gantChart); 
 				    	    break;
@@ -1072,44 +1114,55 @@ public void setDateEndGantt (String dateEndGantt)
 					case "updateAssayDesc" :
 						allExpAssay = false;
 						isAllExp = false;
+						isInProgress = true;
+						isOnHold = true;
+						isCompleted = false;
+						isInQueue = true;
+						isCurrent = false;
 						assayDescDD.setChoices (assayService.allAssayNamesForExpId(expID, false));	
 						MarkupCache.get().clear();
-				    	    getMarkupResourceStream(markupContainer, containerClassl) ;
-				    	    target.add(gantChartForm);
-				    	    target.add(gantChart);
-				    	    for (int i=0 ; i< nList.size();i++ )
-							 	{
-						    	ggIndex = i;
-						    	try
-							    	{
-									gantChartForm.add( buildGanttChartLink(("gchart" + Integer.toString(i)),i));								
-							    	}
-						    	catch (Exception e)
-						    		{
-						    		gantChartForm.replace(buildGanttChartLink(("gchart" + Integer.toString(i)  ),i));
-						    		}
-							 	 } 
+				    	getMarkupResourceStream(markupContainer, containerClassl) ;
+				    	target.add(gantChartForm);
+				    	target.add(gantChart);
+				    	for (int i=0 ; i< nList.size();i++ )
+					        {
+						    ggIndex = i;
+						    try
+							    {
+								gantChartForm.add( buildGanttChartLink(("gchart" + Integer.toString(i)),i));								
+							    }
+						    catch (Exception e)
+						    	{
+						    	gantChartForm.replace(buildGanttChartLink(("gchart" + Integer.toString(i)  ),i));
+						    	}
+							 } 
 					    	break;				    	
-						 case "updateUser" :
-							 MarkupCache.get().clear();
-					    	    getMarkupResourceStream(markupContainer, containerClassl) ;
-					    	    target.add(gantChartForm);
-					    	    target.add(gantChart);
-					    	    
-					    	    for (int i=0 ; i< nList.size();i++ )
-								 	{
-							    	ggIndex = i;
-							    	try
-								    	{
-										gantChartForm.add( buildGanttChartLink(("gchart" + Integer.toString(i)),i));
-									
-								    	}
-							    	catch (Exception e)
-							    		{
-							    		gantChartForm.replace(buildGanttChartLink(("gchart" + Integer.toString(i)  ),i));
-							    		}
-								 	 } 
-							 break;
+					 case "updateUser" :
+						isInProgress = true;
+						isOnHold = true;
+						isCompleted = false;
+						isInQueue = true;
+						isCurrent=false;
+						// issue 305
+						if (assignedTo.equals("All Users"))
+		    	    		assignedTo = "";
+						MarkupCache.get().clear();
+				    	getMarkupResourceStream(markupContainer, containerClassl) ;
+				    	target.add(gantChartForm);
+				    	target.add(gantChart);    
+				    	for (int i=0 ; i< nList.size();i++ )
+						    {
+						    ggIndex = i;
+						    try
+							    {
+								gantChartForm.add( buildGanttChartLink(("gchart" + Integer.toString(i)),i));
+							    }
+						    catch (Exception e)
+						    	{
+						    	gantChartForm.replace(buildGanttChartLink(("gchart" + Integer.toString(i)  ),i));
+						    	}
+							} 
+						break;
 					}
 				}
 			};
@@ -1157,7 +1210,8 @@ public void setDateEndGantt (String dateEndGantt)
 		    @Override
 		    public void onUpdate(AjaxRequestTarget target)
 			    {
-		    	if (property.equals("isOnHold") && isOnHold)
+		    	// issue 305
+		    /*	if (property.equals("isOnHold") && isOnHold)
 		    		{
 		    		isCurrent = false;
 		    		isInProgress = false;
@@ -1171,7 +1225,8 @@ public void setDateEndGantt (String dateEndGantt)
 		    		{
 		    		isOnHold = false;
 		    		isInProgress = false;
-		    		}
+		    		}*/
+		    	
 		    	if (property.equals("isAllExp"))
 		    		{
 		    		if (isAllExp)
@@ -1185,14 +1240,16 @@ public void setDateEndGantt (String dateEndGantt)
 						assayDescDD.setChoices(lilAssay);
 					    MarkupCache.get().clear();
 						getMarkupResourceStream(markupContainer, containerClassl) ;
-		    	  
-						nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, true, true, true); 
+						target.add(gantChart);  
+				// issue 305
+				//		nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, true, true, true);
+						nList =   processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCurrent,  isInProgress, isOnHold, isCompleted,  isInQueue, true);
 						AjaxLink gCLink;
 						ggIndex = 0;
 						// nList = new ArrayList <ProcessTrackingDetails> () ;
-						    for (int i=0 ; i< nList.size();i++ )
-							 	{
-						    	ggIndex = i;
+						for (int i=0 ; i< nList.size();i++ )
+					        {
+						    ggIndex = i;
 						    	try
 							    	{
 									gantChartForm.add(gCLink = buildGanttChartLink(("gchart" + Integer.toString(i)),i));
@@ -1203,21 +1260,53 @@ public void setDateEndGantt (String dateEndGantt)
 						    		}
 						    	}
 						target.add(gantChart);
-						target.add(gantChartForm);
+						target.add(gantChartForm); 
 					    }
 		    			
 			    		////////////////////////////////
-			    		
+			    	    	
 		    		else
 		    			{
 		    			experimentDD.setChoices (processTrackingService.loadAllAssignedExperiments())	;	
 		    			allExpAssay = false;
+		    			MarkupCache.get().clear();
+		 		        getMarkupResourceStream(markupContainer, containerClassl) ;
+		 		        nList =   processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCurrent,  isInProgress, isOnHold, isCompleted,  isInQueue, true);
+		 		        target.add(gantChart); 
+		 		        AjaxLink gCLink;
+						ggIndex = 0;
+		 		        for (int i=0 ; i< nList.size();i++ )
+				            {
+					        ggIndex = i;
+					    	try
+						    	{
+								gantChartForm.add(gCLink = buildGanttChartLink(("gchart" + Integer.toString(i)),i));
+						    	}
+					    	catch (Exception e)
+					    		{
+					    		gantChartForm.replace(buildGanttChartLink(("gchart" + Integer.toString(i)  ),i));
+					    		}
+					    	}
 		    			}
 		    		}
-		    	
-		        MarkupCache.get().clear();
-		        getMarkupResourceStream(markupContainer, containerClassl) ;
+		    	MarkupCache.get().clear();
+ 		        getMarkupResourceStream(markupContainer, containerClassl) ;
 		        target.add(gantChart); 
+		        AjaxLink gCLink;
+				ggIndex = 0;
+ 		        for (int i=0 ; i< nList.size();i++ )
+		            {
+			        ggIndex = i;
+			    	try
+				    	{
+						gantChartForm.add(gCLink = buildGanttChartLink(("gchart" + Integer.toString(i)),i));
+				    	}
+			    	catch (Exception e)
+			    		{
+			    		gantChartForm.replace(buildGanttChartLink(("gchart" + Integer.toString(i)  ),i));
+			    		}
+			    	}
+			 			    
 			    }
 		    };
 		

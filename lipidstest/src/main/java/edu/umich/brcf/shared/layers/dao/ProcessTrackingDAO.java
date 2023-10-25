@@ -325,7 +325,6 @@ public class ProcessTrackingDAO extends BaseDAO
 		String prevExp = "";
 		String prevAssay = "";
 		boolean itBelongs = false;
-		
 		for (ProcessTrackingDetails ptd : ptdList)
 			{
 		
@@ -335,9 +334,9 @@ public class ProcessTrackingDAO extends BaseDAO
 			initializeTheKids(ptd.getExperiment(), new String[] { "project"});
 			//////if ( ptd.getWorkflow().getWfDesc().equals(wfDescString))
 
-			if (isCurrent && ptd.getStatus().equals("Completed"))
-				continue;
-			else if (isInProgress && ptd.getStatus().equals("In progress"))
+			//if (isCurrent && ptd.getStatus().equals("Completed"))
+		   //		continue;
+			if (isInProgress && ptd.getStatus().equals("In progress"))
 				{
 				if ( (!StringUtils.isNullOrEmpty(assignedTo) &&  ptd.getAssignedTo().getFullNameByLast().equals(assignedTo) && ptd.getStatus().equals("In progress")) ||
 						(StringUtils.isNullOrEmpty(assignedTo)  && ptd.getStatus().equals("In progress"))
