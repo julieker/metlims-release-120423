@@ -61,7 +61,7 @@ public class GantChart extends WebPage implements IMarkupResourceStreamProvider
 	@SpringBean 
 	AliquotService aliquotService;
 	@SpringBean 
-	AssayService assayService;
+	AssayService assayService;   
 	@SpringBean
 	MixtureService mixtureService;
 	@SpringBean 
@@ -192,7 +192,7 @@ public boolean getIsAllExp ()
 
 public void setIsAllExp(boolean isAllExp)
 	{
-	this.isAllExp = isAllExp;	
+	this.isAllExp = isAllExp;	   
 	}
 
 
@@ -205,8 +205,9 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 	//MarkupFactory.get().getMarkupCache();
 	MarkupCache.get().clear();
 	//Map <String, String> sampleTypeMap =  new HashMap<String, String>();
-
+   // System.out.println("THISIS THE COMPLETED CHECK BOX IN GETMARKUP:" + completedCheckBox.getDefaultModelObjectAsString());
 /////////////////////////////////////////////
+	
 	Calendar mCalendar = Calendar.getInstance();       
 	mCalendar.add(Calendar.MONTH, 8);
 	List <String> monthStrList =  new ArrayList  <String> ();
@@ -587,20 +588,13 @@ str = str +
 "<form  wicket:id = \"gantChartForm\" > " + 
 " <span style=\"  border: none; \"> " + " Start: </span> " + 
 "<span style=\"outline: 1px solid rgba(0, 0, 0, 0.3)\"> <input style=\"   background-color:#FFFFFF;   \" wicket:id=\"dateStartGantt\" type=\"text\" value=\"date\"  size=\"10\"> </span> " + 
-"<span style=\"  border: none; \"> " + "&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; End: </span> " + 
-"<span style=\"outline: 1px solid rgba(0, 0, 0, 0.3)\"> <input style=\"  background-color:#FFFFFF;   \" wicket:id=\"dateEndGantt\" type=\"text\" value=\"date\"  size=\"10\">  </span>" + 
 " <span style=\"border:none\">  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  </span>  " + 
-" <span style=\"outline: 1px solid ;  \"> <input style=\"   background-color: #D3D3D3;   \" wicket:id=\"dateRangeBtn\" type=\"submit\" value=\"Calculate Date Range\"  size=\"20\"> </span> " + 
-
 " <span style=\"border:none\">  &nbsp;&nbsp; Experiment:  </span>  " + 
-
 "  <select wicket:id = \"experimentDropDown\" style = \"margin-left : 15px; width : 100px;\" ></select> &nbsp;&nbsp;&nbsp; " + 
 " <span style=\"border:none\">   Assay:  </span>  " + 
 "  <select wicket:id = \"assayDescDropDown\" style = \"margin-left : 15px; width : 100px;\" ></select> &nbsp;&nbsp;&nbsp; " + 
 " <span style=\"border:none\">  &nbsp;&nbsp;  Assigned To:  </span>  " + 
 "  <select wicket:id = \"assignedToDropDown\" style = \"margin-left : 15px; width : 100px;\" ></select>  " +
-" <span style=\"outline: 1px solid ;  \"> <input style=\"   background-color: #D3D3D3;   \" wicket:id=\"AllUsersBtn\" type=\"submit\" value=\"All Users \"  size=\"10\"> </span> " + 
-
 "<br> <br>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <button wicket:id = \"leftArrow\"  type= \"submit\"  >   <span>  &#x2190;  </span>     </button>   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <button wicket:id = \"rightArrow\"  type= \"submit\"  >   <span>  &#x2192;  </span>  </button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span style= \"border: none; \"> View Current and Future? </span> <input style=\"   background-color: #D3D3D3;   \" wicket:id=\"currentChkBox\" type=\"checkbox\" value=\"View Current?\"  size=\"20\">   &nbsp;&nbsp;&nbsp;&nbsp; <span style= \"border: none; \"> View In Progress? </span> <input style=\"   background-color: #D3D3D3;   \" wicket:id=\"inProgressChkBox\" type=\"checkbox\" value=\"View Current?\"  size=\"20\">   <span style= \"border: none; \"> View On Hold? </span>  <input style=\"   background-color: #D3D3D3;   \" wicket:id=\"onHoldChkBox\" type=\"checkbox\" value=\"View Current?\"  size=\"20\">      " + 
 // issue 305
 "<span style=\"border: none; \"> View Completed? </span>  <input style=\"   background-color: #D3D3D3;   \" wicket:id= \"completedCheckBox \" type= \"checkbox \" value= \" View Current? \"  size= \"20 \"> "  + 
@@ -863,7 +857,7 @@ public GantChart (String id)
 public class GantChartForm extends Form 
 	{
 	String dateStartGantt;
-    String dateEndGantt;
+   
     
    // boolean	isCurrent;
     
@@ -891,17 +885,6 @@ public class GantChartForm extends Form
 		this.dateStartGantt = dateStartGantt;
 		}
 
-public String getDateEndGantt ()
-	{
-	return this.dateEndGantt;
-	}
-public void setDateEndGantt (String dateEndGantt)
-	{
-	this.dateEndGantt = dateEndGantt;
-	}
-
-
-
 	public GantChartForm(String id) 
 		{
 		///////////////////
@@ -928,6 +911,8 @@ public void setDateEndGantt (String dateEndGantt)
 		completedCheckBox = buildScreeningChkBox("completedCheckBox", "isCompleted");  //issue 305		
 		inQueueCheckBox = buildScreeningChkBox("inQueueCheckBox", "isInQueue");  //issue 305
 		allExpChkBox = buildScreeningChkBox("allExpChkBox", "isAllExp");
+		completedCheckBox.setDefaultModelObject(false);
+		System.out.println("THISIS THE COMPLETED CHECK BOX IN GETMARKUP:" + completedCheckBox.getDefaultModelObjectAsString());
 		add (currentCheckBox); 
 		add (inProgressCheckBox); 
 		add (onHoldCheckBox); 
@@ -964,79 +949,9 @@ public void setDateEndGantt (String dateEndGantt)
 		dateFld.setDefaultStringFormat(ProcessTracking.ProcessTracking_DATE_FORMAT);
 		add(dateFld);
 		dateFld.setRequired(true);
-		
-		METWorksAjaxUpdatingDateTextField dateFldEnd =  new METWorksAjaxUpdatingDateTextField("dateEndGantt", new PropertyModel<String>(this, "dateEndGantt"), "dateEndGantt")
-			{
-			@Override
-			protected void onUpdate(AjaxRequestTarget target)  
-		        { 
-		        }
-			};		
-		dateFldEnd.setDefaultStringFormat(ProcessTracking.ProcessTracking_DATE_FORMAT);
-		add(dateFldEnd);
-		dateFldEnd.setRequired(true);
 		dateFld.add(buildStandardFormComponentUpdateBehavior("change", "updateStartDate"));
-		dateFldEnd.add(buildStandardFormComponentUpdateBehavior("change", "updateEndDate"));
-		
 		
 		//////////// Date calculate button    /////////////////////////
-		
-		add(ganttDateLink =  new IndicatingAjaxLink <Void>("dateRangeBtn") 
-		    {			
-			
-			@Override
-			public boolean isEnabled()
-				{
-				return true;
-				}
-			@Override
-			public void onClick(AjaxRequestTarget target) 			     
-			    {	
-				MarkupCache.get().clear();
-				getMarkupResourceStream(markupContainer, containerClassl) ;
-				target.add(gantChart);
-				/// fixj
-				dateStartingPointIndex = 0;
-			    }
-		    });
-
-		add(ganttDateLink =  new IndicatingAjaxLink <Void>("AllUsersBtn") 
-	    {			
-		@Override
-		public boolean isEnabled()
-			{
-			return true;
-			}
-		@Override
-		public void onClick(AjaxRequestTarget target) 			     
-		    {
-			
-			assignedTo = "";
-			// issue 305
-			nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCompleted,  isInQueue, true); 
-			MarkupCache.get().clear();
-			getMarkupResourceStream(markupContainer, containerClassl) ;
-			target.add(gantChartForm);
-			target.add(gantChart);
-			AjaxLink gCLink;
-			ggIndex = 0;
-			// nList = new ArrayList <ProcessTrackingDetails> () ;
-			    for (int i=0 ; i< nList.size();i++ )
-				 	{
-			    	ggIndex = i;
-			    	try
-				    	{
-						gantChartForm.add(gCLink = buildGanttChartLink(("gchart" + Integer.toString(i)),i));
-				    	}
-			    	catch (Exception e)
-			    		{
-			    		gantChartForm.replace(buildGanttChartLink(("gchart" + Integer.toString(i)  ),i));
-			    		}
-			    	}
-			target.add(gantChart);
-			target.add(gantChartForm);
-		    }
-	    });
 		
 		
 		modal2= new ModalWindow("modal2");
@@ -1081,18 +996,42 @@ public void setDateEndGantt (String dateEndGantt)
 				switch (response)
 					{
 					case "updateStartDate" :
+						System.out.println("in updateStartDateeee...");
+						isInProgress = true;
+						isOnHold = true;
+						isCompleted = false;
+						isInQueue = true;
+						isCurrent = false;
+						MarkupCache.get().clear();
+				    	getMarkupResourceStream(markupContainer, containerClassl) ;
+				    	target.add(gantChartForm);
+				    	target.add(gantChart);    
+				    	for (int i=0 ; i< nList.size();i++ )
+						    {
+						    ggIndex = i;
+						    try
+							    {
+								gantChartForm.add( buildGanttChartLink(("gchart" + Integer.toString(i)),i));
+							    }
+						    catch (Exception e)
+						    	{
+						    	gantChartForm.replace(buildGanttChartLink(("gchart" + Integer.toString(i)  ),i));
+						    	}
+							} 
+						
 						break;	
 						// issue 13
 					case "updateEndDate" :
 					    break;
 					    // issue 273
+					// issue 305
 					case "updateExperiment" :
 						isInProgress = true;
 						isOnHold = true;
 						isCompleted = false;
 						isInQueue = true;
 						isCurrent = false;
-						if (expID.equals ("All Experiments") )
+						if (expID.equals ("All Experiments") )   
 							{						
 							allExpAssay = true;
 							expID = "All Experiments";
