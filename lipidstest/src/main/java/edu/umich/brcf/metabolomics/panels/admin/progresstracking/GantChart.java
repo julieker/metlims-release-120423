@@ -912,7 +912,6 @@ public class GantChartForm extends Form
 		inQueueCheckBox = buildScreeningChkBox("inQueueCheckBox", "isInQueue");  //issue 305
 		allExpChkBox = buildScreeningChkBox("allExpChkBox", "isAllExp");
 		completedCheckBox.setDefaultModelObject(false);
-		System.out.println("THISIS THE COMPLETED CHECK BOX IN GETMARKUP:" + completedCheckBox.getDefaultModelObjectAsString());
 		add (currentCheckBox); 
 		add (inProgressCheckBox); 
 		add (onHoldCheckBox); 
@@ -996,7 +995,6 @@ public class GantChartForm extends Form
 				switch (response)
 					{
 					case "updateStartDate" :
-						System.out.println("in updateStartDateeee...");
 						isInProgress = true;
 						isOnHold = true;
 						isCompleted = false;
