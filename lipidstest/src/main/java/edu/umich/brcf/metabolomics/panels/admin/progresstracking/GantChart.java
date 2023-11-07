@@ -49,7 +49,11 @@ import edu.umich.brcf.shared.layers.service.ProcessTrackingService;
 import edu.umich.brcf.shared.layers.service.UserService;
 import edu.umich.brcf.shared.util.StringParser;
 import edu.umich.brcf.shared.util.widgets.METWorksAjaxUpdatingDateTextField;
-
+import com.googlecode.wicket.jquery.core.JQueryBehavior;
+import com.googlecode.wicket.jquery.core.Options;
+import com.googlecode.wicket.jquery.ui.widget.dialog.DialogButton;
+import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
+import edu.umich.brcf.shared.layers.dto.ProcessTrackingDetailsDTO;
 
 public class GantChart extends WebPage implements IMarkupResourceStreamProvider 
 	{
@@ -116,9 +120,13 @@ public class GantChart extends WebPage implements IMarkupResourceStreamProvider
 	long numDaysUntilComplete = 0L;
 	DropDownChoice<String> userNamesDD;
 	String assignedTo ;
+	String gdateOnHoldString;
+	String gdateCompletedString;
+	 ProcessTrackingDetails gptd;
 	Map <String, String> sampleTypeMap =  new HashMap<String, String>();
- 
-	 
+	// issue 305
+	EditProcessTrackingDetailDialog editProcessTrackingDdateFldOnHoldetailDialog;
+	ProcessTrackingDetailsDTO gprocessTrackingDetailsDTO = new ProcessTrackingDetailsDTO(); 
 	/* @Override
 	 public void renderHead( IHeaderResponse response)
 	     {
@@ -204,10 +212,6 @@ public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<
 	containerClassl = containerClass;
 	//MarkupFactory.get().getMarkupCache();
 	MarkupCache.get().clear();
-	//Map <String, String> sampleTypeMap =  new HashMap<String, String>();
-   // System.out.println("THISIS THE COMPLETED CHECK BOX IN GETMARKUP:" + completedCheckBox.getDefaultModelObjectAsString());
-/////////////////////////////////////////////
-	
 	Calendar mCalendar = Calendar.getInstance();       
 	mCalendar.add(Calendar.MONTH, 8);
 	List <String> monthStrList =  new ArrayList  <String> ();
@@ -729,6 +733,7 @@ str = str + "      <div class=\"chart-row chart-lines\">" +
     int indexxofCDate = 0;
     String theCDate = "";
     int indexLink = 0;
+    str = str + "<div wicket:id=\"editProgressDialog"    + "\">[dialog]</div>" ;
     for (ProcessTrackingDetails ptd: nList)
     	{
     	
@@ -857,11 +862,11 @@ public GantChart (String id)
 public class GantChartForm extends Form 
 	{
 	String dateStartGantt;
-   
+	EditProcessTrackingDetailDialog editProcessTrackingDetailDialog;
     
    // boolean	isCurrent;
     
-    
+	  GantChartForm lGantChartForm = this;
 //////////////////////////////
     
     List<ProcessTrackingDetails> nList;
@@ -889,11 +894,186 @@ public class GantChartForm extends Form
 		{
 		///////////////////
 		super(id, new CompoundPropertyModel(gantChart));	
+		gantChartForm = lGantChartForm;
 		getMarkupResourceStream(markupContainer, containerClassl) ;
 	    nList = new ArrayList <ProcessTrackingDetails> () ;
+	    // issue 303
+	    nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold, true, true, true);    
+	    ProcessTrackingDetails ptdd = nList.get(0);
+	    String title = "Edit Progress";
+	    ProcessTrackingDetailsDTO lptrackingDTO = new ProcessTrackingDetailsDTO();
+	    
+	    // issue 393
+	    editProcessTrackingDetailDialog = new EditProcessTrackingDetailDialog ("editProgressDialog",  title, new Model <ProcessTrackingDetails> (ptdd),  false, lptrackingDTO )			   
+		{ // NOSONAR
+		private static final long serialVersionUID = 1L;	
+	    @Override
+		public void onClick(AjaxRequestTarget target, DialogButton button)
+			{	
+	    	int retCode = 0;
+	    	// issue 205.
+	    	if (button.toString().equals("Done"))          
+    			{
+	    		String placeHolderHoldDate;
+	    	    String placeHolderCompletedDate;
+	    	    int placeHolderDetailOrder;
+	    		placeHolderHoldDate = processTrackingDetailsDTO.getDateOnHold();
+	    		placeHolderCompletedDate = processTrackingDetailsDTO.getDateCompleted();
+	    		placeHolderDetailOrder = processTrackingDetailsDTO.getDetailOrder();
+	    		String lJobid = processTrackingDetailsDTO.getJobID();
+	    		gprocessTrackingDetailsDTO = (ProcessTrackingDetailsDTO) editProcessTrackingDetailDialogForm.getModelObject();
+	    		processTrackingDetailsDTO = (ProcessTrackingDetailsDTO)  editProcessTrackingDetailDialogForm.getModelObject();
+	    		processTrackingDetailsDTO.setDetailOrder(placeHolderDetailOrder);
+	    		processTrackingDetailsDTO.setDateOnHold(placeHolderHoldDate);
+	    		processTrackingDetailsDTO.setDateCompleted(placeHolderCompletedDate);	    		
+	    		processTrackingDetailsDTO.setJobID(lJobid);
+	    		gprocessTrackingDetailsDTO.setJobID(lJobid);       
+	    		retCode = editProcessTrackingDetailDialog.editProcessTrackingDetailDialogForm.saveChanges(gprocessTrackingDetailsDTO, target);
+	    		
+    			}
+	    	if (button.getName().equals("submit2") )   
+	    		{
+	    		
+	    		}	
+	    if (retCode == 0)
+	    	{
+            
+	    	super.close(target, button);  
+	    	MarkupCache.get().clear();
+	    	getMarkupResourceStream(markupContainer, containerClassl) ;
+	    	target.add(gantChart);  
+	    	}
+	    	
+		}
+	    @Override
+		public void onConfigure(JQueryBehavior behavior)
+		    {
+			// class options //
+			behavior.setOption("autoOpen", false);
+			behavior.setOption("modal", true);
+			//behavior.setOption("resizable", this.isResizable());
+			behavior.setOption("resizable",false);
+			behavior.setOption("movable", false);
+			behavior.setOption("width", 1050);
+			behavior.setOption("title", Options.asString(this.getTitle().getObject()));
+			behavior.setOption("height",380);
+			//behavior.setOption("height", 1000);
+		    behavior.setOption("autofocus", true);  
+		    } 
+	    
+	    @Override
+		public Form<?> getForm() 
+			{
+			// TODO Auto-generated method stub
+		    form.setMultiPart(true);
+			return this.form;
+			}
+	    @Override
+		public DialogButton getSubmitButton() 
+	    	{
+			// TODO Auto-generated method stub
+			return this.submitButton;    
+	    	}	 
+	    @Override
+		protected void onOpen(IPartialPageRequestHandler handler)
+			{    
+	    	// issue 303
+	AjaxRequestTarget target = (AjaxRequestTarget) handler;      
+	    	
+	    	String msg = "Hey there";
+	    	String msg2 = "Hello there";
+	    	//gdateOnHoldString    
+	      ////////  ** String changeStyle = "document.getElementById('dateHold').value= '2023-10-31';";
+	    	String changeStyle = "document.getElementById('dateHold').value= '" + gdateOnHoldString + "';";
+	    	String changeStyle2 = "document.getElementById('dateComplete').value= '" + gdateCompletedString + "';";
+	    	
+	    	
+	    /////	String changeStyle = "document.getElementById('dateHold').value= '';";
+	    	//		dateHold
+	    	//.appendJavaScript("alert('" + msg + "')");
+	    /////	System.out.println("here is gdateStartedString:" + gdateStartedString );
+
+	        target.appendJavaScript( changeStyle );
+	        target.appendJavaScript (changeStyle2 );
+	        /// issue 303 
+	        ////
+	        String changeBackground = "  document.getElementById('dateHold').style.backgroundColor = 'transparent';  " +
+    	    		"  document.getElementById('dateHold').style.color = 'transparent';  "   + "document.getElementById('dateHold').value= '" +   "';" ;
+	        
+	        String changeBackgroundc = "  document.getElementById('dateComplete').style.backgroundColor = 'transparent';  " +
+    	    		"  document.getElementById('dateComplete').style.color = 'transparent';  "   + "document.getElementById('dateComplete').value= '" +   "';" ;
+	        
+	        
+	        String listenerstr = "document.getElementById('dateHold').addEventListener('keyup', function(event) { " + 
+    	    	   	" if (event.keyCode == 13 || event.keyCode == 46) { " + 
+	                  changeBackground + 
+    		 " } " + 
+		     "});";    
+    	    
+    	    target.appendJavaScript(  listenerstr  );   
+    	    
+    	    // issue 303
+    	    String listenerstrc = "document.getElementById('dateComplete').addEventListener('keyup', function(event) { " + 
+    	    	   	" if (event.keyCode == 13 || event.keyCode == 46) { " + 
+	                  changeBackgroundc + 
+    		 " } " + 
+		     "});";
+    	    
+    	    target.appendJavaScript(  listenerstrc  );   
+	        
+	        
+	        
+	        ////	target.appendJavaScript("alert(' here is change value   ' + document.getElementById('dateHold').value "   + ");");
+			   
+	    // issue 303
+            if (StringUtils.isNullOrEmpty(gdateOnHoldString)) 
+        	    target.appendJavaScript( changeBackground  );
+        	    
+        	    
+				////////gantChartForm.editProcessTrackingDetailDialog.dateFldOnHoldDP.add(new AttributeModifier("style","color : #D3D3D3; background-color:#D3D3D3;")); 
+			  ///////  target.add(editProcessTrackingDetailDialog);
+            if (StringUtils.isNullOrEmpty(gdateCompletedString)) 
+	    	    target.appendJavaScript(  changeBackgroundc  );
+
+				////////gantChartForm.editProcessTrackingDetailDialog.dateFldOnHoldDP.add(new AttributeModifier("style","color : #D3D3D3; background-color:#D3D3D3;")); 
+			}
+	       
+	    @Override
+		public void onClose(IPartialPageRequestHandler handler, DialogButton button) 
+		    {
+			form.setMultiPart(true);
+			AjaxRequestTarget target = (AjaxRequestTarget) handler;
+		    }
+
+		@Override
+		protected void onSubmit(AjaxRequestTarget target, DialogButton button) 
+				    {
+			    	// TODO Auto-generated method stub	
+			    //	target.add(feedback);
+			    	target.add(this);
+			    	target.add(this.form);
+				    }
+				@Override
+				protected void onError(AjaxRequestTarget target, DialogButton button) 
+				    {
+							
+				    }			
+				@Override
+				protected List<DialogButton> getButtons()
+				    {
+					List <DialogButton> dialogButtonList = new ArrayList <DialogButton> ();
+					
+					dialogButtonList.add( new DialogButton("submit3", "Done")) ;
+					//dialogButtonList.get(0).setEnabled(worklist.getOpenForUpdates());
+					return dialogButtonList;
+				    }
+	            }; 
+	            
+	            
+	            gantChartForm.add(editProcessTrackingDetailDialog) ;       
 	    // issue 305
 	    nList = processTrackingService.loadAllTasksAssigned(expID, StringParser.parseId(assayDescID), allExpAssay, assignedTo, isCurrent, isInProgress, isOnHold, isCompleted,  isInQueue, true);
-	    for (int i=0 ; i<= nList.size();i++ )
+	    for (int i=0 ; i< nList.size();i++ )
 		 	{
 	    	try
 	    	   {
@@ -1288,33 +1468,94 @@ public class GantChartForm extends Form
 	 
 	 ///////////////////////////////
 	 
-	 private AjaxLink buildGanttChartLink(String id, int i)
+	 private IndicatingAjaxLink buildGanttChartLink(String id, int i)
 		{
-		AjaxLink link;		
-		// Issue 237
-		// issue 39
-	    link =  new AjaxLink <Void>(id)
-			{
-			@Override
-			public void onClick(AjaxRequestTarget target) 
+		 IndicatingAjaxLink link;	
+			////// Dialog dialog
+		//	ProcessTrackingDetails ptdd = processTrackingService.loadById(nList.get(i).getJobid());
+			ProcessTrackingDetails ptdd = nList.get(i);
+			String title = "Edit Progress";
+			ProcessTrackingDetailsDTO lptrackingDTO = new ProcessTrackingDetailsDTO();
+			 link =  new IndicatingAjaxLink <Void>(id)
 				{
-				try
+		    	// ProcessTrackingDetails ptdd = processTrackingService.loadById(nList.get(i).getJobid());	
+		    	// mapEditProgressTracking.put(ptd.getJobid() , editProcessTrackingDetailDialog);
+					
+					
+		    	 @Override
+				public void onClick(AjaxRequestTarget target) 
 					{
-					 setModalDimensions(id, modal2);					 
-					 ProcessTrackingDetails ptd = processTrackingService.loadById(nList.get(i).getJobid());					 
-					 modal2.setPageCreator(new ModalWindow.PageCreator()
+					try
 						{
-						public Page createPage() {   return setPage(id, modal2, ptd);   }
-						});	
-					    	modal2.show(target); 
-					
-					
+						 setModalDimensions(id, modal2);	   				 
+						/////// ProcessTrackingDetails ptd = processTrackingService.loadById(nList.get(i).getJobid());					 
+						/////////////////////////////////// the dialog
+						 String title = "editProgressTracking";		    
+								try {
+									
+						  //   mapEditProgressTracking.get(nList.get(i).getJobid()).open(target);
+									
+									///////////////////////
+									
+									  //  ptd = (ProcessTrackingDetails) cmpModel.getObject();	
+									   // lprocessTrackingDetailsDTO = (ProcessTrackingDetailsDTO) new Model <ProcessTrackingDetailsDTO> (lprocessTrackingDetailsDTO).getObject();	
+										processTrackingService.initializeProcessKids(nList.get(i));
+										
+										// issue 292
+										gantChartForm.editProcessTrackingDetailDialog.maxCompltDate = (processTrackingService.grabMaxCompletedDate 
+										         (nList.get(i).getExperiment().getExpID(), nList.get(i).getAssay().getAssayId(),  nList.get(i).getDetailOrder()));  
+										gantChartForm.editProcessTrackingDetailDialog.maxOnHoldDate = (processTrackingService.grabMaxOnHoldDate 
+												(nList.get(i).getExperiment().getExpID(),  nList.get(i).getAssay().getAssayId(), nList.get(i).getDetailOrder()));  
+		                 
+										
+										gantChartForm.editProcessTrackingDetailDialog.setProcessTrackingDetailsDTO(ProcessTrackingDetailsDTO.instance(nList.get(i)));     
+								        gantChartForm.editProcessTrackingDetailDialog.taskDescDD.setDefaultModelObject(nList.get(i).getProcessTracking().getTaskDesc());
+								       // gantChartForm.editProcessTrackingDetailDialog.dateFld.setDefaultModelObject(gantChartForm.editProcessTrackingDetailDialog.processTrackingDetailsDTO.getDateCompleted());
+								        gantChartForm.editProcessTrackingDetailDialog.dateFldStarted.setDefaultModelObject(gantChartForm.editProcessTrackingDetailDialog.processTrackingDetailsDTO.getDateStarted());
+								        
+								        gantChartForm.editProcessTrackingDetailDialog.userNamesDD.setDefaultModelObject(nList.get(i).getAssignedTo().getFullNameByLast());
+								        gantChartForm.editProcessTrackingDetailDialog.statusDD.setDefaultModelObject(nList.get(i).getStatus());
+								        gantChartForm.editProcessTrackingDetailDialog.daysExpectedDD.setDefaultModelObject(nList.get(i).getDaysExpected());
+								        gantChartForm.editProcessTrackingDetailDialog.editProcessTrackingDetailDialogForm.textAreaNotes.setDefaultModelObject(nList.get(i).getComments());
+								        
+								        
+								        gantChartForm.editProcessTrackingDetailDialog.setProcessTrackingDetailsDTO(ProcessTrackingDetailsDTO.instance(nList.get(i)));   
+								          
+								        target.add(gantChartForm.editProcessTrackingDetailDialog);
+								        gantChartForm.editProcessTrackingDetailDialog.processTrackingDetailsDTO.setAssignedTo(nList.get(i).getAssignedTo().getFullNameByLast()); 
+								        gantChartForm.editProcessTrackingDetailDialog.processTrackingDetailsDTO.setStatus(nList.get(i).getStatus()); 
+								        gantChartForm.editProcessTrackingDetailDialog.processTrackingDetailsDTO.setDaysExpected(nList.get(i).getDaysExpected()); 
+								        gantChartForm.editProcessTrackingDetailDialog.processTrackingDetailsDTO.setDateOnHold(nList.get(i).convertToDateString(nList.get(i).getDateOnHold()));							        
+								        gantChartForm.editProcessTrackingDetailDialog.processTrackingDetailsDTO.setDetailOrder ( (nList.get(i).getDetailOrder()));
+								        if (nList.get(i).getDateOnHold() != null)
+										     gdateOnHoldString =   gantChartForm.editProcessTrackingDetailDialog.editProcessTrackingDetailDialogForm.parseDateToyyyymmdd(gantChartForm.editProcessTrackingDetailDialog.processTrackingDetailsDTO.getDateOnHold());
+										else 
+											gdateOnHoldString = "";
+										
+										if (nList.get(i).getDateCompleted() != null)
+										     gdateCompletedString =   gantChartForm.editProcessTrackingDetailDialog.editProcessTrackingDetailDialogForm.parseDateToyyyymmdd(gantChartForm.editProcessTrackingDetailDialog.processTrackingDetailsDTO.getDateCompleted());
+										else 
+											gdateCompletedString = "";   
+								       
+								        
+								        
+								        gantChartForm.editProcessTrackingDetailDialog.open(target);	               
+								}
+								catch (Exception e)
+								{
+									System.out.println("in exception");
+									e.printStackTrace();             
+								}
+						}
+					catch (Exception e) { e.printStackTrace(); }  
 					}
-				catch (Exception e) { e.printStackTrace(); }
-				}
-			};
+				   
+				};
+			
+			return link;
+					
 	    
-		return link;
+		
 		}
 	
 	 

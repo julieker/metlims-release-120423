@@ -12,6 +12,7 @@ package edu.umich.brcf.shared.layers.dto;
 // issue 61 2020
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,8 @@ public class ProcessTrackingDetailsDTO implements Serializable
     private String assayID;
     private String daysExpected;
     private Integer detailOrder;
+    private Date dateOnHoldDP;
+    private Date dateCompletedDP;
     
     // issue 123
     Map<String, List<String>> mixtureAliquotMap = new HashMap<String, List<String>>(); 
@@ -124,6 +127,31 @@ public class ProcessTrackingDetailsDTO implements Serializable
 		{
 		this.jobID= jobID;
 		}
+	
+	
+// issue 303
+	public Date getDateOnHoldDP()
+		{
+		return dateOnHoldDP;
+		}
+
+	//issue 303
+	public void setDateOnHoldDP(Date dateOnHoldDP)
+		{
+		this.dateOnHoldDP= dateOnHoldDP;
+		} 
+		
+		// issue 303
+	public Date getDateCompletedDP()
+		{
+		return dateCompletedDP;
+		}
+
+	//issue 196
+		public void setDateCompletedDP(Date dateOnHoldDP)
+			{
+			this.dateOnHoldDP= dateOnHoldDP;
+			}
 	
 	public String getDateStarted()
 		{
