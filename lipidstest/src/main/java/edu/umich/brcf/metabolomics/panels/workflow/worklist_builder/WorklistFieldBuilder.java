@@ -218,8 +218,8 @@ public class WorklistFieldBuilder implements Serializable
 			};
 		}
 
-	
-	static String assembleStyleTag(WorklistItemSimple item, boolean forTable)
+	// issue 313
+	public static String assembleStyleTag(WorklistItemSimple item, boolean forTable)
 		{
 		String style = forTable ? "" : "width : 100%;";
 	
@@ -436,7 +436,9 @@ public class WorklistFieldBuilder implements Serializable
 			style += "#CCFFFF";
 		// issue 193
 		else if (item.getSampleType().startsWith("MoTrPAC -   Plasma-Human: Male"))
-			style += "#CCFAFf";
+		//	style += "#CCFAFf";
+			// issue 313
+			style += "#B1BC55";
 		else if (item.getSampleType().startsWith("MoTrPAC -   Plasma-Human: Female"))
 			style += "#CCF0FF";
 		//else if (item.getSampleType().startsWith("Injection - plasma   (R00CHRPL1-Pre)") )
@@ -458,7 +460,7 @@ public class WorklistFieldBuilder implements Serializable
 			style += "#e0b3dd";	
 		
 		else
-			style += "#eaeef2";
+			style += "#eaeef2";  
 		return style;		
 		}
 

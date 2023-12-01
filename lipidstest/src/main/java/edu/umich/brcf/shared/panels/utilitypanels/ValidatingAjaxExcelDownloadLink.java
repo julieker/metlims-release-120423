@@ -6,21 +6,44 @@ package edu.umich.brcf.shared.panels.utilitypanels;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
+import java.nio.file.Path;
+
 import org.apache.wicket.util.io.Streams;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.time.Duration;
+import org.hibernate.result.Output;
+import org.springframework.core.env.Environment;
 
 import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheet;
 import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheetReturnStream;
+import edu.umich.brcf.shared.util.io.FileUtils;
+import java.text.DateFormat;  
+import java.text.SimpleDateFormat;  
+import java.util.Date;  
+
+import java.nio.*;
+import java.nio.channels.FileChannel;
+import javax.servlet.http.HttpServletResponse;
+
+import java.nio.file.Path;
+
+import java.nio.file.Paths;
+//import javax.faces.context.FacesContext;
 
 
 
@@ -50,21 +73,22 @@ public abstract class ValidatingAjaxExcelDownloadLink extends Link <Void> // iss
 				}
 
 			@Override
-			// issue 207
-			public void write(OutputStream output)
+			// issue 313
+			public void write(OutputStream output)   
+			{
+			try
 				{
-				try {   
-					    worklistDataFromGenerate = report.generateExcelReport(output); 
-					    if (worklistDataFromGenerate != null)
-					    	{
-					        for (String str : worklistDataFromGenerate)
-						        output.write(str.getBytes());
-					    	}
-					output.flush();
-					}
-					catch (Exception e) { e.printStackTrace();}
+				worklistDataFromGenerate = report.generateExcelReport(output); 	
+				output.flush();
 				}
-
+			catch (Exception e)
+				{
+				e.printStackTrace();
+				}
+			
+			}
+			
+			
 			@Override
 			public String getStyle(){ return null; } 
 			
@@ -81,15 +105,21 @@ public abstract class ValidatingAjaxExcelDownloadLink extends Link <Void> // iss
 			public void setVariation(String arg0) { }
 			};
 			
-			String reportName = report.getReportFileName();		
+			
+			String reportName = report.getReportFileName();	
 			// issue 308
 			RequestCycle cycle = getRequestCycle();
 			ResourceStreamRequestHandler handler = new ResourceStreamRequestHandler(resourceStream).setCacheDuration(Duration.ONE_SECOND);
 			handler.setFileName(reportName);
 			RequestCycle.get().scheduleRequestHandlerAfterCurrent(handler);
-			handler.detach(cycle);
-			cycle.detach();
-			}
+			
+		    handler.detach(cycle);
+		    cycle.detach();  
+		    RequestCycle cycle2 = getRequestCycle();  
+			//////////////////
+			
+			
+		    }
 
    
 	public void setReport(IWriteableSpreadsheetReturnStream rpt)
@@ -102,7 +132,10 @@ public abstract class ValidatingAjaxExcelDownloadLink extends Link <Void> // iss
 	public void onClick() 	
 		{
 		if (validate())
-			doClick(report);
+			{
+			doClick(report); 
+			//doClick(report);  
+			}
 		}
 
 

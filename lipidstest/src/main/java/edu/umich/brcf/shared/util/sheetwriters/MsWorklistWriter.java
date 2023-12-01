@@ -19,19 +19,26 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.wicket.injection.Injector;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.ss.usermodel.Color;
 
 import edu.umich.brcf.metabolomics.layers.service.InstrumentService;
 import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.WorklistBuilderPanel;
+import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.WorklistFieldBuilder;
 import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.WorklistItemSimple;
 import edu.umich.brcf.metabolomics.panels.workflow.worklist_builder.WorklistSimple;
 import edu.umich.brcf.shared.layers.service.SampleService;
 import edu.umich.brcf.shared.util.interfaces.IWriteableSpreadsheetReturnStream;
+import edu.umich.brcf.shared.util.io.FileUtils;
 import edu.umich.brcf.shared.util.io.PoiUtils;
 import edu.umich.brcf.shared.util.io.StringUtils;
 import edu.umich.brcf.shared.util.utilpackages.DateUtils;
 import edu.umich.brcf.shared.util.io.SpreadSheetWriter;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.poi.ss.usermodel.Cell;
 
 
 public class MsWorklistWriter extends SpreadSheetWriter implements Serializable, IWriteableSpreadsheetReturnStream
@@ -52,6 +59,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 	private final int IDDADATAFILECOL = 3; // issue 166
 	List <String> workListData = new ArrayList <String> ();
     public OutputStream outputReportStream;
+    private boolean gDoJustTxtFile = true; 
     
     // issue 247
     
@@ -71,11 +79,18 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		Injector.get().inject(this);
 		}
 
-
 	@Override
 	public List<String> generateExcelReport(OutputStream output)
 		{
+		return generateExcelReport( output, false);
+		}
+
+	@Override
+	public List<String> generateExcelReport(OutputStream output, boolean doJustTxtFile)
+		{
 		Workbook workBook = new XSSFWorkbook();	
+		gDoJustTxtFile = doJustTxtFile;
+		
 		// issue 450
 		if (worklist.getSelectedMode().equals("Positive + Negative"))
 		    {	
@@ -92,33 +107,51 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 		else
 			createWorklistSheet("Worklist Builder Sheet", workBook, worklist, worklist.isPlatformChosenAs("agilent"), worklist.getSelectedMode());  		
 		try 
-			{
+			{   
 	
-			if (worklist.getSelectedMode().contains("Positive + Negative")  )
-				workBook.write(output);
+			// issue 313
+	        workBook.write(output);   
 			output.close();
-			if (!worklist.getSelectedMode().contains("Positive + Negative"))
-				return worklist.getIddaStrList();
-			else
-				return null;
+			workBook.close();
+	
+			if (worklist.getSelectedMode().contains("Positive + Negative"))
+				worklist.setIddaStrList(new ArrayList <String> ());
+			
+		    //FileUtils.writeToFile(worklist.getIddaStrList(),    "/Users/admin/downloads/" +  getReportFileName().replace(".xlsx", ".txt"));
+			return null;
 			} 
 		catch (Exception e)  {  e.printStackTrace();  return null;}
 		
-		}
+		}    
 			
 	// issue 209
 	@Override
-	public String getReportFileName()
+	public String getReportFileName()  
 		{
-		return   worklist.getWorklistName() +  (worklist.getSelectedMode().contains("CC") ? "-CC" : "") + (worklist.getSelectedMode().contains("Positive + Negative") ? ".xlsx" : ".txt" )    ;
+		// issue 313   
+		return   worklist.getWorklistName() +  (worklist.getSelectedMode().contains("CC") ? "-CC" : "") + (worklist.getSelectedMode().contains("Positive + Negative") ? ".xlsx" :  ".xlsx"   )    ;
+		}
+	
+	@Override
+	public void setReportFileName(String str)  
+		{
+		// issue 313   
+		worklist.setWorklistName(str);
 		}
 			
 	private Boolean haveWorkbook()
 		{
-		return true;
+		return true;  
 		}
 	
-		
+	@Override
+	public List <String> getIddaList ()
+		{
+		return worklist.getIddaStrList();
+		}
+	
+
+	
 	public Sheet createEmptySheet(String title, Workbook workBook, int page, List <String> headers, int firstDataCol)
 		{
 		Sheet sheet = workBook.createSheet(title);
@@ -164,10 +197,12 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 	// issue 450
 	public Sheet createWorklistSheet(String title, Workbook workBook, WorklistSimple worklist, boolean isPlatformAgilent, String strMode)
 		{
+
 		// issue 128
 		// issue 207
 		///// put back worklist.getIddaStrList().clear();
 		worklist.getIddaStrList().clear();
+		String styleofPlate;
 		try
 		    {
 		// issue 450
@@ -197,6 +232,7 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 			rowCt++;
 			for (WorklistItemSimple item : items)
 				{
+				 String controlTitlee = WorklistFieldBuilder.assembleStyleTag(item, true);
 				// issue 25
 				if (!initializedOutputFileNameBase)
 					{				
@@ -204,6 +240,10 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 				    initializedOutputFileNameBase = true;
 					}	
 				worklist.setWorksheetTitle(title);
+				
+				styleofPlate =  WorklistFieldBuilder.assembleStyleTag(item, true);
+				char[] chars1 = new char[6];
+				
 				worklist.setInstrumentName(worklist.getSelectedInstrument() == null ? "Missing field : please select an instrument." : worklist.getSelectedInstrument().substring(0,worklist.getSelectedInstrument().indexOf("(") ).trim());
 				String itemStr = item.toCharDelimited((worklist.getSelectedMode().contains("Positive + Negative") ? "," : "\t" ));	
 				worklist.getIddaStrList().add(itemStr + "\r\n"); // issue 207
@@ -211,16 +251,28 @@ public class MsWorklistWriter extends SpreadSheetWriter implements Serializable,
 				PoiUtils.createBlankRow(rowCt,  sheet);
 				sheet.setColumnWidth(CONTROLNAMECOL, 28*256); // issue 179
 				sheet.setColumnWidth(IDDADATAFILECOL, 96*256);
-				for (int i = 0; i < tokens.length; i++)
+				Cell cellOfWsEntry;
+				
+				// issue 313
+				XSSFColor myColor = new XSSFColor();
+				myColor.setARGBHex(styleofPlate.substring ((styleofPlate.indexOf(":") + 2)));
+				XSSFCellStyle stylePlate= grabStyleWhite(workBook, true);
+				//stylePlate.setFillForegroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
+				stylePlate.setFillForegroundColor(myColor);
+				stylePlate.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+				for (int i = 0; i < tokens.length; i++)      
 					{	
-						// issue 410
+						// issue 410    
 					// issue 179
 					if (! ( i== IDDADATAFILECOL  && tokens[i].length() >= 2)) // issue 166
-						PoiUtils.createRowEntry(rowCt, i , sheet,  tokens[i], styleHorizontalAndWhite);
+						cellOfWsEntry =  PoiUtils.createRowEntry(rowCt, i , sheet,  tokens[i], stylePlate);
 						// issue 450
 					else
-						PoiUtils.createRowEntry(rowCt, i, sheet, tokens[i].substring(0,tokens[i].length() -2 ) +   (strMode.equals("Positive") ? "-P" : "-N"), styleHorizontalAndWhite);
-				    }
+					    cellOfWsEntry = PoiUtils.createRowEntry(rowCt, i, sheet, tokens[i].substring(0,tokens[i].length() -2 ) +   (strMode.equals("Positive") ? "-P" : "-N"), stylePlate);
+					cellOfWsEntry.setCellStyle(stylePlate);
+					//byte[] rgbB = Hex.decodeHex(chars1);
+					
+					}
 				rowCt++;
 				}
 			// issue 432
